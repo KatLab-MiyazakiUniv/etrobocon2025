@@ -1,9 +1,4 @@
-#
 # ETロボコン用C++コーディング規約
-# 各要素の詳細は、以下のURLを参照
-# http://algo13.net/clang/clang-format-style-oputions.html
-# http://pynote.hatenablog.com/entry/clang-format-settings
-#
 
 Language: Cpp
 AccessModifierOffset: -1
