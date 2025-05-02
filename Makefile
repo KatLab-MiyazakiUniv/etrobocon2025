@@ -19,9 +19,7 @@ build:
 
 # 実機の場合、走行を開始する
 start:
-ifeq ($(filter katlab%,$(HOST)), $(HOST))
 	cd $(MAKEFILE_PATH)../ && make start
-endif
 
 ## 開発関連 ##
 # ファイルにclang-formatを適用する
