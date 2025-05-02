@@ -1,6 +1,5 @@
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #include "spikeapi.h"
@@ -14,7 +13,7 @@ extern "C"
 
 #ifndef TOPPERS_MACRO_ONLY
 
-  extern void main_task(intptr_t exinf);
+extern void main_task(intptr_t exinf);
 
 #endif /* TOPPERS_MACRO_ONLY */
 
