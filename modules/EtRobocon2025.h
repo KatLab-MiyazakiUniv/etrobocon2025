@@ -9,9 +9,8 @@
 
 #include <iostream>
 
-class EtRobocon2025
-{
-public:
+class EtRobocon2025 {
+ public:
   static void start();
 };
 
