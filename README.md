@@ -2,6 +2,12 @@
 
 宮崎大学片山徹郎研究室チーム KatLab が作成する[ET ロボコン 2025](https://www.etrobo.jp/)アドバンストクラスの走行システムプログラムです。
 
+## 構成
+### ./modules
+ソースファイルを格納
+### ./tests
+テストソースを格納
+
 ## プロジェクトのビルド
 ### 実機の場合
 ```etrobocon2025```で以下を実行
@@ -9,6 +15,7 @@
 make build
 ```
 ### 実機以外の場合
+etrobo環境でビルドが出来ないため，現状 (20250502) ではこの方法を考えています
 ```etrobocon2025```で以下を順に実行
 1. (まだの場合は)bookworm環境のイメージを以下のコマンドで作成
 ```shell
@@ -21,4 +28,16 @@ docker run -it --rm -v $(pwd):/RasPike-ART/sdk/workspace/etrobocon2025 myimage:a
 3. プロジェクトのビルド
 ```shell
 make build
+```
+
+## テスト
+```etrobocon2025```で以下を実行
+```shell
+make test
+```
+もしくは，```etrobocon2025```で以下を実行
+```shell
+make smart-clean
+make test-build
+make test-exec
 ```
