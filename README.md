@@ -19,12 +19,24 @@ etrobo環境でビルドが出来ないため，現状 (20250502) ではこの�
 ```etrobocon2025```で以下を順に実行
 1. (まだの場合は)bookworm環境のイメージを以下のコマンドで作成
 ```shell
-docker buildx build --platform linux/arm64 -t myimage:arm64 .
+docker buildx build --platform linux/arm64 -t kat_etrobo2025:arm64 .
 ```
 2. コンテナ作成と起動
 ```shell
-docker run -it --rm -v $(pwd):/RasPike-ART/sdk/workspace/etrobocon2025 myimage:arm64 bash
+docker run -it --rm -v $(pwd):/RasPike-ART/sdk/workspace/etrobocon2025 kat_etrobo2025:arm64 bash
 ```
+もし，ファイル保存などの権限問題に引っかかったら，以下のコマンドでUIDとGIDを確認し，
+```shell
+id -u
+```
+```shell
+id -g
+```
+その番号でそれぞれ，以下のコマンドのUIDとGIDを置き換えて実行してみてください
+```shell
+docker run -it --rm --user UID:GID -v $(pwd):/RasPike-ART/sdk/workspace/etrobocon2025 kat_etrobo2025:arm64 bash
+```
+
 3. プロジェクトのビルド
 ```shell
 make build
