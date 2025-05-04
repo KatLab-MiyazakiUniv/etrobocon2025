@@ -73,6 +73,10 @@ smart-clean:
 			else \
 				echo "[LOG] 実行環境は変更されていません。"; \
 			fi; \
+		else \
+			echo "[LOG] 'build/Makefile' が存在しません。"; \
+			echo "[LOG] 'buildディレクトリを完全削除します。"; \
+			make clean; \
 		fi; \
 	else \
 		echo "'build' ディレクトリは既に存在しません。"; \
