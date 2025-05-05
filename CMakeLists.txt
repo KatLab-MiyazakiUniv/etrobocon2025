@@ -17,13 +17,12 @@ if(ENABLE_COVERAGE)
 endif()
 
 # GoogleTest のフェッチとビルド
-# Windows環境では動かないかも
 include(FetchContent)
 FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
-  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # プロジェクトのソースディレクトリ構造の定義 (適宜登録)
