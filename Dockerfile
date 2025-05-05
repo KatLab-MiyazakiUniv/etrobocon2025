@@ -1,3 +1,4 @@
+# 実機と同じ環境( bookworm AArch64)を構築するためのDockerfile
 FROM debian:bookworm
 
 # 必要なパッケージをインストール

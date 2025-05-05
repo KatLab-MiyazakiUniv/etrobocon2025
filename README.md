@@ -15,7 +15,16 @@
 make build
 ```
 ### 実機以外の場合
-etrobo環境でビルドが出来ないため，現状 (20250502) ではこの方法を考えています
+etrobo環境でビルドが出来ないため，現状 (20250502) ではこの方法を考えています．
+etrobo環境でのビルドが出来ることにきづいた?できるようになった?ので，etrobo環境でのビルドの仕方も追記します( 20250505 )．
+#### etrobo環境( 速いため，こちらを推奨 )
+```~/etrobo/raspike-athrill-v850e2m/sdk/workspace/etrobocon2025```で以下を実行
+```shell
+make build
+```
+
+
+#### Docker仮想環境
 ```etrobocon2025```で以下を順に実行
 1. (まだの場合は)bookworm環境のイメージを以下のコマンドで作成
 ```shell
