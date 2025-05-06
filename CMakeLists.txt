@@ -1,0 +1,64 @@
+# GoogleTest用のCMakeLists.txt
+cmake_minimum_required(VERSION 3.14)
+project(etrobocon2025)
+
+# C++標準とカバレッジ用フラグ
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# デバッグビルド用のフラグ
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+
+# カバレッジレポート作成のオプション
+option(ENABLE_COVERAGE "Enable test coverage reporting" ON)
+if(ENABLE_COVERAGE)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+endif()
+
+# GoogleTest のフェッチとビルド
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+# プロジェクトのソースディレクトリ構造の定義 (適宜登録)
+set(PROJECT_MODULE_DIR ${PROJECT_SOURCE_DIR}/modules)
+set(PROJECT_TEST_DIR ${PROJECT_SOURCE_DIR}/tests)
+
+# 必要なインクルードディレクトリの設定 (適宜登録)
+set(INCLUDE_DIRS
+  ${PROJECT_MODULE_DIR}
+  ${PROJECT_TEST_DIR}/helpers
+)
+
+# ソースファイルの登録 (適宜登録)
+file(GLOB_RECURSE PROJECT_SOURCES
+  "${PROJECT_MODULE_DIR}/*.cpp"
+  "${PROJECT_TEST_DIR}/helpers/*.cpp"
+)
+
+# プロジェクトのライブラリターゲットを作成
+add_library(${PROJECT_NAME}_impl STATIC ${PROJECT_SOURCES})
+target_include_directories(${PROJECT_NAME}_impl PUBLIC ${INCLUDE_DIRS})
+
+# テスト設定
+enable_testing()
+
+# tests ディレクトリ内の *Test.cpp をすべてテストソースとして登録
+file(GLOB TEST_SOURCES "${PROJECT_TEST_DIR}/*Test.cpp")
+
+# テスト実行可能ファイルの作成
+add_executable(${PROJECT_NAME}_test ${TEST_SOURCES})
+target_link_libraries(${PROJECT_NAME}_test
+  PRIVATE
+    ${PROJECT_NAME}_impl
+    gtest_main
+)
+
+# テストの登録
+include(GoogleTest)
+gtest_discover_tests(${PROJECT_NAME}_test)
