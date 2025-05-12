@@ -4,7 +4,7 @@
  * @author Haranaruki
  */
 
-#include "CameraCapure.h"
+#include "CameraCapture.h"
 
 CameraCapture::CameraCapture() : cameraID(0) {}
 
@@ -82,14 +82,14 @@ bool CameraCapture::getFrames(cv::Mat* frames, int numFrames, double seconds)
   return allSuccess;
 }
 
-bool CameraCapture::saveLatestFrame(std::string filepath, std::string filename)
+bool CameraCapture::saveFrame(const cv::Mat& frame, std::string filepath, std::string filename)
 {
-  if(latestFrame.empty()) {
+  if(frame.empty()) {
     std::cerr << "保存するフレームがありません。" << std::endl;
     return false;
   }
   std::string fullpath = filepath + "/" + filename + ".JPEG";
-  if(!cv::imwrite(fullpath, latestFrame)) {
+  if(!cv::imwrite(fullpath, frame)) {
     std::cerr << "画像の保存に失敗しました: " << fullpath << std::endl;
     return false;
   }

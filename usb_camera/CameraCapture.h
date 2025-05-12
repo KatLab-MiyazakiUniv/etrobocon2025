@@ -7,8 +7,8 @@
 #ifndef CAMERACAPTURE_H
 #define CAMERACAPTURE_H
 
-#include <iostream>
 #include <opencv2/opencv.hpp>
+#include <iostream>
 #include <vector>
 #include <string>
 #include <thread>
@@ -29,7 +29,7 @@ class CameraCapture {
   void setCapProps(double width, double height);
   bool getFrame(cv::Mat& outFrame);
   bool getFrames(cv::Mat* frames, int numFrames, double seconds);
-  bool saveLatestFrame(std::string filepath, std::string filename);
+  bool saveFrame(const cv::Mat& frame, std::string filepath, std::string filename);
 };
 
 #endif

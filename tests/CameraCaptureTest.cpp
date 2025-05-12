@@ -5,14 +5,14 @@
  */
 
 #include <gtest/gtest.h>
-#include "../usb_camera/CameraCapure.h"
+#include "../usb_camera/CameraCapture.h"
 #include "helpers/OStreamCapture.h"
 
 using namespace std;
 
 namespace etrobocon2025_test {
   // CameraCaptureクラスがインスタンス化ができるか確認するテスト
-  TEST(CameraCapureTest, CameraCapureInit)
+  TEST(CameraCaptureTest, CameraCaptureInit)
   {
     CameraCapture cap;
     int expected = 0;
@@ -21,7 +21,7 @@ namespace etrobocon2025_test {
   }
 
   // 有効なcameraIDを指定した場合のテスト
-  TEST(CameraCapureTest, SetCameraIDTrue)
+  TEST(CameraCaptureTest, SetCameraIDTrue)
   {
     CameraCapture cap;
     int expected = 1;
@@ -32,7 +32,7 @@ namespace etrobocon2025_test {
   }
 
   // 無効なcameraIDを指定した場合のテスト
-  TEST(CameraCapureTest, SetCameraIDFalse)
+  TEST(CameraCaptureTest, SetCameraIDFalse)
   {
     CameraCapture cap;
     int expected = 0;
