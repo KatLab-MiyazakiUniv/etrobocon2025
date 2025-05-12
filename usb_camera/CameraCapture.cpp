@@ -65,10 +65,9 @@ bool CameraCapture::getFrame(cv::Mat& outFrame)
   return true;
 }
 
-bool CameraCapture::getFrames(cv::Mat* frames, int numFrames, double seconds)
+bool CameraCapture::getFrames(cv::Mat* frames, int numFrames, int intervals)
 {
-  if(frames == nullptr || numFrames <= 0 || seconds <= 0) return false;
-  int intervalMs = static_cast<int>((seconds * 1000) / numFrames);
+  if(frames == nullptr || numFrames <= 0 || intervals <= 0) return false;
   bool allSuccess = true;
   for(int i = 0; i < numFrames; ++i) {
     if(!getFrame(frames[i])) {
@@ -76,7 +75,7 @@ bool CameraCapture::getFrames(cv::Mat* frames, int numFrames, double seconds)
       allSuccess = false;
     }
     if(i < numFrames - 1) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(intervalMs));
+      std::this_thread::sleep_for(std::chrono::milliseconds(intervals));
     }
   }
   return allSuccess;

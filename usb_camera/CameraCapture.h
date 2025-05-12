@@ -28,7 +28,7 @@ class CameraCapture {
   bool openCamera();
   void setCapProps(double width, double height);
   bool getFrame(cv::Mat& outFrame);
-  bool getFrames(cv::Mat* frames, int numFrames, double seconds);
+  bool getFrames(cv::Mat* frames, int numFrames, int intervals);
   bool saveFrame(const cv::Mat& frame, std::string filepath, std::string filename);
 };
 
