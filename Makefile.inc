@@ -16,3 +16,9 @@ APPL_DIRS += $(mkfile_path)modules
 
 INCLUDES += \
 	-I$(mkfile_path)modules\
+	-I/usr/include/opencv4
+
+APPL_LIBS += $(shell pkg-config --libs opencv4)
+
+CXXFLAGS += -std=c++11 -pthread
+LDFLAGS += -pthread
