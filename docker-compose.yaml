@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  etrobocon:
+    image: chihayataku/kat_etrobo2025:arm64
+    container_name: etrobocon2025
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/RasPike-ART/sdk/workspace/etrobocon2025
