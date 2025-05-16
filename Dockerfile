@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
   git \
   cmake \
   sudo \
+  libopencv-dev \
   && gem install shell \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
