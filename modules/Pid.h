@@ -59,6 +59,7 @@ class Pid {
   double targetValue;             // 目標値
   double maxIntegral = 100;       // 累積積分値の最大値
   double minIntegral = -100;      // 累積積分値の最小値
+  double alpha = 0.8;             // ローパスフィルタの係数
 };
 
 #endif
