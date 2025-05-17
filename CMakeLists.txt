@@ -30,11 +30,13 @@ FetchContent_MakeAvailable(googletest)
 
 # プロジェクトのソースディレクトリ構造の定義 (適宜登録)
 set(PROJECT_MODULE_DIR ${PROJECT_SOURCE_DIR}/modules)
+set(PROJECT_USB_CAMERA_DIR ${PROJECT_SOURCE_DIR}/usb_camera)
 set(PROJECT_TEST_DIR ${PROJECT_SOURCE_DIR}/tests)
 
 # 必要なインクルードディレクトリの設定 (適宜登録)
 set(INCLUDE_DIRS
   ${PROJECT_MODULE_DIR}
+  ${PROJECT_USB_CAMERA_DIR}
   ${PROJECT_TEST_DIR}/helpers
   /usr/include/opencv4
 )
@@ -42,10 +44,10 @@ set(INCLUDE_DIRS
 # ソースファイルの登録 (適宜登録)
 file(GLOB_RECURSE PROJECT_SOURCES
   "${PROJECT_MODULE_DIR}/*.cpp"
+  "${PROJECT_USB_CAMERA_DIR}/*.cpp"
   "${PROJECT_TEST_DIR}/helpers/*.cpp"
 )
 
-file(COPY ${PROJECT_SOURCE_DIR}/tests/data/image.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # プロジェクトのライブラリターゲットを作成
 add_library(${PROJECT_NAME}_impl STATIC ${PROJECT_SOURCES})
