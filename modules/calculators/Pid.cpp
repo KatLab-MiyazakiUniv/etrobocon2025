@@ -51,7 +51,7 @@ double Pid::calculatePid(double currentValue, double delta)
    * 偏差が大きい際に過大な変化量を一気に与えず
    * 滑らかな変化にし、機体の暴走を防ぐため
    */
-  filteredDerivative = 0.8 * currentDerivative + (0.2) * filteredDerivative;
+  filteredDerivative = alpha * currentDerivative + (1 - alpha) * filteredDerivative;
 
   // 前回の偏差を更新する
   prevDeviation = currentDeviation;
