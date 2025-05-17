@@ -9,11 +9,27 @@
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <vector>
+#include <string>
+#include <thread>
+#include <chrono>
 
 class CameraCapture {
-public:
-    static void start();
-};
+ private:
+  cv::VideoCapture cap;
+  int cameraID;
+  cv::Mat latestFrame;
 
+ public:
+  CameraCapture();
+  int getAvailableCameraID(int maxTested = 10);
+  int getCameraID();
+  bool setCameraID(int id);
+  bool openCamera();
+  void setCapProps(double width, double height);
+  bool getFrame(cv::Mat& outFrame);
+  bool getFrames(cv::Mat* frames, int numFrames, double seconds);
+  bool saveLatestFrame(std::string filepath, std::string filename);
+};
 
 #endif

@@ -10,19 +10,35 @@
 
 using namespace std;
 
-namespace CameraCapure_test {
-  // start関数が最終的に標準出力に"Hello KATLAB"を出力することを確認するテスト
-  TEST(CameraCapureTest, Start)
+namespace etrobocon2025_test {
+  // CameraCaptureクラスがインスタンス化ができるか確認するテスト
+  TEST(CameraCapureTest, CameraCapureInit)
   {
-    string expected = "Camera started.\n";
+    CameraCapture cap;
+    int expected = 0;
 
-    // 標準出力をキャプチャ
-    OStreamCapture capture(cout);
+    EXPECT_EQ(expected, cap.getCameraID());
+  }
 
+  // 有効なcameraIDを指定した場合のテスト
+  TEST(CameraCapureTest, SetCameraIDTrue)
+  {
+    CameraCapture cap;
+    int expected = 1;
+    int cameraID = 1;
 
-    // start関数を実行
-    CameraCapture::start();
+    ASSERT_TRUE(cap.setCameraID(cameraID));
+    EXPECT_EQ(expected, cap.getCameraID());
+  }
 
-    EXPECT_EQ(expected, capture.getOutput());
+  // 無効なcameraIDを指定した場合のテスト
+  TEST(CameraCapureTest, SetCameraIDFalse)
+  {
+    CameraCapture cap;
+    int expected = 0;
+    int cameraID = -1;
+
+    ASSERT_FALSE(cap.setCameraID(cameraID));
+    EXPECT_EQ(expected, cap.getCameraID());
   }
 }  // namespace etrobocon2025_test
