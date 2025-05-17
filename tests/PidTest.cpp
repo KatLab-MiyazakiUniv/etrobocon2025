@@ -166,7 +166,7 @@ namespace etrobocon2025_test {
      * prePID = 0 + 0 + 1.0 * 800 = 800
      */
     double expected = 800.0;
-    EXPECT_EQ(expected, pid.calculatePid(currentValu));
+    EXPECT_DOUBLE_EQ(expected, pid.calculatePid(currentValu));
   }
 
   // 同じ入力を連続して与えたときに微分出力の絶対値が減少することをテスト
@@ -215,8 +215,8 @@ namespace etrobocon2025_test {
     double expectedFirst = -240;
     double expectedSecond = -48;
 
-    EXPECT_EQ(derivationFirst, expectedFirst);
-    EXPECT_EQ(derivationSecond, expectedSecond);
+    EXPECT_DOUBLE_EQ(derivationFirst, expectedFirst);
+    EXPECT_DOUBLE_EQ(derivationSecond, expectedSecond);
   }
 
   // 偏差が0の状態が続くと出力も0を維持するかをテスト
@@ -225,7 +225,7 @@ namespace etrobocon2025_test {
     Pid pid(1.0, 1.0, 1.0, 50, 100.0, -100.0);
     double expected = 0.0;
     for(int i = 0; i < 5; ++i) {
-      EXPECT_EQ(expected, pid.calculatePid(50));
+      EXPECT_DOUBLE_EQ(expected, pid.calculatePid(50));
     }
   }
 
@@ -257,8 +257,8 @@ namespace etrobocon2025_test {
      */
     double expectedFirst = 0.5;
     double expectedSecond = 1.5;
-    EXPECT_EQ(expectedFirst, first);
-    EXPECT_EQ(expectedSecond, second);
+    EXPECT_DOUBLE_EQ(expectedFirst, first);
+    EXPECT_DOUBLE_EQ(expectedSecond, second);
   }
 
   // 積分項がmaxIntegralで正しく制限されているかをテスト
@@ -270,7 +270,7 @@ namespace etrobocon2025_test {
     }
     double output = pid.calculatePid(0);
     double expected = 50.0;
-    EXPECT_EQ(output, expected);
+    EXPECT_DOUBLE_EQ(output, expected);
   }
 
   // 積分項がminIntegralで正しく制限されているかをテスト
@@ -282,7 +282,7 @@ namespace etrobocon2025_test {
     }
     double output = pid.calculatePid(0);
     double expected = -50.0;
-    EXPECT_EQ(output, expected);
+    EXPECT_DOUBLE_EQ(output, expected);
   }
 
 }  // namespace etrobocon2025_test
