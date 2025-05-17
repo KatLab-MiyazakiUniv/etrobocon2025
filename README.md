@@ -25,6 +25,12 @@ make build
 
 
 #### Docker仮想環境
+- docker-composeを利用する場合（速いのでおすすめ）
+```shell
+docker-compose run --rm etrobocon
+```
+
+- Dockerイメージから構築する場合
 ```etrobocon2025```で以下を順に実行
 1. (まだの場合は)bookworm環境のイメージを以下のコマンドで作成
 ```shell

@@ -2,6 +2,9 @@
 cmake_minimum_required(VERSION 3.14)
 project(etrobocon2025)
 
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+
 # C++標準とカバレッジ用フラグ
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,23 +30,29 @@ FetchContent_MakeAvailable(googletest)
 
 # プロジェクトのソースディレクトリ構造の定義 (適宜登録)
 set(PROJECT_MODULE_DIR ${PROJECT_SOURCE_DIR}/modules)
+set(PROJECT_USB_CAMERA_DIR ${PROJECT_SOURCE_DIR}/usb_camera)
 set(PROJECT_TEST_DIR ${PROJECT_SOURCE_DIR}/tests)
 
 # 必要なインクルードディレクトリの設定 (適宜登録)
 set(INCLUDE_DIRS
   ${PROJECT_MODULE_DIR}
+  ${PROJECT_USB_CAMERA_DIR}
   ${PROJECT_TEST_DIR}/helpers
+  /usr/include/opencv4
 )
 
 # ソースファイルの登録 (適宜登録)
 file(GLOB_RECURSE PROJECT_SOURCES
   "${PROJECT_MODULE_DIR}/*.cpp"
+  "${PROJECT_USB_CAMERA_DIR}/*.cpp"
   "${PROJECT_TEST_DIR}/helpers/*.cpp"
 )
+
 
 # プロジェクトのライブラリターゲットを作成
 add_library(${PROJECT_NAME}_impl STATIC ${PROJECT_SOURCES})
 target_include_directories(${PROJECT_NAME}_impl PUBLIC ${INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME}_impl ${OpenCV_LIBS})
 
 # テスト設定
 enable_testing()
@@ -57,6 +66,7 @@ target_link_libraries(${PROJECT_NAME}_test
   PRIVATE
     ${PROJECT_NAME}_impl
     gtest_main
+    ${OpenCV_LIBS}
 )
 
 # テストの登録
