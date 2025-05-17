@@ -62,4 +62,4 @@ class Pid {
   double alpha = 0.8;             // ローパスフィルタの係数
 };
 
-#endif
+#endif  // PID_H
