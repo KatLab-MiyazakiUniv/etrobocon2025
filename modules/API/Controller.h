@@ -36,9 +36,20 @@ class Controller {
   void resetWheelsMotorPower();
 
   /**
+   * @brief タイヤのモータに回転速度をセット
+   * @param speed 回転速度
+   */
+  void setRightMotorSpeed(const int speed);
+  void setLeftMotorSpeed(const int speed);
+  /**
    * @brief タイヤのモータを停止する
    */
   void stopWheelsMotor();
+
+  /**
+   * @brief ブレーキをかけてタイヤのモータを停止する
+   */
+  void brakeWheelsMotor();
 
   /**
    * @brief アームのモータにpower値をセット
@@ -57,6 +68,12 @@ class Controller {
   void stopArmMotor();
 
   /**
+   * アームモータを止めて角度を維持する
+   * @return -
+   */
+  void holdArmMotor();
+
+  /**
    * @brief 右タイヤのpower値を取得する
    * @return 右タイヤのpower値
    */
@@ -68,6 +85,18 @@ class Controller {
    */
   int getLeftMotorPower();
 
+  /**
+   * @brief 右タイヤの回転速度を取得する
+   * @return 右タイヤの回転速度
+   */
+  int getRightMotorSpeed();
+
+  /**
+   * @brief 左タイヤの回転速度を取得する
+   * @return 左タイヤの回転速度
+   */
+  int getLeftMotorSpeed();
+
  private:
   Motor rightWheel;
   Motor leftWheel;
@@ -75,6 +104,8 @@ class Controller {
   static int powerOfRightWheel;  // 右タイヤpower
   static int powerOfLeftWheel;   // 左タイヤpower
   static int powerOfArm;         // アームpower
+  static int speedOfRightWheel;  // 右タイヤ回転速度
+  static int speedOfLeftWheel;   // 左タイヤ回転速度
 
   /**
    * @brief モータに設定するpower値の制限
