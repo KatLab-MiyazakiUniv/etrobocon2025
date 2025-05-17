@@ -60,13 +60,13 @@ class Controller {
    * @brief 右タイヤのpower値を取得する
    * @return 右タイヤのpower値
    */
-  static int getRightMotorPower();
+  int getRightMotorPower();
 
   /**
    * @brief 左タイヤのpower値を取得する
    * @return 左タイヤのpower値
    */
-  static int getLeftMotorPower();
+  int getLeftMotorPower();
 
  private:
   Motor rightWheel;

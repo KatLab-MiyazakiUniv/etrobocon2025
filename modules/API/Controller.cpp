@@ -7,7 +7,7 @@
 
 Controller::Controller()
   : rightWheel(Port::PORT_A),
-    leftWheel(Port::PORT_B, EDirection::COUNTERCLOCKWISE),
+    leftWheel(Port::PORT_B, Motor::EDirection::COUNTERCLOCKWISE),
     armMotor(Port::PORT_C)
 {
 }
