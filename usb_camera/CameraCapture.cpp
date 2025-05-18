@@ -1,26 +1,39 @@
 /**
  * @file   AreaACameraAction.cpp
  * @brief  カメラを制御するクラス
- * @author Haranaruki
+ * @author Hara1274
  */
 
 #include "CameraCapture.h"
 
-CameraCapture::CameraCapture() : cameraID(0) {}
+CameraCapture::CameraCapture()
+  : cap(),       // カメラデバイス（未接続で初期化）
+    cameraID(0)  // カメラIDを0で初期化
+{
+}
 
-int CameraCapture::getAvailableCameraID(int maxTested)
+int CameraCapture::findAvailableCameraID(int maxTested)
 {
   for(int i = 0; i < maxTested; ++i) {
     cv::VideoCapture cap(i);
     if(cap.isOpened()) {
       cap.release();
+      // 利用可能なIDを返す
+      if(cap.isOpened()) {
+        cap.release();
+        // 利用可能なIDを返す
+        std::cerr << "カメラID:" << i << " を使ってください" << std::endl;
+        return i;
+      }
+      std::cerr << "使用できるカメラIDが存在しません" << std::endl;
       return i;
     }
   }
+  // どのIDも利用できなかった場合は-1を返す
   return -1;
 }
 
-int CameraCapture::getCameraID()
+int CameraCapture::getCurrentCameraID()
 {
   return cameraID;
 }
@@ -28,6 +41,7 @@ int CameraCapture::getCameraID()
 bool CameraCapture::setCameraID(int id)
 {
   if(id < 0) {
+    std::cerr << "無効なカメラIDです" << std::endl;
     return false;
   }
   cameraID = id;
@@ -54,7 +68,7 @@ void CameraCapture::setCapProps(double width, double height)
 bool CameraCapture::getFrame(cv::Mat& outFrame)
 {
   if(!cap.isOpened()) {
-    std::cerr << "カメラを開いて開いてください。" << std::endl;
+    std::cerr << "カメラを開くことができませんでした。" << std::endl;
     return false;
   }
   cap >> outFrame;
@@ -65,9 +79,9 @@ bool CameraCapture::getFrame(cv::Mat& outFrame)
   return true;
 }
 
-bool CameraCapture::getFrames(cv::Mat* frames, int numFrames, int intervals)
+bool CameraCapture::getFrames(cv::Mat* frames, int numFrames, int millisecondInterval)
 {
-  if(frames == nullptr || numFrames <= 0 || intervals <= 0) return false;
+  if(frames == nullptr || numFrames <= 0 || millisecondInterval <= 0) return false;
   bool allSuccess = true;
   for(int i = 0; i < numFrames; ++i) {
     if(!getFrame(frames[i])) {
@@ -75,7 +89,8 @@ bool CameraCapture::getFrames(cv::Mat* frames, int numFrames, int intervals)
       allSuccess = false;
     }
     if(i < numFrames - 1) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(intervals));
+      // 最後の1回以外は、intervals ミリ秒だけ待機
+      std::this_thread::sleep_for(std::chrono::milliseconds(millisecondInterval));
     }
   }
   return allSuccess;
