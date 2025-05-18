@@ -30,7 +30,7 @@ FetchContent_MakeAvailable(googletest)
 
 # プロジェクトのソースディレクトリ構造の定義 (適宜登録)
 set(PROJECT_MODULE_DIR ${PROJECT_SOURCE_DIR}/modules)
-set(PROJECT_USB_CAMERA_DIR ${PROJECT_SOURCE_DIR}/usb_camera)
+set(PROJECT_USB_CAMERA_DIR ${PROJECT_SOURCE_DIR}/modules/usb_camera)
 set(PROJECT_TEST_DIR ${PROJECT_SOURCE_DIR}/tests)
 
 # 必要なインクルードディレクトリの設定 (適宜登録)
