@@ -34,13 +34,13 @@ inline pup_device_t* pup_color_sensor_get_device(int /*port*/)
 // カラーセンサーのRGB値取得関数のダミー
 inline pup_color_rgb_t pup_color_sensor_rgb(pup_device_t* /*device*/)
 {
-  return { 8, 9, 10 };
+  return { 32, 36, 40 };
 }
 
 // カラーセンサーの色取得関数のダミー
 inline pup_color_hsv_t pup_color_sensor_color(pup_device_t* /*device*/, bool /*surface*/)
 {
-  return { 0, 0, 100 };
+  return { 0, 83, 111 };
 }
 
 // カラーセンサーの色取得関数のダミー (近似なし)
