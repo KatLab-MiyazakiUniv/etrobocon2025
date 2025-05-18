@@ -1,6 +1,6 @@
 /**
  * @file ColorSensor.h
- * @brief カラーセンサクラス
+ * @brief カラーセンサクラス (ラッパクラス)
  * @author HaruArima08
  */
 
@@ -10,6 +10,7 @@
 #include "spikeapi.h"
 #include "spike/pup/colorsensor.h"
 #include "Port.h"
+
 /**
  * SPIKE カラーセンサクラス
  */
@@ -38,7 +39,7 @@ class ColorSensor {
 
   /**
    * カラーセンサのRGB値を取得する
-   * @param  値を設定するRGB構造体、各色8ビット
+   * @param  値を設定するRGB構造体、各色10ビット
    * @return -
    */
   void getRGB(RGB& rgb) const
