@@ -31,12 +31,12 @@ namespace etrobocon2025_test {
 
     // テスト用のRGB期待値の定義
     pup_color_rgb_t expectedColors[] = {
-      { 8, 9, 10 },       // black
-      { 104, 101, 146 },  // white
-      { 111, 19, 19 },    // red
-      { 120, 108, 71 },   // yellow
-      { 4, 75, 35 },      // green
-      { 81, 92, 144 }     // blue
+      { 32, 36, 40 },     // black
+      { 416, 404, 584 },  // white
+      { 444, 76, 76 },    // red
+      { 480, 432, 284 },  // yellow
+      { 16, 300, 140 },   // green
+      { 324, 368, 576 }   // blue
     };
 
     bool match = false;
@@ -47,8 +47,9 @@ namespace etrobocon2025_test {
       }
     }
 
-    ASSERT_TRUE(match) << "RGB値が期待値に一致しません: " << "r=" << (int)actual.r
-                       << ", g=" << (int)actual.g << ", b=" << (int)actual.b;
+    ASSERT_TRUE(match) << "RGB値が期待値に一致しません: "
+                       << "r=" << (int)actual.r << ", g=" << (int)actual.g
+                       << ", b=" << (int)actual.b;
   }
 
   // HSV値取得テスト (近似あり)
