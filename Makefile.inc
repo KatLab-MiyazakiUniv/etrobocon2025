@@ -12,10 +12,13 @@ SRCLANG := c++
 
 APPL_LIBS += -lm
 
-APPL_DIRS += $(mkfile_path)modules
+APPL_DIRS += \
+	$(mkfile_path)modules \
+	$(mkfile_path)modules/CameraCapture
 
 INCLUDES += \
-	-I$(mkfile_path)modules\
+	-I$(mkfile_path)modules \
+	-I$(mkfile_path)modules\CameraCapture \
 	-I/usr/include/opencv4
 
 APPL_LIBS += $(shell pkg-config --libs opencv4)
