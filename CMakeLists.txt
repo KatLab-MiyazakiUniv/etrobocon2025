@@ -36,7 +36,7 @@ set(PROJECT_TEST_DIR ${PROJECT_SOURCE_DIR}/tests)
 # 必要なインクルードディレクトリの設定 (適宜登録)
 set(INCLUDE_DIRS
   ${PROJECT_MODULE_DIR}
-  ${PROJECT_USB_CAMERA_DIR}
+  ${PROJECT_MODULE_DIR}/CameraCapture
   ${PROJECT_TEST_DIR}/helpers
   /usr/include/opencv4
 )
@@ -44,7 +44,7 @@ set(INCLUDE_DIRS
 # ソースファイルの登録 (適宜登録)
 file(GLOB_RECURSE PROJECT_SOURCES
   "${PROJECT_MODULE_DIR}/*.cpp"
-  "${PROJECT_USB_CAMERA_DIR}/*.cpp"
+  "${PROJECT_MODULE_DIR}/CameraCapture/*.cpp"
   "${PROJECT_TEST_DIR}/helpers/*.cpp"
 )
 
