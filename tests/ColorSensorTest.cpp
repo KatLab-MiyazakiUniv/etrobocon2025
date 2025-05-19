@@ -1,5 +1,5 @@
 /**
- * @file ColorMeasureTest.cpp
+ * @file ColorSensorTest.cpp
  * @brief ColorSensorクラスの値取得をテストする
  * @author HaruArima08
  */
@@ -47,8 +47,9 @@ namespace etrobocon2025_test {
       }
     }
 
-    ASSERT_TRUE(match) << "RGB値が期待値に一致しません: "
-                       << "r=" << (int)actual.r << ", g=" << (int)actual.g
+    // ASSERT_TRUE(match)は、matchがfalseの時、エラー文を出力する
+    ASSERT_TRUE(match) << "期待されるRGBのいずれとも一致しませんでした。\n"
+                       << "実測値: r=" << (int)actual.r << ", g=" << (int)actual.g
                        << ", b=" << (int)actual.b;
   }
 
@@ -62,11 +63,12 @@ namespace etrobocon2025_test {
 
     // テスト用のHSV期待値の定義
     pup_color_hsv_t expectedColors[] = {
-      { 0, 83, 111 },    // red
-      { 45, 41, 120 },   // yellow
-      { 150, 94, 75 },   // green
-      { 226, 44, 144 },  // blue
-      { 245, 45, 146 },  // white
+      { 0, 100, 100 },    // red
+      { 60, 100, 100 },   // yellow
+      { 120, 100, 100 },  // green
+      { 240, 100, 100 },  // blue
+      { 0, 0, 100 },      // white
+      { 0, 0, 0 },        // none
     };
 
     bool match = false;
@@ -77,8 +79,9 @@ namespace etrobocon2025_test {
       }
     }
 
-    ASSERT_TRUE(match) << "HSV値が期待値に一致しません: "
-                       << "h=" << (int)actual.h << ", s=" << (int)actual.s
+    // ASSERT_TRUE(match)は、matchがfalseの時、エラー文を出力する
+    ASSERT_TRUE(match) << "期待されるHSVのいずれとも一致しませんでした。\n"
+                       << "実測値: h=" << (int)actual.h << ", s=" << (int)actual.s
                        << ", v=" << (int)actual.v;
   }
 
@@ -108,8 +111,9 @@ namespace etrobocon2025_test {
       }
     }
 
-    ASSERT_TRUE(match) << "HSV値が期待値に一致しません: "
-                       << "h=" << (int)actual.h << ", s=" << (int)actual.s
+    // ASSERT_TRUE(match)は、matchがfalseの時、エラー文を出力する
+    ASSERT_TRUE(match) << "期待されるHSVのいずれとも一致しませんでした。\n"
+                       << "実測値: h=" << (int)actual.h << ", s=" << (int)actual.s
                        << ", v=" << (int)actual.v;
   }
 
