@@ -4,10 +4,9 @@
  * @author HaruArima08
  */
 
-#ifndef COLOR_SENSOR_H_
-#define COLOR_SENSOR_H_
+#ifndef COLOR_SENSOR_H
+#define COLOR_SENSOR_H
 
-#include "spikeapi.h"
 #include "spike/pup/colorsensor.h"
 #include "Port.h"
 
