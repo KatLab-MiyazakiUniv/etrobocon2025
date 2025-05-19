@@ -13,6 +13,8 @@ SRCLANG := c++
 APPL_LIBS += -lm
 
 APPL_DIRS += $(mkfile_path)modules
+APPL_DIRS += $(mkfile_path)modules/calculators
 
 INCLUDES += \
 	-I$(mkfile_path)modules\
+	-I$(mkfile_path)modules/calculators
