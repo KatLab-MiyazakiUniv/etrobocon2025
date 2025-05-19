@@ -4,8 +4,8 @@
  * @author HaruArima08
  */
 
-#ifndef PORT_H_
-#define PORT_H_
+#ifndef PORT_H
+#define PORT_H
 
 #include "spikeapi.h"
 #include "pbio/port.h"

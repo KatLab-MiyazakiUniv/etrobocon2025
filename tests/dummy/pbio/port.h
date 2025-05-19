@@ -4,8 +4,8 @@
  * @author HaruArima08
  */
 
-#ifndef PORT_H
-#define PORT_H
+#ifndef DUMMY_PORT_H
+#define DUMMY_PORT_H
 
 // 型定義（ColorSensorで使われる）
 typedef int pbio_port_id_t;

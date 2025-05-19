@@ -4,8 +4,8 @@
  * @author HaruArima08
  */
 
-#ifndef COLOR_SENSOR_H
-#define COLOR_SENSOR_H
+#ifndef DUMMY_COLOR_SENSOR_H
+#define DUMMY_COLOR_SENSOR_H
 
 #include <stdint.h>
 
