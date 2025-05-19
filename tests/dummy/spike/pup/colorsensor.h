@@ -1,6 +1,6 @@
 /**
- * @file colorSensor.h
- * @brief カラーセンサクラス (ダミー)
+ * @file colorsensor.h
+ * @brief カラーセンサークラス (ダミー)
  * @author HaruArima08
  */
 
@@ -37,10 +37,10 @@ inline pup_color_rgb_t pup_color_sensor_rgb(pup_device_t* /*device*/)
   return { 32, 36, 40 };
 }
 
-// カラーセンサーの色取得関数のダミー
+// カラーセンサーの色取得関数のダミー (近似あり)
 inline pup_color_hsv_t pup_color_sensor_color(pup_device_t* /*device*/, bool /*surface*/)
 {
-  return { 0, 83, 111 };
+  return { 0, 0, 100 };
 }
 
 // カラーセンサーの色取得関数のダミー (近似なし)
