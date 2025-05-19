@@ -1,6 +1,6 @@
 /**
  * @file ColorSensor.h
- * @brief カラーセンサクラス (ラッパクラス)
+ * @brief カラーセンサークラス (ラッパクラス)
  * @author HaruArima08
  */
 
@@ -12,7 +12,7 @@
 #include "Port.h"
 
 /**
- * SPIKE カラーセンサクラス
+ * SPIKE カラーセンサークラス
  */
 class ColorSensor {
  public:
@@ -29,7 +29,7 @@ class ColorSensor {
   };
 
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param port PUPポートID
    */
   ColorSensor(Port port)
@@ -38,9 +38,9 @@ class ColorSensor {
   }
 
   /**
-   * カラーセンサのRGB値を取得する
-   * @param  値を設定するRGB構造体、各色10ビット
-   * @return -
+   * @brief カラーセンサーのRGB値を取得する
+   * @param  rgb値を設定するRGB構造体、各色10ビット
+   * @return 色（rgbによる表現）
    */
   void getRGB(RGB& rgb) const
   {
@@ -51,7 +51,8 @@ class ColorSensor {
   }
 
   /**
-   * カラーセンサで色を測定する
+   * @brief カラーセンサーで色を測定する
+   * @param hsv値を設定するHSV構造体、h(16ビット)、s(8ビット)、v(8ビット)
    * @param surface trueならば表面の色から、falseならば他の光源の色を検出する
    * @return 色（hsvによる表現）
    */
@@ -64,7 +65,8 @@ class ColorSensor {
   }
 
   /**
-   * カラーセンサで色を測定する（近似なし）
+   * @brief カラーセンサーで色を測定する（近似なし）
+   * @param hsv値を設定するHSV構造体、h(16ビット)、s(8ビット)、v(8ビット)
    * @param surface trueならば表面の色から、falseならば他の光源の色を検出する
    * @return 色（hsvによる表現）
    */
@@ -77,23 +79,23 @@ class ColorSensor {
   }
 
   /**
-   * センサーの発する光を表面がどの程度反射するかを測定する
+   * @brief センサーの発する光を表面がどの程度反射するかを測定する
    * @return どの程度反射しているか（％）
    */
   int32_t getReflection() const { return pup_color_sensor_reflection(pupDevicePointer); }
 
   /**
-   * 周囲の光の強度を測定する
+   * @brief 周囲の光の強度を測定する
    * @return 周囲の光の強度（％）
    */
   int32_t getAmbient() const { return pup_color_sensor_ambient(pupDevicePointer); }
 
   /**
-   * カラーセンサのライトを設定する
-   * @param bv1 輝度1
-   * @param bv2 輝度2
-   * @param bv3 輝度3
-   * @return -
+   * @brief カラーセンサーのライトを設定する
+   * @param bv1 輝度1 （明るさ0-100）
+   * @param bv2 輝度2 （明るさ0-100）
+   * @param bv3 輝度3 （明るさ0-100）
+   * @return void
    */
   void setLight(int32_t bv1, int32_t bv2, int32_t bv3) const
   {
@@ -101,24 +103,22 @@ class ColorSensor {
   }
 
   /**
-   * カラーセンサのライトを点灯する
-   * @param -
-   * @return -
+   * @brief カラーセンサーのライトを点灯する
+   * @return void
    */
   void lightOn() const { pup_color_sensor_light_on(pupDevicePointer); }
 
   /**
-   * カラーセンサのライトを消灯する
-   * @param -
-   * @return -
+   * @brief カラーセンサーのライトを消灯する
+   * @return void
    */
   void lightOff() const { pup_color_sensor_light_off(pupDevicePointer); }
 
   /**
-   * カラーセンサが検知する色を設定する
+   * @brief カラーセンサーが検知する色を設定する
    * @param size カラーの配列のサイズ
    * @param colors カラーの配列
-   * @return -
+   * @return void
    */
   void setDetectableColors(int32_t size, pup_color_hsv_t* colors) const
   {
@@ -126,8 +126,8 @@ class ColorSensor {
   }
 
   /**
-   * インスタンス生成が正常にできたかどうかを確認するための共通メソッド
-   * pupDevicePointerがNULLの場合にtrueとなる
+   * @brief インスタンス生成が正常にできたかどうかを確認するための共通メソッド
+   * @return pupDevicePointerがNULLの場合にtrueとなる
    */
   bool hasError() { return pupDevicePointer == 0; }
 
