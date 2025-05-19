@@ -74,6 +74,24 @@ class Controller {
   void holdArmMotor();
 
   /**
+   * @brief 右モータの角位置を取得する
+   * @return 右モータの角位置
+   */
+  int32_t getRightCount();
+
+  /**
+   * @brief 左モータの角位置を取得する
+   * @return 左モータの角位置
+   */
+  int32_t getLeftCount();
+
+  /**
+   * @brief アームモータの角位置を取得する
+   * @return アームモータの角位置
+   */
+  int32_t getArmMotorCount();
+
+  /**
    * @brief 右タイヤのpower値を取得する
    * @return 右タイヤのpower値
    */
@@ -104,8 +122,6 @@ class Controller {
   static int powerOfRightWheel;  // 右タイヤpower
   static int powerOfLeftWheel;   // 左タイヤpower
   static int powerOfArm;         // アームpower
-  static int speedOfRightWheel;  // 右タイヤ回転速度
-  static int speedOfLeftWheel;   // 左タイヤ回転速度
 
   /**
    * @brief モータに設定するpower値の制限

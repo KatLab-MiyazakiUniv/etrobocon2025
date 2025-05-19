@@ -1,7 +1,7 @@
 /**
  * @file Controller.cpp
  * @brief モーター制御に用いる関数をまとめたラッパークラス
- * @author takahashitom CHIHAYATAKU
+ * @author nishijima515
  */
 #include "Controller.h"
 
@@ -16,10 +16,6 @@ Controller::Controller()
 int Controller::powerOfRightWheel = 0.0;
 int Controller::powerOfLeftWheel = 0.0;
 int Controller::powerOfArm = 0.0;
-
-// // speed値の初期化
-// int Controller::speedOfRightWheel = 0;
-// int Controller::speedOfLeftWheel = 0;
 
 // モータに設定するpower値の制限
 int Controller::limitPowerValue(const int inputPower)
@@ -136,6 +132,24 @@ int Controller::getRightMotorPower()
 int Controller::getLeftMotorPower()
 {
   return leftWheel.getPower();
+}
+
+// 右モータの角位置を取得する
+int32_t Controller::getRightCount()
+{
+  return rightWheel.getCount();
+}
+
+// 右モータの角位置を取得する
+int32_t Controller::getLeftCount()
+{
+  return leftWheel.getCount();
+}
+
+// アームモータの角位置を取得する
+int32_t Controller::getArmMotorCount()
+{
+  return armMotor.getCount();
 }
 
 // 右タイヤモータの回転速度を取得する
