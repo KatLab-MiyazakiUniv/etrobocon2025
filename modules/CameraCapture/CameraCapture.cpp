@@ -75,12 +75,13 @@ bool CameraCapture::getFrame(cv::Mat& outFrame)
   return true;
 }
 
-bool CameraCapture::getFrames(cv::Mat* frames, int numFrames, int millisecondInterval)
+bool CameraCapture::getFrames(cv::Mat& frames, int numFrames, int millisecondInterval)
 {
-  if(frames == nullptr) {
-    cerr << "フレームバッファが null です。" << endl;
+  if(frames.empty()) {
+    cerr << "フレームバッファが空です。" << endl;
     return false;
   }
+
   if(numFrames <= 0) {
     cerr << "フレーム数が無効です: " << numFrames << endl;
     return false;
@@ -90,6 +91,7 @@ bool CameraCapture::getFrames(cv::Mat* frames, int numFrames, int millisecondInt
     return false;
   }
 
+  frames.resize(numFrames);
   bool allSuccess = true;
   for(int i = 0; i < numFrames; ++i) {
     if(!getFrame(frames[i])) {
@@ -104,7 +106,7 @@ bool CameraCapture::getFrames(cv::Mat* frames, int numFrames, int millisecondInt
   return allSuccess;
 }
 
-bool CameraCapture::saveFrame(const cv::Mat& frame, const string filepath, const string filename)
+bool CameraCapture::saveFrame(const cv::Mat& frame, string filepath, string filename)
 {
   if(frame.empty()) {
     cerr << "保存するフレームがありません。" << endl;

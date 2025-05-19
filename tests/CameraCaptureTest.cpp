@@ -1,12 +1,11 @@
 /**
  * @file   CameraCaptureTest.cpp
- * @brief  Cameraクラスのテスト
+ * @brief  CameraCaptureクラスのテスト
  * @author Hara1274
  */
 
 #include <gtest/gtest.h>
 #include "CameraCapture.h"
-#include "helpers/OStreamCapture.h"
 
 namespace etrobocon2025_test {
   // CameraCaptureクラスがインスタンス化ができるか確認するテスト
