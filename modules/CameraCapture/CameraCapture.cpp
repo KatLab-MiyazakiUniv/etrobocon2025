@@ -75,7 +75,7 @@ bool CameraCapture::getFrame(cv::Mat& outFrame)
   return true;
 }
 
-bool CameraCapture::getFrames(cv::Mat& frames, int numFrames, int millisecondInterval)
+bool CameraCapture::getFrames(vector<cv::Mat>& frames, int numFrames, int millisecondInterval)
 {
   if(frames.empty()) {
     cerr << "フレームバッファが空です。" << endl;
