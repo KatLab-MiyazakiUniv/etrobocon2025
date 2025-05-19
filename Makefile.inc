@@ -18,7 +18,7 @@ APPL_DIRS += \
 
 INCLUDES += \
 	-I$(mkfile_path)modules \
-	-I$(mkfile_path)modules\CameraCapture \
+	-I$(mkfile_path)modules/CameraCapture \
 	-I/usr/include/opencv4
 
 APPL_LIBS += $(shell pkg-config --libs opencv4)
