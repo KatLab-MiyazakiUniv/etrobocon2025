@@ -22,7 +22,7 @@ bool eqHsv(pup_color_hsv_t hsv1, pup_color_hsv_t hsv2)
 namespace etrobocon2025_test {
 
   // RGB値取得テスト
-  TEST(RgbColorTest, getRGB)
+  TEST(RgbColorTest, GetRGB)
   {
     ColorSensor colorSensor(Port::PORT_E);
     ColorSensor::RGB rgb;
@@ -54,7 +54,7 @@ namespace etrobocon2025_test {
   }
 
   // HSV値取得テスト (近似あり)
-  TEST(HsvColorApproxiTest, getColor)
+  TEST(HsvColorApproxiTest, GetColor)
   {
     ColorSensor colorSensor(Port::PORT_E);
     ColorSensor::HSV hsv1;
@@ -86,7 +86,7 @@ namespace etrobocon2025_test {
   }
 
   // HSV値取得テスト (近似なし)
-  TEST(HsvColorTest, getHSV)
+  TEST(HsvColorTest, GetHSV)
   {
     ColorSensor colorSensor(Port::PORT_E);
     ColorSensor::HSV hsv2;
@@ -118,7 +118,7 @@ namespace etrobocon2025_test {
   }
 
   // 反射率取得テスト
-  TEST(ReflectionTest, getReflection)
+  TEST(ReflectionTest, GetReflection)
   {
     ColorSensor colorSensor(Port::PORT_E);
     int32_t actual = colorSensor.getReflection();
