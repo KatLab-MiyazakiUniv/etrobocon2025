@@ -32,7 +32,7 @@ void Pid::setPidGain(double _kp, double _ki, double _kd)
 
 double Pid::calculatePid(double currentValue, double delta)
 {
-  // 0除算を避けるために0の場合はデフォルト周期0.01とする
+  // 0除算を避けるために delta=0 の場合はデフォルト周期0.01とする
   if(delta == 0) delta = 0.01;
 
   // 現在の目標値との偏差を求める
@@ -40,10 +40,11 @@ double Pid::calculatePid(double currentValue, double delta)
   // 積分の処理を行う
   integral += (currentDeviation + prevDeviation) * delta / 2;
   // 累積する積分値の大きさ制限
-  if(integral > maxIntegral)
+  if(integral > maxIntegral) {
     integral = maxIntegral;
-  else if(integral < minIntegral)
+  } else if(integral < minIntegral) {
     integral = minIntegral;
+  }
   // 微分の処理を行う
   double currentDerivative = (currentDeviation - prevDeviation) / delta;
   /**
