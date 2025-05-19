@@ -7,7 +7,7 @@
 #ifndef PID_H
 #define PID_H
 
-//   PIDゲインを保持する構造体
+// PIDゲインを保持する構造体
 struct PidGain {
  public:
   double kp;  // Pゲイン
@@ -53,13 +53,13 @@ class Pid {
 
  private:
   PidGain pidGain;
-  double prevDeviation;           // 前回の偏差
-  double integral;                // 偏差の累積
-  double filteredDerivative = 0;  // フィルタされた微分項を保持する変数
-  double targetValue;             // 目標値
-  double maxIntegral = 100;       // 累積積分値の最大値
-  double minIntegral = -100;      // 累積積分値の最小値
-  double alpha = 0.8;             // ローパスフィルタの係数
+  double prevDeviation;             // 前回の偏差
+  double integral;                  // 偏差の累積
+  double filteredDerivative = 0.0;  // フィルタされた微分項を保持する変数
+  double targetValue;               // 目標値
+  double maxIntegral = 100.0;       // 累積積分値の最大値
+  double minIntegral = -100.0;      // 累積積分値の最小値
+  double alpha = 0.8;               // ローパスフィルタの係数
 };
 
 #endif  // PID_H

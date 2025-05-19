@@ -54,7 +54,7 @@ namespace etrobocon2025_test {
   TEST(PidTest, CalculatePid)
   {
     Pid actualPid(0.6, 0.02, 0.03, 70, 100.0, -100.0);
-    double currentValue = 20;
+    double currentValue = 20.0;
     /** 計算過程
      * 1. 前回の誤差
      * prevDeviation = 0
@@ -64,7 +64,7 @@ namespace etrobocon2025_test {
      * integral = 0 + (50 + 0) * 0.01 / 2 = 0.25
      * 4. 微分の処理を行う
      * currentDerivative = (50 - 0) / 0.01 = 5000
-     * 微分項にローパスフィルタを適用
+     *  4.1.  4.1 微分項にローパスフィルタを適用
      * prevDeviat filteredDerivative = 0.8 * 5000 + (1 - 0.8) * 0 = 4000
      * 5. PID制御を計算
      * expected = 0.6 * 50 + 0.02 * 0.25 + 0.03 * 4000 = 150.005
@@ -77,7 +77,7 @@ namespace etrobocon2025_test {
   TEST(PidTest, CalculatePidGainZero)
   {
     Pid actualPid(0.0, 0.0, 0.0, 70, 100.0, -100.0);
-    double currentValue = 20;
+    double currentValue = 20.0;
     /** 計算過程
      * 1. 前回の誤差
      * prevDeviation = 0
@@ -87,7 +87,7 @@ namespace etrobocon2025_test {
      * integral = 0 + (50 + 0) * 0.01 / 2 = 0.25
      * 4. 微分の処理を行う
      * currentDerivative = (50 - 0) / 0.01 = 5000
-     * 微分項にローパスフィルタを適用
+     *  4.1 微分項にローパスフィルタを適用
      * prevDeviat filteredDerivative = 0.8 * 5000 + (1 - 0.8) * 0 = 4000
      * 5. PID制御を計算
      * expected = 0.0 * 50 + 0.0 * 0.25 + 0.0 * 4000 = 0.0
@@ -101,7 +101,7 @@ namespace etrobocon2025_test {
   {
     double DELTA = 0.03;
     Pid actualPid(0.6, 0.02, 0.03, 70, 100.0, -100.0);
-    double currentValue = 55;
+    double currentValue = 55.0;
     /** 計算過程
      * 1. 前回の誤差
      * prevDeviation = 0
@@ -111,7 +111,7 @@ namespace etrobocon2025_test {
      * integral = 0 + (15 + 0) * 0.03 / 2 = 0.225
      * 4. 微分の処理を行う
      * currentDerivative = (15 - 0) / 0.03 = 500
-     * 微分項にローパスフィルタを適用
+     *  4.1 微分項にローパスフィルタを適用
      * filteredDerivative = 0.8 * 500 + (1 - 0.8) * 0 = 400
      * 5. PID制御を計算
      * expected = 0.6 * 15 + 0.02 * 0.225 + 0.03 * 400 = 21.0045
@@ -124,7 +124,7 @@ namespace etrobocon2025_test {
   TEST(PidTest, CalculatePidChangeDeltaZero)
   {
     Pid actualPid(0.6, 0.02, 0.03, 70, 100.0, -100.0);
-    double currentValue = 55;
+    double currentValue = 55.0;
     /** 計算過程
      * 1. 前回の誤差
      * prevDeviation = 0
@@ -134,7 +134,7 @@ namespace etrobocon2025_test {
      * integral = 0 + (15 + 0) * 0.01 / 2 = 0.075
      * 4. 微分の処理を行う
      * currentDerivative = (15 - 0) / 0.01 = 1500
-     * 微分項にローパスフィルタを適用
+     *  4.1 微分項にローパスフィルタを適用
      * filteredDerivative = 0.8 * 1500 + (1 - 0.8) * 0 = 1200
      * 5. PID制御を計算
      * expected = 0.6 * 15 + 0.02 * 0.075 + 0.03 * 1200 = 45.0015
@@ -147,7 +147,7 @@ namespace etrobocon2025_test {
   TEST(PidTest, CalculatePidAfterSetNewGain)
   {
     Pid actualPid(0.6, 0.05, 0.01, 70, 100.0, -100.0);
-    double preCurrentValue = 60;
+    double prevValue = 60.0;
     /** 計算過程
      * 1. 前回の誤差
      * prevDeviation = 0
@@ -157,16 +157,16 @@ namespace etrobocon2025_test {
      * integral = 0 + (10 + 0) * 0.01 / 2 = 0.05
      * 4. 微分の処理を行う
      * currentDerivative = (10 - 0) / 0.01 = 1000
-     * 微分項にローパスフィルタを適用
+     *  4.1 微分項にローパスフィルタを適用
      * filteredDerivative = 0.8 * 1000 + (1 - 0.8) * 0 = 800
      * 5. PID制御を計算
      * expected = 0.6 * 10 + 0.05 * 0.005 + 0.01 * 800 = 14.0025
      */
     double expected = 14.0025;
-    EXPECT_DOUBLE_EQ(expected, actualPid.calculatePid(preCurrentValue));
+    EXPECT_DOUBLE_EQ(expected, actualPid.calculatePid(prevValue));
 
     actualPid.setPidGain(0.1, 0.2, 0.3);
-    double currentValue = 100;
+    double currentValue = 100.0;
     /** 計算過程
      * 1. 前回の誤差
      * prevDeviation = 10
@@ -176,7 +176,7 @@ namespace etrobocon2025_test {
      * integral = 0.05+ (-30 + 10) * 0.01 / 2 = -0.05
      * 4. 微分の処理を行う
      * currentDerivative = (-30 - 10) / 0.01 = -4000
-     * 微分項にローパスフィルタを適用
+     *  4.1 微分項にローパスフィルタを適用
      * filteredDerivative = 0.8 * -4000 + (1 - 0.8) * 800 = -3040
      * 5. PID制御を計算
      * expected = 0.1 * -30 + 0.2 * -0.1 + 0.3 * -3040 = -915.01
@@ -189,7 +189,7 @@ namespace etrobocon2025_test {
   TEST(PidTest, CalculatePidFirstDerivative)
   {
     Pid pid(0.0, 0.0, 1.0, 100, 100.0, -100.0);
-    double currentValue = 90;
+    double currentValue = 90.0;
     /** 計算過程
      * 1. 前回の誤差
      * prevDeviation = 0
@@ -197,9 +197,9 @@ namespace etrobocon2025_test {
      * currentDeviation = (100 - 90) = 10
      * 3. 微分の処理を行う
      * currentDerivative = (10 - 0) / 0.01 = 1000
-     * 微分項にローパスフィルタを適用
+     *  3.1 微分項にローパスフィルタを適用
      * filteredDerivative = 0.8 * 1000 + (1 - 0.8) * 0 = 800
-     * 5. PID制御を計算
+     * 4. PID制御を計算
      * prePID = 0 + 0 + 1.0 * 800 = 800
      */
     double expected = 800.0;
@@ -210,8 +210,8 @@ namespace etrobocon2025_test {
   TEST(PidTest, CalculatePidChangeDerivative)
   {
     Pid pid(0.0, 0.0, 1.0, 100, 100.0, -100.0);
-    double preCurrentValue = 90;
-    pid.calculatePid(preCurrentValue);
+    double prevValue = 90.0;
+    pid.calculatePid(prevValue);
     /** 計算過程
      * 1. 前回の誤差
      * prevDeviation = 0
@@ -219,12 +219,12 @@ namespace etrobocon2025_test {
      * currentDeviation = (100 - 90) = 10
      * 3. 微分の処理を行う
      * currentDerivative = (10 - 0) / 0.01 = 1000
-     * 微分項にローパスフィルタを適用
+     *  3.1 微分項にローパスフィルタを適用
      * filteredDerivative = 0.8 * 1000 + (1 - 0.8) * 0 = 800
-     * 5. PID制御を計算
+     * 4. PID制御を計算
      * prePID = 0 + 0 + 1.0 * 800 = 800
      */
-    double currentValue = 95;
+    double currentValue = 95.0;
     double derivationFirst = pid.calculatePid(currentValue);
     /** 計算過程
      * 1. 前回の誤差
@@ -233,9 +233,9 @@ namespace etrobocon2025_test {
      * currentDeviation = (100 - 95) = 5
      * 3. 微分の処理を行う
      * currentDerivative = (5 - 10) / 0.01 = -500
-     * 微分項にローパスフィルタを適用
+     *  3.1 微分項にローパスフィルタを適用
      * filteredDerivative = 0.8 * -500 + (1 - 0.8) * 800 = -240
-     * 5. PID制御を計算
+     * 4. PID制御を計算
      * expected_first = 0 + 0 + 1.0 * -240 = -240
      */
     double derivationSecond = pid.calculatePid(currentValue);
@@ -246,13 +246,13 @@ namespace etrobocon2025_test {
      * currentDeviation = (100 - 95) = 5
      * 3. 微分の処理を行う
      * currentDerivative = (5 - 5) / 0.01 = 0
-     * 微分項にローパスフィルタを適用
+     *  3.1 微分項にローパスフィルタを適用
      * filteredDerivative = 0.8 * 0 + (1 - 0.8) * -240 = -48
-     * 5. PID制御を計算
+     * 4. PID制御を計算
      * expected = 0 + 0 + 1.0 * -48 = -48
      */
-    double expectedFirst = -240;
-    double expectedSecond = -48;
+    double expectedFirst = -240.0;
+    double expectedSecond = -48.0;
 
     EXPECT_DOUBLE_EQ(derivationFirst, expectedFirst);
     EXPECT_DOUBLE_EQ(derivationSecond, expectedSecond);
@@ -263,7 +263,7 @@ namespace etrobocon2025_test {
   {
     Pid pid(1.0, 1.0, 1.0, 50, 100.0, -100.0);
     double expected = 0.0;
-    double currentValue = 50;
+    double currentValue = 50.0;
     for(int i = 0; i < 5; ++i) {
       EXPECT_DOUBLE_EQ(expected, pid.calculatePid(currentValue));
     }
@@ -273,7 +273,7 @@ namespace etrobocon2025_test {
   TEST(PidTest, CalculatePidIntegralUpdate)
   {
     Pid pid(0.0, 1.0, 0.0, 100, 100.0, -100.0);
-    double currentValue = 0;
+    double currentValue = 0.0;
     double first = pid.calculatePid(currentValue);
     /** 計算過程
      * 1. 前回の誤差
@@ -306,7 +306,7 @@ namespace etrobocon2025_test {
   TEST(PidTest, CalculatePidIntegralUpperBound)
   {
     Pid pid(0.0, 1.0, 0.0, 100, 50, -100.0);  // maxIntegral = 50
-    double currentValue = 0;
+    double currentValue = 0.0;
     for(int i = 0; i < 500; ++i) {  // 5秒間の累積
       pid.calculatePid(currentValue);
     }
@@ -319,7 +319,7 @@ namespace etrobocon2025_test {
   TEST(PidTest, CalculatePidIntegralLowerBound)
   {
     Pid pid(0.0, 1.0, 0.0, -100, 100.0, -50.0);  // minIntegral = -50
-    double currentValue = 0;
+    double currentValue = 0.0;
     for(int i = 0; i < 500; ++i) {  // 5秒間の累積
       pid.calculatePid(currentValue);
     }
