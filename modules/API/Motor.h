@@ -1,8 +1,8 @@
-//
-// Motor.h
-//
-// Copyright (c) 2025 Embedded Technology Software Design Robot Contest
-//
+/**
+ * @file Motor.h
+ * @brief spikeapiのモータラッパークラス
+ * @author nishijima515
+ */
 
 #ifndef MOTOR_H_
 #define MOTOR_H_
