@@ -8,7 +8,7 @@
 #include "CameraCapture.h"
 
 namespace etrobocon2025_test {
-  // CameraCaptureクラスがインスタンス化ができるか確認するテスト
+  // CameraCaptureクラスがインスタンス化できるか確認するテスト
   TEST(CameraCaptureTest, CameraCaptureInit)
   {
     CameraCapture cap;
