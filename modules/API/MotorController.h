@@ -123,6 +123,12 @@ class Controller {
   int getLeftMotorPower();
 
   /**
+   * @brief アームモータのpower値を取得する
+   * @return アームモータのpower値
+   */
+  int getArmMotorPower();
+
+  /**
    * @brief 右タイヤの回転速度を取得する
    * @return 右タイヤの回転速度（°/秒）
    */

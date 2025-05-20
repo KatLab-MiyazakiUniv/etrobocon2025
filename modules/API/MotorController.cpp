@@ -1,9 +1,9 @@
 /**
  * @file Controller.cpp
- * @brief モーター制御に用いる関数をまとめたラッパークラス
+ * @brief モータ制御に用いる関数をまとめたラッパークラス
  * @author nishijima515
  */
-#include "Controller.h"
+#include "MotorController.h"
 
 Controller::Controller()
   : rightWheel(Port::PORT_A),
@@ -18,7 +18,7 @@ int Controller::powerOfLeftWheel = 0.0;
 int Controller::powerOfArm = 0.0;
 
 // モータに設定するpower値の制限
-int Controller::limitPowerValue(const int inputPower)
+int Controller::limitPowerValue(int inputPower)
 {
   if(inputPower > MOTOR_POWER_MAX) {
     return MOTOR_POWER_MAX;
@@ -29,14 +29,14 @@ int Controller::limitPowerValue(const int inputPower)
 }
 
 // 右モータにpower値をセット
-void Controller::setRightMotorPower(const int power)
+void Controller::setRightMotorPower(int power)
 {
   powerOfRightWheel = limitPowerValue(power);
   rightWheel.setPower(powerOfRightWheel);
 }
 
 // 左モータにpower値をセット
-void Controller::setLeftMotorPower(const int power)
+void Controller::setLeftMotorPower(int power)
 {
   powerOfLeftWheel = limitPowerValue(power);
   leftWheel.setPower(powerOfLeftWheel);
@@ -71,13 +71,13 @@ void Controller::setRightMotorSpeed(int speed)
   rightWheel.setSpeed(speed);
 }
 
-// 右タイヤのモータに回転速度をセット
+// 左タイヤのモータに回転速度をセット
 void Controller::setLeftMotorSpeed(int speed)
 {
   leftWheel.setSpeed(speed);
 }
 
-// タイヤのモータを停止する
+// 両タイヤのモータを停止する
 void Controller::stopWheelsMotor()
 {
   powerOfRightWheel = 0;
@@ -96,7 +96,7 @@ void Controller::brakeWheelsMotor()
 }
 
 // アームのモータにpower値をセット
-void Controller::setArmMotorPower(const int power)
+void Controller::setArmMotorPower(int power)
 {
   powerOfArm = limitPowerValue(power);
   armMotor.setPower(powerOfArm);
@@ -116,7 +116,7 @@ void Controller::stopArmMotor()
   armMotor.stop();
 }
 
-// 　アームモータを止めて角度を維持する
+// アームモータを止めて角度を維持する
 void Controller::holdArmMotor()
 {
   armMotor.hold();
@@ -132,6 +132,12 @@ int Controller::getRightMotorPower()
 int Controller::getLeftMotorPower()
 {
   return leftWheel.getPower();
+}
+
+// アームモータのpower値を取得する
+int Controller::getArmMotorPower()
+{
+  return armMotor.getPower();
 }
 
 // 右モータの角位置を取得する
