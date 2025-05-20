@@ -23,6 +23,7 @@ namespace etrobocon2025_test {
     EXPECT_DOUBLE_EQ(expected_ki, actualPidGain.ki);
     EXPECT_DOUBLE_EQ(expected_kd, actualPidGain.kd);
   }
+
   // PidGainの0のゲインがそのまま格納されるかをテスト
   TEST(PidGainTest, PidGainZero)
   {
@@ -306,7 +307,7 @@ namespace etrobocon2025_test {
   // 積分項がmaxIntegralで正しく制限されているかをテスト
   TEST(PidTest, CalculatePidIntegralUpperBound)
   {
-    Pid pid(0.0, 1.0, 0.0, 100, 50, -100.0);  // maxIntegral = 50
+    Pid pid(0.0, 1.0, 0.0, 100, 50, -100.0);  // maxIntegral = 50.0
     double currentValue = 0.0;
     for(int i = 0; i < 500; ++i) {  // 5秒間の累積
       pid.calculatePid(currentValue);
@@ -319,13 +320,39 @@ namespace etrobocon2025_test {
   // 積分項がminIntegralで正しく制限されているかをテスト
   TEST(PidTest, CalculatePidIntegralLowerBound)
   {
-    Pid pid(0.0, 1.0, 0.0, -100, 100.0, -50.0);  // minIntegral = -50
+    Pid pid(0.0, 1.0, 0.0, -100, 100.0, -50.0);  // minIntegral = -50.0
     double currentValue = 0.0;
     for(int i = 0; i < 500; ++i) {  // 5秒間の累積
       pid.calculatePid(currentValue);
     }
     double output = pid.calculatePid(currentValue);
     double expected = -50.0;
+    EXPECT_DOUBLE_EQ(output, expected);
+  }
+
+  // 積分項の制限をしない時積分項がmaxIntegral = 100.0で正しく制限されているかをテスト
+  TEST(PidTest, CalculatePidNotSetIntegralUpperBound)
+  {
+    Pid pid(0.0, 1.0, 0.0, 100);  // maxIntegral = 100.0
+    double currentValue = 0.0;
+    for(int i = 0; i < 500; ++i) {  // 5秒間の累積
+      pid.calculatePid(currentValue);
+    }
+    double output = pid.calculatePid(currentValue);
+    double expected = 100.0;
+    EXPECT_DOUBLE_EQ(output, expected);
+  }
+
+  // 積分項の制限をしない時積分項がminIntegral = -100.0で正しく制限されているかをテスト
+  TEST(PidTest, CalculatePidNotSetIntegralLowerBound)
+  {
+    Pid pid(0.0, 1.0, 0.0, -100);  // minIntegral = -100.0
+    double currentValue = 0.0;
+    for(int i = 0; i < 500; ++i) {  // 5秒間の累積
+      pid.calculatePid(currentValue);
+    }
+    double output = pid.calculatePid(currentValue);
+    double expected = -100.0;
     EXPECT_DOUBLE_EQ(output, expected);
   }
 
