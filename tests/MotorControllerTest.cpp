@@ -10,7 +10,7 @@
 namespace etrobocon2025_test {
 
   // 右車輪のモータにpower値をセットできるかのテスト
-  TEST(MotorControllerTest, setRightMotorPower)
+  TEST(MotorControllerTest, SetRightMotorPower)
   {
     Controller controller;
     const int power = 50;
@@ -22,7 +22,7 @@ namespace etrobocon2025_test {
   }
 
   // 右車輪のモータにマイナスのPower値をセットできるかどうかのテスト
-  TEST(MotorControllerTest, setRightMotorMinusPower)
+  TEST(MotorControllerTest, SetRightMotorMinusPower)
   {
     Controller controller;
     const int power = -50;
@@ -34,7 +34,7 @@ namespace etrobocon2025_test {
   }
 
   // 左車輪のモータにPower値をセットできるかのテスト
-  TEST(MotorControllerTest, setLeftMotorPower)
+  TEST(MotorControllerTest, SetLeftMotorPower)
   {
     Controller controller;
     const int power = 50;
@@ -46,7 +46,7 @@ namespace etrobocon2025_test {
   }
 
   // 左車輪のモータにマイナスのPower値をセットできるかどうかのテスト
-  TEST(MotorControllerTest, setLeftMotorMinusPower)
+  TEST(MotorControllerTest, SetLeftMotorMinusPower)
   {
     Controller controller;
     const int power = -50;
@@ -58,7 +58,7 @@ namespace etrobocon2025_test {
   }
 
   // モータに設定するPower値の制限が行われているか確認するテスト
-  TEST(MotorControllerTest, setLeftMotorPowerMin)
+  TEST(MotorControllerTest, SetLeftMotorPowerMin)
   {
     Controller controller;
     const int power = -150;
@@ -72,7 +72,7 @@ namespace etrobocon2025_test {
   }
 
   // stopWheelsMotor()を呼び出せるか確認するテスト
-  TEST(MotorControllerTest, stopWheelsMotor)
+  TEST(MotorControllerTest, StopWheelsMotor)
   {
     Controller controller;
     int expected = 0;
@@ -84,7 +84,7 @@ namespace etrobocon2025_test {
   }
 
   // brakeWheelsMotor()を呼び出せるか確認するテスト
-  TEST(MotorControllerTest, brakeWheelsMotor)
+  TEST(MotorControllerTest, BrakeWheelsMotor)
   {
     Controller controller;
     int expected = 0;
@@ -96,7 +96,7 @@ namespace etrobocon2025_test {
   }
 
   // アームモータにPower値を設定できるかどうか確認するテスト
-  TEST(MotorControllerTest, setArmMotorPower)
+  TEST(MotorControllerTest, SetArmMotorPower)
   {
     Controller controller;
     const int power = 50;
@@ -108,7 +108,7 @@ namespace etrobocon2025_test {
   }
 
   // stopArmMotor()を呼び出せるか確認するテスト
-  TEST(MotorControllerTest, stopArmMotor)
+  TEST(MotorControllerTest, StopArmMotor)
   {
     Controller controller;
     int expected = 0;
@@ -118,7 +118,7 @@ namespace etrobocon2025_test {
   }
 
   // holdArmMotor()を呼び出せるか確認するテスト
-  TEST(MotorControllerTest, holdArmMotor)
+  TEST(MotorControllerTest, HoldArmMotor)
   {
     Controller controller;
     int expected = 0;
@@ -128,7 +128,7 @@ namespace etrobocon2025_test {
   }
 
   // 右タイヤのPower値を取得できるかのテスト
-  TEST(MotorControllerTest, getRightMotorPwm)
+  TEST(MotorControllerTest, GetRightMotorPower)
   {
     Controller controller;
     int expected = 0;
@@ -153,7 +153,7 @@ namespace etrobocon2025_test {
   }
 
   // 左タイヤのPower値を取得できるかのテスト
-  TEST(MotorControllerTest, getleftMotorPower)
+  TEST(MotorControllerTest, GetleftMotorPower)
   {
     Controller controller;
     int expected = 0;
@@ -178,7 +178,7 @@ namespace etrobocon2025_test {
   }
 
   // 右車輪のモータに回転速度をセットできるかのテスト
-  TEST(MotorControllerTest, setRightMotorSpeed)
+  TEST(MotorControllerTest, SetRightMotorSpeed)
   {
     Controller controller;
     const int speed = 1000;
@@ -190,7 +190,7 @@ namespace etrobocon2025_test {
   }
 
   // 左車輪のモータに回転速度をセットできるかのテスト
-  TEST(MotorControllerTest, setLeftMotorSpeed)
+  TEST(MotorControllerTest, SetLeftMotorSpeed)
   {
     Controller controller;
     const int speed = 1000;
@@ -202,7 +202,7 @@ namespace etrobocon2025_test {
   }
 
   // 右車輪のモータの回転速度を取得できるかのテスト
-  TEST(MotorControllerTest, getRightMotorSpeed)
+  TEST(MotorControllerTest, GetRightMotorSpeed)
   {
     Controller controller;
     int expected = 0;
@@ -222,7 +222,7 @@ namespace etrobocon2025_test {
   }
 
   // 左車輪のモータの回転速度を取得できるかのテスト
-  TEST(MotorControllerTest, getLeftMotorSpeed)
+  TEST(MotorControllerTest, GetLeftMotorSpeed)
   {
     Controller controller;
     int expected = 0;
