@@ -6,6 +6,7 @@
 
 #include "Pid.h"
 #include "gtest/gtest.h"
+
 namespace etrobocon2025_test {
 
   // PidGainの正のゲインがそのまま格納されるかをテスト
