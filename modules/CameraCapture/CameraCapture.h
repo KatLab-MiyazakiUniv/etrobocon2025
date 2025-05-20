@@ -34,13 +34,13 @@ class CameraCapture {
   /**
    * @brief カメラIDをクラスの変数に格納
    * @param id クラスの変数に格納するカメラid
-   * @return 無効な値の場合はfalse、成功した場合はtrue
+   * @return 成功した場合はtrue、無効な値の場合はfalse
    */
   bool setCameraID(int id);
 
   /**
    * @brief カメラデバイスをオープンする
-   * @return openに失敗した場合はfalse、成功した場合はtrue
+   * @return openに成功した場合はtrue、失敗した場合はfalse、
    */
   bool openCamera();
 
