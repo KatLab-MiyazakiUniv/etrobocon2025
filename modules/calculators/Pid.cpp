@@ -5,6 +5,7 @@
  */
 
 #include "Pid.h"
+
 PidGain::PidGain(double _kp, double _ki, double _kd)
   // pidゲインが負の値にならないようにする
   : kp(_kp < 0 ? 0 : _kp), ki(_ki < 0 ? 0 : _ki), kd(_kd < 0 ? 0 : _kd)
@@ -38,7 +39,7 @@ double Pid::calculatePid(double currentValue, double delta)
   // 現在の目標値との偏差を求める
   double currentDeviation = targetValue - currentValue;
   // 積分の処理を行う
-  integral += (currentDeviation + prevDeviation) * delta / 2;
+  integral += (currentDeviation + prevDeviation) * delta / 2.0;
   // 累積する積分値の大きさ制限
   if(integral > maxIntegral) {
     integral = maxIntegral;
@@ -52,7 +53,7 @@ double Pid::calculatePid(double currentValue, double delta)
    * 偏差が大きい際に過大な変化量を一気に与えず
    * 滑らかな変化にし、機体の暴走を防ぐため
    */
-  filteredDerivative = alpha * currentDerivative + (1 - alpha) * filteredDerivative;
+  filteredDerivative = alpha * currentDerivative + (1.0 - alpha) * filteredDerivative;
 
   // 前回の偏差を更新する
   prevDeviation = currentDeviation;
