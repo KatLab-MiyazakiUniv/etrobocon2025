@@ -15,11 +15,14 @@ PidGain::PidGain(double _kp, double _ki, double _kd)
 Pid::Pid(double _kp, double _ki, double _kd, double _targetValue, double _maxIntegral,
          double _minIntegral)
   : pidGain(_kp, _ki, _kd),
-    prevDeviation(0.0),
-    integral(0.0),
     targetValue(_targetValue),
     maxIntegral(_maxIntegral),
     minIntegral(_minIntegral)
+{
+}
+
+Pid::Pid(double _kp, double _ki, double _kd, double _targetValue)
+  : Pid(_kp, _ki, _kd, _targetValue, 100.0, -100.0)
 {
 }
 
