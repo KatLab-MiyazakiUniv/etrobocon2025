@@ -13,6 +13,13 @@ CameraCapture::CameraCapture()
 {
 }
 
+CameraCapture::~CameraCapture()
+{
+  if(cap.isOpened()) {
+    cap.release();
+  }
+}
+
 int CameraCapture::findAvailableCameraID(int maxTested)
 {
   for(int i = 0; i < maxTested; ++i) {
