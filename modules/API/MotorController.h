@@ -3,12 +3,12 @@
  * @brief モータ制御に用いる関数をまとめたラッパークラス
  * @author nishijima515
  */
-#ifndef MOTOR_CONTROLLER_H
-#define MOTOR_CONTROLLER_H
+#ifndef MOTOR_MotorController_H
+#define MOTOR_MotorController_H
 
 #include "Motor.h"
 
-class Controller {
+class MotorController {
  public:
   /** Power値の上限 */
   static constexpr int MOTOR_POWER_MAX = 100;
@@ -19,7 +19,7 @@ class Controller {
   /**
    * コンストラクタ
    */
-  Controller();
+  MotorController();
 
   /**
    * @brief 右タイヤのモータにPower値をセット
