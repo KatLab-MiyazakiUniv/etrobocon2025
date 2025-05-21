@@ -96,13 +96,13 @@ class Controller {
    * @brief 右モータの角位置を取得する
    * @return 右モータの角位置（°）
    */
-  int32_t getRightCount();
+  int32_t getRightMotorCount();
 
   /**
    * @brief 左モータの角位置を取得する
    * @return 左モータの角位置（°）
    */
-  int32_t getLeftCount();
+  int32_t getLeftMotorCount();
 
   /**
    * @brief アームモータの角位置を取得する
@@ -132,13 +132,13 @@ class Controller {
    * @brief 右タイヤの回転速度を取得する
    * @return 右タイヤの回転速度（°/秒）
    */
-  int getRightMotorSpeed();
+  int32_t getRightMotorSpeed();
 
   /**
    * @brief 左タイヤの回転速度を取得する
    * @return 左タイヤの回転速度（°/秒）
    */
-  int getLeftMotorSpeed();
+  int32_t getLeftMotorSpeed();
 
  private:
   Motor rightWheel;              // 右タイヤモータのインスタンス

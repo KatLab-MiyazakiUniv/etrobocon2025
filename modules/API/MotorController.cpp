@@ -136,7 +136,7 @@ int32_t Controller::getRightMotorCount()
   return rightWheel.getCount();
 }
 
-// 右モータの角位置を取得する
+// 左モータの角位置を取得する
 int32_t Controller::getLeftMotorCount()
 {
   return leftWheel.getCount();
@@ -149,13 +149,13 @@ int32_t Controller::getArmMotorCount()
 }
 
 // 右タイヤモータの回転速度を取得する
-int Controller::getRightMotorSpeed()
+int32_t Controller::getRightMotorSpeed()
 {
   return rightWheel.getSpeed();
 }
 
 // 左タイヤモータの回転速度を取得する
-int Controller::getLeftMotorSpeed()
+int32_t Controller::getLeftMotorSpeed()
 {
   return leftWheel.getSpeed();
 }
