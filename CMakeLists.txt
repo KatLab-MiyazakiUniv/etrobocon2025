@@ -36,7 +36,7 @@ set(INCLUDE_DIRS
   ${PROJECT_TEST_DIR}
   ${PROJECT_TEST_DIR}/dummy
   ${PROJECT_TEST_DIR}/helpers
-  )
+)
 
 # ソースファイルの登録 (適宜登録)
 file(GLOB_RECURSE PROJECT_SOURCES
