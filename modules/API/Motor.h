@@ -7,7 +7,6 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
-#include "spikeapi.h"
 #include "spike/pup/motor.h"
 #include "Port.h"
 
