@@ -129,7 +129,8 @@ class Motor {
 
  private:
   pup_motor_t* pupDevicePointer;  // SPIKE API のモーター構造体へのポインタ
-  bool mHasError;                 // インスタンス生成に失敗したかどうかを示すフラグ
+  // フォーマットエラー解消のための文章です
+  bool mHasError;  // インスタンス生成に失敗したかどうかを示すフラグ
 
 };  // class Motor
 
