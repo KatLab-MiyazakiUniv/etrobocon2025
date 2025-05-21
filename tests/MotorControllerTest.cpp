@@ -14,9 +14,9 @@ namespace etrobocon2025_test {
   {
     Controller controller;
     const int power = 50;
-    int initCount = controller.getRightCount();
+    int initCount = controller.getRightMotorCount();
     controller.setRightMotorPower(power);
-    int currentCount = controller.getRightCount();
+    int currentCount = controller.getRightMotorCount();
     EXPECT_LT(initCount, currentCount);
     controller.resetRightMotorPower();
   }
@@ -26,9 +26,9 @@ namespace etrobocon2025_test {
   {
     Controller controller;
     const int power = -50;
-    int initCount = controller.getRightCount();
+    int initCount = controller.getRightMotorCount();
     controller.setRightMotorPower(power);
-    int currentCount = controller.getRightCount();
+    int currentCount = controller.getRightMotorCount();
     EXPECT_GT(initCount, currentCount);
     controller.resetRightMotorPower();
   }
@@ -38,9 +38,9 @@ namespace etrobocon2025_test {
   {
     Controller controller;
     const int power = 50;
-    int initCount = controller.getLeftCount();
+    int initCount = controller.getLeftMotorCount();
     controller.setLeftMotorPower(power);
-    int currentCount = controller.getLeftCount();
+    int currentCount = controller.getLeftMotorCount();
     EXPECT_LT(initCount, currentCount);
     controller.resetLeftMotorPower();
   }
@@ -50,14 +50,14 @@ namespace etrobocon2025_test {
   {
     Controller controller;
     const int power = -50;
-    int initCount = controller.getLeftCount();
+    int initCount = controller.getLeftMotorCount();
     controller.setLeftMotorPower(power);
-    int currentCount = controller.getLeftCount();
+    int currentCount = controller.getLeftMotorCount();
     EXPECT_GT(initCount, currentCount);
     controller.resetLeftMotorPower();
   }
 
-  // モータに設定するPower値の制限が行われているか確認するテスト
+  // モータに設定するPower値の下限の制限が行われているか確認するテスト
   TEST(MotorControllerTest, SetLeftMotorPowerMin)
   {
     Controller controller;
@@ -68,6 +68,20 @@ namespace etrobocon2025_test {
     controller.setLeftMotorPower(power);
     int currentCount = controller.getLeftMotorPower();
     EXPECT_EQ(minCount, currentCount);
+    controller.resetLeftMotorPower();
+  }
+
+  // モータに設定するPower値の上限の制限が行われているか確認するテスト
+  TEST(MotorControllerTest, SetLeftMotorPowerMax)
+  {
+    Controller controller;
+    const int power = 150;
+    controller.setLeftMotorPower(Controller::MOTOR_POWER_MAX);
+    int maxCount = controller.getLeftMotorPower();
+    controller.resetLeftMotorPower();
+    controller.setLeftMotorPower(power);
+    int currentCount = controller.getLeftMotorPower();
+    EXPECT_EQ(maxCount, currentCount);
     controller.resetLeftMotorPower();
   }
 
@@ -182,9 +196,9 @@ namespace etrobocon2025_test {
   {
     Controller controller;
     const int speed = 1000;
-    int initCount = controller.getRightCount();
+    int initCount = controller.getRightMotorCount();
     controller.setRightMotorSpeed(speed);
-    int currentCount = controller.getRightCount();
+    int currentCount = controller.getRightMotorCount();
     EXPECT_LT(initCount, currentCount);
     controller.resetRightMotorPower();
   }
@@ -194,9 +208,9 @@ namespace etrobocon2025_test {
   {
     Controller controller;
     const int speed = 1000;
-    int initCount = controller.getLeftCount();
+    int initCount = controller.getLeftMotorCount();
     controller.setLeftMotorSpeed(speed);
-    int currentCount = controller.getLeftCount();
+    int currentCount = controller.getLeftMotorCount();
     EXPECT_LT(initCount, currentCount);
     controller.resetLeftMotorPower();
   }
