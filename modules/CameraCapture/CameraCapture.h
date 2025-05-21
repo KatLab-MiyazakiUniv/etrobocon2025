@@ -17,6 +17,7 @@
 class CameraCapture {
  public:
   CameraCapture();
+  ~CameraCapture();
 
   /**
    * @brief 利用可能なカメラIDを探索する
