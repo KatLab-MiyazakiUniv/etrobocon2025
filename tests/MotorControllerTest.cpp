@@ -1,6 +1,6 @@
 /**
  * @file MotorControllerTest.cpp
- * @brief Controllerクラスをテストする
+ * @brief MotorControllerクラスをテストする
  * @author nishijima515
  */
 
@@ -12,246 +12,246 @@ namespace etrobocon2025_test {
   // 右車輪のモータにpower値をセットできるかのテスト
   TEST(MotorControllerTest, SetRightMotorPower)
   {
-    Controller controller;
+    MotorController MotorController;
     const int power = 50;
-    int initCount = controller.getRightMotorCount();
-    controller.setRightMotorPower(power);
-    int currentCount = controller.getRightMotorCount();
+    int initCount = MotorController.getRightMotorCount();
+    MotorController.setRightMotorPower(power);
+    int currentCount = MotorController.getRightMotorCount();
     EXPECT_LT(initCount, currentCount);
-    controller.resetRightMotorPower();
+    MotorController.resetRightMotorPower();
   }
 
   // 右車輪のモータにマイナスのPower値をセットできるかどうかのテスト
   TEST(MotorControllerTest, SetRightMotorMinusPower)
   {
-    Controller controller;
+    MotorController MotorController;
     const int power = -50;
-    int initCount = controller.getRightMotorCount();
-    controller.setRightMotorPower(power);
-    int currentCount = controller.getRightMotorCount();
+    int initCount = MotorController.getRightMotorCount();
+    MotorController.setRightMotorPower(power);
+    int currentCount = MotorController.getRightMotorCount();
     EXPECT_GT(initCount, currentCount);
-    controller.resetRightMotorPower();
+    MotorController.resetRightMotorPower();
   }
 
   // 左車輪のモータにPower値をセットできるかのテスト
   TEST(MotorControllerTest, SetLeftMotorPower)
   {
-    Controller controller;
+    MotorController MotorController;
     const int power = 50;
-    int initCount = controller.getLeftMotorCount();
-    controller.setLeftMotorPower(power);
-    int currentCount = controller.getLeftMotorCount();
+    int initCount = MotorController.getLeftMotorCount();
+    MotorController.setLeftMotorPower(power);
+    int currentCount = MotorController.getLeftMotorCount();
     EXPECT_LT(initCount, currentCount);
-    controller.resetLeftMotorPower();
+    MotorController.resetLeftMotorPower();
   }
 
   // 左車輪のモータにマイナスのPower値をセットできるかどうかのテスト
   TEST(MotorControllerTest, SetLeftMotorMinusPower)
   {
-    Controller controller;
+    MotorController MotorController;
     const int power = -50;
-    int initCount = controller.getLeftMotorCount();
-    controller.setLeftMotorPower(power);
-    int currentCount = controller.getLeftMotorCount();
+    int initCount = MotorController.getLeftMotorCount();
+    MotorController.setLeftMotorPower(power);
+    int currentCount = MotorController.getLeftMotorCount();
     EXPECT_GT(initCount, currentCount);
-    controller.resetLeftMotorPower();
+    MotorController.resetLeftMotorPower();
   }
 
   // モータに設定するPower値の下限の制限が行われているか確認するテスト
   TEST(MotorControllerTest, SetLeftMotorPowerMin)
   {
-    Controller controller;
+    MotorController MotorController;
     const int power = -150;
-    controller.setLeftMotorPower(Controller::MOTOR_POWER_MIN);
-    int minCount = controller.getLeftMotorPower();
-    controller.resetLeftMotorPower();
-    controller.setLeftMotorPower(power);
-    int currentCount = controller.getLeftMotorPower();
+    MotorController.setLeftMotorPower(MotorController::MOTOR_POWER_MIN);
+    int minCount = MotorController.getLeftMotorPower();
+    MotorController.resetLeftMotorPower();
+    MotorController.setLeftMotorPower(power);
+    int currentCount = MotorController.getLeftMotorPower();
     EXPECT_EQ(minCount, currentCount);
-    controller.resetLeftMotorPower();
+    MotorController.resetLeftMotorPower();
   }
 
   // モータに設定するPower値の上限の制限が行われているか確認するテスト
   TEST(MotorControllerTest, SetLeftMotorPowerMax)
   {
-    Controller controller;
+    MotorController MotorController;
     const int power = 150;
-    controller.setLeftMotorPower(Controller::MOTOR_POWER_MAX);
-    int maxCount = controller.getLeftMotorPower();
-    controller.resetLeftMotorPower();
-    controller.setLeftMotorPower(power);
-    int currentCount = controller.getLeftMotorPower();
+    MotorController.setLeftMotorPower(MotorController::MOTOR_POWER_MAX);
+    int maxCount = MotorController.getLeftMotorPower();
+    MotorController.resetLeftMotorPower();
+    MotorController.setLeftMotorPower(power);
+    int currentCount = MotorController.getLeftMotorPower();
     EXPECT_EQ(maxCount, currentCount);
-    controller.resetLeftMotorPower();
+    MotorController.resetLeftMotorPower();
   }
 
   // stopWheelsMotor()を呼び出せるか確認するテスト
   TEST(MotorControllerTest, StopWheelsMotor)
   {
-    Controller controller;
+    MotorController MotorController;
     int expected = 0;
-    controller.stopWheelsMotor();
-    int actualRight = controller.getRightMotorPower();
+    MotorController.stopWheelsMotor();
+    int actualRight = MotorController.getRightMotorPower();
     EXPECT_EQ(expected, actualRight);
-    int actualLeft = controller.getLeftMotorPower();
+    int actualLeft = MotorController.getLeftMotorPower();
     EXPECT_EQ(expected, actualLeft);
   }
 
   // brakeWheelsMotor()を呼び出せるか確認するテスト
   TEST(MotorControllerTest, BrakeWheelsMotor)
   {
-    Controller controller;
+    MotorController MotorController;
     int expected = 0;
-    controller.brakeWheelsMotor();
-    int actualRight = controller.getRightMotorPower();
+    MotorController.brakeWheelsMotor();
+    int actualRight = MotorController.getRightMotorPower();
     EXPECT_EQ(expected, actualRight);
-    int actualLeft = controller.getLeftMotorPower();
+    int actualLeft = MotorController.getLeftMotorPower();
     EXPECT_EQ(expected, actualLeft);
   }
 
   // アームモータにPower値を設定できるかどうか確認するテスト
   TEST(MotorControllerTest, SetArmMotorPower)
   {
-    Controller controller;
+    MotorController MotorController;
     const int power = 50;
-    int initCount = controller.getArmMotorCount();
-    controller.setArmMotorPower(power);
-    int currentCount = controller.getArmMotorCount();
+    int initCount = MotorController.getArmMotorCount();
+    MotorController.setArmMotorPower(power);
+    int currentCount = MotorController.getArmMotorCount();
     EXPECT_LT(initCount, currentCount);
-    controller.resetArmMotorPower();
+    MotorController.resetArmMotorPower();
   }
 
   // stopArmMotor()を呼び出せるか確認するテスト
   TEST(MotorControllerTest, StopArmMotor)
   {
-    Controller controller;
+    MotorController MotorController;
     int expected = 0;
-    controller.stopArmMotor();
-    int actual = controller.getArmMotorPower();
+    MotorController.stopArmMotor();
+    int actual = MotorController.getArmMotorPower();
     EXPECT_EQ(expected, actual);
   }
 
   // holdArmMotor()を呼び出せるか確認するテスト
   TEST(MotorControllerTest, HoldArmMotor)
   {
-    Controller controller;
+    MotorController MotorController;
     int expected = 0;
-    controller.holdArmMotor();
-    int actual = controller.getArmMotorPower();
+    MotorController.holdArmMotor();
+    int actual = MotorController.getArmMotorPower();
     EXPECT_EQ(expected, actual);
   }
 
   // 右タイヤのPower値を取得できるかのテスト
   TEST(MotorControllerTest, GetRightMotorPower)
   {
-    Controller controller;
+    MotorController MotorController;
     int expected = 0;
-    int actual = controller.getRightMotorPower();
+    int actual = MotorController.getRightMotorPower();
     EXPECT_EQ(expected, actual);
     int power = 90;
-    controller.setRightMotorPower(power);
+    MotorController.setRightMotorPower(power);
     expected = 90;
-    actual = controller.getRightMotorPower();
+    actual = MotorController.getRightMotorPower();
     EXPECT_EQ(expected, actual);
     power = 200;
-    controller.setRightMotorPower(power);
+    MotorController.setRightMotorPower(power);
     expected = 100;
-    actual = controller.getRightMotorPower();
+    actual = MotorController.getRightMotorPower();
     EXPECT_EQ(expected, actual);
     power = -200;
-    controller.setRightMotorPower(power);
+    MotorController.setRightMotorPower(power);
     expected = -100;
-    actual = controller.getRightMotorPower();
+    actual = MotorController.getRightMotorPower();
     EXPECT_EQ(expected, actual);
-    controller.resetRightMotorPower();
+    MotorController.resetRightMotorPower();
   }
 
   // 左タイヤのPower値を取得できるかのテスト
   TEST(MotorControllerTest, GetleftMotorPower)
   {
-    Controller controller;
+    MotorController MotorController;
     int expected = 0;
-    int actual = controller.getLeftMotorPower();
+    int actual = MotorController.getLeftMotorPower();
     EXPECT_EQ(expected, actual);
     int power = 80;
-    controller.setLeftMotorPower(power);
+    MotorController.setLeftMotorPower(power);
     expected = 80;
-    actual = controller.getLeftMotorPower();
+    actual = MotorController.getLeftMotorPower();
     EXPECT_EQ(expected, actual);
     power = 200;
-    controller.setLeftMotorPower(power);
+    MotorController.setLeftMotorPower(power);
     expected = 100;
-    actual = controller.getLeftMotorPower();
+    actual = MotorController.getLeftMotorPower();
     EXPECT_EQ(expected, actual);
     power = -200;
-    controller.setLeftMotorPower(power);
+    MotorController.setLeftMotorPower(power);
     expected = -100;
-    actual = controller.getLeftMotorPower();
+    actual = MotorController.getLeftMotorPower();
     EXPECT_EQ(expected, actual);
-    controller.resetLeftMotorPower();
+    MotorController.resetLeftMotorPower();
   }
 
   // 右車輪のモータに回転速度をセットできるかのテスト
   TEST(MotorControllerTest, SetRightMotorSpeed)
   {
-    Controller controller;
+    MotorController MotorController;
     const int speed = 1000;
-    int initCount = controller.getRightMotorCount();
-    controller.setRightMotorSpeed(speed);
-    int currentCount = controller.getRightMotorCount();
+    int initCount = MotorController.getRightMotorCount();
+    MotorController.setRightMotorSpeed(speed);
+    int currentCount = MotorController.getRightMotorCount();
     EXPECT_LT(initCount, currentCount);
-    controller.resetRightMotorPower();
+    MotorController.resetRightMotorPower();
   }
 
   // 左車輪のモータに回転速度をセットできるかのテスト
   TEST(MotorControllerTest, SetLeftMotorSpeed)
   {
-    Controller controller;
+    MotorController MotorController;
     const int speed = 1000;
-    int initCount = controller.getLeftMotorCount();
-    controller.setLeftMotorSpeed(speed);
-    int currentCount = controller.getLeftMotorCount();
+    int initCount = MotorController.getLeftMotorCount();
+    MotorController.setLeftMotorSpeed(speed);
+    int currentCount = MotorController.getLeftMotorCount();
     EXPECT_LT(initCount, currentCount);
-    controller.resetLeftMotorPower();
+    MotorController.resetLeftMotorPower();
   }
 
   // 右車輪のモータの回転速度を取得できるかのテスト
   TEST(MotorControllerTest, GetRightMotorSpeed)
   {
-    Controller controller;
+    MotorController MotorController;
     int expected = 0;
-    int actual = controller.getRightMotorSpeed();
+    int actual = MotorController.getRightMotorSpeed();
     EXPECT_EQ(expected, actual);
     int speed = 1000;
-    controller.setRightMotorSpeed(speed);
+    MotorController.setRightMotorSpeed(speed);
     expected = 1000;
-    actual = controller.getRightMotorSpeed();
+    actual = MotorController.getRightMotorSpeed();
     EXPECT_EQ(expected, actual);
     speed = -1000;
-    controller.setRightMotorSpeed(speed);
+    MotorController.setRightMotorSpeed(speed);
     expected = -1000;
-    actual = controller.getRightMotorSpeed();
+    actual = MotorController.getRightMotorSpeed();
     EXPECT_EQ(expected, actual);
-    controller.resetRightMotorPower();
+    MotorController.resetRightMotorPower();
   }
 
   // 左車輪のモータの回転速度を取得できるかのテスト
   TEST(MotorControllerTest, GetLeftMotorSpeed)
   {
-    Controller controller;
+    MotorController MotorController;
     int expected = 0;
-    int actual = controller.getLeftMotorSpeed();
+    int actual = MotorController.getLeftMotorSpeed();
     EXPECT_EQ(expected, actual);
     int speed = 1000;
-    controller.setLeftMotorSpeed(speed);
+    MotorController.setLeftMotorSpeed(speed);
     expected = 1000;
-    actual = controller.getLeftMotorSpeed();
+    actual = MotorController.getLeftMotorSpeed();
     EXPECT_EQ(expected, actual);
     speed = -1000;
-    controller.setLeftMotorSpeed(speed);
+    MotorController.setLeftMotorSpeed(speed);
     expected = -1000;
-    actual = controller.getLeftMotorSpeed();
+    actual = MotorController.getLeftMotorSpeed();
     EXPECT_EQ(expected, actual);
-    controller.resetLeftMotorPower();
+    MotorController.resetLeftMotorPower();
   }
 }  // namespace etrobocon2025_test
