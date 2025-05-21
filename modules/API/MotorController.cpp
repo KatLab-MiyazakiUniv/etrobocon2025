@@ -13,9 +13,9 @@ Controller::Controller()
 }
 
 // power値の初期化
-int Controller::powerOfRightWheel = 0.0;
-int Controller::powerOfLeftWheel = 0.0;
-int Controller::powerOfArm = 0.0;
+int Controller::powerOfRightWheel = 0;
+int Controller::powerOfLeftWheel = 0;
+int Controller::powerOfArm = 0;
 
 // モータに設定するpower値の制限
 int Controller::limitPowerValue(int inputPower)
@@ -45,24 +45,20 @@ void Controller::setLeftMotorPower(int power)
 // 右モータのpower値をリセット
 void Controller::resetRightMotorPower()
 {
-  powerOfRightWheel = 0;
-  rightWheel.setPower(powerOfRightWheel);
+  rightWheel.setPower(0);
 }
 
 // 左モータのpower値をリセット
 void Controller::resetLeftMotorPower()
 {
-  powerOfLeftWheel = 0;
-  leftWheel.setPower(powerOfLeftWheel);
+  leftWheel.setPower(0);
 }
 
 // 右左両モータの状態をリセット
 void Controller::resetWheelsMotorPower()
 {
-  powerOfRightWheel = 0;
-  powerOfLeftWheel = 0;
-  rightWheel.setPower(powerOfRightWheel);
-  leftWheel.setPower(powerOfLeftWheel);
+  rightWheel.setPower(0);
+  leftWheel.setPower(0);
 }
 
 // 右タイヤのモータに回転速度をセット
@@ -80,8 +76,6 @@ void Controller::setLeftMotorSpeed(int speed)
 // 両タイヤのモータを停止する
 void Controller::stopWheelsMotor()
 {
-  powerOfRightWheel = 0;
-  powerOfLeftWheel = 0;
   rightWheel.stop();
   leftWheel.stop();
 }
@@ -89,8 +83,6 @@ void Controller::stopWheelsMotor()
 // ブレーキをかけてタイヤのモータを停止する
 void Controller::brakeWheelsMotor()
 {
-  powerOfRightWheel = 0;
-  powerOfLeftWheel = 0;
   rightWheel.brake();
   leftWheel.brake();
 }
@@ -105,14 +97,12 @@ void Controller::setArmMotorPower(int power)
 // アームのモータのpower値をリセット
 void Controller::resetArmMotorPower()
 {
-  powerOfArm = 0;
-  armMotor.setPower(powerOfArm);
+  armMotor.setPower(0);
 }
 
 // アームのモータを停止する
 void Controller::stopArmMotor()
 {
-  powerOfArm = 0;
   armMotor.stop();
 }
 
@@ -141,13 +131,13 @@ int Controller::getArmMotorPower()
 }
 
 // 右モータの角位置を取得する
-int32_t Controller::getRightCount()
+int32_t Controller::getRightMotorCount()
 {
   return rightWheel.getCount();
 }
 
 // 右モータの角位置を取得する
-int32_t Controller::getLeftCount()
+int32_t Controller::getLeftMotorCount()
 {
   return leftWheel.getCount();
 }
