@@ -141,12 +141,9 @@ class MotorController {
   int32_t getLeftMotorSpeed();
 
  private:
-  Motor rightWheel;              // 右タイヤモータのインスタンス
-  Motor leftWheel;               // 左タイヤモータのインスタンス
-  Motor armMotor;                // アームモータのインスタンス
-  static int powerOfRightWheel;  // 右タイヤpower
-  static int powerOfLeftWheel;   // 左タイヤpower
-  static int powerOfArm;         // アームpower
+  Motor rightWheel;  // 右タイヤモータのインスタンス
+  Motor leftWheel;   // 左タイヤモータのインスタンス
+  Motor armMotor;    // アームモータのインスタンス
 
   /**
    * @brief モータに設定するpower値の制限
