@@ -4,15 +4,16 @@
  * @author nishijima515
  */
 
-#ifndef MOTOR_H_
-#define MOTOR_H_
+#ifndef MOTOR_H
+#define MOTOR_H
 
-#include "spikeapi.h"
 #include "spike/pup/motor.h"
 #include "Port.h"
 
 /**
- * SPIKE モータクラス
+ * SPIKE モータラッパークラス
+ * モータの回転方向（時計回り、反時計回り）を指定するための列挙型
+ * CLOCKWISEは時計回り、COUNTERCLOCKWISEは反時計回りを表す
  */
 class Motor {
  public:
@@ -45,7 +46,6 @@ class Motor {
 
   /**
    * エンコーダをリセットする
-   * @return -
    */
   void resetCount() const { pup_motor_reset_count(pupDevicePointer); }
 
@@ -64,7 +64,6 @@ class Motor {
   /**
    * モータの回転速度を設定する
    * @param speed モータの回転速度 [°/秒]
-   * @return -
    */
   void setSpeed(int speed) const { pup_motor_set_speed(pupDevicePointer, speed); }
 
@@ -77,25 +76,21 @@ class Motor {
   /**
    * モータのパワー値を設定する
    * @param power モータのパワー値（-100 ～ +100）
-   * @return -
    */
   void setPower(int power) const { pup_motor_set_power(pupDevicePointer, power); }
 
   /**
    * モータを止める
-   * @return -
    */
   void stop() const { pup_motor_stop(pupDevicePointer); }
 
   /**
    * ブレーキをかけてモータを止める
-   * @return -
    */
   void brake() const { pup_motor_brake(pupDevicePointer); }
 
   /**
    * モータを止めて角度を維持する
-   * @return -
    */
   void hold() const { pup_motor_hold(pupDevicePointer); }
 
@@ -127,12 +122,14 @@ class Motor {
 
   /**
    * インスタンス生成が正常にできたかどうかを確認するための共通メソッド
+   * @return true インスタンス生成に失敗した
+   * @return false インスタンス生成に成功した
    */
   bool hasError() { return mHasError; }
 
  private:
-  pup_motor_t* pupDevicePointer;
-  bool mHasError;
+  pup_motor_t* pupDevicePointer;  // SPIKE API のモーター構造体へのポインタ
+  bool mHasError;                 // インスタンス生成に失敗したかどうかを示すフラグ
 
 };  // class Motor
 
