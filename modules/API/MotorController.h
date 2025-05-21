@@ -3,8 +3,8 @@
  * @brief モータ制御に用いる関数をまとめたラッパークラス
  * @author nishijima515
  */
-#ifndef MOTOR_MotorController_H
-#define MOTOR_MotorController_H
+#ifndef MOTOR_MOTORCONTROLLER_H
+#define MOTOR_MOTORCONTROLLER_H
 
 #include "Motor.h"
 

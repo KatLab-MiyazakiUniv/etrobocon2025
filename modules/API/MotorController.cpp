@@ -12,11 +12,6 @@ MotorController::MotorController()
 {
 }
 
-// power値の初期化
-int MotorController::powerOfRightWheel = 0;
-int MotorController::powerOfLeftWheel = 0;
-int MotorController::powerOfArm = 0;
-
 // モータに設定するpower値の制限
 int MotorController::limitPowerValue(int inputPower)
 {
@@ -31,15 +26,13 @@ int MotorController::limitPowerValue(int inputPower)
 // 右モータにpower値をセット
 void MotorController::setRightMotorPower(int power)
 {
-  powerOfRightWheel = limitPowerValue(power);
-  rightWheel.setPower(powerOfRightWheel);
+  rightWheel.setPower(limitPowerValue(power));
 }
 
 // 左モータにpower値をセット
 void MotorController::setLeftMotorPower(int power)
 {
-  powerOfLeftWheel = limitPowerValue(power);
-  leftWheel.setPower(powerOfLeftWheel);
+  leftWheel.setPower(limitPowerValue(power));
 }
 
 // 右モータのpower値をリセット
@@ -90,8 +83,7 @@ void MotorController::brakeWheelsMotor()
 // アームのモータにpower値をセット
 void MotorController::setArmMotorPower(int power)
 {
-  powerOfArm = limitPowerValue(power);
-  armMotor.setPower(powerOfArm);
+  armMotor.setPower(limitPowerValue(power));
 }
 
 // アームのモータのpower値をリセット
