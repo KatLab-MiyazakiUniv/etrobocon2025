@@ -23,8 +23,6 @@ enum class COLOR : int {
 
 class ColorJudge {
  public:
-  ColorJudge() = delete;  // 明示的にインスタンス化を禁止
-
   /**
    * @brief 文字列を列挙型COLORに変換する
    * @param str 文字列の色
@@ -46,6 +44,9 @@ class ColorJudge {
    * @return 色（hsvによる表現）
    */
   static COLOR getColor(const spikeapi::ColorSensor::HSV& hsv, bool surface = true);
+
+ private:
+  ColorJudge();  // 明示的にインスタンス化を禁止
 };
 
 #endif

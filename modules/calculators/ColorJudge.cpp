@@ -46,7 +46,9 @@ const char* ColorJudge::colorToString(COLOR color)
 
 COLOR ColorJudge::getColor(const spikeapi::ColorSensor::HSV& hsv, bool surface)
 {
-  if(hsv.s == 0) {
+  if(hsv.h == 0 && hsv.s == 0 && hsv.v == 0) {
+    return COLOR::BLACK;  // BLACKの場合
+  } else if(hsv.s == 0) {
     return COLOR::WHITE;  // WHITEの場合
   } else if(hsv.h == PBIO_COLOR_HUE_RED) {
     return COLOR::RED;  // REDの場合
@@ -56,8 +58,6 @@ COLOR ColorJudge::getColor(const spikeapi::ColorSensor::HSV& hsv, bool surface)
     return COLOR::GREEN;  // GREENの場合
   } else if(hsv.h == PBIO_COLOR_HUE_BLUE) {
     return COLOR::BLUE;  // BLUEの場合
-  } else if(hsv.h == 0 && hsv.s == 0 && hsv.v == 0) {
-    return COLOR::BLACK;  // BLACKの場合
   } else {
     return COLOR::NONE;  // 想定していない色の場合
   }
