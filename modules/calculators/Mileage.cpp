@@ -5,7 +5,6 @@
  **/
 
 #include "Mileage.h"
-#include "../common/SystemInfo.h"
 
 double Mileage::calculateWheelMileage(int angle)
 {

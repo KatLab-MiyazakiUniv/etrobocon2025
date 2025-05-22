@@ -8,6 +8,7 @@
 #define MILEAGE_H
 
 #include <cmath>
+#include "common/SystemInfo.h"
 
 class Mileage {
  public:

@@ -4,9 +4,9 @@
  * @author molpui0726
  */
 
-#include "Mileage.h"
 #include <cmath>
 #include <gtest/gtest.h>
+#include "Mileage.h"
 
 namespace etrobocon2025_test {
   TEST(MileageTest, CalculateMileage)
