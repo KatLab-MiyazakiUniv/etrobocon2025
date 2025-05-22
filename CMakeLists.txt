@@ -33,6 +33,9 @@ set(PROJECT_TEST_DIR ${PROJECT_SOURCE_DIR}/tests)
 set(INCLUDE_DIRS
   ${PROJECT_MODULE_DIR}
   ${PROJECT_MODULE_DIR}/calculators
+  ${PROJECT_MODULE_DIR}/API
+  ${PROJECT_TEST_DIR}
+  ${PROJECT_TEST_DIR}/dummy
   ${PROJECT_TEST_DIR}/helpers
 )
 
@@ -55,6 +58,11 @@ file(GLOB TEST_SOURCES "${PROJECT_TEST_DIR}/*Test.cpp")
 
 # テスト実行可能ファイルの作成
 add_executable(${PROJECT_NAME}_test ${TEST_SOURCES})
+target_include_directories(${PROJECT_NAME}_test
+PRIVATE
+    ${PROJECT_TEST_DIR}/dummy  # spikeapi ダミー用
+)
+
 target_link_libraries(${PROJECT_NAME}_test
   PRIVATE
     ${PROJECT_NAME}_impl
