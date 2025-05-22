@@ -37,6 +37,7 @@ set(INCLUDE_DIRS
   ${PROJECT_MODULE_DIR}
   ${PROJECT_MODULE_DIR}/CameraCapture
   ${PROJECT_MODULE_DIR}/calculators
+  ${PROJECT_MODULE_DIR}/motions
   ${PROJECT_MODULE_DIR}/API
   ${PROJECT_TEST_DIR}
   ${PROJECT_TEST_DIR}/dummy
@@ -49,6 +50,7 @@ file(GLOB_RECURSE PROJECT_SOURCES
   "${PROJECT_MODULE_DIR}/*.cpp"
   "${PROJECT_MODULE_DIR}/CameraCapture/*.cpp"
   "${PROJECT_MODULE_DIR}/calculators/*.cpp"
+  "${PROJECT_MODULE_DIR}/motions/*.cpp"
   "${PROJECT_TEST_DIR}/helpers/*.cpp"
 )
 
