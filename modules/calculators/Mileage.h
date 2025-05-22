@@ -17,7 +17,7 @@ class Mileage {
   ** @param angle タイヤの回転角度[deg]
   ** @return タイヤの累計走行距離[mm]
   **/
-  static double calculateWheelMileage(int angle);
+  static double calculateWheelMileage(int32_t angle);
 
   /**
    ** @brief 走行体全体の累計走行距離を計算する
