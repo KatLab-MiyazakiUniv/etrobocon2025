@@ -14,9 +14,17 @@ APPL_LIBS += -lm
 APPL_DIRS += \
 	$(mkfile_path)modules\
 	$(mkfile_path)modules/API\
-	$(mkfile_path)modules/calculators
+	$(mkfile_path)modules/calculators\
+	$(mkfile_path)modules/CameraCapture
 
 INCLUDES += \
 	-I$(mkfile_path)modules\
 	-I$(mkfile_path)modules/API\
-	-I$(mkfile_path)modules/calculators
+	-I$(mkfile_path)modules/calculators\
+	-I$(mkfile_path)modules/CameraCapture \
+	-I/usr/include/opencv4
+
+APPL_LIBS += $(shell pkg-config --libs opencv4)
+
+CXXFLAGS += -std=c++11 -pthread
+LDFLAGS += -pthread
