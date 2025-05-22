@@ -36,6 +36,10 @@ set(PROJECT_TEST_DIR ${PROJECT_SOURCE_DIR}/tests)
 set(INCLUDE_DIRS
   ${PROJECT_MODULE_DIR}
   ${PROJECT_MODULE_DIR}/CameraCapture
+  ${PROJECT_MODULE_DIR}/calculators
+  ${PROJECT_MODULE_DIR}/API
+  ${PROJECT_TEST_DIR}
+  ${PROJECT_TEST_DIR}/dummy
   ${PROJECT_TEST_DIR}/helpers
   /usr/include/opencv4
 )
@@ -44,6 +48,7 @@ set(INCLUDE_DIRS
 file(GLOB_RECURSE PROJECT_SOURCES
   "${PROJECT_MODULE_DIR}/*.cpp"
   "${PROJECT_MODULE_DIR}/CameraCapture/*.cpp"
+  "${PROJECT_MODULE_DIR}/calculators/*.cpp"
   "${PROJECT_TEST_DIR}/helpers/*.cpp"
 )
 
@@ -61,6 +66,11 @@ file(GLOB TEST_SOURCES "${PROJECT_TEST_DIR}/*Test.cpp")
 
 # テスト実行可能ファイルの作成
 add_executable(${PROJECT_NAME}_test ${TEST_SOURCES})
+target_include_directories(${PROJECT_NAME}_test
+PRIVATE
+    ${PROJECT_TEST_DIR}/dummy  # spikeapi ダミー用
+)
+
 target_link_libraries(${PROJECT_NAME}_test
   PRIVATE
     ${PROJECT_NAME}_impl
