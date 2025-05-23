@@ -7,6 +7,7 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
+#include "spikeapi.h"
 #include "MotorController.h"
 #include "CameraCapture.h"
 // #include "ColorSensor.h"
@@ -31,10 +32,16 @@ class Robot {
    */
   CameraCapture& getCameraCaptureInstance();
 
+  // /**
+  //  * @brief ColorSensorのインスタンスの参照を返す
+  //  * @return メンバ変数colorSensor(ColorSensorのインスタンス)の参照
+  //  */
+  // spikeapi::ColorSensor& getColorSensorInstance();
+
  private:
   MotorController motorController;  // MotorControllerインスタンス
   CameraCapture cameraCapture;      // CameraCaptureインスタンス
-  // ColorSensor colorSensor;　//ColorSensorインスタンス
+  // spikeapi::ColorSensor colorSensor;  // ColorSensorインスタンス
 };
 
 #endif

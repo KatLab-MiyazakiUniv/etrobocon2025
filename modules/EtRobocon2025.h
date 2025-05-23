@@ -8,10 +8,14 @@
 #define ETROBOCON2025_H
 
 #include <iostream>
+#include "Robot.h"
 
 class EtRobocon2025 {
  public:
   static void start();
+
+ private:
+  static Robot robot;  // Robotインスタンス
 };
 
 #endif

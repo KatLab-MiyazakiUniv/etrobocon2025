@@ -29,4 +29,14 @@ namespace etrobocon2025_test {
     EXPECT_EQ(&cameraRef1, &cameraRef2);
   }
 
+  // ゲッターで取得したColorSensorインスタンスが等しいか確認するテスト
+  // TEST(RobotTest, GetColorSensorInstanceReturnsReference)
+  // {
+  //   Robot robot;
+  //   spikeapi::ColorSensor& colorSensorRef1 = robot.getCameraCaptureInstance();
+  //   spikeapi::ColoeSensor& colorSensorRef2 = robot.getCameraCaptureInstance();
+
+  //   EXPECT_EQ(&cameraRef1, &cameraRef2);
+  // }
+
 }  // namespace etrobocon2025_test
