@@ -24,7 +24,7 @@ INCLUDES += \
 	-I$(mkfile_path)modules/calculators\
 	-I$(mkfile_path)modules/motions\
 	-I$(mkfile_path)modules/CameraCapture \
-	-I$(mkfile_path)../../raspike-athrill-v850e2m/sdk/common/library/libcpp-spike/include \
+	-I$(mkfile_path)../../common/library/libcpp-spike/include \
 	-I/usr/include/opencv4
 
 APPL_LIBS += $(shell pkg-config --libs opencv4)
