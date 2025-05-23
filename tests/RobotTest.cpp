@@ -33,10 +33,10 @@ namespace etrobocon2025_test {
   // TEST(RobotTest, GetColorSensorInstanceReturnsReference)
   // {
   //   Robot robot;
-  //   spikeapi::ColorSensor& colorSensorRef1 = robot.getCameraCaptureInstance();
-  //   spikeapi::ColoeSensor& colorSensorRef2 = robot.getCameraCaptureInstance();
+  //   spikeapi::ColorSensor& colorSensorRef1 = robot.getColorSensorInstance();
+  //   spikeapi::ColorSensor& colorSensorRef2 = robot.getColorSensorInstance();
 
-  //   EXPECT_EQ(&cameraRef1, &cameraRef2);
+  //   EXPECT_EQ(&colorSensorRef1, &colorSensorRef2);
   // }
 
 }  // namespace etrobocon2025_test
