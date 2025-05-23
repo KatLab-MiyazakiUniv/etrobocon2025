@@ -9,10 +9,10 @@
 #include "Mileage.h"
 
 namespace etrobocon2025_test {
-  TEST(MileageTest, CalculateMileage)
+  TEST(MileageTest, CalculateMileagePlus)
   {
-    double rightAngle = 30.0;
-    double leftAngle = 40.0;
+    int32_t rightAngle = 30;
+    int32_t leftAngle = 40;
 
     // 計算過程
     // 1.右車輪の累計走行距離を算出
@@ -40,8 +40,8 @@ namespace etrobocon2025_test {
 
   TEST(MileageTest, CalculateMileageMinus)
   {
-    double rightAngle = -30.0;
-    double leftAngle = -40.0;
+    int32_t rightAngle = -30;
+    int32_t leftAngle = -40;
     double expected_min = -17.15;
     double expected_max = -17.09555;
     double actual = Mileage::calculateMileage(rightAngle, leftAngle);
@@ -51,8 +51,8 @@ namespace etrobocon2025_test {
 
   TEST(MileageTest, CalculateMileageZero)
   {
-    double rightAngle = 0.0;
-    double leftAngle = 0.0;
+    int32_t rightAngle = 0;
+    int32_t leftAngle = 0;
     double expected = 0.0;
     double actual = Mileage::calculateMileage(rightAngle, leftAngle);
     EXPECT_DOUBLE_EQ(expected, actual);

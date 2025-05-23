@@ -25,9 +25,10 @@ class Mileage {
    ** @param leftAngle 左タイヤの回転角度[deg]
    ** @return 走行体全体の累計走行距離[mm]
    **/
-  static double calculateMileage(int rightAngle, int leftAngle);
+  static double calculateMileage(int32_t rightAngle, int32_t leftAngle);
 
  private:
   Mileage();  // インスタンス化を禁止する
 };
+
 #endif

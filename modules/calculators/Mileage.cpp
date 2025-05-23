@@ -6,8 +6,8 @@
 
 #include "Mileage.h"
 
-// MotorController でモーターの角位置を int32_t 型で取得しているため、double ではなく int32_t
-// 型を使用する
+// MotorController でモーターの角位置を int32_t 型で取得しているため、
+// double ではなく int32_t 型を使用する
 double Mileage::calculateWheelMileage(int32_t angle)
 {
   // タイヤの累計走行距離 ＝ 2 * π * タイヤの半径　* (タイヤの回転角度 / 360[deg])
