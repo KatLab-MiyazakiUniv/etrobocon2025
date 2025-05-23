@@ -1,14 +1,14 @@
 /**
  **  @file Mileage.h
  **  @brief 走行距離を計算するクラス
- **  @author YKhm20020
+ **  @author molpui0726
  **/
 
 #ifndef MILEAGE_H
 #define MILEAGE_H
 
 #include <cmath>
-#include "common/SystemInfo.h"
+#include "SystemInfo.h"
 
 class Mileage {
  public:
