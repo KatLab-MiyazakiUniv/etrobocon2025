@@ -23,7 +23,7 @@ class Motion {
   virtual void run() = 0;
 
  protected:
-  Robot* robot;  // Robotインスタンスのポインタ
+  Robot& robot;  // Robotインスタンスのポインタ
 };
 
 #endif

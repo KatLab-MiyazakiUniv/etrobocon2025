@@ -6,4 +6,4 @@
 
 #include "Motion.h"
 
-Motion::Motion(Robot& _robot) : robot(&_robot) {}
+Motion::Motion(Robot& _robot) : robot(_robot) {}
