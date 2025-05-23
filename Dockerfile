@@ -8,12 +8,13 @@ RUN apt-get update && apt-get install -y \
   git \
   cmake \
   sudo \
+  clang-format \
   libopencv-dev \
   && gem install shell \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ビルド時に日本語が含まれていたらエラーになるので，C.UTF-8を指定
-ENV LANG=C.UTF-8 
+ENV LANG=C.UTF-8
 
 # RasPike-ART を clone
 # libraspike-artは，RasPike-ART内で運営がリンクで紐づけていたため，直接cloneする必要がある
