@@ -9,6 +9,5 @@
 
 static constexpr double RADIUS = 28.0;  // 車輪の半径[mm]
 static constexpr double TREAD = 112.0;  // 走行体のトレッド幅（両輪の間の距離）[mm]
-static bool shouldGetRunLogs = false;   // 実行ログを取得するかのフラグ
 
 #endif
