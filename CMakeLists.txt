@@ -47,6 +47,7 @@ set(INCLUDE_DIRS
 # ソースファイルの登録 (適宜登録)
 file(GLOB_RECURSE PROJECT_SOURCES
   "${PROJECT_MODULE_DIR}/*.cpp"
+  "${PROJECT_MODULE_DIR}/API/*.cpp"
   "${PROJECT_MODULE_DIR}/CameraCapture/*.cpp"
   "${PROJECT_MODULE_DIR}/calculators/*.cpp"
   "${PROJECT_TEST_DIR}/helpers/*.cpp"
