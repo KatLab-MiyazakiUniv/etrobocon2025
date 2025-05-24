@@ -1,22 +1,32 @@
 /**
  * @file Port.h
- * @brief ポート関連列挙型（ダミー）
- * @author HaruArima08
+ * @brief ポート関連定義(ダミー)
+ * @author nishijima515
  */
 
-#ifndef DUMMY_PORT_H
-#define DUMMY_PORT_H
+#ifndef SPIKE_CPP_API_PORT_H_
+#define SPIKE_CPP_API_PORT_H_
 
 /**
- * spikeポート番号
+ * モータ/センサポート関連定義
  */
-enum EPort {
-  PBIO_PORT_ID_A = 0,  // SPIKE ポートA
-  PBIO_PORT_ID_B = 1,  // SPIKE ポートB
-  PBIO_PORT_ID_C = 2,  // SPIKE ポートC
-  PBIO_PORT_ID_D = 3,  // SPIKE ポートD
-  PBIO_PORT_ID_E = 4,  // SPIKE ポートE
-  PBIO_PORT_ID_F = 5   // SPIKE ポートF
+
+/**
+ * モータ/センサポート番号
+ */
+enum class EPort {
+  PORT_A = 0, /**< SPIKE ポートA */
+  PORT_B = 1, /**< SPIKE ポートB */
+  PORT_C = 2, /**< SPIKE ポートC */
+  PORT_D = 3, /**< SPIKE ポートD */
+  PORT_E = 4, /**< SPIKE ポートE */
+  PORT_F = 5  /**< SPIKE ポートF */
 };
 
-#endif
+/** センサポート数 */
+#define NUM_PORT_S (6)  // number of sensor ports
+
+/** モータポート数 */
+#define NUM_PORT_M (6)  // number of motor ports
+
+#endif  // ! SPIKE_CPP_API_PORT_H_
