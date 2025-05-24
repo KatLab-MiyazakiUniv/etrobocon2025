@@ -19,19 +19,21 @@ void ColorSensor::getColor(pup_color_hsv_t& hsv)
       hsv = { 0, 0, 100 };  // white
       break;
     case 1:
-      hsv = { 0, 100, 100 };  // red
+      hsv = { PBIO_COLOR_HUE_RED, 100, 100 };  // red
       break;
     case 2:
-      hsv = { 60, 100, 100 };  // yellow
+      hsv = { PBIO_COLOR_HUE_YELLOW, 100, 100 };  // yellow
       break;
     case 3:
-      hsv = { 120, 100, 100 };  // green
+      hsv = { PBIO_COLOR_HUE_GREEN, 100, 100 };  // green
       break;
     case 4:
-      hsv = { 240, 100, 100 };  // blue
+      hsv = { PBIO_COLOR_HUE_BLUE, 100, 100 };  // blue
       break;
     case 5:
-      hsv = { 0, 0, 0 };  // none
+      hsv = { 0, 0, 0 };  // black
+    case 6:
+      hsv = { 123, 0, 0 };  // none (hsv.hは未定義の値(例:123))
       break;
   }
 }

@@ -8,7 +8,6 @@
 #define COLOR_SENSOR_H
 
 #include "Port.h"
-#include "pbio/color.h"
 #include <stdlib.h>
 #include <cstdint>
 
@@ -17,6 +16,15 @@ typedef struct {
   uint8_t s;   // 彩度
   uint8_t v;   // 明度
 } pup_color_hsv_t;
+
+// 型定義（Colorjudgeで使われる）
+typedef int pbio_color_hue_t;
+
+// ダミーのカラーID定数定義
+#define PBIO_COLOR_HUE_RED 0
+#define PBIO_COLOR_HUE_YELLOW 60
+#define PBIO_COLOR_HUE_GREEN 120
+#define PBIO_COLOR_HUE_BLUE 240
 
 namespace spikeapi {
 
