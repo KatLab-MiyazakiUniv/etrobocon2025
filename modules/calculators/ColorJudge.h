@@ -46,7 +46,7 @@ class ColorJudge {
   static COLOR getColor(const spikeapi::ColorSensor::HSV& hsv, bool surface = true);
 
  private:
-  ColorJudge();  // 明示的にインスタンス化を禁止
+  ColorJudge();
 };
 
 #endif
