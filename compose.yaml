@@ -1,5 +1,3 @@
-# version: '3.8'
-
 services:
   etrobocon:
     image: chihayataku/kat_etrobo2025:arm64
