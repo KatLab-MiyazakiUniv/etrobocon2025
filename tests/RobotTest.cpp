@@ -30,13 +30,13 @@ namespace etrobocon2025_test {
   }
 
   // ゲッターで取得したColorSensorインスタンスが等しいか確認するテスト
-  // TEST(RobotTest, GetColorSensorInstanceReturnsReference)
-  // {
-  //   Robot robot;
-  //   spikeapi::ColorSensor& colorSensorRef1 = robot.getColorSensorInstance();
-  //   spikeapi::ColorSensor& colorSensorRef2 = robot.getColorSensorInstance();
+  TEST(RobotTest, GetColorSensorInstanceReturnsReference)
+  {
+    Robot robot;
+    spikeapi::ColorSensor& colorSensorRef1 = robot.getColorSensorInstance();
+    spikeapi::ColorSensor& colorSensorRef2 = robot.getColorSensorInstance();
 
-  //   EXPECT_EQ(&colorSensorRef1, &colorSensorRef2);
-  // }
+    EXPECT_EQ(&colorSensorRef1, &colorSensorRef2);
+  }
 
 }  // namespace etrobocon2025_test
