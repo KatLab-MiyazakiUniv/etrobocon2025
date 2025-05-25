@@ -181,17 +181,6 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 黒色の誤差判定を検出するテスト（"make test" を通すためにコメントアウト）
-  // TEST(ColorJudgeTest, GetColorHueNearBlack)
-  // {
-  //   spikeapi::ColorSensor::HSV hsv{ 5, 0, 0 };  // 誤差(Hue)を+5設定
-  //   COLOR expected = COLOR::BLACK;
-
-  //   COLOR actual = ColorJudge::getColor(hsv);
-
-  //   EXPECT_EQ(expected, actual);
-  // }
-
   // 白色を検出するテスト
   TEST(ColorJudgeTest, GetColorWhite)
   {
@@ -202,17 +191,6 @@ namespace etrobocon2025_test {
 
     EXPECT_EQ(expected, actual);
   }
-
-  // 白色の誤差判定を検出するテスト（"make test" を通すためにコメントアウト）
-  // TEST(ColorJudgeTest, GetColorHueNearWhite)
-  // {
-  //   spikeapi::ColorSensor::HSV hsv{ 5, 100, 100 };  // 誤差(Hue)を+5設定
-  //   COLOR expected = COLOR::WHITE;
-
-  //   COLOR actual = ColorJudge::getColor(hsv);
-
-  //   EXPECT_EQ(expected, actual);
-  // }
 
   // 赤色を検出するテスト
   TEST(ColorJudgeTest, GetColorRed)
@@ -225,17 +203,6 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 赤色の誤差判定を検出するテスト（"make test" を通すためにコメントアウト）
-  // TEST(ColorJudgeTest, GetColorHueNearRed)
-  // {
-  //   spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_RED + 5, 100, 100 };  // 誤差(Hue)を+5設定
-  //   COLOR expected = COLOR::RED;
-
-  //   COLOR actual = ColorJudge::getColor(hsv);
-
-  //   EXPECT_EQ(expected, actual);
-  // }
-
   // 黄色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorYellow)
   {
@@ -246,17 +213,6 @@ namespace etrobocon2025_test {
 
     EXPECT_EQ(expected, actual);
   }
-
-  // 黄色の誤差判定を検出するテスト（"make test" を通すためにコメントアウト）
-  // TEST(ColorJudgeTest, GetColorHueNearYellow)
-  // {
-  //   spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_YELLOW + 5, 100, 100 };  // 誤差(Hue)を+5設定
-  //   COLOR expected = COLOR::YELLOW;
-
-  //   COLOR actual = ColorJudge::getColor(hsv);
-
-  //   EXPECT_EQ(expected, actual);
-  // }
 
   // 緑色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorGreen)
@@ -269,17 +225,6 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 緑色の誤差判定を検出するテスト（"make test" を通すためにコメントアウト）
-  // TEST(ColorJudgeTest, GetColorHueNearGreen)
-  // {
-  //   spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_GREEN + 5, 100, 100 };  // 誤差(Hue)を+5設定
-  //   COLOR expected = COLOR::GREEN;
-
-  //   COLOR actual = ColorJudge::getColor(hsv);
-
-  //   EXPECT_EQ(expected, actual);
-  // }
-
   // 青色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorBlue)
   {
@@ -290,17 +235,6 @@ namespace etrobocon2025_test {
 
     EXPECT_EQ(expected, actual);
   }
-
-  // 青色の誤差判定を検出するテスト（"make test" を通すためにコメントアウト）
-  // TEST(ColorJudgeTest, GetColorHueNearBlue)
-  // {
-  //   spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_BLUE + 5, 100, 100 };  // 誤差(Hue)を+5設定
-  //   COLOR expected = COLOR::BLUE;
-
-  //   COLOR actual = ColorJudge::getColor(hsv);
-
-  //   EXPECT_EQ(expected, actual);
-  // }
 
   // 想定外の色相（NONE）を検出するテスト
   TEST(ColorJudgeTest, GetColorNone)
