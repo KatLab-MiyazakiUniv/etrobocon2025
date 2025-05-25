@@ -6,19 +6,19 @@
 
 #include "ColorJudge.h"
 
-COLOR ColorJudge::stringToColor(const char* str)
+COLOR ColorJudge::stringToColor(const std::string& str)
 {
-  if(strcmp(str, "BLACK") == 0) {  // 文字列がBLACKの場合
+  if(strcmp(str.c_str(), "BLACK") == 0) {  // 文字列がBLACKの場合
     return COLOR::BLACK;
-  } else if(strcmp(str, "WHITE") == 0) {  // 文字列がWHITEの場合
+  } else if(strcmp(str.c_str(), "WHITE") == 0) {  // 文字列がWHITEの場合
     return COLOR::WHITE;
-  } else if(strcmp(str, "BLUE") == 0) {  // 文字列がBLUEの場合
+  } else if(strcmp(str.c_str(), "BLUE") == 0) {  // 文字列がBLUEの場合
     return COLOR::BLUE;
-  } else if(strcmp(str, "GREEN") == 0) {  // 文字列がGREENの場合
+  } else if(strcmp(str.c_str(), "GREEN") == 0) {  // 文字列がGREENの場合
     return COLOR::GREEN;
-  } else if(strcmp(str, "YELLOW") == 0) {  // 文字列がYELLOWの場合
+  } else if(strcmp(str.c_str(), "YELLOW") == 0) {  // 文字列がYELLOWの場合
     return COLOR::YELLOW;
-  } else if(strcmp(str, "RED") == 0) {  // 文字列がREDの場合
+  } else if(strcmp(str.c_str(), "RED") == 0) {  // 文字列がREDの場合
     return COLOR::RED;
   } else {  // 想定していない文字列が来た場合
     return COLOR::NONE;

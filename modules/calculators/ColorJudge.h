@@ -7,6 +7,7 @@
 #ifndef COLOR_JUDGE_H
 #define COLOR_JUDGE_H
 
+#include <string>
 #include <string.h>
 #include <algorithm>
 #include "ColorSensor.h"
@@ -25,10 +26,10 @@ class ColorJudge {
  public:
   /**
    * @brief 文字列を列挙型COLORに変換する
-   * @param str 文字列の色
+   * @param str 変換する文字列
    * @return 色
    */
-  static COLOR stringToColor(const char* str);
+  static COLOR stringToColor(const std::string& str);
 
   /**
    * @brief 列挙型COLORを文字列に変換する
@@ -40,7 +41,7 @@ class ColorJudge {
   /**
    * @brief カラーセンサで色を測定する
    * @param hsv値を設定するHSV構造体、h(16ビット)、s(8ビット)、v(8ビット)
-   * @param surface trueならば表面の色から、falseならば他の光源の色を検出する
+   * @param surface LEDの点灯状況を指定するもので、Trueなら点灯、Falseであれば消灯
    * @return 色（hsvによる表現）
    */
   static COLOR getColor(const spikeapi::ColorSensor::HSV& hsv, bool surface = true);
