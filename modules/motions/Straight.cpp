@@ -1,7 +1,7 @@
 /**
  * @file   Straight.cpp
  * @brief  直進動作の抽象クラス
- * @author bizyutyu
+ * @author HaruArima08
  */
 
 #include "Straight.h"
