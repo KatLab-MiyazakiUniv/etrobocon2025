@@ -38,13 +38,18 @@ class Robot {
    * @return メンバ変数colorSensor(ColorSensorのインスタンス)の参照
    */
   spikeapi::ColorSensor& getColorSensorInstance();
+
+  /**
+   * @brief Clockのインスタンスの参照を返す
+   * @return メンバ変数clock(Clockのインスタンス)の参照
+   */
   spikeapi::Clock& getClockInstance();
 
  private:
   MotorController motorController;    // MotorControllerインスタンス
   CameraCapture cameraCapture;        // CameraCaptureインスタンス
   spikeapi::ColorSensor colorSensor;  // ColorSensorインスタンス
-  spikeapi::Clock clock;
+  spikeapi::Clock clock;              // Clockインスタンス
 };
 
 #endif
