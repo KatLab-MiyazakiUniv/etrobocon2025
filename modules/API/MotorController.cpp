@@ -5,10 +5,12 @@
  */
 #include "MotorController.h"
 
+using namespace spikeapi;
+
 MotorController::MotorController()
-  : rightWheel(Port::PORT_A),
-    leftWheel(Port::PORT_B, Motor::EDirection::COUNTERCLOCKWISE),
-    armMotor(Port::PORT_C, Motor::EDirection::COUNTERCLOCKWISE)
+  : rightWheel(EPort::PORT_A),
+    leftWheel(EPort::PORT_B, Motor::EDirection::COUNTERCLOCKWISE),
+    armMotor(EPort::PORT_C, Motor::EDirection::COUNTERCLOCKWISE)
 {
 }
 
