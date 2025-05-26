@@ -10,7 +10,6 @@
 #include "Motion.h"
 #include "Mileage.h"
 #include "SystemInfo.h"
-// #include "Time.h"
 
 class Rotation : public Motion {
  public:
@@ -57,6 +56,5 @@ class Rotation : public Motion {
   int targetAngle;   // 目標回転角度(deg) 0~360
   int power;         // パワー値（-100 ～ +100）
   bool isClockwise;  // 回頭方向 true:時計回り, false:反時計回り
-  // Timer timer;
 };
 #endif

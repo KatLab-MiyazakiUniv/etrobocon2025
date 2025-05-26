@@ -16,6 +16,7 @@ Rotation::Rotation(Robot& _robot, int _targetAngle, int _power, bool _isClockwis
 void Rotation::run()
 {
   MotorController& motorController = robot.getMotorControllerInstance();
+  // Clock& clock = robot.getClockInstance();
   if(!isMetPreCondition()) return;
 
   // 回転方向の符号：時計回り = +1, 反時計回り = -1
@@ -35,10 +36,10 @@ void Rotation::run()
     motorController.setLeftMotorPower(power * leftSign);
     motorController.setRightMotorPower(power * rightSign);
 
-    // timer.sleep();  // 10ms程度のスリープでループを安定させる
+    // clock.sleep(10000);  // 10ms程度のスリープでループを安定させる
   }
 
   // モーターを停止
-  robot.getMotorControllerInstance().stopWheelsMotor();
-  // timer.sleep(10);
+  motorController.stopWheelsMotor();
+  // clock.sleep(10000);
 }
