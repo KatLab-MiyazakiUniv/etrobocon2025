@@ -1,6 +1,6 @@
 /**
  * @file   Straight.cpp
- * @brief  直進動作の抽象クラス
+ * @brief  直進動作の親クラス
  * @author HaruArima08
  */
 
@@ -33,9 +33,10 @@ void Straight::run()
     robot.getMotorControllerInstance().setRightMotorPower(currentRightPower);
 
     // 10ミリ秒待機
-    robot.getClockInstance().sleep(10);
+    robot.getClockInstance().sleep(10000);
   }
 
-  robot.getMotorControllerInstance().stopWheelsMotor();  // モータを停止
-  robot.getClockInstance().sleep(10);
+  // モータを停止
+  robot.getMotorControllerInstance().stopWheelsMotor();
+  robot.getClockInstance().sleep(10000);
 }

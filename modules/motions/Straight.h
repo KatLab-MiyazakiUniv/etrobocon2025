@@ -1,6 +1,6 @@
 /**
  * @file   Straight.h
- * @brief  直進動作の抽象クラス
+ * @brief  直進動作の親クラス
  * @author HaruArima08
  */
 
@@ -31,8 +31,7 @@ class Straight : public Motion {
    */
   virtual bool isMetPreCondition()
   {
-    // 事前条件は常に満たす
-    return true;
+    return true;  // 事前条件は常に満たす(子クラスで実装)
   }
 
   /**
