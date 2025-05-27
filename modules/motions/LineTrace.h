@@ -59,8 +59,8 @@ class LineTrace : public Motion {
   double initRightMileage;          // クラス呼び出し時の右車輪の走行距離
   double initDistance;              // 実行前の走行距離
   MotorController motorController;  // MotorController
-  spikeapi::ColorSensor colorSensor{ EPort::PORT_A };  // ColorSensor
-  spikeapi::Clock clock;                               // Clock
+  // spikeapi::ColorSensor colorSensor{ EPort::PORT_A };  // ColorSensor
+  spikeapi::Clock clock;  // Clock
 };
 
 #endif

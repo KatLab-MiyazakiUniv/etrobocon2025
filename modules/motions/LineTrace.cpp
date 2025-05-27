@@ -9,7 +9,7 @@ using namespace std;
 
 LineTrace::LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness,
                      const PidGain& _pidGain, bool& _isLeftEdge)
-  : colorSensor(EPort::PORT_A),
+  :  // colorSensor(EPort::PORT_A),
     Motion(robot),
     robot(_robot),
     targetSpeed(_targetSpeed),
@@ -50,7 +50,7 @@ void LineTrace::run()
     double baseLeftPwm = motorController.getLeftMotorPower();
 
     // PIDで旋回値を計算
-    double turningPwm = pid.calculatePid(colorSensor.getReflection()) * edgeSign;
+    /*double turningPwm = pid.calculatePid(colorSensor.getReflection()) * edgeSign;
 
     // モータのPWM値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
     double rightPwm = baseRightPwm > 0.0 ? max(baseRightPwm - turningPwm, 0.0)
@@ -62,15 +62,15 @@ void LineTrace::run()
 
     //  10ループに1回走行ログを取得
     if(logIntervalCount % 10 == 0) {
-      // 現在の明るさを取得
+      現在の明るさを取得
       double currentReflection = colorSensor.getReflection();
 
-      // 現在のRGB値を取得
+      現在のRGB値を取得
       spikeapi::ColorSensor::RGB currentRgb;
       colorSensor.getRGB(currentRgb);
     }
     logIntervalCount++;
-
+    */
     // 10ms待機
     clock.sleep(10);
   }
