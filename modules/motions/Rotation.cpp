@@ -6,8 +6,8 @@
 
 #include "Rotation.h"
 
-Rotation::Rotation(Robot& _robot, int _targetAngle, int _power, bool _isClockwise)
-  : Motion(_robot), targetAngle(_targetAngle), power(_power), isClockwise(_isClockwise)
+Rotation::Rotation(Robot& _robot, int _targetAngle, int _speed, bool _isClockwise)
+  : Motion(_robot), targetAngle(_targetAngle), speed(_speed), isClockwise(_isClockwise)
 {
 }
 
@@ -30,9 +30,9 @@ void Rotation::run()
   double targetRightDistance = initRightMileage + targetDistance * rightSign;
 
   while(isMetContCondition(targetLeftDistance, targetRightDistance, leftSign, rightSign)) {
-    // パワー値で左右のモーターを制御
-    motorController.setLeftMotorPower(power * leftSign);
-    motorController.setRightMotorPower(power * rightSign);
+    // 回転速度（°/秒）で指定しモーターを制御
+    motorController.setLeftMotorSpeed(speed * leftSign);
+    motorController.setRightMotorSpeed(speed * rightSign);
 
     clock.sleep(10000);  // 10000μs(10ms)程度のスリープでループを安定させる
   }
