@@ -9,9 +9,7 @@ using namespace std;
 
 LineTrace::LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness,
                      const PidGain& _pidGain, bool& _isLeftEdge)
-  :  // colorSensor(EPort::PORT_A),
-    Motion(robot),
-    robot(_robot),
+  : Motion(_robot),
     targetSpeed(_targetSpeed),
     targetBrightness(_targetBrightness),
     pidGain(_pidGain),
@@ -52,7 +50,7 @@ void LineTrace::run()
     double baseLeftPwm = robot.getMotorControllerInstance().getLeftMotorPower();
 
     // PIDで旋回値を計算
-    /*double turningPwm = pid.calculatePid(robot.getColorSensorInstance().getReflection()) * edgeSign;
+    double turningPwm = pid.calculatePid(robot.getColorSensorInstance().getReflection()) * edgeSign;
 
     // モータのPWM値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
     double rightPwm = baseRightPwm > 0.0 ? max(baseRightPwm - turningPwm, 0.0)
@@ -61,7 +59,7 @@ void LineTrace::run()
                                        : min(baseLeftPwm - turningPwm, 0.0);
     robot.getMotorControllerInstance().setRightMotorPower(rightPwm);
     robot.getMotorControllerInstance().setLeftMotorPower(leftPwm);
-    */
+
     // 10ms待機
     robot.getClockInstance().sleep(10);
   }

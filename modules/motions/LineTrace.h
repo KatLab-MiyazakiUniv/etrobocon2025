@@ -13,9 +13,6 @@
 #include "Pid.h"
 
 class LineTrace : public Motion {
- protected:
-  Robot& robot;  // Robot インスタンスを参照で保持
-
  public:
   /**
    * コンストラクタ
