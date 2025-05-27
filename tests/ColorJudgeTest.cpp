@@ -14,7 +14,7 @@ namespace etrobocon2025_test {
     const char* str = "BLACK";
     COLOR expected = COLOR::BLACK;
 
-    COLOR actual = ColorJudge::stringToColor(str);
+    COLOR actual = ColorJudge::convertStringToColor(str);
 
     EXPECT_EQ(expected, actual);
   }
@@ -25,7 +25,7 @@ namespace etrobocon2025_test {
     const char* str = "WHITE";
     COLOR expected = COLOR::WHITE;
 
-    COLOR actual = ColorJudge::stringToColor(str);
+    COLOR actual = ColorJudge::convertStringToColor(str);
 
     EXPECT_EQ(expected, actual);
   }
@@ -36,7 +36,7 @@ namespace etrobocon2025_test {
     const char* str = "BLUE";
     COLOR expected = COLOR::BLUE;
 
-    COLOR actual = ColorJudge::stringToColor(str);
+    COLOR actual = ColorJudge::convertStringToColor(str);
 
     EXPECT_EQ(expected, actual);
   }
@@ -47,7 +47,7 @@ namespace etrobocon2025_test {
     const char* str = "GREEN";
     COLOR expected = COLOR::GREEN;
 
-    COLOR actual = ColorJudge::stringToColor(str);
+    COLOR actual = ColorJudge::convertStringToColor(str);
 
     EXPECT_EQ(expected, actual);
   }
@@ -58,7 +58,7 @@ namespace etrobocon2025_test {
     const char* str = "YELLOW";
     COLOR expected = COLOR::YELLOW;
 
-    COLOR actual = ColorJudge::stringToColor(str);
+    COLOR actual = ColorJudge::convertStringToColor(str);
 
     EXPECT_EQ(expected, actual);
   }
@@ -69,7 +69,7 @@ namespace etrobocon2025_test {
     const char* str = "RED";
     COLOR expected = COLOR::RED;
 
-    COLOR actual = ColorJudge::stringToColor(str);
+    COLOR actual = ColorJudge::convertStringToColor(str);
 
     EXPECT_EQ(expected, actual);
   }
@@ -80,7 +80,7 @@ namespace etrobocon2025_test {
     const char* str = "NONE";
     COLOR expected = COLOR::NONE;
 
-    COLOR actual = ColorJudge::stringToColor(str);
+    COLOR actual = ColorJudge::convertStringToColor(str);
 
     EXPECT_EQ(expected, actual);
   }
@@ -91,7 +91,7 @@ namespace etrobocon2025_test {
     COLOR color = COLOR::BLACK;
     const char* expected = "BLACK";
 
-    const char* actual = ColorJudge::colorToString(color);
+    const char* actual = ColorJudge::convertColorToString(color);
 
     EXPECT_STREQ(expected, actual);
   }
@@ -102,7 +102,7 @@ namespace etrobocon2025_test {
     COLOR color = COLOR::WHITE;
     const char* expected = "WHITE";
 
-    const char* actual = ColorJudge::colorToString(color);
+    const char* actual = ColorJudge::convertColorToString(color);
 
     EXPECT_STREQ(expected, actual);
   }
@@ -113,7 +113,7 @@ namespace etrobocon2025_test {
     COLOR color = COLOR::BLUE;
     const char* expected = "BLUE";
 
-    const char* actual = ColorJudge::colorToString(color);
+    const char* actual = ColorJudge::convertColorToString(color);
 
     EXPECT_STREQ(expected, actual);
   }
@@ -124,7 +124,7 @@ namespace etrobocon2025_test {
     COLOR color = COLOR::GREEN;
     const char* expected = "GREEN";
 
-    const char* actual = ColorJudge::colorToString(color);
+    const char* actual = ColorJudge::convertColorToString(color);
 
     EXPECT_STREQ(expected, actual);
   }
@@ -135,7 +135,7 @@ namespace etrobocon2025_test {
     COLOR color = COLOR::YELLOW;
     const char* expected = "YELLOW";
 
-    const char* actual = ColorJudge::colorToString(color);
+    const char* actual = ColorJudge::convertColorToString(color);
 
     EXPECT_STREQ(expected, actual);
   }
@@ -146,7 +146,7 @@ namespace etrobocon2025_test {
     COLOR color = COLOR::RED;
     const char* expected = "RED";
 
-    const char* actual = ColorJudge::colorToString(color);
+    const char* actual = ColorJudge::convertColorToString(color);
 
     EXPECT_STREQ(expected, actual);
   }
@@ -157,7 +157,7 @@ namespace etrobocon2025_test {
     COLOR color = COLOR::NONE;
     const char* expected = "NONE";
 
-    const char* actual = ColorJudge::colorToString(color);
+    const char* actual = ColorJudge::convertColorToString(color);
 
     EXPECT_STREQ(expected, actual);
   }
@@ -165,9 +165,9 @@ namespace etrobocon2025_test {
   // 無効な色名に対して NONE を返すかテスト
   TEST(ColorJudgeTest, StringToColorInvalid)
   {
-    EXPECT_EQ(COLOR::NONE, ColorJudge::stringToColor("PINK"));
-    EXPECT_EQ(COLOR::NONE, ColorJudge::stringToColor("123"));
-    EXPECT_EQ(COLOR::NONE, ColorJudge::stringToColor(""));
+    EXPECT_EQ(COLOR::NONE, ColorJudge::convertStringToColor("PINK"));
+    EXPECT_EQ(COLOR::NONE, ColorJudge::convertStringToColor("123"));
+    EXPECT_EQ(COLOR::NONE, ColorJudge::convertStringToColor(""));
   }
 
   // 黒色を検出するテスト
@@ -176,7 +176,7 @@ namespace etrobocon2025_test {
     spikeapi::ColorSensor::HSV hsv{ 0, 0, 0 };  // BLACK
     COLOR expected = COLOR::BLACK;
 
-    COLOR actual = ColorJudge::getColor(hsv);
+    COLOR actual = ColorJudge::convertHsvToColor(hsv);
 
     EXPECT_EQ(expected, actual);
   }
@@ -187,7 +187,7 @@ namespace etrobocon2025_test {
     spikeapi::ColorSensor::HSV hsv{ 0, 0, 100 };  // WHITE
     COLOR expected = COLOR::WHITE;
 
-    COLOR actual = ColorJudge::getColor(hsv);
+    COLOR actual = ColorJudge::convertHsvToColor(hsv);
 
     EXPECT_EQ(expected, actual);
   }
@@ -198,7 +198,7 @@ namespace etrobocon2025_test {
     spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_RED, 100, 100 };
     COLOR expected = COLOR::RED;
 
-    COLOR actual = ColorJudge::getColor(hsv);
+    COLOR actual = ColorJudge::convertHsvToColor(hsv);
 
     EXPECT_EQ(expected, actual);
   }
@@ -209,7 +209,7 @@ namespace etrobocon2025_test {
     spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_YELLOW, 100, 100 };
     COLOR expected = COLOR::YELLOW;
 
-    COLOR actual = ColorJudge::getColor(hsv);
+    COLOR actual = ColorJudge::convertHsvToColor(hsv);
 
     EXPECT_EQ(expected, actual);
   }
@@ -220,7 +220,7 @@ namespace etrobocon2025_test {
     spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_GREEN, 100, 100 };
     COLOR expected = COLOR::GREEN;
 
-    COLOR actual = ColorJudge::getColor(hsv);
+    COLOR actual = ColorJudge::convertHsvToColor(hsv);
 
     EXPECT_EQ(expected, actual);
   }
@@ -231,7 +231,7 @@ namespace etrobocon2025_test {
     spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_BLUE, 100, 100 };
     COLOR expected = COLOR::BLUE;
 
-    COLOR actual = ColorJudge::getColor(hsv);
+    COLOR actual = ColorJudge::convertHsvToColor(hsv);
 
     EXPECT_EQ(expected, actual);
   }
@@ -242,7 +242,7 @@ namespace etrobocon2025_test {
     spikeapi::ColorSensor::HSV hsv{ 123, 100, 100 };  // 未定義のH値
     COLOR expected = COLOR::NONE;
 
-    COLOR actual = ColorJudge::getColor(hsv);
+    COLOR actual = ColorJudge::convertHsvToColor(hsv);
 
     EXPECT_EQ(expected, actual);
   }
