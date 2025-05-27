@@ -7,7 +7,6 @@
 #define MOTOR_MOTORCONTROLLER_H
 
 #include "Motor.h"
-#include <cstdint>
 
 using namespace spikeapi;
 
