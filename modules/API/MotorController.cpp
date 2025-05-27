@@ -5,8 +5,6 @@
  */
 #include "MotorController.h"
 
-using namespace spikeapi;
-
 MotorController::MotorController()
   : rightWheel(EPort::PORT_A),
     leftWheel(EPort::PORT_B, Motor::EDirection::COUNTERCLOCKWISE),
