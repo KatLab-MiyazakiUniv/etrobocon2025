@@ -16,7 +16,7 @@ Rotation::Rotation(Robot& _robot, int _targetAngle, int _power, bool _isClockwis
 void Rotation::run()
 {
   MotorController& motorController = robot.getMotorControllerInstance();
-  // Clock& clock = robot.getClockInstance();
+  spikeapi::Clock& clock = robot.getClockInstance();
   if(!isMetPreCondition()) return;
 
   // 回転方向の符号：時計回り = +1, 反時計回り = -1
