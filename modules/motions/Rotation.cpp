@@ -6,8 +6,6 @@
 
 #include "Rotation.h"
 
-using namespace std;
-
 Rotation::Rotation(Robot& _robot, int _targetAngle, int _power, bool _isClockwise)
   : Motion(_robot), targetAngle(_targetAngle), power(_power), isClockwise(_isClockwise)
 {
@@ -36,7 +34,7 @@ void Rotation::run()
     motorController.setLeftMotorPower(power * leftSign);
     motorController.setRightMotorPower(power * rightSign);
 
-    clock.sleep(10000);  // 10ms程度のスリープでループを安定させる
+    clock.sleep(10000);  // 10000μs(10ms)程度のスリープでループを安定させる
   }
 
   // モーターを停止
