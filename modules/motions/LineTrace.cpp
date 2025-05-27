@@ -72,7 +72,7 @@ void LineTrace::run()
     logIntervalCount++;
 
     // 10ms待機
-    // clock.sleep(10);
+    clock.sleep(10);
   }
 
   motorController.stopWheelsMotor();

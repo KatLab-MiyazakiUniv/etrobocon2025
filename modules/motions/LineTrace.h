@@ -13,7 +13,6 @@
 #include "Pid.h"
 #include "SystemInfo.h"
 #include "Robot.h"
-// #include "Clock.h"
 
 class LineTrace : public Motion {
  protected:
@@ -61,7 +60,7 @@ class LineTrace : public Motion {
   double initDistance;              // 実行前の走行距離
   MotorController motorController;  // MotorController
   spikeapi::ColorSensor colorSensor{ EPort::PORT_A };  // ColorSensor
-  // spikeapi::Clock clock;                               // Clock
+  spikeapi::Clock clock;                               // Clock
 };
 
 #endif
