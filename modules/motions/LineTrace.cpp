@@ -43,23 +43,26 @@ void LineTrace::run()
   // 左右で符号を変える
   int edgeSign = isLeftEdge ? -1 : 1;
 
+  robot.getMotorControllerInstance().setRightMotorSpeed(720);
+  robot.getMotorControllerInstance().setLeftMotorSpeed(720);
+
   // 継続条件を満たしている間ループ
   while(isMetContinuationCondition()) {
-    // 初期Speed値を計算
-    double baseRightSpeed = robot.getMotorControllerInstance().getRightMotorSpeed();
-    double baseLeftSpeed = robot.getMotorControllerInstance().getLeftMotorSpeed();
+    // 初期Power値を計算
+    double baseRightPower = robot.getMotorControllerInstance().getRightMotorPower();
+    double baseLeftPower = robot.getMotorControllerInstance().getLeftMotorPower();
 
     // PIDで旋回値を計算
     double turningSpeed
         = pid.calculatePid(robot.getColorSensorInstance().getReflection()) * edgeSign;
 
-    // モータのSpeed値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
-    double rightSpeed = baseRightSpeed > 0.0 ? max(baseRightSpeed - turningSpeed, 0.0)
-                                             : min(baseRightSpeed + turningSpeed, 0.0);
-    double leftSpeed = baseLeftSpeed > 0.0 ? max(baseLeftSpeed + turningSpeed, 0.0)
-                                           : min(baseLeftSpeed - turningSpeed, 0.0);
-    robot.getMotorControllerInstance().setRightMotorSpeed(rightSpeed);
-    robot.getMotorControllerInstance().setLeftMotorSpeed(leftSpeed);
+    // モータのPower値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
+    double rightPower = baseRightPower > 0.0 ? max(baseRightPower - turningSpeed, 0.0)
+                                             : min(baseRightPower + turningSpeed, 0.0);
+    double leftPower = baseLeftPower > 0.0 ? max(baseLeftPower + turningSpeed, 0.0)
+                                           : min(baseLeftPower - turningSpeed, 0.0);
+    robot.getMotorControllerInstance().setRightMotorPower(rightPower);
+    robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
 
     // 10ms待機
     robot.getClockInstance().sleep(10000);
