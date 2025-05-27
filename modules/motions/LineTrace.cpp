@@ -26,8 +26,8 @@ void LineTrace::run()
 
   // 初期値を代入
 
-  initDistance = Mileage::calculateMileage(motorController.getRightMotorCount(),
-                                           motorController.getLeftMotorCount());
+  initDistance = Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
+                                           robot.getMotorControllerInstance().getLeftMotorCount());
 
   // 事前条件を判定する
   if(!isMetPreCondition(targetSpeed)) {
@@ -38,42 +38,33 @@ void LineTrace::run()
   int edgeSign = isLeftEdge ? -1 : 1;
 
   // 呼び出し時の走行距離
-  initLeftMileage = Mileage::calculateWheelMileage(motorController.getLeftMotorCount());
-  initRightMileage = Mileage::calculateWheelMileage(motorController.getRightMotorCount());
+  initLeftMileage
+      = Mileage::calculateWheelMileage(robot.getMotorControllerInstance().getLeftMotorCount());
+  initRightMileage
+      = Mileage::calculateWheelMileage(robot.getMotorControllerInstance().getRightMotorCount());
 
   int logIntervalCount = 0;  // 走行ログを取得するタイミングを計るための変数
 
   // 継続条件を満たしている間ループ
   while(isMetContinuationCondition()) {
     // 初期pwm値を計算
-    double baseRightPwm = motorController.getRightMotorPower();
-    double baseLeftPwm = motorController.getLeftMotorPower();
+    double baseRightPwm = robot.getMotorControllerInstance().getRightMotorPower();
+    double baseLeftPwm = robot.getMotorControllerInstance().getLeftMotorPower();
 
     // PIDで旋回値を計算
-    /*double turningPwm = pid.calculatePid(colorSensor.getReflection()) * edgeSign;
+    /*double turningPwm = pid.calculatePid(robot.getColorSensorInstance().getReflection()) * edgeSign;
 
     // モータのPWM値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
     double rightPwm = baseRightPwm > 0.0 ? max(baseRightPwm - turningPwm, 0.0)
                                          : min(baseRightPwm + turningPwm, 0.0);
     double leftPwm = baseLeftPwm > 0.0 ? max(baseLeftPwm + turningPwm, 0.0)
                                        : min(baseLeftPwm - turningPwm, 0.0);
-    motorController.setRightMotorPower(rightPwm);
-    motorController.setLeftMotorPower(leftPwm);
-
-    //  10ループに1回走行ログを取得
-    if(logIntervalCount % 10 == 0) {
-      現在の明るさを取得
-      double currentReflection = colorSensor.getReflection();
-
-      現在のRGB値を取得
-      spikeapi::ColorSensor::RGB currentRgb;
-      colorSensor.getRGB(currentRgb);
-    }
-    logIntervalCount++;
+    robot.getMotorControllerInstance().setRightMotorPower(rightPwm);
+    robot.getMotorControllerInstance().setLeftMotorPower(leftPwm);
     */
     // 10ms待機
-    clock.sleep(10);
+    robot.getClockInstance().sleep(10);
   }
 
-  motorController.stopWheelsMotor();
+  robot.getMotorControllerInstance().stopWheelsMotor();
 }

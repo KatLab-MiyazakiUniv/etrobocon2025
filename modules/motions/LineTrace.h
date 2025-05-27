@@ -11,8 +11,6 @@
 #include "Motion.h"
 #include "Mileage.h"
 #include "Pid.h"
-#include "SystemInfo.h"
-#include "Robot.h"
 
 class LineTrace : public Motion {
  protected:
@@ -54,13 +52,10 @@ class LineTrace : public Motion {
   int targetBrightness;  // 目標輝度 0~
   PidGain pidGain;       // PIDゲイン
 
-  bool& isLeftEdge;                 // エッジの左右判定(true:左エッジ, false:右エッジ)
-  double initLeftMileage;           // クラス呼び出し時の左車輪の走行距離
-  double initRightMileage;          // クラス呼び出し時の右車輪の走行距離
-  double initDistance;              // 実行前の走行距離
-  MotorController motorController;  // MotorController
-  // spikeapi::ColorSensor colorSensor{ EPort::PORT_A };  // ColorSensor
-  spikeapi::Clock clock;  // Clock
+  bool& isLeftEdge;         // エッジの左右判定(true:左エッジ, false:右エッジ)
+  double initLeftMileage;   // クラス呼び出し時の左車輪の走行距離
+  double initRightMileage;  // クラス呼び出し時の右車輪の走行距離
+  double initDistance;      // 実行前の走行距離
 };
 
 #endif
