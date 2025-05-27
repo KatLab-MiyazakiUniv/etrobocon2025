@@ -1,6 +1,6 @@
 /**
  * @file ColorSensor.h
- * @brief カラーセンサクラス（ダミー）
+ * @brief カラーセンサークラス（ダミー）
  * @author HaruArima08
  */
 
@@ -28,7 +28,7 @@ typedef int pbio_color_hue_t;
 
 namespace spikeapi {
 
-  // カラーセンサクラス
+  // カラーセンサークラス
   class ColorSensor {
    public:
     struct HSV {
@@ -38,12 +38,12 @@ namespace spikeapi {
     };
     /**
      * コンストラクタ
-     * @param port カラーセンサポート番号
+     * @param port カラーセンサーポート番号
      * @return -
      */
     explicit ColorSensor(EPort port)
     {
-      // 実際のセンサではポートの初期化などを行う
+      // 実際のセンサーではポートの初期化などを行う
       (void)port;  // 引数を使わないことを明示
     }
 
@@ -52,7 +52,7 @@ namespace spikeapi {
      * @param hsv HSV値を代入する変数（参照渡し）
      * @return HSVを保持するクラス
      */
-    void getColor(pup_color_hsv_t& hsv)
+    void convertHsvToColor(pup_color_hsv_t& hsv)
     {
       int index = rand() % 6;
       switch(index) {
