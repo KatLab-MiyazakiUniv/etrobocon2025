@@ -28,7 +28,7 @@ void LineTrace::run()
                                            robot.getMotorControllerInstance().getLeftMotorCount());
 
   // 事前条件を判定する
-  if(!isMetPreCondition(targetSpeed)) {
+  if(!isMetPreCondition()) {
     return;
   }
 
