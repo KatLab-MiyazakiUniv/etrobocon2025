@@ -32,9 +32,6 @@ void LineTrace::run()
     return;
   }
 
-  // 左右で符号を変える
-  int edgeSign = isLeftEdge ? -1 : 1;
-
   // 呼び出し時の走行距離
   initLeftMileage
       = Mileage::calculateWheelMileage(robot.getMotorControllerInstance().getLeftMotorCount());
@@ -43,25 +40,29 @@ void LineTrace::run()
 
   int logIntervalCount = 0;  // 走行ログを取得するタイミングを計るための変数
 
+  // 左右で符号を変える
+  int edgeSign = isLeftEdge ? -1 : 1;
+
   // 継続条件を満たしている間ループ
   while(isMetContinuationCondition()) {
-    // 初期pwm値を計算
-    double baseRightPwm = robot.getMotorControllerInstance().getRightMotorPower();
-    double baseLeftPwm = robot.getMotorControllerInstance().getLeftMotorPower();
+    // 初期Speed値を計算
+    double baseRightSpeed = robot.getMotorControllerInstance().getRightMotorSpeed();
+    double baseLeftSpeed = robot.getMotorControllerInstance().getLeftMotorSpeed();
 
     // PIDで旋回値を計算
-    double turningPwm = pid.calculatePid(robot.getColorSensorInstance().getReflection()) * edgeSign;
+    double turningSpeed
+        = pid.calculatePid(robot.getColorSensorInstance().getReflection()) * edgeSign;
 
-    // モータのPWM値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
-    double rightPwm = baseRightPwm > 0.0 ? max(baseRightPwm - turningPwm, 0.0)
-                                         : min(baseRightPwm + turningPwm, 0.0);
-    double leftPwm = baseLeftPwm > 0.0 ? max(baseLeftPwm + turningPwm, 0.0)
-                                       : min(baseLeftPwm - turningPwm, 0.0);
-    robot.getMotorControllerInstance().setRightMotorPower(rightPwm);
-    robot.getMotorControllerInstance().setLeftMotorPower(leftPwm);
+    // モータのSpeed値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
+    double rightSpeed = baseRightSpeed > 0.0 ? max(baseRightSpeed - turningSpeed, 0.0)
+                                             : min(baseRightSpeed + turningSpeed, 0.0);
+    double leftSpeed = baseLeftSpeed > 0.0 ? max(baseLeftSpeed + turningSpeed, 0.0)
+                                           : min(baseLeftSpeed - turningSpeed, 0.0);
+    robot.getMotorControllerInstance().setRightMotorSpeed(rightSpeed);
+    robot.getMotorControllerInstance().setLeftMotorSpeed(leftSpeed);
 
     // 10ms待機
-    robot.getClockInstance().sleep(10);
+    robot.getClockInstance().sleep(10000);
   }
 
   robot.getMotorControllerInstance().stopWheelsMotor();

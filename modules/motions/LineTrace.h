@@ -36,7 +36,7 @@ class LineTrace : public Motion {
    * @param targetSpeed 目標速度
    * @note オーバーライド必須
    */
-  virtual bool isMetPreCondition(double targetSpeed) = 0;
+  virtual bool isMetPreCondition() = 0;
 
   /**
    * @brief ライントレースする際の継続条件判定をする　返り値がfalseでモーターが止まる
