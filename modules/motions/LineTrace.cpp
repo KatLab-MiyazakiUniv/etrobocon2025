@@ -28,12 +28,9 @@ void LineTrace::run()
                                            robot.getMotorControllerInstance().getLeftMotorCount());
 
   // 事前条件を判定する
-  if(!isMetPreCondition(targetSpeed)) {
+  if(!isMetPreCondition()) {
     return;
   }
-
-  // 左右で符号を変える
-  int edgeSign = isLeftEdge ? -1 : 1;
 
   // 呼び出し時の走行距離
   initLeftMileage
@@ -43,25 +40,32 @@ void LineTrace::run()
 
   int logIntervalCount = 0;  // 走行ログを取得するタイミングを計るための変数
 
+  // 左右で符号を変える
+  int edgeSign = isLeftEdge ? -1 : 1;
+
+  robot.getMotorControllerInstance().setRightMotorSpeed(720);
+  robot.getMotorControllerInstance().setLeftMotorSpeed(720);
+
   // 継続条件を満たしている間ループ
   while(isMetContinuationCondition()) {
-    // 初期pwm値を計算
-    double baseRightPwm = robot.getMotorControllerInstance().getRightMotorPower();
-    double baseLeftPwm = robot.getMotorControllerInstance().getLeftMotorPower();
+    // 初期Power値を計算
+    double baseRightPower = robot.getMotorControllerInstance().getRightMotorPower();
+    double baseLeftPower = robot.getMotorControllerInstance().getLeftMotorPower();
 
     // PIDで旋回値を計算
-    double turningPwm = pid.calculatePid(robot.getColorSensorInstance().getReflection()) * edgeSign;
+    double turningSpeed
+        = pid.calculatePid(robot.getColorSensorInstance().getReflection()) * edgeSign;
 
-    // モータのPWM値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
-    double rightPwm = baseRightPwm > 0.0 ? max(baseRightPwm - turningPwm, 0.0)
-                                         : min(baseRightPwm + turningPwm, 0.0);
-    double leftPwm = baseLeftPwm > 0.0 ? max(baseLeftPwm + turningPwm, 0.0)
-                                       : min(baseLeftPwm - turningPwm, 0.0);
-    robot.getMotorControllerInstance().setRightMotorPower(rightPwm);
-    robot.getMotorControllerInstance().setLeftMotorPower(leftPwm);
+    // モータのPower値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
+    double rightPower = baseRightPower > 0.0 ? max(baseRightPower - turningSpeed, 0.0)
+                                             : min(baseRightPower + turningSpeed, 0.0);
+    double leftPower = baseLeftPower > 0.0 ? max(baseLeftPower + turningSpeed, 0.0)
+                                           : min(baseLeftPower - turningSpeed, 0.0);
+    robot.getMotorControllerInstance().setRightMotorPower(rightPower);
+    robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
 
     // 10ms待機
-    robot.getClockInstance().sleep(10);
+    robot.getClockInstance().sleep(10000);
   }
 
   robot.getMotorControllerInstance().stopWheelsMotor();
