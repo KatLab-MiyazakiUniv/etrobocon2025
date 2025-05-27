@@ -7,12 +7,8 @@
 #define MOTOR_MOTORCONTROLLER_H
 
 #include "Motor.h"
-#include <cstdint>
 
 using namespace spikeapi;
-
-using namespace spikeapi;
-
 class MotorController {
  public:
   /** Power値の上限 */

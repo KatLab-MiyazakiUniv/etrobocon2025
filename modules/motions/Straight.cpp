@@ -5,9 +5,11 @@
  */
 
 #include "Straight.h"
+
 using namespace std;
 
 Straight::Straight(Robot& robot, double _targetSpeed) : Motion(robot), targetSpeed(_targetSpeed) {}
+
 void Straight::run()
 {
   // 事前条件判定が真でないときは終了する
