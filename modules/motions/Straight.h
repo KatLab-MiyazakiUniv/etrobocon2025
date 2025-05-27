@@ -29,10 +29,7 @@ class Straight : public Motion {
   /**
    * @brief 直進する際の事前条件判定をする
    */
-  virtual bool isMetPreCondition()
-  {
-    return true;  // 事前条件は常に満たす(子クラスで実装)
-  }
+  virtual bool isMetPreCondition() = 0;
 
   /**
    * @brief 直進する際の動作継続条件判定をする　返り値がtrueの間モーターが回転
