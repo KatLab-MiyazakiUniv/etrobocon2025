@@ -22,24 +22,18 @@ void LineTrace::run()
 {
   Pid pid(pidGain.kp, pidGain.ki, pidGain.kd, targetBrightness);
 
-  // 初期値を代入
-  initDistance = Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
-                                           robot.getMotorControllerInstance().getLeftMotorCount());
-
   // 事前条件を判定する
   if(!isMetPreCondition()) {
     return;
   }
 
-  // 呼び出し時の走行距離
-  initLeftMileage
-      = Mileage::calculateWheelMileage(robot.getMotorControllerInstance().getLeftMotorCount());
-  initRightMileage
-      = Mileage::calculateWheelMileage(robot.getMotorControllerInstance().getRightMotorCount());
+  // 事前準備
+  prepare();
 
   // 左右で符号を変える
   int edgeSign = isLeftEdge ? -1 : 1;
 
+  // 初期Speed値の設定
   robot.getMotorControllerInstance().setRightMotorSpeed(FIRST_SPEED);
   robot.getMotorControllerInstance().setLeftMotorSpeed(FIRST_SPEED);
 
