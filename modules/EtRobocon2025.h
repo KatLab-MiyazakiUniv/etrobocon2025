@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include "Robot.h"
-#include "motions/DistanceLineTrace.h"
 
 class EtRobocon2025 {
  public:
