@@ -14,7 +14,6 @@ LineTrace::LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness,
     targetBrightness(_targetBrightness),
     pidGain(_pidGain),
     isLeftEdge(_isLeftEdge)
-
 {
 }
 
@@ -29,23 +28,17 @@ void LineTrace::run()
 
   // 事前準備
   prepare();
-
   // 左右で符号を変える
   int edgeSign = isLeftEdge ? -1 : 1;
-
-  // 初期Speed値の設定
-  robot.getMotorControllerInstance().setRightMotorSpeed(FIRST_SPEED);
-  robot.getMotorControllerInstance().setLeftMotorSpeed(FIRST_SPEED);
-
-  robot.getClockInstance().sleep(1000000);
-
+  SpeedCalculator speedCalculator(robot, targetSpeed);
   // 継続条件を満たしている間ループ
   while(isMetContinuationCondition()) {
     // 初期Speed値を計算
-    robot.getMotorControllerInstance().setRightMotorSpeed(FIRST_SPEED);
-    robot.getMotorControllerInstance().setLeftMotorSpeed(FIRST_SPEED);
-    double baseRightPower = robot.getMotorControllerInstance().getRightMotorPower();
-    double baseLeftPower = robot.getMotorControllerInstance().getLeftMotorPower();
+    double baseRightPower = speedCalculator.calculateRightMotorPowor();
+    double baseLeftPower = speedCalculator.calculateLeftMotorPowor();
+
+    std ::cout << "right" << baseRightPower << "\n"
+               << "left" << baseLeftPower << "\n";
 
     // PIDで旋回値を計算
     double turningPower
@@ -63,9 +56,8 @@ void LineTrace::run()
               << " RightPower=" << rightPower << "\n"
               << " LeftPower=" << leftPower << "\n";
 
-    robot.getMotorControllerInstance().setRightMotorSpeed(rightPower);
-    robot.getMotorControllerInstance().setLeftMotorSpeed(leftPower);
-
+    robot.getMotorControllerInstance().setRightMotorPower(rightPower);
+    robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
     // 10ms待機
     robot.getClockInstance().sleep(10000);
   }

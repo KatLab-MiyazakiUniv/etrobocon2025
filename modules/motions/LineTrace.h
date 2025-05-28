@@ -8,11 +8,10 @@
 #ifndef LINE_TRACING_H
 #define LINE_TRACING_H
 
-#define FIRST_SPEED 360  // ライントレースする初速 360deg/s
-
 #include "Motion.h"
 #include "Mileage.h"
 #include "Pid.h"
+#include "SpeedCalculator.h"
 
 class LineTrace : public Motion {
  public:
