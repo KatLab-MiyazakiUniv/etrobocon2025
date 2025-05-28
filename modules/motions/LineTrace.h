@@ -11,6 +11,7 @@
 #include "Motion.h"
 #include "Mileage.h"
 #include "Pid.h"
+#include "SpeedCalculator.h"
 
 class LineTrace : public Motion {
  public:
@@ -39,6 +40,12 @@ class LineTrace : public Motion {
   virtual bool isMetPreCondition() = 0;
 
   /**
+   * @brief ライントレースする際の事前処理をする
+   * @note オーバーライド必須
+   */
+  virtual void prepare() = 0;
+
+  /**
    * @brief ライントレースする際の継続条件判定をする　返り値がfalseでモーターが止まる
    * @note オーバーライド必須
    */
@@ -48,11 +55,6 @@ class LineTrace : public Motion {
   double targetSpeed;    // 目標速度 0~
   int targetBrightness;  // 目標輝度 0~
   PidGain pidGain;       // PIDゲイン
-
-  bool& isLeftEdge;         // エッジの左右判定(true:左エッジ, false:右エッジ)
-  double initLeftMileage;   // クラス呼び出し時の左車輪の走行距離
-  double initRightMileage;  // クラス呼び出し時の右車輪の走行距離
-  double initDistance;      // 実行前の走行距離
+  bool& isLeftEdge;      // エッジの左右判定(true:左エッジ, false:右エッジ)
 };
-
 #endif
