@@ -11,15 +11,6 @@
 #include <stdlib.h>
 #include <cstdint>
 
-typedef struct {
-  uint16_t h;  // 色相
-  uint8_t s;   // 彩度
-  uint8_t v;   // 明度
-} pup_color_hsv_t;
-
-// 型定義（Colorjudgeで使われる）
-typedef int pbio_color_hue_t;
-
 // ダミーのカラーID定数定義
 #define PBIO_COLOR_HUE_RED 0
 #define PBIO_COLOR_HUE_YELLOW 60
@@ -36,6 +27,7 @@ namespace spikeapi {
       uint8_t s;
       uint8_t v;
     };
+
     /**
      * コンストラクタ
      * @param port カラーセンサーポート番号
@@ -52,7 +44,7 @@ namespace spikeapi {
      * @param hsv HSV値を代入する変数（参照渡し）
      * @return HSVを保持するクラス
      */
-    void convertHsvToColor(pup_color_hsv_t& hsv)
+    void getColor(HSV& hsv, bool surface = true)
     {
       int index = rand() % 6;
       switch(index) {
