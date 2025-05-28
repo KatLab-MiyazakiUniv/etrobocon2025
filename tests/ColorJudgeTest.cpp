@@ -170,7 +170,7 @@ namespace etrobocon2025_test {
     EXPECT_EQ(COLOR::NONE, ColorJudge::convertStringToColor(""));
   }
 
-  // 黒色を検出するテスト
+  // 黒色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorBlack)
   {
     spikeapi::ColorSensor::HSV hsv{ 0, 0, 0 };  // BLACK
@@ -181,7 +181,7 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 白色を検出するテスト
+  // 白色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorWhite)
   {
     spikeapi::ColorSensor::HSV hsv{ 0, 0, 100 };  // WHITE
@@ -192,7 +192,7 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 赤色を検出するテスト
+  // 赤色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorRed)
   {
     spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_RED, 100, 100 };
