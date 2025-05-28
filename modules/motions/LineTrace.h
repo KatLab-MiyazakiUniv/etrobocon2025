@@ -8,7 +8,7 @@
 #ifndef LINE_TRACING_H
 #define LINE_TRACING_H
 
-#define FIRST_SPEED 720  // ライントレースする初速 720deg/s
+#define FIRST_SPEED 360  // ライントレースする初速 360deg/s
 
 #include "Motion.h"
 #include "Mileage.h"

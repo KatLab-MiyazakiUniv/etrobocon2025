@@ -37,23 +37,34 @@ void LineTrace::run()
   robot.getMotorControllerInstance().setRightMotorSpeed(FIRST_SPEED);
   robot.getMotorControllerInstance().setLeftMotorSpeed(FIRST_SPEED);
 
+  robot.getClockInstance().sleep(1000000);
+
   // 継続条件を満たしている間ループ
   while(isMetContinuationCondition()) {
-    // 初期Power値を計算
+    // 初期Speed値を計算
+    robot.getMotorControllerInstance().setRightMotorSpeed(FIRST_SPEED);
+    robot.getMotorControllerInstance().setLeftMotorSpeed(FIRST_SPEED);
     double baseRightPower = robot.getMotorControllerInstance().getRightMotorPower();
     double baseLeftPower = robot.getMotorControllerInstance().getLeftMotorPower();
 
     // PIDで旋回値を計算
-    double turningSpeed
+    double turningPower
         = pid.calculatePid(robot.getColorSensorInstance().getReflection()) * edgeSign;
 
-    // モータのPower値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
-    double rightPower = baseRightPower > 0.0 ? max(baseRightPower - turningSpeed, 0.0)
-                                             : min(baseRightPower + turningSpeed, 0.0);
-    double leftPower = baseLeftPower > 0.0 ? max(baseLeftPower + turningSpeed, 0.0)
-                                           : min(baseLeftPower - turningSpeed, 0.0);
-    robot.getMotorControllerInstance().setRightMotorPower(rightPower);
-    robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
+    // モータのSpeed値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
+    double rightPower = baseRightPower > 0.0 ? max(baseRightPower - turningPower, 0.0)
+                                             : min(baseRightPower + turningPower, 0.0);
+    double leftPower = baseLeftPower > 0.0 ? max(baseLeftPower + turningPower, 0.0)
+                                           : min(baseLeftPower - turningPower, 0.0);
+
+    // 実機での出力確認
+    std::cout << " Reflection=" << robot.getColorSensorInstance().getReflection() << "\n"
+              << " Turning=" << turningPower << "\n"
+              << " RightPower=" << rightPower << "\n"
+              << " LeftPower=" << leftPower << "\n";
+
+    robot.getMotorControllerInstance().setRightMotorSpeed(rightPower);
+    robot.getMotorControllerInstance().setLeftMotorSpeed(leftPower);
 
     // 10ms待機
     robot.getClockInstance().sleep(10000);
