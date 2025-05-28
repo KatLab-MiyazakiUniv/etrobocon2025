@@ -42,7 +42,7 @@ class DistanceLineTrace : public LineTrace {
    * @brief ライントレースする際の事前処理をする
    * @note オーバーライド必須
    */
-  virtual void prepare() = 0;
+  virtual void prepare() override;
 
   /**
    * @brief 指定距離ライントレースする際の継続条件判定をする　返り値がfalseでモーターが止まる
