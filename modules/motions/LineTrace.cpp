@@ -23,7 +23,6 @@ void LineTrace::run()
   Pid pid(pidGain.kp, pidGain.ki, pidGain.kd, targetBrightness);
 
   // 初期値を代入
-
   initDistance = Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
                                            robot.getMotorControllerInstance().getLeftMotorCount());
 
@@ -38,13 +37,11 @@ void LineTrace::run()
   initRightMileage
       = Mileage::calculateWheelMileage(robot.getMotorControllerInstance().getRightMotorCount());
 
-  int logIntervalCount = 0;  // 走行ログを取得するタイミングを計るための変数
-
   // 左右で符号を変える
   int edgeSign = isLeftEdge ? -1 : 1;
 
-  robot.getMotorControllerInstance().setRightMotorSpeed(720);
-  robot.getMotorControllerInstance().setLeftMotorSpeed(720);
+  robot.getMotorControllerInstance().setRightMotorSpeed(FIRST_SPEED);
+  robot.getMotorControllerInstance().setLeftMotorSpeed(FIRST_SPEED);
 
   // 継続条件を満たしている間ループ
   while(isMetContinuationCondition()) {
