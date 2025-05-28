@@ -15,6 +15,7 @@ DistanceLineTrace::DistanceLineTrace(Robot& _robot, double _targetDistance, doub
 {
 }
 
+// 距離ライントレースの事前条件
 bool DistanceLineTrace::isMetPreCondition()
 {
   char buf[SMALL_BUF_SIZE];
@@ -45,6 +46,7 @@ bool DistanceLineTrace::isMetPreCondition()
   return true;
 }
 
+// 距離ライントレースの事前処理
 void DistanceLineTrace::prepare()
 {
   // 初期値を代入
@@ -58,6 +60,7 @@ void DistanceLineTrace::prepare()
       = Mileage::calculateWheelMileage(robot.getMotorControllerInstance().getRightMotorCount());
 }
 
+// 距離ライントレースの継続条件
 bool DistanceLineTrace::isMetContinuationCondition()
 {
   // 走行距離が目標距離に到達

@@ -34,11 +34,8 @@ void LineTrace::run()
   // 継続条件を満たしている間ループ
   while(isMetContinuationCondition()) {
     // 初期Speed値を計算
-    double baseRightPower = speedCalculator.calculateRightMotorPowor();
-    double baseLeftPower = speedCalculator.calculateLeftMotorPowor();
-
-    std ::cout << "right" << baseRightPower << "\n"
-               << "left" << baseLeftPower << "\n";
+    double baseRightPower = speedCalculator.calculateRightMotorPower();
+    double baseLeftPower = speedCalculator.calculateLeftMotorPower();
 
     // PIDで旋回値を計算
     double turningPower
@@ -49,18 +46,11 @@ void LineTrace::run()
                                              : min(baseRightPower + turningPower, 0.0);
     double leftPower = baseLeftPower > 0.0 ? max(baseLeftPower + turningPower, 0.0)
                                            : min(baseLeftPower - turningPower, 0.0);
-
-    // 実機での出力確認
-    std::cout << " Reflection=" << robot.getColorSensorInstance().getReflection() << "\n"
-              << " Turning=" << turningPower << "\n"
-              << " RightPower=" << rightPower << "\n"
-              << " LeftPower=" << leftPower << "\n";
-
     robot.getMotorControllerInstance().setRightMotorPower(rightPower);
     robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
     // 10ms待機
     robot.getClockInstance().sleep(10000);
   }
-
+  // モータを停止
   robot.getMotorControllerInstance().stopWheelsMotor();
 }
