@@ -1,7 +1,7 @@
 /**
  *  @file SpeedCalculator.cpp
  *  @brief 目標速度に対応するPWM値を算出するクラス
- *  @author CHIHAYATAKU
+ *  @author miyahara046
  */
 #include "SpeedCalculator.h"
 
@@ -16,7 +16,7 @@ SpeedCalculator::SpeedCalculator(Robot& _robot, double _targetSpeed)
   prevLeftTime = currentTime;
 }
 
-double SpeedCalculator::calculateRightMotorPowor()
+double SpeedCalculator::calculateRightMotorPower()
 {
   // 走行時間を算出
   int currentRightTime = robot.getClockInstance().now();
@@ -24,7 +24,7 @@ double SpeedCalculator::calculateRightMotorPowor()
   // 右タイヤの走行速度を算出
   double currentRightAngleSpeed = robot.getMotorControllerInstance().getRightMotorSpeed();
   double currentRightSpeed = currentRightAngleSpeed / 180 * RADIUS * 3.14;
-  // 走行速度に相当する右タイヤのPWM値を算出
+  // 走行速度に相当する右タイヤのPower値を算出
   rightMotorPower += rightPid.calculatePid(currentRightSpeed, diffRightTime);
   // メンバを更新
   prevRightTime = currentRightTime;
@@ -32,7 +32,7 @@ double SpeedCalculator::calculateRightMotorPowor()
   return rightMotorPower;
 }
 
-double SpeedCalculator::calculateLeftMotorPowor()
+double SpeedCalculator::calculateLeftMotorPower()
 {
   // 走行時間を算出
   int currentLeftTime = robot.getClockInstance().now();
@@ -40,7 +40,7 @@ double SpeedCalculator::calculateLeftMotorPowor()
   // 右タイヤの走行速度を算出
   double currentLeftAngleSpeed = robot.getMotorControllerInstance().getLeftMotorSpeed();
   double currentLeftSpeed = currentLeftAngleSpeed / 180 * RADIUS * 3.14;
-  // 走行速度に相当する右タイヤのPWM値を算出
+  // 走行速度に相当する左タイヤのPower値を算出
   leftMotorPower += leftPid.calculatePid(currentLeftSpeed, diffLeftTime);
   // メンバを更新
   prevLeftTime = currentLeftTime;
