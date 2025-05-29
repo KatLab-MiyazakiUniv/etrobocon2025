@@ -6,7 +6,11 @@
 #ifndef MOTOR_MOTORCONTROLLER_H
 #define MOTOR_MOTORCONTROLLER_H
 
+#define PI 3.1415926  // 円周率
+#define HALF 180.0    // 角度（°）
+
 #include "Motor.h"
+#include "SystemInfo.h"  // RADIUSの定義を含む
 
 class MotorController {
  public:
@@ -141,9 +145,9 @@ class MotorController {
   int32_t getLeftMotorSpeed();
 
  private:
-  Motor rightWheel;  // 右タイヤモータのインスタンス
-  Motor leftWheel;   // 左タイヤモータのインスタンス
-  Motor armMotor;    // アームモータのインスタンス
+  spikeapi::Motor rightWheel;  // 右タイヤモータのインスタンス
+  spikeapi::Motor leftWheel;   // 左タイヤモータのインスタンス
+  spikeapi::Motor armMotor;    // アームモータのインスタンス
 
   /**
    * @brief モータに設定するpower値の制限

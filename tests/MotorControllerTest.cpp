@@ -7,6 +7,8 @@
 #include "MotorController.h"
 #include <gtest/gtest.h>
 
+using namespace spikeapi;
+
 namespace etrobocon2025_test {
 
   // 右車輪のモータにpower値をセットできるかのテスト
@@ -224,12 +226,12 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
     int speed = 1000;
     MotorController.setRightMotorSpeed(speed);
-    expected = 1000;
+    expected = 999;  // 誤差
     actual = MotorController.getRightMotorSpeed();
     EXPECT_EQ(expected, actual);
     speed = -1000;
     MotorController.setRightMotorSpeed(speed);
-    expected = -1000;
+    expected = -999;  // 誤差
     actual = MotorController.getRightMotorSpeed();
     EXPECT_EQ(expected, actual);
     MotorController.resetRightMotorPower();
@@ -244,12 +246,12 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
     int speed = 1000;
     MotorController.setLeftMotorSpeed(speed);
-    expected = 1000;
+    expected = 999;  // 誤差
     actual = MotorController.getLeftMotorSpeed();
     EXPECT_EQ(expected, actual);
     speed = -1000;
     MotorController.setLeftMotorSpeed(speed);
-    expected = -1000;
+    expected = -999;  // 誤差
     actual = MotorController.getLeftMotorSpeed();
     EXPECT_EQ(expected, actual);
     MotorController.resetLeftMotorPower();

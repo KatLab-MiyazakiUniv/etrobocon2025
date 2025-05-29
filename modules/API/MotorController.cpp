@@ -4,6 +4,7 @@
  * @author nishijima515
  */
 #include "MotorController.h"
+using namespace spikeapi;
 
 MotorController::MotorController()
   : rightWheel(EPort::PORT_A),
@@ -57,13 +58,15 @@ void MotorController::resetWheelsMotorPower()
 // 右タイヤのモータに回転速度をセット
 void MotorController::setRightMotorSpeed(int speed)
 {
-  rightWheel.setSpeed(speed);
+  double rightAngleSpeed = speed * HALF / RADIUS / PI;
+  rightWheel.setSpeed(rightAngleSpeed);
 }
 
 // 左タイヤのモータに回転速度をセット
 void MotorController::setLeftMotorSpeed(int speed)
 {
-  leftWheel.setSpeed(speed);
+  double leftAngleSpeed = speed * HALF / RADIUS / PI;
+  leftWheel.setSpeed(leftAngleSpeed);
 }
 
 // 両タイヤのモータを停止する
@@ -143,11 +146,14 @@ int32_t MotorController::getArmMotorCount()
 // 右タイヤモータの回転速度を取得する
 int32_t MotorController::getRightMotorSpeed()
 {
-  return rightWheel.getSpeed();
+  double rightSpeed = rightWheel.getSpeed() / HALF * RADIUS * PI;
+  return rightSpeed;
 }
 
 // 左タイヤモータの回転速度を取得する
 int32_t MotorController::getLeftMotorSpeed()
 {
-  return leftWheel.getSpeed();
+  double leftSpeed = leftWheel.getSpeed() / HALF * RADIUS * PI;
+
+  return leftSpeed;
 }
