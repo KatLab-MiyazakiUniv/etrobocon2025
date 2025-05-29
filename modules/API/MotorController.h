@@ -8,8 +8,6 @@
 
 #include "Motor.h"
 
-using namespace spikeapi;
-
 class MotorController {
  public:
   /** Power値の上限 */
