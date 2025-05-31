@@ -58,14 +58,14 @@ void MotorController::resetWheelsMotorPower()
 // 右タイヤのモータに回転速度をセット
 void MotorController::setRightMotorSpeed(int speed)
 {
-  double rightAngleSpeed = speed * HALF / RADIUS / PI;
+  double rightAngleSpeed = speed * DEG_180 / RADIUS / PI;
   rightWheel.setSpeed(rightAngleSpeed);
 }
 
 // 左タイヤのモータに回転速度をセット
 void MotorController::setLeftMotorSpeed(int speed)
 {
-  double leftAngleSpeed = speed * HALF / RADIUS / PI;
+  double leftAngleSpeed = speed * DEG_180 / RADIUS / PI;
   leftWheel.setSpeed(leftAngleSpeed);
 }
 
@@ -146,14 +146,13 @@ int32_t MotorController::getArmMotorCount()
 // 右タイヤモータの回転速度を取得する
 int32_t MotorController::getRightMotorSpeed()
 {
-  double rightSpeed = rightWheel.getSpeed() / HALF * RADIUS * PI;
+  double rightSpeed = rightWheel.getSpeed() / DEG_180 * RADIUS * PI;
   return rightSpeed;
 }
 
 // 左タイヤモータの回転速度を取得する
 int32_t MotorController::getLeftMotorSpeed()
 {
-  double leftSpeed = leftWheel.getSpeed() / HALF * RADIUS * PI;
-
+  double leftSpeed = leftWheel.getSpeed() / DEG_180 * RADIUS * PI;
   return leftSpeed;
 }

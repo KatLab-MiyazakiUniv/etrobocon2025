@@ -6,8 +6,8 @@
 #ifndef MOTOR_MOTORCONTROLLER_H
 #define MOTOR_MOTORCONTROLLER_H
 
-#define PI 3.1415926  // 円周率
-#define HALF 180.0    // 角度（°）
+#define PI 3.1415926   // 円周率
+#define DEG_180 180.0  // 角度（°）
 
 #include "Motor.h"
 #include "SystemInfo.h"  // RADIUSの定義を含む
