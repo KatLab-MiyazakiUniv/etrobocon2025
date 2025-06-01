@@ -221,19 +221,23 @@ namespace etrobocon2025_test {
   TEST(MotorControllerTest, GetRightMotorSpeed)
   {
     MotorController MotorController;
-    int expected = 0;
-    int actual = MotorController.getRightMotorSpeed();
+    double expected = 0.0;
+    double actual = MotorController.getRightMotorSpeed();
     EXPECT_EQ(expected, actual);
-    int speed = 1000;
+    double speed = 1000;
     MotorController.setRightMotorSpeed(speed);
-    expected = 999;  // 誤差
+    double expectedLower = speed - 1;  // getやsetの計算過程でintに丸められることによる誤差
     actual = MotorController.getRightMotorSpeed();
-    EXPECT_EQ(expected, actual);
+    // 　誤差が1以内であれば取得できているとする
+    EXPECT_LE(expectedLower, actual);
+    EXPECT_GE(speed, actual);
     speed = -1000;
     MotorController.setRightMotorSpeed(speed);
-    expected = -999;  // 誤差
+    double expectedUpper = speed + 1;  // 誤差
     actual = MotorController.getRightMotorSpeed();
-    EXPECT_EQ(expected, actual);
+    // 　誤差が1以内であれば取得できているとする
+    EXPECT_GE(actual, speed);
+    EXPECT_LE(actual, expectedUpper);
     MotorController.resetRightMotorPower();
   }
 
@@ -241,19 +245,22 @@ namespace etrobocon2025_test {
   TEST(MotorControllerTest, GetLeftMotorSpeed)
   {
     MotorController MotorController;
-    int expected = 0;
-    int actual = MotorController.getLeftMotorSpeed();
+    double expected = 0.0;
+    double actual = MotorController.getLeftMotorSpeed();
     EXPECT_EQ(expected, actual);
-    int speed = 1000;
+    double speed = 1000;
     MotorController.setLeftMotorSpeed(speed);
-    expected = 999;  // 誤差
+    double expectedLower = speed - 1;  // 誤差
     actual = MotorController.getLeftMotorSpeed();
-    EXPECT_EQ(expected, actual);
+    // 　誤差が1以内であれば取得できているとする
+    EXPECT_LE(expectedLower, actual);
+    EXPECT_GE(speed, actual);
     speed = -1000;
     MotorController.setLeftMotorSpeed(speed);
-    expected = -999;  // 誤差
+    double expectedUpper = speed + 1;  // 誤差
     actual = MotorController.getLeftMotorSpeed();
-    EXPECT_EQ(expected, actual);
+    EXPECT_GE(actual, speed);
+    EXPECT_LE(actual, expectedUpper);
     MotorController.resetLeftMotorPower();
   }
 }  // namespace etrobocon2025_test

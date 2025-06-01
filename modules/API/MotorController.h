@@ -6,11 +6,10 @@
 #ifndef MOTOR_MOTORCONTROLLER_H
 #define MOTOR_MOTORCONTROLLER_H
 
-#define PI 3.1415926   // 円周率
-#define DEG_180 180.0  // 角度（°）
+#define WHEEL_RADIUS RADIUS  // 車輪の半径[mm]
 
 #include "Motor.h"
-#include "SystemInfo.h"  // RADIUSの定義を含む
+#include "SystemInfo.h"  // RADIUS, PI, RAD_TO_DEGの定義を含む
 
 class MotorController {
  public:
@@ -56,13 +55,13 @@ class MotorController {
    * @brief 右タイヤのモータに回転速度をセット
    * @param speed 回転速度（°/秒）
    */
-  void setRightMotorSpeed(int speed);
+  void setRightMotorSpeed(double speed);
 
   /**
    * @brief 左タイヤのモータに回転速度をセット
    * @param speed 回転速度（°/秒）
    */
-  void setLeftMotorSpeed(int speed);
+  void setLeftMotorSpeed(double speed);
 
   /**
    * @brief 両タイヤのモータを停止する
@@ -136,13 +135,13 @@ class MotorController {
    * @brief 右タイヤの回転速度を取得する
    * @return 右タイヤの回転速度（°/秒）
    */
-  int32_t getRightMotorSpeed();
+  double getRightMotorSpeed();
 
   /**
    * @brief 左タイヤの回転速度を取得する
    * @return 左タイヤの回転速度（°/秒）
    */
-  int32_t getLeftMotorSpeed();
+  double getLeftMotorSpeed();
 
  private:
   spikeapi::Motor rightWheel;  // 右タイヤモータのインスタンス

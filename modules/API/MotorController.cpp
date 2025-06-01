@@ -55,17 +55,17 @@ void MotorController::resetWheelsMotorPower()
   leftWheel.setPower(0);
 }
 
-// 右タイヤのモータに回転速度をセット
-void MotorController::setRightMotorSpeed(int speed)
+// 右タイヤのモータに,線速度を回転速度に変換しセットする
+void MotorController::setRightMotorSpeed(double speed)
 {
-  double rightAngleSpeed = speed * DEG_180 / RADIUS / PI;
+  int rightAngleSpeed = static_cast<int>(speed / WHEEL_RADIUS * (RAD_TO_DEG));
   rightWheel.setSpeed(rightAngleSpeed);
 }
 
-// 左タイヤのモータに回転速度をセット
-void MotorController::setLeftMotorSpeed(int speed)
+// 左タイヤのモータに,線速度を回転速度に変換しセットする
+void MotorController::setLeftMotorSpeed(double speed)
 {
-  double leftAngleSpeed = speed * DEG_180 / RADIUS / PI;
+  int leftAngleSpeed = static_cast<int>(speed / WHEEL_RADIUS * (RAD_TO_DEG));
   leftWheel.setSpeed(leftAngleSpeed);
 }
 
@@ -143,16 +143,16 @@ int32_t MotorController::getArmMotorCount()
   return armMotor.getCount();
 }
 
-// 右タイヤモータの回転速度を取得する
-int32_t MotorController::getRightMotorSpeed()
+// 右タイヤモータの線速度を取得する
+double MotorController::getRightMotorSpeed()
 {
-  double rightSpeed = rightWheel.getSpeed() / DEG_180 * RADIUS * PI;
+  double rightSpeed = rightWheel.getSpeed() / (RAD_TO_DEG)*WHEEL_RADIUS;
   return rightSpeed;
 }
 
-// 左タイヤモータの回転速度を取得する
-int32_t MotorController::getLeftMotorSpeed()
+// 左タイヤモータの線速度を取得する
+double MotorController::getLeftMotorSpeed()
 {
-  double leftSpeed = leftWheel.getSpeed() / DEG_180 * RADIUS * PI;
+  double leftSpeed = leftWheel.getSpeed() / (RAD_TO_DEG)*WHEEL_RADIUS;
   return leftSpeed;
 }
