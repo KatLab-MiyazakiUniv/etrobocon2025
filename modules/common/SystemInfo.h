@@ -1,7 +1,7 @@
 /**
  * @file SystemInfo.h
  * @brief 走行システムで統一する情報をまとめたファイル
- * @author molpui0726
+ * @author molpui0726, nishijima515
  */
 
 #ifndef SYSTEM_INFO_H
