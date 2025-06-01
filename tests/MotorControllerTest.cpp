@@ -217,7 +217,7 @@ namespace etrobocon2025_test {
     MotorController.resetLeftMotorPower();
   }
 
-  // 右車輪のモータの回転速度を取得できるかのテスト
+  // 右車輪のモータの線速度を取得できるかのテスト
   TEST(MotorControllerTest, GetRightMotorSpeed)
   {
     MotorController MotorController;
@@ -241,7 +241,7 @@ namespace etrobocon2025_test {
     MotorController.resetRightMotorPower();
   }
 
-  // 左車輪のモータの回転速度を取得できるかのテスト
+  // 左車輪のモータの線速度を取得できるかのテスト
   TEST(MotorControllerTest, GetLeftMotorSpeed)
   {
     MotorController MotorController;
