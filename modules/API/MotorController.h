@@ -6,8 +6,6 @@
 #ifndef MOTOR_MOTORCONTROLLER_H
 #define MOTOR_MOTORCONTROLLER_H
 
-#define WHEEL_RADIUS RADIUS  // 車輪の半径[mm]
-
 #include "Motor.h"
 #include "SystemInfo.h"  // RADIUS, PI, RAD_TO_DEGの定義を含む
 

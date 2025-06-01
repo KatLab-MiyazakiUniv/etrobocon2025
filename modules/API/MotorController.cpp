@@ -146,13 +146,13 @@ int32_t MotorController::getArmMotorCount()
 // 右タイヤモータの線速度を取得する
 double MotorController::getRightMotorSpeed()
 {
-  double rightSpeed = rightWheel.getSpeed() * (DEG_TO_RAD)*WHEEL_RADIUS;
+  double rightSpeed = rightWheel.getSpeed() * DEG_TO_RAD * WHEEL_RADIUS;
   return rightSpeed;
 }
 
 // 左タイヤモータの線速度を取得する
 double MotorController::getLeftMotorSpeed()
 {
-  double leftSpeed = leftWheel.getSpeed() * (DEG_TO_RAD)*WHEEL_RADIUS;
+  double leftSpeed = leftWheel.getSpeed() * DEG_TO_RAD * WHEEL_RADIUS;
   return leftSpeed;
 }
