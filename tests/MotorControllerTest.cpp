@@ -224,16 +224,16 @@ namespace etrobocon2025_test {
     double expected = 0.0;
     double actual = MotorController.getRightMotorSpeed();
     EXPECT_EQ(expected, actual);
-    double speed = 1000;
+    double speed = 1000.0;
     MotorController.setRightMotorSpeed(speed);
-    double expectedLower = speed - 1;  // getやsetの計算過程でintに丸められることによる誤差
+    double expectedLower = speed - 1;  // getやsetの計算過程でintに丸められた際の許容誤差
     actual = MotorController.getRightMotorSpeed();
     // 　誤差が1以内であれば取得できているとする
     EXPECT_LE(expectedLower, actual);
     EXPECT_GE(speed, actual);
-    speed = -1000;
+    speed = -1000.0;
     MotorController.setRightMotorSpeed(speed);
-    double expectedUpper = speed + 1;  // 誤差
+    double expectedUpper = speed + 1;  // getやsetの計算過程でintに丸められた際の許容誤差
     actual = MotorController.getRightMotorSpeed();
     // 　誤差が1以内であれば取得できているとする
     EXPECT_GE(actual, speed);
@@ -248,16 +248,16 @@ namespace etrobocon2025_test {
     double expected = 0.0;
     double actual = MotorController.getLeftMotorSpeed();
     EXPECT_EQ(expected, actual);
-    double speed = 1000;
+    double speed = 1000.0;
     MotorController.setLeftMotorSpeed(speed);
-    double expectedLower = speed - 1;  // 誤差
+    double expectedLower = speed - 1;  // getやsetの計算過程でintに丸められた際の許容誤差
     actual = MotorController.getLeftMotorSpeed();
     // 　誤差が1以内であれば取得できているとする
     EXPECT_LE(expectedLower, actual);
     EXPECT_GE(speed, actual);
-    speed = -1000;
+    speed = -1000.0;
     MotorController.setLeftMotorSpeed(speed);
-    double expectedUpper = speed + 1;  // 誤差
+    double expectedUpper = speed + 1;  // getやsetの計算過程でintに丸められた際の許容誤差
     actual = MotorController.getLeftMotorSpeed();
     EXPECT_GE(actual, speed);
     EXPECT_LE(actual, expectedUpper);
