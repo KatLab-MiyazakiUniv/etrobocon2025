@@ -22,24 +22,16 @@ bool DistanceLineTrace::isMetPreCondition()
 
   // targetDistance値が0以下かつtargetSpeed値が0のときwarningを出して終了する
   if(targetDistance <= 0.0 && targetSpeed == 0.0) {
-    snprintf(buf, SMALL_BUF_SIZE,
-             "The targetDistance value passed to DistanceLineTrace is %.2f, and the targetSpeed "
-             "value passed "
-             "to ColorLineTrace is 0",
-             targetDistance);
     return false;
   }
 
   // targetSpeed値が0の場合はwarningを出して終了する
   if(targetSpeed == 0.0) {
-    snprintf(buf, SMALL_BUF_SIZE, "The targetSpeed value passed to DistanceLineTrace is 0");
     return false;
   }
 
   // targetDistance値が0以下の場合はwarningを出して終了する
   if(targetDistance <= 0.0) {
-    snprintf(buf, SMALL_BUF_SIZE, "The targetDistance value passed to DistanceLineTrace is %.2f",
-             targetDistance);
     return false;
   }
 
