@@ -20,6 +20,8 @@ void Rotation::run()
 {
   MotorController& motorController = robot.getMotorControllerInstance();
   spikeapi::Clock& clock = robot.getClockInstance();
+
+  prepare();
   if(!isMetPreCondition()) return;
 
   // 回転速度（°/秒）で指定しモーターを制御

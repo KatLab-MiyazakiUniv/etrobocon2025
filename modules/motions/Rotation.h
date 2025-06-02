@@ -26,6 +26,12 @@ class Rotation : public Motion {
   void run();
 
   /**
+   * @brief 回頭動作の事前準備を行う
+   * @note オーバーライド必須
+   */
+  virtual void prepare() = 0;
+
+  /**
    * @brief 回頭する際の事前条件判定をする
    * @note オーバーライド必須
    */
