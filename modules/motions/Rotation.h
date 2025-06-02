@@ -17,10 +17,10 @@ class Rotation : public Motion {
    * コンストラクタ
    * @param _robot       ロボット制御クラスへの参照
    * @param _targetAngle 目標回転角度(deg) 0~360
-   * @param _power 指定するパワー値（-100 ～ +100）
+   * @param _speed       指定する速度値（単位：°/秒）
    * @param _isClockwise 回頭方向 true:時計回り, false:反時計回り
    */
-  Rotation(Robot& _robot, int _targetAngle, int power, bool _isClockwise);
+  Rotation(Robot& _robot, int _targetAngle, int speed, bool _isClockwise);
 
  private:
   /**
@@ -54,7 +54,7 @@ class Rotation : public Motion {
 
  protected:
   int targetAngle;   // 目標回転角度(deg) 0~360
-  int power;         // パワー値（-100 ～ +100）
+  int speed;         // 指定する速度値（単位：°/秒）
   bool isClockwise;  // 回頭方向 true:時計回り, false:反時計回り
 };
 #endif
