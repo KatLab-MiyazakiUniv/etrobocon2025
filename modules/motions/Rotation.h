@@ -8,8 +8,6 @@
 #define ROTATION_H
 
 #include "Motion.h"
-#include "Mileage.h"
-#include "SystemInfo.h"
 
 class Rotation : public Motion {
  public:
@@ -22,7 +20,6 @@ class Rotation : public Motion {
    */
   Rotation(Robot& _robot, int _targetAngle, int _speed, bool _isClockwise);
 
- private:
   /**
    * @brief 回頭する
    */
@@ -36,15 +33,9 @@ class Rotation : public Motion {
 
   /**
    * @brief 回頭する際の継続条件判定をする　返り値がfalseでモーターが止まる
-   * @param targetLeftDistance 左車輪の目標距離
-   * @param targetRightDistance 右車輪の目標距離
-   * @param leftSign 左車輪の回転方向
-   * @param rightSign 右車輪の回転方向
    * @note オーバーライド必須
    */
-  virtual bool isMetContinuationCondition(double targetLeftDistance, double targetRightDistance,
-                                          int leftSign, int rightSign)
-      = 0;
+  virtual bool isMetContinuationCondition() = 0;
 
   /**
    * @brief 実行のログを取る
@@ -54,7 +45,9 @@ class Rotation : public Motion {
 
  protected:
   int targetAngle;   // 目標回転角度(deg) 0~360
-  int speed;         // 指定する速度値（単位：°/秒）
+  int speed;         // 指定する速度値（単位：°/秒
   bool isClockwise;  // 回頭方向 true:時計回り, false:反時計回り
+  int leftSign;      //   leftSign  = +1 のとき左モーターは順回転、 -1 のとき逆回転
+  int rightSign;     //   rightSign = +1 のとき右モーターは順回転、 -1 のとき逆回転
 };
 #endif
