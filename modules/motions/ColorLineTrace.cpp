@@ -27,6 +27,12 @@ bool ColorLineTrace::isMetPreCondition()
   return true;
 }
 
+void ColorLineTrace::prepare()
+{
+  // 初期値を代入
+  colorCount = 0;
+}
+
 // 色ライントレースの継続条件
 bool ColorLineTrace::isMetContinuationCondition()
 {

@@ -50,7 +50,7 @@ class ColorLineTrace : public LineTrace {
 
  private:
   static constexpr int JUDGE_COUNT = 3;
-  int colorCount = 0;
+  int colorCount;
   COLOR targetColor;  // 指定色
 };
 
