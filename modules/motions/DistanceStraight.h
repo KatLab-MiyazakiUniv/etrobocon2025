@@ -19,6 +19,11 @@ class DistanceStraight : public Straight {
    */
   DistanceStraight(Robot& robot, double _targetDistance, double _speed);
 
+  /**
+   * @brief 目標距離まで直進する
+   */
+  using Straight::run;
+
  protected:
   /**
    * @brief 直進する際の事前条件判定をする
@@ -26,8 +31,7 @@ class DistanceStraight : public Straight {
   virtual bool isMetPreCondition() override;
 
   /**
-   * @brief ライントレースする際の事前処理をする
-   * @note オーバーライド必須
+   * @brief 直進する際の事前処理をする
    */
   virtual void prepare() override;
 
