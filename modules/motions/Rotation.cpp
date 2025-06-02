@@ -29,7 +29,7 @@ void Rotation::run()
   double targetLeftDistance = initLeftMileage + targetDistance * leftSign;
   double targetRightDistance = initRightMileage + targetDistance * rightSign;
 
-  while(isMetContCondition(targetLeftDistance, targetRightDistance, leftSign, rightSign)) {
+  while(isMetContinuationCondition(targetLeftDistance, targetRightDistance, leftSign, rightSign)) {
     // 回転速度（°/秒）で指定しモーターを制御
     motorController.setLeftMotorSpeed(speed * leftSign);
     motorController.setRightMotorSpeed(speed * rightSign);

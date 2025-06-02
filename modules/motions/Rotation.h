@@ -20,7 +20,7 @@ class Rotation : public Motion {
    * @param _speed       指定する速度値（単位：°/秒）
    * @param _isClockwise 回頭方向 true:時計回り, false:反時計回り
    */
-  Rotation(Robot& _robot, int _targetAngle, int speed, bool _isClockwise);
+  Rotation(Robot& _robot, int _targetAngle, int _speed, bool _isClockwise);
 
  private:
   /**
@@ -42,8 +42,8 @@ class Rotation : public Motion {
    * @param rightSign 右車輪の回転方向
    * @note オーバーライド必須
    */
-  virtual bool isMetContCondition(double targetLeftDistance, double targetRightDistance,
-                                  int leftSign, int rightSign)
+  virtual bool isMetContinuationCondition(double targetLeftDistance, double targetRightDistance,
+                                          int leftSign, int rightSign)
       = 0;
 
   /**
