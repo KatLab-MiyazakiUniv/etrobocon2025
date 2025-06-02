@@ -4,6 +4,9 @@
  * @author nishijima515
  */
 #include "MotorController.h"
+using namespace spikeapi;
+
+using namespace spikeapi;
 
 MotorController::MotorController()
   : rightWheel(EPort::PORT_A),
@@ -54,16 +57,18 @@ void MotorController::resetWheelsMotorPower()
   leftWheel.setPower(0);
 }
 
-// 右タイヤのモータに回転速度をセット
-void MotorController::setRightMotorSpeed(int speed)
+// 右タイヤのモータに,線速度を回転速度に変換しセットする
+void MotorController::setRightMotorSpeed(double speed)
 {
-  rightWheel.setSpeed(speed);
+  int rightAngleSpeed = static_cast<int>(speed / WHEEL_RADIUS * (RAD_TO_DEG));
+  rightWheel.setSpeed(rightAngleSpeed);
 }
 
-// 左タイヤのモータに回転速度をセット
-void MotorController::setLeftMotorSpeed(int speed)
+// 左タイヤのモータに,線速度を回転速度に変換しセットする
+void MotorController::setLeftMotorSpeed(double speed)
 {
-  leftWheel.setSpeed(speed);
+  int leftAngleSpeed = static_cast<int>(speed / WHEEL_RADIUS * (RAD_TO_DEG));
+  leftWheel.setSpeed(leftAngleSpeed);
 }
 
 // 両タイヤのモータを停止する
@@ -140,14 +145,16 @@ int32_t MotorController::getArmMotorCount()
   return armMotor.getCount();
 }
 
-// 右タイヤモータの回転速度を取得する
-int32_t MotorController::getRightMotorSpeed()
+// 右タイヤモータの線速度を取得する
+double MotorController::getRightMotorSpeed()
 {
-  return rightWheel.getSpeed();
+  double rightSpeed = rightWheel.getSpeed() * DEG_TO_RAD * WHEEL_RADIUS;
+  return rightSpeed;
 }
 
-// 左タイヤモータの回転速度を取得する
-int32_t MotorController::getLeftMotorSpeed()
+// 左タイヤモータの線速度を取得する
+double MotorController::getLeftMotorSpeed()
 {
-  return leftWheel.getSpeed();
+  double leftSpeed = leftWheel.getSpeed() * DEG_TO_RAD * WHEEL_RADIUS;
+  return leftSpeed;
 }
