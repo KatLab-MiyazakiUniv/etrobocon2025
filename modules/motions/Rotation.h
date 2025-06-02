@@ -33,6 +33,7 @@ class Rotation : public Motion {
 
   /**
    * @brief 回頭する際の事前条件判定をする
+   * @return true: 事前条件を満たす,false: 事前条件を満たさない
    * @note オーバーライド必須
    */
   virtual bool isMetPreCondition() = 0;
