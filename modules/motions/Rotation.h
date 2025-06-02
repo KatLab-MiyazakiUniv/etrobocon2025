@@ -33,6 +33,7 @@ class Rotation : public Motion {
 
   /**
    * @brief 回頭する際の継続条件判定をする　返り値がfalseでモーターが止まる
+   * @return true: 継続, false: 停止（モーター停止）
    * @note オーバーライド必須
    */
   virtual bool isMetContinuationCondition() = 0;
