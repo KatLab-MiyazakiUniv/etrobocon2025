@@ -46,7 +46,7 @@ class Rotation : public Motion {
 
  protected:
   int targetAngle;   // 目標回転角度(deg) 0~360
-  int speed;         // 指定する速度値（単位：°/秒
+  int speed;         // 指定する速度値（単位：°/秒)
   bool isClockwise;  // 回頭方向 true:時計回り, false:反時計回り
   int leftSign;      //   leftSign  = +1 のとき左モーターは順回転、 -1 のとき逆回転
   int rightSign;     //   rightSign = +1 のとき右モーターは順回転、 -1 のとき逆回転
