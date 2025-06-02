@@ -1,6 +1,6 @@
 /**
  * @file ColorSensor.h
- * @brief カラーセンサクラス（ダミー）
+ * @brief カラーセンサークラス（ダミー）
  * @author HaruArima08
  */
 
@@ -11,27 +11,15 @@
 #include <stdlib.h>
 #include <cstdint>
 
-typedef struct {
-  uint16_t h;  // 色相
-  uint8_t s;   // 彩度
-  uint8_t v;   // 明度
-} pup_color_hsv_t;
-
-// 型定義（Colorjudgeで使われる）
-typedef int pbio_color_hue_t;
-
 // ダミーのカラーID定数定義
 #define PBIO_COLOR_HUE_RED 0
 #define PBIO_COLOR_HUE_YELLOW 60
 #define PBIO_COLOR_HUE_GREEN 120
 #define PBIO_COLOR_HUE_BLUE 240
 
-// ダミーの反射率定義
-#define REFLECTION_RESULT 10
-
 namespace spikeapi {
 
-  // カラーセンサクラス
+  // カラーセンサークラス
   class ColorSensor {
    public:
     struct HSV {
@@ -41,12 +29,12 @@ namespace spikeapi {
     };
     /**
      * コンストラクタ
-     * @param port カラーセンサポート番号
+     * @param port カラーセンサーポート番号
      * @return -
      */
     explicit ColorSensor(EPort port)
     {
-      // 実際のセンサではポートの初期化などを行う
+      // 実際のセンサーではポートの初期化などを行う
       (void)port;  // 引数を使わないことを明示
     }
 
@@ -55,7 +43,7 @@ namespace spikeapi {
      * @param hsv HSV値を代入する変数（参照渡し）
      * @return HSVを保持するクラス
      */
-    void getColor(pup_color_hsv_t& hsv)
+    void getColor(HSV& hsv, bool surface = true)
     {
       int index = rand() % 6;
       switch(index) {
@@ -82,12 +70,6 @@ namespace spikeapi {
           break;
       }
     }
-
-    /**
-     * センサーの発する光を表面がどの程度反射するかを測定する
-     * @return どの程度反射しているか（％）
-     */
-    int32_t getReflection() const { return REFLECTION_RESULT; }
   };
 }  // namespace spikeapi
 

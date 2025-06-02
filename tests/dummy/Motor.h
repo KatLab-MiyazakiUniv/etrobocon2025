@@ -9,9 +9,13 @@
 
 #include <stdint.h>
 #include "Port.h"
+<<<<<<< HEAD
 #include "spikeapi.h"
+    =======
+>>>>>>> main
 
-namespace spikeapi {
+    namespace spikeapi
+{
   /**
    * SPIKE モータクラス
    */
@@ -25,8 +29,8 @@ namespace spikeapi {
     /**
      * コンストラクタ
      * @param port PUPポートID
-     * @param direction モータの回転方向
-     * @param reset_count カウントをリセットするか
+     * @param direction モータの回転方向 初期値はCLOCKWISE(時計回り)
+     * @param reset_count カウントをリセットするか　初期値はtrue
      * pup_motor_setup()を複数回呼ぶとハングするため、コンストラクタで一回だけ呼ぶことでエラーを回避する
      */
     Motor(EPort port, EDirection direction = EDirection::CLOCKWISE, bool reset_count = true)
