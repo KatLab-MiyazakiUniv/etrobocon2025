@@ -7,6 +7,7 @@
 #define MOTOR_MOTORCONTROLLER_H
 
 #include "Motor.h"
+#include "SystemInfo.h"  // WHEEL_RADIUS, PI, RAD_TO_DEG, DEG_TO_RADの定義を含む
 
 using namespace spikeapi;
 
@@ -51,16 +52,16 @@ class MotorController {
   void resetWheelsMotorPower();
 
   /**
-   * @brief 右タイヤのモータに回転速度をセット
-   * @param speed 回転速度（°/秒）
+   * @brief 右タイヤのモータに, 線速度から算出した回転速度をセット
+   * @param speed 線速度（mm/秒）
    */
-  void setRightMotorSpeed(int speed);
+  void setRightMotorSpeed(double speed);
 
   /**
-   * @brief 左タイヤのモータに回転速度をセット
-   * @param speed 回転速度（°/秒）
+   * @brief 左タイヤのモータに, 線速度から算出した回転速度をセット
+   * @param speed 線速度（mm/秒）
    */
-  void setLeftMotorSpeed(int speed);
+  void setLeftMotorSpeed(double speed);
 
   /**
    * @brief 両タイヤのモータを停止する
@@ -131,21 +132,21 @@ class MotorController {
   int getArmMotorPower();
 
   /**
-   * @brief 右タイヤの回転速度を取得する
-   * @return 右タイヤの回転速度（°/秒）
+   * @brief 右タイヤの線速度を取得する
+   * @return 右タイヤの線速度（mm/秒）
    */
-  int32_t getRightMotorSpeed();
+  double getRightMotorSpeed();
 
   /**
-   * @brief 左タイヤの回転速度を取得する
-   * @return 左タイヤの回転速度（°/秒）
+   * @brief 左タイヤの線速度を取得する
+   * @return 左タイヤの線速度（mm/秒）
    */
-  int32_t getLeftMotorSpeed();
+  double getLeftMotorSpeed();
 
  private:
-  Motor rightWheel;  // 右タイヤモータのインスタンス
-  Motor leftWheel;   // 左タイヤモータのインスタンス
-  Motor armMotor;    // アームモータのインスタンス
+  spikeapi::Motor rightWheel;  // 右タイヤモータのインスタンス
+  spikeapi::Motor leftWheel;   // 左タイヤモータのインスタンス
+  spikeapi::Motor armMotor;    // アームモータのインスタンス
 
   /**
    * @brief モータに設定するpower値の制限

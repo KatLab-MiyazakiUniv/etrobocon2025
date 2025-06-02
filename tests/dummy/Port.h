@@ -7,6 +7,12 @@
 #ifndef SPIKE_CPP_API_PORT_H_
 #define SPIKE_CPP_API_PORT_H_
 
+/** センサポート数 */
+#define NUM_PORT_S (6)  // number of sensor ports
+
+/** モータポート数 */
+#define NUM_PORT_M (6)  // number of motor ports
+
 /**
  * モータ/センサポート関連定義
  */
@@ -22,11 +28,5 @@ enum class EPort {
   PORT_E = 4, /**< SPIKE ポートE */
   PORT_F = 5  /**< SPIKE ポートF */
 };
-
-/** センサポート数 */
-#define NUM_PORT_S (6)  // number of sensor ports
-
-/** モータポート数 */
-#define NUM_PORT_M (6)  // number of motor ports
 
 #endif  // ! SPIKE_CPP_API_PORT_H_
