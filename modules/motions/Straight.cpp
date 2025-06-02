@@ -19,12 +19,18 @@ void Straight::run()
   // 事前準備
   prepare();
 
-  // 速度に合うようにパワー値を設定
-  robot.getMotorControllerInstance().setRightMotorSpeed(targetSpeed);
-  robot.getMotorControllerInstance().setLeftMotorSpeed(targetSpeed);
+  SpeedCalculator speedCalculator(robot, targetSpeed);
 
   // 継続条件を満たしている間繰り返す
   while(isMetContinuationCondition()) {
+    // Power値を計算
+    double currentRightPower = speedCalculator.calculateRightMotorPower();
+    double currentLeftPower = speedCalculator.calculateLeftMotorPower();
+
+    // モーターにPower値をセット
+    robot.getMotorControllerInstance().setRightMotorPower(currentRightPower);
+    robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower);
+
     robot.getClockInstance().sleep(10000);  // 10000マイクロ秒(10ミリ秒)待機
   }
 

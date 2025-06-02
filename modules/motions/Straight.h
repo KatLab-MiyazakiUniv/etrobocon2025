@@ -10,6 +10,7 @@
 #include "Motion.h"
 #include "Pid.h"
 #include "Mileage.h"
+#include "SpeedCalculator.h"
 
 class Straight : public Motion {
  public:
@@ -32,8 +33,7 @@ class Straight : public Motion {
   virtual bool isMetPreCondition() = 0;
 
   /**
-   * @brief ライントレースする際の事前処理をする
-   * @note オーバーライド必須
+   * @brief 直進する際の事前処理をする
    */
   virtual void prepare() = 0;
 
