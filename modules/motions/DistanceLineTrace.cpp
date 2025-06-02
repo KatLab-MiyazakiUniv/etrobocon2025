@@ -18,17 +18,17 @@ DistanceLineTrace::DistanceLineTrace(Robot& _robot, double _targetDistance, doub
 // 距離ライントレースの事前条件
 bool DistanceLineTrace::isMetPreCondition()
 {
-  // targetDistance値が0以下かつtargetSpeed値が0のときwarningを出して終了する
+  // targetDistance値が0以下かつtargetSpeed値が0のとき終了する
   if(targetDistance <= 0.0 && targetSpeed == 0.0) {
     return false;
   }
 
-  // targetSpeed値が0の場合はwarningを出して終了する
+  // targetSpeed値が0の場合は終了する
   if(targetSpeed == 0.0) {
     return false;
   }
 
-  // targetDistance値が0以下の場合はwarningを出して終了する
+  // targetDistance値が0以下の場合は終了する
   if(targetDistance <= 0.0) {
     return false;
   }

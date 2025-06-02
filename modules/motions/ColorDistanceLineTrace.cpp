@@ -24,8 +24,8 @@ bool ColorDistanceLineTrace::isMetPreCondition()
     return false;
   }
 
-  // targetDistance値が0以下かつtargetSpeed値が0のときwarningを出して終了する
-  if(targetDistance <= 0.0 && targetSpeed == 0.0) {
+  // targetDistance値が0かつtargetSpeed値が0のときwarningを出して終了する
+  if(targetDistance == 0.0 && targetSpeed == 0.0) {
     return false;
   }
 
@@ -39,8 +39,8 @@ bool ColorDistanceLineTrace::isMetPreCondition()
     return false;
   }
 
-  // targetDistance値が0以下の場合はwarningを出して終了する
-  if(targetDistance <= 0.0) {
+  // targetDistance値が0の場合はwarningを出して終了する
+  if(targetDistance == 0.0) {
     return false;
   }
 
