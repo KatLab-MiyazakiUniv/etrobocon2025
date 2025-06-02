@@ -24,7 +24,7 @@ void Rotation::run()
   prepare();
   if(!isMetPreCondition()) return;
 
-  // 回転速度（°/秒）で指定しモーターを制御
+  // 回転速度（mm/秒）で指定しモーターを制御
   motorController.setLeftMotorSpeed(speed * leftSign);
   motorController.setRightMotorSpeed(speed * rightSign);
 
