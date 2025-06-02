@@ -10,7 +10,7 @@
 #include "spikeapi.h"
 #include "MotorController.h"
 #include "CameraCapture.h"
-// #include "ColorSensor.h"
+#include "ColorSensor.h"
 #include "Clock.h"
 
 class Robot {
@@ -37,14 +37,19 @@ class Robot {
    * @brief ColorSensorのインスタンスの参照を返す
    * @return メンバ変数colorSensor(ColorSensorのインスタンス)の参照
    */
-  // spikeapi::ColorSensor& getColorSensorInstance();
+  spikeapi::ColorSensor& getColorSensorInstance();
+
+  /**
+   * @brief Clockのインスタンスの参照を返す
+   * @return メンバ変数clock(Clockのインスタンス)の参照
+   */
   spikeapi::Clock& getClockInstance();
 
  private:
-  MotorController motorController;  // MotorControllerインスタンス
-  CameraCapture cameraCapture;      // CameraCaptureインスタンス
-  // spikeapi::ColorSensor colorSensor;  // ColorSensorインスタンス
-  spikeapi::Clock clock;
+  MotorController motorController;    // MotorControllerインスタンス
+  CameraCapture cameraCapture;        // CameraCaptureインスタンス
+  spikeapi::ColorSensor colorSensor;  // ColorSensorインスタンス
+  spikeapi::Clock clock;              // Clockインスタンス
 };
 
 #endif
