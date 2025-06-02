@@ -6,7 +6,7 @@
 
 #include "Robot.h"
 
-Robot::Robot() : motorController(), cameraCapture(), /*, colorSensor(EPort::PORT_E),*/ clock() {}
+Robot::Robot() : motorController(), cameraCapture(), colorSensor(EPort::PORT_E), clock() {}
 
 MotorController& Robot::getMotorControllerInstance()
 {
@@ -18,10 +18,10 @@ CameraCapture& Robot::getCameraCaptureInstance()
   return cameraCapture;
 }
 
-// spikeapi::ColorSensor& Robot::getColorSensorInstance()
-// {
-//   return colorSensor;
-// }
+spikeapi::ColorSensor& Robot::getColorSensorInstance()
+{
+  return colorSensor;
+}
 
 spikeapi::Clock& Robot::getClockInstance()
 {
