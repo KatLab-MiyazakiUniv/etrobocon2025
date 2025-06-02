@@ -39,6 +39,12 @@ class ColorDistanceLineTrace : public LineTrace {
   bool isMetPreCondition() override;
 
   /**
+   * @brief ライントレースする際の事前処理をする
+   * @note オーバーライド必須
+   */
+  virtual void prepare() override;
+
+  /**
    * @brief 色指定距離ライントレースする際の継続条件判定をする　返り値がfalseでモーターが止まる
    * @note オーバーライド
    */
@@ -46,9 +52,12 @@ class ColorDistanceLineTrace : public LineTrace {
 
  private:
   static constexpr int JUDGE_COUNT = 3;
-  int colorCount = 0;
-  COLOR targetColor;      // 指定色
-  double targetDistance;  // 目標距離 0~
+  int colorCount;
+  COLOR targetColor;        // 指定色
+  double targetDistance;    // 目標距離 0~
+  double initLeftMileage;   // クラス呼び出し時の左車輪の走行距離
+  double initRightMileage;  // クラス呼び出し時の右車輪の走行距離
+  double initDistance;      // 実行前の走行距離
 };
 
 #endif

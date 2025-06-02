@@ -7,12 +7,15 @@
 #include "ColorDistanceLineTrace.h"
 using namespace std;
 
-ColorDistanceLineTrace::ColorDistanceLineTrace(COLOR _targetColor, double _targetDistance,
-                                               double _targetSpeed, int _targetBrightness,
-                                               const PidGain& _pidGain, bool& _isLeftEdge)
-  : LineTrace(_targetSpeed, _targetBrightness, _pidGain, _isLeftEdge),
+ColorDistanceLineTrace::ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor,
+                                               double _targetDistance, double _targetSpeed,
+                                               int _targetBrightness, const PidGain& _pidGain,
+                                               bool& _isLeftEdge)
+  : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain, _isLeftEdge),
     targetColor(_targetColor),
-    targetDistance(_targetDistance) {};
+    targetDistance(_targetDistance)
+{
+}
 
 bool ColorDistanceLineTrace::isMetPreCondition()
 {
@@ -43,7 +46,7 @@ bool ColorDistanceLineTrace::isMetPreCondition()
 
   return true;
 }
-void ColorDistanceLineTracing::prepare()
+void ColorDistanceLineTrace::prepare()
 {
   // 初期値を代入
   initDistance = Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
@@ -57,20 +60,22 @@ void ColorDistanceLineTracing::prepare()
 
   // 色カウントを初期化
   colorCount = 0;
-
-  logRunning();
 }
 
-bool ColorDistanceLineTracing::isMetContinuationCondition()
+bool ColorDistanceLineTrace::isMetContinuationCondition()
 {
-  if(ColorJudge::getColor(measurer.getRawColor()) == targetColor) {
+  // HSV値を取得
+  spikeapi::ColorSensor::HSV hsv;
+  robot.getColorSensorInstance().getColor(hsv);
+  if(ColorJudge::convertHsvToColor(hsv) == targetColor) {
     colorCount++;
   } else {
     colorCount = 0;
   }
 
   // (走行距離が目標距離に到達)||(指定された色をJUDGE_COUNT回連続で取得したとき)モータが止まる
-  if((fabs(Mileage::calculateMileage(measurer.getRightCount(), measurer.getLeftCount())
+  if((fabs(Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
+                                     robot.getMotorControllerInstance().getLeftMotorCount())
            - initDistance)
       >= targetDistance)
      || (colorCount >= JUDGE_COUNT))

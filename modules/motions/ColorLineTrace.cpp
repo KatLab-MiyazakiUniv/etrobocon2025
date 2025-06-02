@@ -36,8 +36,12 @@ void ColorLineTrace::prepare()
 // 色ライントレースの継続条件
 bool ColorLineTrace::isMetContinuationCondition()
 {
+  // HSV値を取得
+  spikeapi::ColorSensor::HSV hsv;
+  robot.getColorSensorInstance().getColor(hsv);
+
   // 現在の色が目標色と一致していればカウント増加、違えばリセット
-  if(ColorJudge::getColor(measurer.getRawColor()) == targetColor) {
+  if(ColorJudge::convertHsvToColor(hsv) == targetColor) {
     colorCount++;
   } else {
     colorCount = 0;
