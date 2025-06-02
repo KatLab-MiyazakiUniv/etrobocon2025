@@ -32,15 +32,20 @@ class Straight : public Motion {
   virtual bool isMetPreCondition() = 0;
 
   /**
-   * @brief 直進する際の動作継続条件判定をする　返り値がtrueの間モーターが回転
+   * @brief ライントレースする際の事前処理をする
+   * @note オーバーライド必須
+   */
+  virtual void prepare() = 0;
+
+  /**
+   * @brief 直進する際の動作継続条件判定をする 返り値がtrueの間モーターが回転
    * @note オーバーライド必須
    */
   virtual bool isMetContinuationCondition() = 0;
 
  protected:
   // 目標値は継承後に追加する
-  double targetSpeed;      // 目標速度[mm/s]
-  double initialDistance;  // 初期走行距離
+  double targetSpeed;  // 目標速度[mm/s]
 };
 
 #endif

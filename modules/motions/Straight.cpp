@@ -15,10 +15,9 @@ void Straight::run()
   if(!isMetPreCondition()) {
     return;
   }
-  // 呼び出し時の走行距離を取得する
-  double initialRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
-  double initialLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
-  initialDistance = Mileage::calculateMileage(initialRightMotorCount, initialLeftMotorCount);
+
+  // 事前準備
+  prepare();
 
   // 速度に合うようにパワー値を設定
   robot.getMotorControllerInstance().setRightMotorSpeed(targetSpeed);
