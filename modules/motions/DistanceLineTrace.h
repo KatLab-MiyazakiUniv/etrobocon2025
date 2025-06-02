@@ -7,8 +7,6 @@
 #ifndef DISTANCE_LINE_TRACE_H
 #define DISTANCE_LINE_TRACE_H
 
-#define SMALL_BUF_SIZE 256  // メッセージ用のバッファサイズ
-
 #include "LineTrace.h"
 
 class DistanceLineTrace : public LineTrace {

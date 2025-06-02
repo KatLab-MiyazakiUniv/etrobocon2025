@@ -4,8 +4,8 @@
  *  @author miyahara046
  */
 
-#ifndef SpeedCalculator_H
-#define SpeedCalculator_H
+#ifndef SPEED_CALCULATOR_H
+#define SPEED_CALCULATOR_H
 
 #include "Pid.h"
 #include "Robot.h"
