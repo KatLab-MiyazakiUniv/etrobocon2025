@@ -9,13 +9,9 @@
 
 #include <stdint.h>
 #include "Port.h"
-<<<<<<< HEAD
 #include "spikeapi.h"
-    =======
->>>>>>> main
 
-    namespace spikeapi
-{
+namespace spikeapi {
   /**
    * SPIKE モータクラス
    */
