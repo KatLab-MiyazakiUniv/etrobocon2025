@@ -14,22 +14,22 @@ class ColorStraight : public Straight {
  public:
   /**
    * コンストラクタ
-   * @param robot ロボット本体への参照
+   * @param _robot ロボット本体への参照
    * @param _targetColor 目標色
    * @param _speed       目標速度[mm/s]
    */
-  ColorStraight(Robot& robot, COLOR _targetColor, double _speed);
-
-  /**
-   * @brief 指定色まで直進する
-   */
-  using Straight::run;
+  ColorStraight(Robot& _robot, COLOR _targetColor, double _speed);
 
  protected:
   /**
    * @brief 直進する際の事前条件判定をする
    */
   virtual bool isMetPreCondition() override;
+
+  /**
+   * @brief 直進する際の事前処理をする
+   */
+  void prepare() override;
 
   /**
    * @brief 直進する際の動作継続条件判定をする 返り値がtrueの間モーターが回転

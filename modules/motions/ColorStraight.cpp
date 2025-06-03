@@ -7,25 +7,28 @@
 #include "ColorStraight.h"
 using namespace std;
 
-ColorStraight::ColorStraight(Robot& robot, COLOR _targetColor, double _targetSpeed)
-  : Straight(robot, _targetSpeed), targetColor(_targetColor)
+ColorStraight::ColorStraight(Robot& _robot, COLOR _targetColor, double _targetSpeed)
+  : Straight(_robot, _targetSpeed), targetColor(_targetColor)
 {
 }
 
 bool ColorStraight::isMetPreCondition()
 {
-  // 目標速度値が0の場合は終了する
+  // 目標速度が0の場合は終了する
   if(targetSpeed == 0) {
-    std::cout << "[Warning] targetSpeed is 0.0\n";
     return false;
   }
-  // 目標の色がNoneのときwarningを出して終了する
+  // 目標の色がNoneの場合は終了する
   if(targetColor == COLOR::NONE) {
-    std::cout << "The targetColor passed to ColorStraight is NONE\n";
     return false;
   }
 
   return true;
+}
+
+void ColorStraight::prepare()
+{
+  colorCount = 0;
 }
 
 bool ColorStraight::isMetContinuationCondition()
