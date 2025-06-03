@@ -52,7 +52,7 @@ void LineTrace::run()
     robot.getClockInstance().sleep(10000);
   }
   // モータを停止
-  robot.getMotorControllerInstance().stopWheelsMotor();
+  robot.getMotorControllerInstance().brakeWheelsMotor();
 
   // ライントレース終了後の処理
   // robot.getClockInstance().sleep(10000);
