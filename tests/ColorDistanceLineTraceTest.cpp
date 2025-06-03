@@ -16,7 +16,7 @@ namespace etrobocon2025_test {
   {
     Robot robot;
     COLOR targetColor = COLOR::GREEN;
-    double targetDistance = 10000;
+    double targetDistance = 10000.0;
     double targetSpeed = 50000.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
@@ -25,8 +25,8 @@ namespace etrobocon2025_test {
                               gain, isLeftEdge);
 
     // 初期値から期待する走行距離を求める
-    // int initialRightCount = measurer.getRightCount();
-    // int initialLeftCount = measurer.getLeftCount();
+    // int initialRightCount = robot.getMotorControllerInstance().getRightMotorCount();
+    // int initialLeftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     // double expected = Mileage::calculateMileage(initialRightCount, initialLeftCount);
     double expected = 0.0;
     srand(9037);  // 3回連続して緑を取得する乱数シード
@@ -46,7 +46,7 @@ namespace etrobocon2025_test {
   {
     Robot robot;
     COLOR targetColor = COLOR::BLUE;
-    double targetDistance = 10000;
+    double targetDistance = 10000.0;
     double targetSpeed = 100.0;
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
@@ -55,8 +55,8 @@ namespace etrobocon2025_test {
                               gain, isLeftEdge);
 
     // 初期値から期待する走行距離を求める
-    // int initialRightCount = measurer.getRightCount();
-    // int initialLeftCount = measurer.getLeftCount();
+    // int initialRightCount = robot.getMotorControllerInstance().getRightMotorCount();
+    // int initialLeftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     // double expected = Mileage::calculateMileage(initialRightCount, initialLeftCount);
     double expected = 0.0;
 
@@ -77,7 +77,7 @@ namespace etrobocon2025_test {
   {
     Robot robot;
     COLOR targetColor = COLOR::YELLOW;
-    double targetDistance = 1000;
+    double targetDistance = 1000.0;
     double targetSpeed = -100.0;
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
@@ -86,8 +86,8 @@ namespace etrobocon2025_test {
                               gain, isLeftEdge);
 
     // 初期値から期待する走行距離を求める
-    // int initialRightCount = measurer.getRightCount();
-    // int initialLeftCount = measurer.getLeftCount();
+    // int initialRightCount = robot.getMotorControllerInstance().getRightMotorCount();
+    // int initialLeftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     // double expected = Mileage::calculateMileage(initialRightCount, initialLeftCount);
     double expected = 0.0;
 
@@ -108,7 +108,7 @@ namespace etrobocon2025_test {
   {
     Robot robot;
     COLOR targetColor = COLOR::BLUE;
-    double targetDistance = 10000;
+    double targetDistance = 10000.0;
     double targetSpeed = 0.0;
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
@@ -117,8 +117,8 @@ namespace etrobocon2025_test {
                               gain, isLeftEdge);
 
     // 初期値から期待する走行距離を求める
-    // int initialRightCount = measurer.getRightCount();
-    // int initialLeftCount = measurer.getLeftCount();
+    // int initialRightCount = robot.getMotorControllerInstance().getRightMotorCount();
+    // int initialLeftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     // double expected = Mileage::calculateMileage(initialRightCount, initialLeftCount);
     double expected = 0.0;
 
@@ -138,7 +138,7 @@ namespace etrobocon2025_test {
   {
     Robot robot;
     COLOR targetColor = COLOR::NONE;
-    double targetDistance = 10000;
+    double targetDistance = 10000.0;
     double targetSpeed = 100.0;
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
