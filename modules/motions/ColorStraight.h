@@ -37,9 +37,10 @@ class ColorStraight : public Straight {
   bool isMetContinuationCondition() override;
 
  private:
+  int colorCount = 0;  // 色を取得した回数
+  COLOR targetColor;   // 目標色
+  // 取得色の決定に必要な連続取得回数
   static constexpr int JUDGE_COUNT = 3;
-  int colorCount = 0;
-  COLOR targetColor;  // 目標色
 };
 
 #endif
