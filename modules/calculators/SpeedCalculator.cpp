@@ -20,7 +20,7 @@ double SpeedCalculator::calculateRightMotorPower()
 {
   // 走行時間を算出
   double currentRightTime = robot.getClockInstance().now() / 1000000.0;  // 現在の時間を取得(秒単位)
-  double diffRightTime = (double)(currentRightTime - prevRightTime);     // 秒単位に変換
+  double diffRightTime = (double)(currentRightTime - prevRightTime);
   // 右タイヤの走行速度を算出
   double currentRightSpeed = robot.getMotorControllerInstance().getRightMotorSpeed();
   // 走行速度に相当する右タイヤのPower値を算出

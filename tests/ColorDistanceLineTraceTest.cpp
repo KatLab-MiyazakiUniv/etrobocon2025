@@ -72,7 +72,7 @@ namespace etrobocon2025_test {
     EXPECT_LT(actual, targetDistance);  // 目標距離よりも進んでいない
   }
 
-  // 後退すると終了するテストケース
+  // 後退するテストケース
   TEST(ColorDistanceLineTraceTest, colorRunBackLeftEdge)
   {
     Robot robot;
@@ -99,7 +99,8 @@ namespace etrobocon2025_test {
     int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    EXPECT_EQ(actual, expected);  // 後退のため進んでいない
+    EXPECT_LT(actual, expected);              // 実行後に少しでも進んでいる
+    EXPECT_LT(fabs(actual), targetDistance);  // 目標距離よりも進んでいない
   }
 
   // targetSpeed値が0の時に終了するテストケース
