@@ -4,8 +4,8 @@
  * @author miyahara046
  */
 
-#ifndef COLOR_DISTANCE_LINE_TRACING_H
-#define COLOR_DISTANCE_LINE_TRACING_H
+#ifndef COLOR_DISTANCE_LINE_TRACE_H
+#define COLOR_DISTANCE_LINE_TRACE_H
 
 #include "LineTrace.h"
 #include "ColorJudge.h"

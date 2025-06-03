@@ -5,7 +5,6 @@
  */
 
 #include "ColorDistanceLineTrace.h"
-using namespace std;
 
 ColorDistanceLineTrace::ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor,
                                                double _targetDistance, double _targetSpeed,
@@ -17,6 +16,7 @@ ColorDistanceLineTrace::ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor
 {
 }
 
+// 色距離指定ライントレースの事前条件
 bool ColorDistanceLineTrace::isMetPreCondition()
 {
   // 目標の色がNoneのとき終了する
@@ -29,13 +29,15 @@ bool ColorDistanceLineTrace::isMetPreCondition()
     return false;
   }
 
-  // targetDistance値が0の場合は終了する
-  if(targetDistance == 0.0) {
+  // targetDistance値が0以下の場合は終了する
+  if(targetDistance <= 0.0) {
     return false;
   }
 
   return true;
 }
+
+// 色距離指定ライントレースの事前処理
 void ColorDistanceLineTrace::prepare()
 {
   // 初期値を代入
@@ -57,6 +59,8 @@ bool ColorDistanceLineTrace::isMetContinuationCondition()
   // HSV値を取得
   spikeapi::ColorSensor::HSV hsv;
   robot.getColorSensorInstance().getColor(hsv);
+
+  // 現在の色が目標色と一致していればカウント増加、違えばリセット
   if(ColorJudge::convertHsvToColor(hsv) == targetColor) {
     colorCount++;
   } else {
