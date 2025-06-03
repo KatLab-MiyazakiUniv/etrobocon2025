@@ -4,8 +4,8 @@
  * @author HaruArima08
  */
 
-#ifndef DISTANCESTRAIGHT_H
-#define DISTANCESTRAIGHT_H
+#ifndef DISTANCE_STRAIGHT_H
+#define DISTANCE_STRAIGHT_H
 
 #include "Straight.h"
 
@@ -23,7 +23,7 @@ class DistanceStraight : public Straight {
   /**
    * @brief 直進する際の事前条件判定をする
    */
-  virtual bool isMetPreCondition() override;
+  bool isMetPreCondition() override;
 
   /**
    * @brief 直進する際の事前処理をする
@@ -33,7 +33,7 @@ class DistanceStraight : public Straight {
   /**
    * @brief 直進する際の動作継続条件判定をする 返り値がtrueの間モーターが回転
    */
-  virtual bool isMetContinuationCondition() override;
+  bool isMetContinuationCondition() override;
 
  private:
   double targetDistance;   // 目標距離 [mm]
