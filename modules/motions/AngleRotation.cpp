@@ -16,9 +16,15 @@ AngleRotation::AngleRotation(Robot& robot, int targetAngle, int speed, bool isCl
 void AngleRotation::prepare()
 {
   MotorController& motorController = robot.getMotorControllerInstance();
+
+  // 現在の走行距離を取得
   double initLeftMileage = Mileage::calculateWheelMileage(motorController.getLeftMotorCount());
   double initRightMileage = Mileage::calculateWheelMileage(motorController.getRightMotorCount());
+
+  // 回頭距離 = π × TREAD(両輪間距離[mm]) × (角度 / 360) により各車輪の目標距離を算出
   double targetDistance = M_PI * TREAD * targetAngle / 360;
+
+  // 目標走行距離を方向に応じて設定
   targetLeftDistance = initLeftMileage + targetDistance * leftSign;
   targetRightDistance = initRightMileage + targetDistance * rightSign;
 }

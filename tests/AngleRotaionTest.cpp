@@ -27,7 +27,7 @@ namespace etrobocon2024_test {
     int speed = 300;
     bool isClockwise = true;
 
-    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, angle, speed, isClockwise);
 
     double expected = angle;  // 指定した回頭角度を期待値とする
 
@@ -62,7 +62,7 @@ namespace etrobocon2024_test {
     int speed = 300;
     bool isClockwise = false;
 
-    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, angle, speed, isClockwise);
 
     double expected = angle;  // 指定した回頭角度を期待値とする
 
@@ -97,7 +97,7 @@ namespace etrobocon2024_test {
     int speed = 0;
     bool isClockwise = true;
 
-    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, angle, speed, isClockwise);
 
     double expected = 0;  // 回頭しない
 
@@ -126,7 +126,7 @@ namespace etrobocon2024_test {
     int speed = -300;
     bool isClockwise = true;
 
-    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, angle, speed, isClockwise);
 
     double expected = 0;  // 回頭しない
 
@@ -155,7 +155,7 @@ namespace etrobocon2024_test {
     int speed = 300;
     bool isClockwise = true;
 
-    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, angle, speed, isClockwise);
 
     double expected = 0;  // 回頭しない
 
@@ -184,7 +184,7 @@ namespace etrobocon2024_test {
     int speed = 300;
     bool isClockwise = true;
 
-    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, angle, speed, isClockwise);
 
     double expected = 0;  // 回頭しない
 
@@ -213,7 +213,7 @@ namespace etrobocon2024_test {
     int speed = 300;
     bool isClockwise = true;
 
-    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, angle, speed, isClockwise);
 
     double expected = 0;  // 回頭しない
 

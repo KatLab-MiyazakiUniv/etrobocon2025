@@ -39,13 +39,13 @@ class Rotation : public Motion {
   virtual bool isMetPreCondition() = 0;
 
   /**
-   * @brief 回頭する際の継続条件判定をする　返り値がfalseでモーターが止まる
+   * @brief 回頭する際の継続条件判定をする。返り値がfalseでモーターが止まる
    * @return true: 継続, false: 停止（モーター停止）
    * @note オーバーライド必須
    */
   virtual bool isMetContinuationCondition() = 0;
 
-  protected:
+ protected:
   int targetAngle;   // 目標回転角度(deg) 0~360
   int speed;         // 指定する速度（mm/秒）
   bool isClockwise;  // 回頭方向 true:時計回り, false:反時計回り

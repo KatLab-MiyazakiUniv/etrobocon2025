@@ -24,6 +24,7 @@ class AngleRotation : public Rotation {
 
   /**
    * @brief 回頭する
+   * @note run() メソッドは Rotation クラスの実装をそのまま使用する
    */
   using Rotation::run;
 
@@ -39,14 +40,14 @@ class AngleRotation : public Rotation {
   bool isMetPreCondition() override;
 
   /**
-   * @brief 回頭する際の継続条件判定をする　返り値がfalseでモーターが止まる
+   * @brief 回頭する際の継続条件判定をする。返り値がfalseでモーターが止まる
    * @return true: 継続, false: 停止（モーター停止）
    */
   bool isMetContinuationCondition() override;
 
  protected:
-  double targetLeftDistance;
-  double targetRightDistance;
+  double targetLeftDistance;   // 左モーターの目標移動距離（
+  double targetRightDistance;  // 右モーターの目標移動距離
 };
 
 #endif
