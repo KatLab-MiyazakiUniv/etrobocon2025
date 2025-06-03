@@ -31,8 +31,9 @@ namespace etrobocon2024_test {
 
     double expected = angle;  // 指定した回頭角度を期待値とする
 
-    // 一回のsetSpeed()でダミーのモーターに加算される値はspeed * 0.05なので、
-    // 1 ループで余分に回る角度は speed * 0.05 * TRANSFORM として誤差を設定
+    // 実機の setSpeed() 後のモータカウントの増減を模倣するため、ダミークラスでは
+    // getCount()の呼び出しごとに count += speed× 0.05される。 よって、
+    // 1ループあたりの余分な回転角は speed × 0.05 × TRANSFORM を誤差として見込む。
     double error = speed * 0.05 * TRANSFORM;
 
     // 回頭前のモータカウント
@@ -65,7 +66,9 @@ namespace etrobocon2024_test {
 
     double expected = angle;  // 指定した回頭角度を期待値とする
 
-    // 一回のsetMotorSpeed()でダミーのモーターに加算される値はspeed * 0.05
+    // 実機の setSpeed() 後のモータカウントの増減を模倣するため、ダミークラスでは
+    // getCount()の呼び出しごとに count += speed× 0.05される。 よって、
+    // 1ループあたりの余分な回転角は speed × 0.05 × TRANSFORM を誤差として見込む。
     double error = speed * 0.05 * TRANSFORM;
 
     // 回頭前のモータカウント
