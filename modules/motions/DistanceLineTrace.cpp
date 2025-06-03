@@ -5,7 +5,6 @@
  */
 
 #include "DistanceLineTrace.h"
-using namespace std;
 
 DistanceLineTrace::DistanceLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
                                      int _targetBrightness, const PidGain& _pidGain,

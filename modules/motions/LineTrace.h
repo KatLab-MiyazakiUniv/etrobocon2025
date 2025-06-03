@@ -5,13 +5,14 @@
  * @author miyahara046
  */
 
-#ifndef LINE_TRACING_H
-#define LINE_TRACING_H
+#ifndef LINE_TRACE_H
+#define LINE_TRACE_H
 
 #include "Motion.h"
 #include "Mileage.h"
 #include "Pid.h"
 #include "SpeedCalculator.h"
+#include <algorithm>  // max, min を使用するために追加
 
 class LineTrace : public Motion {
  public:
