@@ -49,7 +49,7 @@ class ColorLineTrace : public LineTrace {
   bool isMetContinuationCondition() override;
 
  private:
-  static constexpr int JUDGE_COUNT = 3;
+  static constexpr int JUDGE_COUNT = 2;
   int colorCount;
   COLOR targetColor;  // 指定色
 };

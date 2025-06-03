@@ -19,11 +19,15 @@ ColorLineTrace::ColorLineTrace(Robot& _robot, COLOR _targetColor, double _target
 // 色ライントレースの事前条件
 bool ColorLineTrace::isMetPreCondition()
 {
-  // targetColorがNONEか、またはtargetSpeedが0.0のとき動作しない
-  if(targetColor == COLOR::NONE || targetSpeed == 0.0) {
+  // targetColorがNONEのとき動作しない
+  if(targetColor == COLOR::NONE) {
     return false;
   }
 
+  // targetSpeedが0の場合は動作しない
+  if(targetSpeed == 0.0) {
+    return false;
+  }
   return true;
 }
 
