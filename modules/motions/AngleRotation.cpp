@@ -6,12 +6,13 @@
 
 #include "AngleRotation.h"
 
-AngleRotation::AngleRotation(Robot& _robot, int _targetAngle, int _speed, bool _isClockwise)
-  : Rotation(_robot, _targetAngle, _speed, _isClockwise),
+AngleRotation::AngleRotation(Robot& robot, int targetAngle, int speed, bool isClockwise)
+  : Rotation(robot, targetAngle, speed, isClockwise),
     targetLeftDistance(0.0),
     targetRightDistance(0.0)
 {
 }
+
 void AngleRotation::prepare()
 {
   MotorController& motorController = robot.getMotorControllerInstance();

@@ -30,7 +30,7 @@ class AngleRotation : public Rotation {
   /**
    * @brief 回頭動作の事前準備を行う
    */
-  void prepare() = 0;
+  void prepare() override;
 
   /**
    * @brief 回頭する際の事前条件判定をする

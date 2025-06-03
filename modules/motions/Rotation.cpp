@@ -24,11 +24,11 @@ void Rotation::run()
   prepare();
   if(!isMetPreCondition()) return;
 
-  // 回転速度（mm/秒）で指定しモーターを制御
-  motorController.setLeftMotorSpeed(speed * leftSign);
-  motorController.setRightMotorSpeed(speed * rightSign);
-
   while(isMetContinuationCondition()) {
+    // 回転速度（mm/秒）で指定しモーターを制御
+    motorController.setLeftMotorSpeed(speed * leftSign);
+    motorController.setRightMotorSpeed(speed * rightSign);
+
     clock.sleep(10000);  // 10000μs(10ms)程度のスリープでループを安定させる
   }
 
