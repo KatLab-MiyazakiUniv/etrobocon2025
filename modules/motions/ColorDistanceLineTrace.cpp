@@ -19,27 +19,17 @@ ColorDistanceLineTrace::ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor
 
 bool ColorDistanceLineTrace::isMetPreCondition()
 {
-  // 目標の色がNoneかつtargetSpeed値が0のときwarningを出して終了する
-  if(targetColor == COLOR::NONE && targetSpeed == 0.0) {
-    return false;
-  }
-
-  // targetDistance値が0かつtargetSpeed値が0のときwarningを出して終了する
-  if(targetDistance == 0.0 && targetSpeed == 0.0) {
-    return false;
-  }
-
-  // 目標の色がNoneのときwarningを出して終了する
+  // 目標の色がNoneのとき終了する
   if(targetColor == COLOR::NONE) {
     return false;
   }
 
-  // targetSpeed値が0の場合はwarningを出して終了する
+  // targetSpeed値が0の場合は終了する
   if(targetSpeed == 0.0) {
     return false;
   }
 
-  // targetDistance値が0の場合はwarningを出して終了する
+  // targetDistance値が0の場合は終了する
   if(targetDistance == 0.0) {
     return false;
   }
