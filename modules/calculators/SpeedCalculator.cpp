@@ -11,7 +11,7 @@ SpeedCalculator::SpeedCalculator(Robot& _robot, double _targetSpeed)
     rightPid(K_P, K_I, K_D, _targetSpeed),
     leftPid(K_P, K_I, K_D, _targetSpeed)
 {
-  int currentTime = robot.getClockInstance().now();
+  double currentTime = robot.getClockInstance().now() / 1000000;
   prevRightTime = currentTime;
   prevLeftTime = currentTime;
 }
@@ -19,8 +19,8 @@ SpeedCalculator::SpeedCalculator(Robot& _robot, double _targetSpeed)
 double SpeedCalculator::calculateRightMotorPower()
 {
   // 走行時間を算出
-  int currentRightTime = robot.getClockInstance().now();  // 現在の時間を取得(microseconds)
-  double diffRightTime = (double)(currentRightTime - prevRightTime) / 1000000.0;  // 秒単位に変換
+  double currentRightTime = robot.getClockInstance().now() / 1000000.0;  // 現在の時間を取得(秒単位)
+  double diffRightTime = (double)(currentRightTime - prevRightTime);     // 秒単位に変換
   // 右タイヤの走行速度を算出
   double currentRightSpeed = robot.getMotorControllerInstance().getRightMotorSpeed();
   // 走行速度に相当する右タイヤのPower値を算出
@@ -34,8 +34,8 @@ double SpeedCalculator::calculateRightMotorPower()
 double SpeedCalculator::calculateLeftMotorPower()
 {
   // 走行時間を算出
-  int currentLeftTime = robot.getClockInstance().now();
-  double diffLeftTime = (double)(currentLeftTime - prevLeftTime) / 1000000.0;  // 秒単位に変換
+  double currentLeftTime = robot.getClockInstance().now() / 1000000.0;  // 現在の時間を取得(秒単位)
+  double diffLeftTime = (double)(currentLeftTime - prevLeftTime);
   // 左タイヤの走行速度を算出
   double currentLeftSpeed = robot.getMotorControllerInstance().getLeftMotorSpeed();
   // 走行速度に相当する左タイヤのPower値を算出
