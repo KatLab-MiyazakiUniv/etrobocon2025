@@ -25,11 +25,6 @@ namespace etrobocon2025_test {
     bool isLeftEdge = true;
     DistanceLineTrace dl(robot, targetDistance, targetSpeed, targetBrightness, gain, isLeftEdge);
 
-    // 初期値から期待する走行距離を求める
-    // int initialRightCount = robot.getMotorControllerInstance().getRightCount();
-    // int initialLeftCount = robot.getMotorControllerInstance().getLeftCount();
-    // double expected
-    //     = Mileage::calculateMileage(initialRightCount, initialLeftCount) + targetDistance;
     double expected = targetDistance;
 
     // 一回のsetPower()でダミーのモータカウントに加算される値はpower * 0.05
@@ -60,11 +55,6 @@ namespace etrobocon2025_test {
     bool isLeftEdge = false;
     DistanceLineTrace dl(robot, targetDistance, targetSpeed, targetBrightness, gain, isLeftEdge);
 
-    // 初期値から期待する走行距離を求める
-    // int initialRightCount = robot.getMotorControllerInstance().getRightCount();
-    // int initialLeftCount = robot.getMotorControllerInstance().getLeftCount();
-    // double expected
-    //     = Mileage::calculateMileage(initialRightCount, initialLeftCount) + targetDistance;
     double expected = targetDistance;
 
     // 一回のsetPower()でダミーのモータカウントに加算される値はpower * 0.05
@@ -95,11 +85,6 @@ namespace etrobocon2025_test {
     bool isLeftEdge = true;
     DistanceLineTrace dl(robot, targetDistance, targetSpeed, targetBrightness, gain, isLeftEdge);
 
-    // 初期値から期待する走行距離を求める
-    // int initialRightCount = robot.getMotorControllerInstance().getRightCount();
-    // int initialLeftCount = robot.getMotorControllerInstance().getLeftCount();
-    // double expected
-    //     = Mileage::calculateMileage(initialRightCount, initialLeftCount) - targetDistance;
     double expected = -targetDistance;
 
     // 一回のsetPower()でダミーのモータカウントに加算される値はpower * 0.05
@@ -131,11 +116,6 @@ namespace etrobocon2025_test {
     bool isLeftEdge = false;
     DistanceLineTrace dl(robot, targetDistance, targetSpeed, targetBrightness, gain, isLeftEdge);
 
-    // 初期値から期待する走行距離を求める
-    // int initialRightCount = robot.getMotorControllerInstance().getRightCount();
-    // int initialLeftCount = robot.getMotorControllerInstance().getLeftCount();
-    // double expected
-    //     = Mileage::calculateMileage(initialRightCount, initialLeftCount) - targetDistance;
     double expected = -targetDistance;
 
     // 一回のsetPower()でダミーのモータカウントに加算される値はpower * 0.05
@@ -157,20 +137,13 @@ namespace etrobocon2025_test {
   TEST(DistanceLineTraceTest, RunZeroSpeed)
   {
     Robot robot;
-    // Power値の初期化
-    robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetSpeed = 0.0;
     double targetDistance = 1000.0;
     double targetBrightness = 45.0;
-    double basePower = 100.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
     bool isLeftEdge = true;
     DistanceLineTrace dl(robot, targetDistance, targetSpeed, targetBrightness, gain, isLeftEdge);
 
-    // 初期値から期待する走行距離を求める
-    // int initialRightCount = robot.getMotorControllerInstance().getRightCount();
-    // int initialLeftCount = robot.getMotorControllerInstance().getLeftCount();
-    // double expected = Mileage::calculateMileage(initialRightCount, initialLeftCount);
     double expected = 0.0;
     dl.run();  // ライントレースを実行
 
@@ -182,24 +155,17 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // ライントレース前後で走行距離に変化はない
   }
 
-  // targetDistance値が0以下の時に終了するテストケース
+  // targetDistance値が負の時に終了するテストケース
   TEST(DistanceLineTraceTest, RunMinusDistance)
   {
     Robot robot;
-    // Power値の初期化
-    robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetSpeed = 100.0;
     double targetDistance = -1000.0;
     double targetBrightness = 45.0;
-    double basePower = 100.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
     bool isLeftEdge = true;
     DistanceLineTrace dl(robot, targetDistance, targetSpeed, targetBrightness, gain, isLeftEdge);
 
-    // 初期値から期待する走行距離を求める
-    // int initialRightCount = robot.getMotorControllerInstance().getRightCount();
-    // int initialLeftCount = robot.getMotorControllerInstance().getLeftCount();
-    // double expected = Mileage::calculateMileage(initialRightCount, initialLeftCount);
     double expected = 0.0;
 
     dl.run();  // ライントレースを実行
@@ -212,24 +178,17 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // ライントレース前後で走行距離に変化はない
   }
 
-  // targetDistance値が0以下かつtargetSpeed値が0のとき終了するテストケース
-  TEST(DistanceLineTraceTest, RunMinusDistanceAndZeroSpeed)
+  // targetDistance値が0のとき終了するテストケース
+  TEST(DistanceLineTraceTest, RunZeroDistance)
   {
     Robot robot;
-    // Power値の初期化
-    robot.getMotorControllerInstance().resetWheelsMotorPower();
-    double targetSpeed = 0.0;
-    double targetDistance = -1000.0;
+    double targetSpeed = 500.0;
+    double targetDistance = 0.0;
     double targetBrightness = 45.0;
-    double basePower = 100.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
     bool isLeftEdge = true;
     DistanceLineTrace dl(robot, targetDistance, targetSpeed, targetBrightness, gain, isLeftEdge);
 
-    // 初期値から期待する走行距離を求める
-    // int initialRightCount = robot.getMotorControllerInstance().getRightCount();
-    // int initialLeftCount = robot.getMotorControllerInstance().getLeftCount();
-    // double expected = Mileage::calculateMileage(initialRightCount, initialLeftCount);
     double expected = 0.0;
 
     dl.run();  // ライントレースを実行

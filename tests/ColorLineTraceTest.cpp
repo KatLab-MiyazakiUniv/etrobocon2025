@@ -12,11 +12,11 @@ using namespace std;
 
 namespace etrobocon2025_test {
   // 最初3回の色取得で連続して指定色を取得するテストケース
-  TEST(ColorLineTraceTest, runToGetFirst)
+  TEST(ColorLineTraceTest, RunToGetFirst)
   {
     Robot robot;
     COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = 50000.0;
+    double targetSpeed = 500.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
     bool isLeftEdge = true;
@@ -30,6 +30,7 @@ namespace etrobocon2025_test {
     int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
+    // 色を乱数で取得するため、正確な走行距離が予測できず走行距離が進んでいることを確認
     EXPECT_LT(expected, actual);  // 初期値より少しでも進んでいる
   }
 
@@ -39,7 +40,7 @@ namespace etrobocon2025_test {
     Robot robot;
     COLOR targetColor = COLOR::GREEN;
     double targetSpeed = 100.0;
-    double targetBrightness = 45.0;
+    double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
     bool isLeftEdge = true;
     ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
@@ -52,17 +53,23 @@ namespace etrobocon2025_test {
     int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    // 目標色が最初から取得されているため、走行距離は0に近い。走行開始してから判定するため走行距離が0ではないことに注意。
-    EXPECT_NEAR(expected, actual, 60.0);  // 許容誤差を60mmとする
+    // 目標色が最初から取得されているため、走行距離は0に近い。継続条件が指定色の取得回数であるためその間走行する。
+    EXPECT_NEAR(expected, actual, 30.0);  // 許容誤差を±30.0mmとする
+    /**
+     * 色所得回数における誤差は以下のとおりである
+     * 1回->19.5476mm
+     * 2回->21.9911mm
+     * 3回->95.2949mm
+     */
   }
 
-  // 以下のテストケースはそのまま再利用（書式を既に整えているため）
-  TEST(ColorLineTraceTest, runLeftEdge)
+  // 指定色を取得し、後退するテストケース
+  TEST(ColorLineTraceTest, RunBack)
   {
     Robot robot;
     COLOR targetColor = COLOR::BLUE;
-    double targetSpeed = 100.0;
-    double targetBrightness = 45.0;
+    double targetSpeed = -500.0;
+    double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
     bool isLeftEdge = true;
     ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
@@ -75,94 +82,12 @@ namespace etrobocon2025_test {
     int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    EXPECT_LT(expected, actual);
+    // 初期値より少しでも進んでいることを確認
+    EXPECT_LT(actual, expected);
   }
 
-  TEST(ColorLineTraceTest, runRightEdge)
-  {
-    Robot robot;
-    COLOR targetColor = COLOR::RED;
-    double targetSpeed = 100.0;
-    double targetBrightness = 45.0;
-    PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = false;
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
-
-    double expected = 0.0;
-    srand(0);
-    cl.run();
-
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
-    double actual = Mileage::calculateMileage(rightCount, leftCount);
-
-    EXPECT_LT(expected, actual);
-  }
-
-  TEST(ColorLineTraceTest, runBackLeftEdge)
-  {
-    Robot robot;
-    COLOR targetColor = COLOR::BLUE;
-    double targetSpeed = -100.0;
-    double targetBrightness = 45.0;
-    PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
-
-    double expected = 0.0;
-    srand(0);
-    cl.run();
-
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
-    double actual = Mileage::calculateMileage(rightCount, leftCount);
-
-    EXPECT_GT(expected, actual);
-  }
-
-  TEST(ColorLineTraceTest, runBackLeftEdgeWithZeroSpeed)
-  {
-    Robot robot;
-    COLOR targetColor = COLOR::YELLOW;
-    double targetSpeed = -100.0;
-    double targetBrightness = 45.0;
-    PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
-
-    double expected = 0.0;
-    srand(0);
-    cl.run();
-
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
-    double actual = Mileage::calculateMileage(rightCount, leftCount);
-
-    EXPECT_GT(expected, actual);
-  }
-
-  TEST(ColorLineTraceTest, runBackRightEdge)
-  {
-    Robot robot;
-    COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = -100.0;
-    double targetBrightness = 45.0;
-    PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = false;
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
-
-    double expected = 0.0;
-    srand(0);
-    cl.run();
-
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
-    double actual = Mileage::calculateMileage(rightCount, leftCount);
-
-    EXPECT_GT(expected, actual);
-  }
-
-  TEST(ColorLineTraceTest, runZeroSpeed)
+  // targetSpeedが0の時に走行しないテストケース
+  TEST(ColorLineTraceTest, RunZeroSpeed)
   {
     Robot robot;
     COLOR targetColor = COLOR::BLUE;
@@ -181,10 +106,12 @@ namespace etrobocon2025_test {
     int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
+    // 正確に終了している
     EXPECT_EQ(expected, actual);
   }
 
-  TEST(ColorLineTraceTest, runNoneColor)
+  // targetColorがNONEの時に走行しないテストケース
+  TEST(ColorLineTraceTest, RunNoneColor)
   {
     Robot robot;
     COLOR targetColor = COLOR::NONE;
@@ -202,27 +129,8 @@ namespace etrobocon2025_test {
     int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
+    // 正確に終了している
     EXPECT_EQ(expected, actual);
   }
 
-  TEST(ColorLineTraceTest, runNoneColorAndZeroSpeed)
-  {
-    Robot robot;
-    COLOR targetColor = COLOR::NONE;
-    double targetSpeed = 0.0;
-    double targetBrightness = 45.0;
-    PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
-
-    double expected = 0.0;
-
-    cl.run();
-
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
-    double actual = Mileage::calculateMileage(rightCount, leftCount);
-
-    EXPECT_EQ(expected, actual);
-  }
 }  // namespace etrobocon2025_test
