@@ -25,19 +25,15 @@ void AngleRotation::prepare()
 
 bool AngleRotation::isMetPreCondition()
 {
-  //   char buf[SMALL_BUF_SIZE];  // log用にメッセージを一時保持する領域
-
-  // スピードが0以下の場合はwarningを出して終了する
+  // スピードが0以下なら終了
   if(speed <= 0) {
-    // snprintf(buf, SMALL_BUF_SIZE, "The speed value passed to AngleRotation is %d", speed);
-    // logger.logWarning(buf);
+    std::cerr << "speed=" << speed << " は無効な値です。\n";
     return false;
   }
 
-  // targetAngleが0以下の場合はwarningを出して終了する
+  // 角度が0以下または360以上なら終了
   if(targetAngle <= 0 || targetAngle >= 360) {
-    // snprintf(buf, SMALL_BUF_SIZE, "The angle value passed to AngleRotation is %d", targetAngle);
-    // logger.logWarning(buf);
+    std::cerr << "targetAngle=" << targetAngle << " は範囲外です。\n";
     return false;
   }
 
@@ -54,20 +50,13 @@ bool AngleRotation::isMetContinuationCondition()
   double diffRightDistance
       = (targetRightDistance - Mileage::calculateWheelMileage(motorController.getRightMotorCount()))
         * rightSign;
-
   // 目標距離に到達した場合
   if(diffLeftDistance <= 0 && diffRightDistance <= 0) {
     return false;
   }
+
+  // targetDistanceを更新し続ける(要Rotation.cppを変更！！！！！！！！！！！)
+  // targetLeftDistance = diffLeftDistance;
+  // targetRightDistance = diffRightDistance;
   return true;
-}
-
-void AngleRotation::logRunning()
-{
-  //   char buf[SMALL_BUF_SIZE];  // log用にメッセージを一時保持する領域
-  //   const char* str = isClockwise ? "true" : "false";
-
-  //   snprintf(buf, SMALL_BUF_SIZE, "Run AngleRotation (angle: %d, speed: %d, isClockwise: %s)",
-  //            targetAngle, speed, str);
-  //   logger.log(buf);
 }

@@ -45,13 +45,7 @@ class Rotation : public Motion {
    */
   virtual bool isMetContinuationCondition() = 0;
 
-  /**
-   * @brief 実行のログを取る
-   * @note オーバーライド必須
-   */
-  virtual void logRunning() = 0;
-
- protected:
+  protected:
   int targetAngle;   // 目標回転角度(deg) 0~360
   int speed;         // 指定する速度（mm/秒）
   bool isClockwise;  // 回頭方向 true:時計回り, false:反時計回り

@@ -1,7 +1,7 @@
 /**
- * @file   PwmRotationTest.cpp
- * @brief  PwmRotationクラスのテスト
- * @author takahashitom
+ * @file   AngleRotationTest.cpp
+ * @brief  AngleRotationクラスのテスト
+ * @author Hara1274
  */
 
 #include "AngleRotation.h"
@@ -31,7 +31,8 @@ namespace etrobocon2024_test {
 
     double expected = angle;  // 指定した回頭角度を期待値とする
 
-    // 一回のsetMotorSpeed()でダミーのモーターに加算される値はspeed * 0.05
+    // 一回のsetSpeed()でダミーのモーターに加算される値はspeed * 0.05なので、
+    // 1 ループで余分に回る角度は speed * 0.05 * TRANSFORM として誤差を設定
     double error = speed * 0.05 * TRANSFORM;
 
     // 回頭前のモータカウント
@@ -82,188 +83,148 @@ namespace etrobocon2024_test {
     EXPECT_GE(expected + error, actual);
   }
 
-  //   // PWM値を0に設定して回頭するテスト
-  //   TEST(PwmRotationTest, runZeroPWM)
-  //   {
-  //     Controller controller;
-  //     controller.resetRightMotorPwm();
-  //     controller.resetLeftMotorPwm();
+  // speedを0に設定して回頭するテスト
+  TEST(AngleRotationTest, runZeroSpeed)
+  {
+    Robot robot;
+    MotorController& motorController = robot.getMotorControllerInstance();
+    motorController.resetWheelsMotorPower();
 
-  //     Measurer measurer;
-  //     int angle = 45;
-  //     int pwm = 0;
-  //     bool isClockwise = true;
-  //     PwmRotation PwmRotation(angle, pwm, isClockwise);
+    int angle = 45;
+    int speed = 0;
+    bool isClockwise = true;
 
-  //     double expected = 0;  // 回頭しない
+    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
 
-  //     // Warning文
-  //     string expectedOutput = "\x1b[36m";  // 文字色をシアンに
-  //     expectedOutput += "Warning: The pwm value passed to PwmRotation is 0";
-  //     expectedOutput += "\n\x1b[39m";  // 文字色をデフォルトに戻す
+    double expected = 0;  // 回頭しない
 
-  //     // 回頭前のモータカウント
-  //     int initialRightMotorCount = measurer.getRightCount();
-  //     int initialLeftMotorCount = measurer.getLeftCount();
+    // 回頭前のモータカウント
+    int initialRightMotorCount = motorController.getRightMotorCount();
+    int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-  //     testing::internal::CaptureStdout();                            // 標準出力キャプチャ開始
-  //     PwmRotation.run();                                             // 右回頭を実行
-  //     string actualOutput = testing::internal::GetCapturedStdout();  // キャプチャ終了
+    AngleRotation.run();  // 回頭を実行
 
-  //     // 回頭後に各モータが回転した角度
-  //     int rightMotorCount = abs(measurer.getRightCount() - initialRightMotorCount);
-  //     int leftMotorCount = abs(measurer.getLeftCount() - initialLeftMotorCount);
-  //     double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
+    // 回頭後に各モータが回転した角度
+    int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
+    int leftMotorCount = abs(motorController.getLeftMotorCount() - initialLeftMotorCount);
+    double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
 
-  //     EXPECT_EQ(expectedOutput, actualOutput);  // 標準出力でWarningを出している
-  //     EXPECT_EQ(expected, actual);              // 回頭の前後で角度に変化はない
-  //   }
+    EXPECT_EQ(expected, actual);
+  }
 
-  //   // PWM値をマイナスに設定して回頭するテスト
-  //   TEST(PwmRotationTest, runMinusPWM)
-  //   {
-  //     Controller controller;
-  //     controller.resetRightMotorPwm();
-  //     controller.resetLeftMotorPwm();
+  // speedをマイナスに設定して回頭するテスト
+  TEST(AngleRotationTest, runMinusSpeed)
+  {
+    Robot robot;
+    MotorController& motorController = robot.getMotorControllerInstance();
+    motorController.resetWheelsMotorPower();
 
-  //     Measurer measurer;
-  //     int angle = 45;
-  //     int pwm = -100;
-  //     bool isClockwise = true;
-  //     PwmRotation PwmRotation(angle, pwm, isClockwise);
+    int angle = 45;
+    int speed = -300;
+    bool isClockwise = true;
 
-  //     double expected = 0;  // 回頭しない
+    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
 
-  //     // Warning文
-  //     string expectedOutput = "\x1b[36m";  // 文字色をシアンに
-  //     expectedOutput += "Warning: The pwm value passed to PwmRotation is " + to_string(pwm);
-  //     expectedOutput += "\n\x1b[39m";  // 文字色をデフォルトに戻す
+    double expected = 0;  // 回頭しない
 
-  //     // 回頭前のモータカウント
-  //     int initialRightMotorCount = measurer.getRightCount();
-  //     int initialLeftMotorCount = measurer.getLeftCount();
+    // 回頭前のモータカウント
+    int initialRightMotorCount = motorController.getRightMotorCount();
+    int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-  //     testing::internal::CaptureStdout();                            // 標準出力キャプチャ開始
-  //     PwmRotation.run();                                             // 右回頭を実行
-  //     string actualOutput = testing::internal::GetCapturedStdout();  // キャプチャ終了
+    AngleRotation.run();  // 回頭を実行
 
-  //     // 回頭後に各モータが回転した角度
-  //     int rightMotorCount = abs(measurer.getRightCount() - initialRightMotorCount);
-  //     int leftMotorCount = abs(measurer.getLeftCount() - initialLeftMotorCount);
-  //     double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
+    // 回頭後に各モータが回転した角度
+    int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
+    int leftMotorCount = abs(motorController.getLeftMotorCount() - initialLeftMotorCount);
+    double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
 
-  //     EXPECT_EQ(expectedOutput, actualOutput);  // 標準出力でWarningを出している
-  //     EXPECT_EQ(expected, actual);              // 回頭の前後で角度に変化はない
-  //   }
+    EXPECT_EQ(expected, actual);
+  }
 
-  //   // 回頭角度を0に設定して回頭するテスト
-  //   TEST(PwmRotationTest, runZeroAngle)
-  //   {
-  //     Controller controller;
-  //     controller.resetRightMotorPwm();
-  //     controller.resetLeftMotorPwm();
+  // 回頭角度を0に設定して回頭するテスト
+  TEST(AngleRotationTest, runZeroAngle)
+  {
+    Robot robot;
+    MotorController& motorController = robot.getMotorControllerInstance();
+    motorController.resetWheelsMotorPower();
 
-  //     Measurer measurer;
-  //     int angle = 0;
-  //     int pwm = 100;
-  //     bool isClockwise = true;
-  //     PwmRotation PwmRotation(angle, pwm, isClockwise);
+    int angle = 0;
+    int speed = 300;
+    bool isClockwise = true;
 
-  //     double expected = 0;  // 回頭しない
+    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
 
-  //     // Warning文
-  //     string expectedOutput = "\x1b[36m";  // 文字色をシアンに
-  //     expectedOutput += "Warning: The angle value passed to PwmRotation is 0";
-  //     expectedOutput += "\n\x1b[39m";  // 文字色をデフォルトに戻す
+    double expected = 0;  // 回頭しない
 
-  //     // 回頭前のモータカウント
-  //     int initialRightMotorCount = measurer.getRightCount();
-  //     int initialLeftMotorCount = measurer.getLeftCount();
+    // 回頭前のモータカウント
+    int initialRightMotorCount = motorController.getRightMotorCount();
+    int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-  //     testing::internal::CaptureStdout();                            // 標準出力キャプチャ開始
-  //     PwmRotation.run();                                             // 右回頭を実行
-  //     string actualOutput = testing::internal::GetCapturedStdout();  // キャプチャ終了
+    AngleRotation.run();  // 回頭を実行
 
-  //     // 回頭後に各モータが回転した角度
-  //     int rightMotorCount = abs(measurer.getRightCount() - initialRightMotorCount);
-  //     int leftMotorCount = abs(measurer.getLeftCount() - initialLeftMotorCount);
-  //     double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
+    // 回頭後に各モータが回転した角度
+    int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
+    int leftMotorCount = abs(motorController.getLeftMotorCount() - initialLeftMotorCount);
+    double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
 
-  //     EXPECT_EQ(expectedOutput, actualOutput);  // 標準出力でWarningを出している
-  //     EXPECT_EQ(expected, actual);              // 回頭の前後で角度に変化はない
-  //   }
+    EXPECT_EQ(expected, actual);
+  }
 
-  //   // 回頭角度をマイナスに設定して回頭するテスト
-  //   TEST(PwmRotationTest, runMinusAngle)
-  //   {
-  //     Controller controller;
-  //     controller.resetRightMotorPwm();
-  //     controller.resetLeftMotorPwm();
+  // 回頭角度をマイナスに設定して回頭するテスト
+  TEST(AngleRotationTest, runMinusAngle)
+  {
+    Robot robot;
+    MotorController& motorController = robot.getMotorControllerInstance();
+    motorController.resetWheelsMotorPower();
 
-  //     Measurer measurer;
-  //     int angle = -180;
-  //     int pwm = 100;
-  //     bool isClockwise = true;
-  //     PwmRotation PwmRotation(angle, pwm, isClockwise);
+    int angle = -1;
+    int speed = 300;
+    bool isClockwise = true;
 
-  //     double expected = 0;  // 回頭しない
+    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
 
-  //     // Warning文
-  //     string expectedOutput = "\x1b[36m";  // 文字色をシアンに
-  //     expectedOutput += "Warning: The angle value passed to PwmRotation is " + to_string(angle);
-  //     expectedOutput += "\n\x1b[39m";  // 文字色をデフォルトに戻す
+    double expected = 0;  // 回頭しない
 
-  //     // 回頭前のモータカウント
-  //     int initialRightMotorCount = measurer.getRightCount();
-  //     int initialLeftMotorCount = measurer.getLeftCount();
+    // 回頭前のモータカウント
+    int initialRightMotorCount = motorController.getRightMotorCount();
+    int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-  //     testing::internal::CaptureStdout();                            // 標準出力キャプチャ開始
-  //     PwmRotation.run();                                             // 右回頭を実行
-  //     string actualOutput = testing::internal::GetCapturedStdout();  // キャプチャ終了
+    AngleRotation.run();  // 回頭を実行
 
-  //     // 回頭後に各モータが回転した角度
-  //     int rightMotorCount = abs(measurer.getRightCount() - initialRightMotorCount);
-  //     int leftMotorCount = abs(measurer.getLeftCount() - initialLeftMotorCount);
-  //     double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
+    // 回頭後に各モータが回転した角度
+    int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
+    int leftMotorCount = abs(motorController.getLeftMotorCount() - initialLeftMotorCount);
+    double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
 
-  //     EXPECT_EQ(expectedOutput, actualOutput);  // 標準出力でWarningを出している
-  //     EXPECT_EQ(expected, actual);              // 回頭の前後で角度に変化はない
-  //   }
+    EXPECT_EQ(expected, actual);
+  }
 
-  //   // 回頭角度を360度以上に設定して回頭するテスト
-  //   TEST(PwmRotationTest, runOverAngle)
-  //   {
-  //     Controller controller;
-  //     controller.resetRightMotorPwm();
-  //     controller.resetLeftMotorPwm();
+  // 回頭角度を360度以上に設定して回頭するテスト
+  TEST(AngleRotationTest, runOverAngle)
+  {
+    Robot robot;
+    MotorController& motorController = robot.getMotorControllerInstance();
+    motorController.resetWheelsMotorPower();
 
-  //     Measurer measurer;
-  //     int angle = 360;
-  //     int pwm = 100;
-  //     bool isClockwise = true;
-  //     PwmRotation PwmRotation(angle, pwm, isClockwise);
+    int angle = 360;
+    int speed = 300;
+    bool isClockwise = true;
 
-  //     double expected = 0;  // 回頭しない
+    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
 
-  //     // Warning文
-  //     string expectedOutput = "\x1b[36m";  // 文字色をシアンに
-  //     expectedOutput += "Warning: The angle value passed to PwmRotation is " + to_string(angle);
-  //     expectedOutput += "\n\x1b[39m";  // 文字色をデフォルトに戻す
+    double expected = 0;  // 回頭しない
 
-  //     // 回頭前のモータカウント
-  //     int initialRightMotorCount = measurer.getRightCount();
-  //     int initialLeftMotorCount = measurer.getLeftCount();
+    // 回頭前のモータカウント
+    int initialRightMotorCount = motorController.getRightMotorCount();
+    int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-  //     testing::internal::CaptureStdout();                            // 標準出力キャプチャ開始
-  //     PwmRotation.run();                                             // 右回頭を実行
-  //     string actualOutput = testing::internal::GetCapturedStdout();  // キャプチャ終了
+    AngleRotation.run();  // 回頭を実行
 
-  //     // 回頭後に各モータが回転した角度
-  //     int rightMotorCount = abs(measurer.getRightCount() - initialRightMotorCount);
-  //     int leftMotorCount = abs(measurer.getLeftCount() - initialLeftMotorCount);
-  //     double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
+    // 回頭後に各モータが回転した角度
+    int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
+    int leftMotorCount = abs(motorController.getLeftMotorCount() - initialLeftMotorCount);
+    double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
 
-  //     EXPECT_EQ(expectedOutput, actualOutput);  // 標準出力でWarningを出している
-  //     EXPECT_EQ(expected, actual);              // 回頭の前後で角度に変化はない
-  //   }
+    EXPECT_EQ(expected, actual);
+  }
 }  // namespace etrobocon2024_test

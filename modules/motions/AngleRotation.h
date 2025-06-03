@@ -44,11 +44,6 @@ class AngleRotation : public Rotation {
    */
   bool isMetContinuationCondition() override;
 
-  /**
-   * @brief 実行のログを取る
-   */
-  void logRunning() override;
-
  protected:
   double targetLeftDistance;
   double targetRightDistance;
