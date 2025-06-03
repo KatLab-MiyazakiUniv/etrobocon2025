@@ -5,10 +5,11 @@
  */
 
 #include "Straight.h"
-
 using namespace std;
 
-Straight::Straight(Robot& robot, double _targetSpeed) : Motion(robot), targetSpeed(_targetSpeed) {}
+Straight::Straight(Robot& _robot, double _targetSpeed) : Motion(_robot), targetSpeed(_targetSpeed)
+{
+}
 
 void Straight::run()
 {
@@ -16,17 +17,22 @@ void Straight::run()
   if(!isMetPreCondition()) {
     return;
   }
-  // 呼び出し時の走行距離を取得する
-  double initialRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
-  double initialLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
-  initialDistance = Mileage::calculateMileage(initialRightMotorCount, initialLeftMotorCount);
 
-  // 速度に合うようにパワー値を設定
-  robot.getMotorControllerInstance().setRightMotorSpeed(targetSpeed);
-  robot.getMotorControllerInstance().setLeftMotorSpeed(targetSpeed);
+  // 事前準備
+  prepare();
+
+  SpeedCalculator speedCalculator(robot, targetSpeed);
 
   // 継続条件を満たしている間繰り返す
   while(isMetContinuationCondition()) {
+    // Power値を計算
+    double currentRightPower = speedCalculator.calculateRightMotorPower();
+    double currentLeftPower = speedCalculator.calculateLeftMotorPower();
+
+    // モーターにPower値をセット
+    robot.getMotorControllerInstance().setRightMotorPower(currentRightPower);
+    robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower);
+
     robot.getClockInstance().sleep(10000);  // 10000マイクロ秒(10ミリ秒)待機
   }
 
