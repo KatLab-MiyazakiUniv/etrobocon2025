@@ -20,21 +20,24 @@ namespace etrobocon2024_test {
   // 右回頭のテスト
   TEST(AngleRotationTest, runRight)
   {
-    int angle = 90;
-    int speed = 300;
-    bool isClockwise = true;
     Robot robot;
     MotorController& motorController = robot.getMotorControllerInstance();
 
+    int angle = 90;
+    int speed = 300;
+    bool isClockwise = true;
+
     AngleRotation AngleRotation(robot, angle, speed, isClockwise);
+
     double expected = angle;  // 指定した回頭角度を期待値とする
 
-    // 変更後（speed に置き換える）
+    // 一回のsetMotorSpeed()でダミーのモーターに加算される値はspeed * 0.05
     double error = speed * 0.05 * TRANSFORM;
 
     // 回頭前のモータカウント
     int initialRightMotorCount = motorController.getRightMotorCount();
     int initialLeftMotorCount = motorController.getLeftMotorCount();
+
     AngleRotation.run();  // 右回頭を実行
 
     // 回頭後に各モータが回転した角度
@@ -46,39 +49,38 @@ namespace etrobocon2024_test {
     EXPECT_GE(expected + error, actual);
   }
 
-  // 左回頭のテスト
-  //   TEST(PwmRotationTest, runLeft)
-  //   {
-  //     Controller controller;
-  //     controller.resetRightMotorPwm();
-  //     controller.resetLeftMotorPwm();
+  //   左回頭のテスト
+  TEST(AngleRotationTest, runLeft)
+  {
+    Robot robot;
+    MotorController& motorController = robot.getMotorControllerInstance();
+    motorController.resetWheelsMotorPower();
 
-  //     Measurer measurer;
-  //     int angle = 180;
-  //     int pwm = 100;
-  //     bool isClockwise = false;
-  //     PwmRotation PwmRotation(angle, pwm, isClockwise);
+    int angle = 180;
+    int speed = 300;
+    bool isClockwise = false;
 
-  //     double expected = angle;  // 指定した回頭角度を期待値とする
+    AngleRotation AngleRotation(robot, angle, speed, isClockwise);
 
-  //     // 一回のsetPWM()でダミーのモータカウントに加算される値はpwm * 0.05
-  //     double error = pwm * 0.05 * TRANSFORM;  // 許容誤差[deg]
+    double expected = angle;  // 指定した回頭角度を期待値とする
 
-  //     // 回頭前のモータカウント
-  //     int initialRightMotorCount = measurer.getRightCount();
-  //     int initialLeftMotorCount = measurer.getLeftCount();
+    // 一回のsetMotorSpeed()でダミーのモーターに加算される値はspeed * 0.05
+    double error = speed * 0.05 * TRANSFORM;
 
-  //     PwmRotation.run();  // 左回頭を実行
+    // 回頭前のモータカウント
+    int initialRightMotorCount = motorController.getRightMotorCount();
+    int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-  //     // 回頭後に各モータが回転した角度
-  //     int rightMotorCount = abs(measurer.getRightCount() - initialRightMotorCount);
-  //     int leftMotorCount = abs(measurer.getLeftCount() - initialLeftMotorCount);
+    AngleRotation.run();  // 左回頭を実行
 
-  //     double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
+    // 回頭後に各モータが回転した角度
+    int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
+    int leftMotorCount = abs(motorController.getLeftMotorCount() - initialLeftMotorCount);
+    double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
 
-  //     EXPECT_LE(expected, actual);
-  //     EXPECT_GE(expected + error, actual);
-  //   }
+    EXPECT_LE(expected, actual);
+    EXPECT_GE(expected + error, actual);
+  }
 
   //   // PWM値を0に設定して回頭するテスト
   //   TEST(PwmRotationTest, runZeroPWM)
