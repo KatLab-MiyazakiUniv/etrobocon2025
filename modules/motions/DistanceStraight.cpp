@@ -7,23 +7,20 @@
 #include "DistanceStraight.h"
 using namespace std;
 
-DistanceStraight::DistanceStraight(Robot& robot, double _targetDistance, double _targetSpeed)
-  : Straight(robot, _targetSpeed), targetDistance(_targetDistance)
+DistanceStraight::DistanceStraight(Robot& _robot, double _targetDistance, double _targetSpeed)
+  : Straight(_robot, _targetSpeed), targetDistance(_targetDistance)
 {
 }
 
-// 目標距離まで直進する際の事前条件
 bool DistanceStraight::isMetPreCondition()
 {
-  // targetSpeed値が0の場合はwarningを出して終了する
+  // targetSpeed値が0の場合は終了する
   if(targetSpeed == 0.0) {
-    std::cout << "[Warning] targetSpeed is 0.0\n";
     return false;
   }
 
-  // targetDistance値が0以下の場合はwarningを出して終了する
+  // targetDistance値が0以下の場合は終了する
   if(targetDistance <= 0.0) {
-    std::cout << "[Warning] targetDistance is less than or equal to 0.0\n";
     return false;
   }
 
