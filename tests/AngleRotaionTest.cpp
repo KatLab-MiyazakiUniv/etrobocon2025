@@ -10,8 +10,6 @@
 #include "Robot.h"
 #include "SystemInfo.h"
 
-using namespace std;
-
 namespace etrobocon2024_test {
 
   // @see https://github.com/KatLab-MiyazakiUniv/etrobocon2022/blob/main/docs/odometry.md
@@ -31,16 +29,16 @@ namespace etrobocon2024_test {
 
     double expected = angle;  // 指定した回頭角度を期待値とする
 
-    // 実機の setSpeed() 後のモータカウントの増減を模倣するため、ダミークラスでは
-    // getCount()の呼び出しごとに count += speed× 0.05される。 よって、
-    // 1ループあたりの余分な回転角は speed × 0.05 × TRANSFORM を誤差として見込む。
+    // 実機の setSpeed() 後のモータカウントの増減を模倣するため、ダミークラスで
+    // isSetSpeedがtrueのとき、getCount()を呼ぶ度に count += speed× 0.05される。
+    // よって、1ループあたりの余分な回転角は speed × 0.05 × TRANSFORM を誤差として見込む。
     double error = speed * 0.05 * TRANSFORM;
 
     // 回頭前のモータカウント
     int initialRightMotorCount = motorController.getRightMotorCount();
     int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-    AngleRotation.run();  // 右回頭を実行
+    angleRotation.run();  // 右回頭を実行
 
     // 回頭後に各モータが回転した角度
     int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
@@ -66,16 +64,16 @@ namespace etrobocon2024_test {
 
     double expected = angle;  // 指定した回頭角度を期待値とする
 
-    // 実機の setSpeed() 後のモータカウントの増減を模倣するため、ダミークラスでは
-    // getCount()の呼び出しごとに count += speed× 0.05される。 よって、
-    // 1ループあたりの余分な回転角は speed × 0.05 × TRANSFORM を誤差として見込む。
+    // 実機の setSpeed() 後のモータカウントの増減を模倣するため、ダミークラスで
+    // isSetSpeedがtrueのとき、getCount()を呼ぶ度に count += speed× 0.05される。
+    // よって、1ループあたりの余分な回転角は speed × 0.05 × TRANSFORM を誤差として見込む。
     double error = speed * 0.05 * TRANSFORM;
 
     // 回頭前のモータカウント
     int initialRightMotorCount = motorController.getRightMotorCount();
     int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-    AngleRotation.run();  // 左回頭を実行
+    angleRotation.run();  // 左回頭を実行
 
     // 回頭後に各モータが回転した角度
     int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
@@ -105,7 +103,7 @@ namespace etrobocon2024_test {
     int initialRightMotorCount = motorController.getRightMotorCount();
     int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-    AngleRotation.run();  // 回頭を実行
+    angleRotation.run();  // 回頭を実行
 
     // 回頭後に各モータが回転した角度
     int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
@@ -134,7 +132,7 @@ namespace etrobocon2024_test {
     int initialRightMotorCount = motorController.getRightMotorCount();
     int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-    AngleRotation.run();  // 回頭を実行
+    angleRotation.run();  // 回頭を実行
 
     // 回頭後に各モータが回転した角度
     int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
@@ -163,7 +161,7 @@ namespace etrobocon2024_test {
     int initialRightMotorCount = motorController.getRightMotorCount();
     int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-    AngleRotation.run();  // 回頭を実行
+    angleRotation.run();  // 回頭を実行
 
     // 回頭後に各モータが回転した角度
     int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
@@ -192,7 +190,7 @@ namespace etrobocon2024_test {
     int initialRightMotorCount = motorController.getRightMotorCount();
     int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-    AngleRotation.run();  // 回頭を実行
+    angleRotation.run();  // 回頭を実行
 
     // 回頭後に各モータが回転した角度
     int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
@@ -221,7 +219,7 @@ namespace etrobocon2024_test {
     int initialRightMotorCount = motorController.getRightMotorCount();
     int initialLeftMotorCount = motorController.getLeftMotorCount();
 
-    AngleRotation.run();  // 回頭を実行
+    angleRotation.run();  // 回頭を実行
 
     // 回頭後に各モータが回転した角度
     int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
