@@ -7,7 +7,9 @@
 #include "Straight.h"
 using namespace std;
 
-Straight::Straight(Robot& robot, double _targetSpeed) : Motion(robot), targetSpeed(_targetSpeed) {}
+Straight::Straight(Robot& _robot, double _targetSpeed) : Motion(_robot), targetSpeed(_targetSpeed)
+{
+}
 
 void Straight::run()
 {
