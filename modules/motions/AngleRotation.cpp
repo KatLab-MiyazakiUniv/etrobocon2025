@@ -54,9 +54,5 @@ bool AngleRotation::isMetContinuationCondition()
   if(diffLeftDistance <= 0 && diffRightDistance <= 0) {
     return false;
   }
-
-  // targetDistanceを更新し続ける(要Rotation.cppを変更！！！！！！！！！！！)
-  // targetLeftDistance = diffLeftDistance;
-  // targetRightDistance = diffRightDistance;
   return true;
 }
