@@ -48,6 +48,7 @@ namespace spikeapi {
      * エンコーダの値を取得する
      * @return エンコーダの値 [°]
      */
+
     int32_t getCount()
     {
       if(!isSetSpeed) {
@@ -57,6 +58,7 @@ namespace spikeapi {
       count += speed * 0.05;
       return count;
     }
+    int32_t getCount() const { return count; }
 
     /**
      * モータの回転速度を取得する
@@ -73,6 +75,7 @@ namespace spikeapi {
     {
       this->speed = speed;
       isSetSpeed = true;
+      count += speed * 0.05;
     }
 
     /**

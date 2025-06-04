@@ -45,6 +45,7 @@ class Robot {
    */
   spikeapi::Clock& getClockInstance();
 
+
  private:
   MotorController motorController;    // MotorControllerインスタンス
   CameraCapture cameraCapture;        // CameraCaptureインスタンス
