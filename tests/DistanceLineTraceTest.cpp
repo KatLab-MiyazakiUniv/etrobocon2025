@@ -80,7 +80,7 @@ namespace etrobocon2025_test {
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
     EXPECT_GE(expected, actual);  // ライントレース後に走行した距離が期待する走行距離以下である
-    EXPECT_LE(expected * ERROR, actual);  // ライントレース後に走行した距離が許容誤差未満である
+    EXPECT_LT(expected * ERROR, actual);  // ライントレース後に走行した距離が許容誤差未満である
   }
 
   // 目標距離までライントレースを行うテストケース（バック，右エッジ走行）

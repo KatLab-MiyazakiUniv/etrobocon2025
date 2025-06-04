@@ -8,7 +8,6 @@
 #define COLOR_DISTANCE_LINE_TRACE_H
 
 #include "LineTrace.h"
-#include "ColorJudge.h"
 
 class ColorDistanceLineTrace : public LineTrace {
  public:

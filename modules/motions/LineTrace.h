@@ -10,6 +10,7 @@
 
 #include "Motion.h"
 #include "Mileage.h"
+#include "ColorJudge.h"
 #include "Pid.h"
 #include "SpeedCalculator.h"
 #include <algorithm>  // max, min を使用するために追加

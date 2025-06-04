@@ -8,7 +8,6 @@
 #define COLOR_LINE_TRACE_H
 
 #include "LineTrace.h"
-#include "ColorJudge.h"
 
 class ColorLineTrace : public LineTrace {
  public:
