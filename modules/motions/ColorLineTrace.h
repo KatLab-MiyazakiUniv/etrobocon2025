@@ -1,7 +1,7 @@
 /**
  * @file   ColorLineTrace.h
  * @brief  指定色ライントレース動作
- * @author miyahara046
+ * @author miyahara046 nishijima515
  */
 
 #ifndef COLOR_LINE_TRACE_H
@@ -49,9 +49,9 @@ class ColorLineTrace : public LineTrace {
   bool isMetContinuationCondition() override;
 
  private:
-  static constexpr int JUDGE_COUNT = 2;
-  int colorCount;
-  COLOR targetColor;  // 指定色
+  static constexpr int JUDGE_COUNT = 2;  // 色取得の決定に必要な連続回数
+  int colorCount;                        // 色取得した回数
+  COLOR targetColor;                     // 指定色
 };
 
 #endif

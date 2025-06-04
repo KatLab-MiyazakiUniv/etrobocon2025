@@ -1,11 +1,10 @@
 /**
  * @file   DistanceLineTrace.cpp
  * @brief  指定距離ライントレース動作
- * @author miyahara046
+ * @author miyahara046 nishijima515
  */
 
 #include "DistanceLineTrace.h"
-using namespace std;
 
 DistanceLineTrace::DistanceLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
                                      int _targetBrightness, const PidGain& _pidGain,

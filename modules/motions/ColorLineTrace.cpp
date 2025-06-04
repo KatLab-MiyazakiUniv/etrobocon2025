@@ -1,12 +1,10 @@
 /**
  * @file   ColorLineTrace.cpp
- * @brief  指定色ライントレース動作
- * @author miyahara046
+ * @brief  色指定ライントレース動作
+ * @author miyahara046 nishijima515
  */
 
 #include "ColorLineTrace.h"
-
-using namespace std;
 
 ColorLineTrace::ColorLineTrace(Robot& _robot, COLOR _targetColor, double _targetSpeed,
                                int _targetBrightness, const PidGain& _pidGain, bool& _isLeftEdge)
@@ -16,24 +14,29 @@ ColorLineTrace::ColorLineTrace(Robot& _robot, COLOR _targetColor, double _target
 {
 }
 
-// 色ライントレースの事前条件
+// 色指定ライントレースの事前条件
 bool ColorLineTrace::isMetPreCondition()
 {
-  // targetColorがNONEか、またはtargetSpeedが0.0のとき動作しない
-  if(targetColor == COLOR::NONE || targetSpeed == 0.0) {
+  // targetColorがNONEのとき動作しない
+  if(targetColor == COLOR::NONE) {
     return false;
   }
 
+  // targetSpeedが0の場合は動作しない
+  if(targetSpeed == 0.0) {
+    return false;
+  }
   return true;
 }
 
+// 色指定ライントレースの事前処理
 void ColorLineTrace::prepare()
 {
   // 初期値を代入
   colorCount = 0;
 }
 
-// 色ライントレースの継続条件
+// 色指定ライントレースの継続条件
 bool ColorLineTrace::isMetContinuationCondition()
 {
   // HSV値を取得
