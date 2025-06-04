@@ -6,7 +6,7 @@
 
 #include "AngleRotation.h"
 
-AngleRotation::AngleRotation(Robot& _robot, int _speed, bool _isClockwise, int _targetAngle)
+AngleRotation::AngleRotation(Robot& _robot, double _speed, bool _isClockwise, int _targetAngle)
   : Rotation(_robot, _speed, _isClockwise),
     targetAngle(_targetAngle),
     targetLeftDistance(0.0),
@@ -33,7 +33,7 @@ void AngleRotation::prepare()
 bool AngleRotation::isMetPreCondition()
 {
   // スピードが0以下なら終了
-  if(speed <= 0) {
+  if(speed <= 0.0) {
     std::cerr << "speed=" << speed << " は無効な値です" << std::endl;
     return false;
   }
