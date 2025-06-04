@@ -6,7 +6,7 @@
 
 #include "Rotation.h"
 
-Rotation::Rotation(Robot& _robot, int _speed, bool _isClockwise)
+Rotation::Rotation(Robot& _robot, double _speed, bool _isClockwise)
   : Motion(_robot),
     speed(_speed),
     isClockwise(_isClockwise),

@@ -20,7 +20,7 @@ class AngleRotation : public Rotation {
    * @param _isClockwise 回頭方向 true:時計回り, false:反時計回り
    * @param _targetAngle 目標回転角度(deg) 0~360
    */
-  AngleRotation(Robot& _robot, int _speed, bool _isClockwise, int _targetAngle);
+  AngleRotation(Robot& _robot, double _speed, bool _isClockwise, int _targetAngle);
 
   /**
    * @brief 回頭する

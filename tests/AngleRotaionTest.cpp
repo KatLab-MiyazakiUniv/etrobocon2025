@@ -10,7 +10,7 @@
 #include "Robot.h"
 #include "SystemInfo.h"
 
-namespace etrobocon2024_test {
+namespace etrobocon2025_test {
 
   // @see https://github.com/KatLab-MiyazakiUniv/etrobocon2022/blob/main/docs/odometry.md
   constexpr double TRANSFORM = 2.0 * WHEEL_RADIUS / TREAD;  // 回頭角度を求める式の係数
@@ -22,7 +22,7 @@ namespace etrobocon2024_test {
     MotorController& motorController = robot.getMotorControllerInstance();
 
     int angle = 90;
-    int speed = 300;
+    double speed = 300.0;
     bool isClockwise = true;
 
     AngleRotation angleRotation(robot, speed, isClockwise, angle);
@@ -57,7 +57,7 @@ namespace etrobocon2024_test {
     motorController.resetWheelsMotorPower();
 
     int angle = 180;
-    int speed = 300;
+    double speed = 300.0;
     bool isClockwise = false;
 
     AngleRotation angleRotation(robot, speed, isClockwise, angle);
@@ -92,12 +92,12 @@ namespace etrobocon2024_test {
     motorController.resetWheelsMotorPower();
 
     int angle = 45;
-    int speed = 0;
+    double speed = 0.0;
     bool isClockwise = true;
 
     AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
-    double expected = 0;  // 回頭しない
+    double expected = 0.0;  // 回頭しない
 
     // 回頭前のモータカウント
     int initialRightMotorCount = motorController.getRightMotorCount();
@@ -121,12 +121,12 @@ namespace etrobocon2024_test {
     motorController.resetWheelsMotorPower();
 
     int angle = 45;
-    int speed = -300;
+    double speed = -0.01;
     bool isClockwise = true;
 
     AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
-    double expected = 0;  // 回頭しない
+    double expected = 0.0;  // 回頭しない
 
     // 回頭前のモータカウント
     int initialRightMotorCount = motorController.getRightMotorCount();
@@ -150,12 +150,12 @@ namespace etrobocon2024_test {
     motorController.resetWheelsMotorPower();
 
     int angle = 0;
-    int speed = 300;
+    double speed = 300.0;
     bool isClockwise = true;
 
     AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
-    double expected = 0;  // 回頭しない
+    double expected = 0.0;  // 回頭しない
 
     // 回頭前のモータカウント
     int initialRightMotorCount = motorController.getRightMotorCount();
@@ -179,12 +179,12 @@ namespace etrobocon2024_test {
     motorController.resetWheelsMotorPower();
 
     int angle = -1;
-    int speed = 300;
+    double speed = 300.0;
     bool isClockwise = true;
 
     AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
-    double expected = 0;  // 回頭しない
+    double expected = 0.0;  // 回頭しない
 
     // 回頭前のモータカウント
     int initialRightMotorCount = motorController.getRightMotorCount();
@@ -208,12 +208,12 @@ namespace etrobocon2024_test {
     motorController.resetWheelsMotorPower();
 
     int angle = 360;
-    int speed = 300;
+    double speed = 300.0;
     bool isClockwise = true;
 
     AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
-    double expected = 0;  // 回頭しない
+    double expected = 0.0;  // 回頭しない
 
     // 回頭前のモータカウント
     int initialRightMotorCount = motorController.getRightMotorCount();
@@ -228,4 +228,4 @@ namespace etrobocon2024_test {
 
     EXPECT_EQ(expected, actual);
   }
-}  // namespace etrobocon2024_test
+}  // namespace etrobocon2025_test
