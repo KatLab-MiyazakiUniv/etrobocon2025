@@ -8,7 +8,6 @@
 
 Robot::Robot() : motorController(), cameraCapture(), colorSensor(EPort::PORT_E), clock() {}
 
-
 MotorController& Robot::getMotorControllerInstance()
 {
   return motorController;
