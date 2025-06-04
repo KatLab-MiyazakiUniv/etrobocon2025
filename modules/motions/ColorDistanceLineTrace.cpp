@@ -12,7 +12,8 @@ ColorDistanceLineTrace::ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor
                                                bool& _isLeftEdge)
   : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain, _isLeftEdge),
     targetColor(_targetColor),
-    targetDistance(_targetDistance)
+    targetDistance(_targetDistance),
+    colorCount(0)
 {
 }
 
@@ -43,12 +44,6 @@ void ColorDistanceLineTrace::prepare()
   // 初期値を代入
   initDistance = Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
                                            robot.getMotorControllerInstance().getLeftMotorCount());
-
-  // 呼び出し時の走行距離
-  initLeftMileage
-      = Mileage::calculateWheelMileage(robot.getMotorControllerInstance().getLeftMotorCount());
-  initRightMileage
-      = Mileage::calculateWheelMileage(robot.getMotorControllerInstance().getRightMotorCount());
 
   // 色カウントを初期化
   colorCount = 0;

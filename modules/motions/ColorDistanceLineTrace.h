@@ -54,8 +54,6 @@ class ColorDistanceLineTrace : public LineTrace {
   int colorCount;                        // 色取得した回数
   COLOR targetColor;                     // 指定色
   double targetDistance;                 // 目標距離 0~
-  double initLeftMileage;                // クラス呼び出し時の左車輪の走行距離
-  double initRightMileage;               // クラス呼び出し時の右車輪の走行距離
   double initDistance;                   // 実行前の走行距離
 };
 

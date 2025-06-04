@@ -36,12 +36,6 @@ void DistanceLineTrace::prepare()
   // 初期値を代入
   initDistance = Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
                                            robot.getMotorControllerInstance().getLeftMotorCount());
-
-  // 呼び出し時の走行距離
-  initLeftMileage
-      = Mileage::calculateWheelMileage(robot.getMotorControllerInstance().getLeftMotorCount());
-  initRightMileage
-      = Mileage::calculateWheelMileage(robot.getMotorControllerInstance().getRightMotorCount());
 }
 
 // 距離ライントレースの継続条件
