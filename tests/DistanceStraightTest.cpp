@@ -36,7 +36,7 @@ namespace etrobocon2025_test {
     double distanceError
         = Mileage::calculateMileage(basePower * 0.05, basePower * 0.05);  // 許容誤差
 
-    double expectedError = 1;  // タイヤの走行距離の誤差の期待値
+    double expectedError = 1.0;  // タイヤの走行距離の許容誤差
 
     ds.run();  // 直進を実行
 
@@ -52,12 +52,12 @@ namespace etrobocon2025_test {
     double rightDifference = std::abs(rightActual - leftInitial);
     double leftDifference = std::abs(leftActual - rightInitial);
     // タイヤの走行距離の誤差
-    double actualError = std::abs(rightDifference - leftDifference);
+    double actualError = (rightDifference - leftDifference);
 
     // 走行距離のテスト
-    EXPECT_NEAR(expectedDistance, actualDistance, distanceError);
-    // 直進できているかのテスト
-    EXPECT_LE(actualError, expectedError);
+    EXPECT_LE(actualDistance, expectedDistance + distanceError);
+    // 左右タイヤの走行距離差が0に近い（＝直進できているか）のテスト
+    EXPECT_NEAR(actualError, 0.0, expectedError);
   }
 
   // 最大速度での直進テスト
@@ -67,7 +67,7 @@ namespace etrobocon2025_test {
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
-    double targetSpeed = 100.0;
+    double targetSpeed = 1000.0;
     double basePower = 100.0;
     DistanceStraight ds(robot, targetDistance, targetSpeed);
 
@@ -85,7 +85,7 @@ namespace etrobocon2025_test {
     double distanceError
         = Mileage::calculateMileage(basePower * 0.05, basePower * 0.05);  // 許容誤差
 
-    double expectedError = 1;  // タイヤの走行距離の誤差の期待値
+    double expectedError = 1.0;  // タイヤの走行距離の許容誤差
 
     ds.run();  // 直進を実行
 
@@ -101,12 +101,12 @@ namespace etrobocon2025_test {
     double rightDifference = std::abs(rightActual - leftInitial);
     double leftDifference = std::abs(leftActual - rightInitial);
     // タイヤの走行距離の誤差
-    double actualError = std::abs(rightDifference - leftDifference);
+    double actualError = (rightDifference - leftDifference);
 
     // 走行距離のテスト
-    EXPECT_NEAR(expectedDistance, actualDistance, distanceError);
-    // 直進できているかのテスト
-    EXPECT_LE(actualError, expectedError);
+    EXPECT_LE(actualDistance, expectedDistance + distanceError);
+    // 左右タイヤの走行距離差が0に近い（＝直進できているか）のテスト
+    EXPECT_NEAR(actualError, 0.0, expectedError);
   }
 
   // 後退テスト
@@ -133,7 +133,8 @@ namespace etrobocon2025_test {
     // 1ステップ分の走行距離を許容誤差とする
     double distanceError
         = std::abs(Mileage::calculateMileage(basePower * 0.05, basePower * 0.05));  // 許容誤差
-    double expectedError = 1;  // タイヤの走行距離の誤差の期待値
+
+    double expectedError = 1.0;  // タイヤの走行距離の許容誤差
 
     ds.run();  // 後退を実行
 
@@ -149,12 +150,12 @@ namespace etrobocon2025_test {
     double rightDifference = std::abs(rightActual - leftInitial);
     double leftDifference = std::abs(leftActual - rightInitial);
     // タイヤの走行距離の誤差
-    double actualError = std::abs(rightDifference - leftDifference);
+    double actualError = (rightDifference - leftDifference);
 
     // 走行距離のテスト
-    EXPECT_NEAR(expectedDistance, actualDistance, distanceError);
-    // 後退できているかのテスト
-    EXPECT_LE(actualError, expectedError);
+    EXPECT_LE(actualDistance, expectedDistance + distanceError);
+    // 左右タイヤの走行距離差が0に近い（＝後退できているか）のテスト
+    EXPECT_NEAR(actualError, 0.0, expectedError);
   }
 
   // 最大速度での後退テスト
@@ -164,7 +165,7 @@ namespace etrobocon2025_test {
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
-    double targetSpeed = -100.0;
+    double targetSpeed = -1000.0;
     double basePower = -100.0;
     DistanceStraight ds(robot, targetDistance, targetSpeed);
 
@@ -181,7 +182,8 @@ namespace etrobocon2025_test {
     // 1ステップ分の走行距離を許容誤差とする
     double distanceError
         = std::abs(Mileage::calculateMileage(basePower * 0.05, basePower * 0.05));  // 許容誤差
-    double expectedError = 1;  // タイヤの走行距離の誤差の期待値
+
+    double expectedError = 1.0;  // タイヤの走行距離の許容誤差
 
     ds.run();  // 後退を実行
 
@@ -197,12 +199,12 @@ namespace etrobocon2025_test {
     double rightDifference = std::abs(rightActual - leftInitial);
     double leftDifference = std::abs(leftActual - rightInitial);
     // タイヤの走行距離の誤差
-    double actualError = std::abs(rightDifference - leftDifference);
+    double actualError = (rightDifference - leftDifference);
 
     // 走行距離のテスト
-    EXPECT_NEAR(expectedDistance, actualDistance, distanceError);
-    // 後退できているかのテスト
-    EXPECT_LE(actualError, expectedError);
+    EXPECT_LE(actualDistance, expectedDistance + distanceError);
+    // 左右タイヤの走行距離差が0に近い（＝後退できているか）のテスト
+    EXPECT_NEAR(actualError, 0.0, expectedError);
   }
 
   // 目標距離が負のとき停止するかのテスト
@@ -232,7 +234,34 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expectedDistance, actualDistance);  // 直進前後で走行距離に変化はない
   }
 
-  // 目標速度が0で停止するかのテスト
+  // 目標距離が0のとき停止するかのテスト
+  TEST(DistanceStraightTest, RunZeroDistance)
+  {
+    Robot robot;
+    // Power値の初期化
+    robot.getMotorControllerInstance().resetWheelsMotorPower();
+    double targetDistance = 0.0;
+    double targetSpeed = 100.0;
+    DistanceStraight ds(robot, targetDistance, targetSpeed);
+
+    // 初期値 （タイヤの累計走行距離）
+    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
+    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
+
+    // 期待する走行距離
+    double expectedDistance = Mileage::calculateMileage(rightCount, leftCount);
+
+    ds.run();  // 直進を実行
+
+    // 直進実行後の走行距離
+    rightCount = robot.getMotorControllerInstance().getRightMotorCount();
+    leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
+    double actualDistance = Mileage::calculateMileage(rightCount, leftCount);
+
+    EXPECT_EQ(expectedDistance, actualDistance);  // 直進前後で走行距離に変化はない
+  }
+
+  // 目標速度が0のとき停止するかのテスト
   TEST(DistanceStraightTest, RunZeroPower)
   {
     Robot robot;
