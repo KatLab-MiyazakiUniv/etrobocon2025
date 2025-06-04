@@ -15,16 +15,11 @@ namespace etrobocon2025_test {
   TEST(ColorStraightTest, RunToGetFirst)
   {
     Robot robot;
-    // Power値の初期化
-    robot.getMotorControllerInstance().resetWheelsMotorPower();
     COLOR targetColor = COLOR::GREEN;
     double targetSpeed = 100.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
 
-    // 初期値から期待する走行距離を求める
-    int initialRightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int initialLeftCount = robot.getMotorControllerInstance().getLeftMotorCount();
-    double expected = Mileage::calculateMileage(initialRightCount, initialLeftCount);
+    double expected = 0.0;
 
     // 最初10回の色取得分の走行距離を許容誤差とする
     int error
@@ -39,7 +34,8 @@ namespace etrobocon2025_test {
     int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    EXPECT_NEAR(expected, actual, error);
+    EXPECT_GE(actual, expected);
+    EXPECT_LE(actual, expected + error);
   }
 
   // 最初3回の色取得で連続して指定色を取得するテスト
@@ -67,8 +63,6 @@ namespace etrobocon2025_test {
   TEST(ColorStraightTest, RunToGetLater)
   {
     Robot robot;
-    // Power値の初期化
-    robot.getMotorControllerInstance().resetWheelsMotorPower();
     COLOR targetColor = COLOR::GREEN;
     double targetSpeed = 100.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
@@ -93,8 +87,6 @@ namespace etrobocon2025_test {
   TEST(ColorStraightTest, runBackToGetLater)
   {
     Robot robot;
-    // Power値の初期化
-    robot.getMotorControllerInstance().resetWheelsMotorPower();
     COLOR targetColor = COLOR::GREEN;
     double targetSpeed = -100.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
@@ -119,16 +111,11 @@ namespace etrobocon2025_test {
   TEST(ColorStraightTest, RunZeroPower)
   {
     Robot robot;
-    // Power値の初期化
-    robot.getMotorControllerInstance().resetWheelsMotorPower();
     COLOR targetColor = COLOR::YELLOW;
     double targetSpeed = 0.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
 
-    // 初期値から期待する走行距離を求める
-    int initialRightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int initialLeftCount = robot.getMotorControllerInstance().getLeftMotorCount();
-    double expected = Mileage::calculateMileage(initialRightCount, initialLeftCount);
+    double expected = 0.0;
 
     srand(0);  // 最初に黄色を取得しない乱数シード
 
@@ -146,17 +133,11 @@ namespace etrobocon2025_test {
   TEST(ColorStraightTest, runNoneColor)
   {
     Robot robot;
-
-    // Power値の初期化
-    robot.getMotorControllerInstance().resetWheelsMotorPower();
     COLOR targetColor = COLOR::NONE;
     double targetSpeed = 100.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
 
-    // 初期値から期待する走行距離を求める
-    int initialRightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int initialLeftCount = robot.getMotorControllerInstance().getLeftMotorCount();
-    double expected = Mileage::calculateMileage(initialRightCount, initialLeftCount);
+    double expected = 0.0;
 
     cs.run();  // 直進を実行
 
