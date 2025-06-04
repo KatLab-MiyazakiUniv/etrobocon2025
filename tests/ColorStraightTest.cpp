@@ -39,7 +39,7 @@ namespace etrobocon2025_test {
   }
 
   // 最初3回の色取得で連続して指定色を取得するテスト
-  TEST(ColorStraightTest, runToGetThreeConsecutive)
+  TEST(ColorStraightTest, RunToGetThreeConsecutive)
   {
     Robot robot;
     COLOR targetColor = COLOR::GREEN;
@@ -84,7 +84,7 @@ namespace etrobocon2025_test {
   }
 
   // 少し後退して指定色を取得するテストケース
-  TEST(ColorStraightTest, runBackToGetLater)
+  TEST(ColorStraightTest, RunBackToGetLater)
   {
     Robot robot;
     COLOR targetColor = COLOR::GREEN;
@@ -130,7 +130,7 @@ namespace etrobocon2025_test {
   }
 
   // 目標色がなしで停止するかのテスト
-  TEST(ColorStraightTest, runNoneColor)
+  TEST(ColorStraightTest, RunNoneColor)
   {
     Robot robot;
     COLOR targetColor = COLOR::NONE;

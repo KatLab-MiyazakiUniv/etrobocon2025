@@ -49,8 +49,8 @@ namespace etrobocon2025_test {
     double rightActual = Mileage::calculateWheelMileage(rightCount);
     double leftActual = Mileage::calculateWheelMileage(leftCount);
     // タイヤごとの走行距離
-    double rightDifference = std::abs(rightActual - leftInitial);
-    double leftDifference = std::abs(leftActual - rightInitial);
+    double rightDifference = std::abs(rightActual - rightInitial);
+    double leftDifference = std::abs(leftActual - leftInitial);
     // タイヤの走行距離の誤差
     double actualError = (rightDifference - leftDifference);
 
@@ -98,8 +98,8 @@ namespace etrobocon2025_test {
     double rightActual = Mileage::calculateWheelMileage(rightCount);
     double leftActual = Mileage::calculateWheelMileage(leftCount);
     // タイヤごとの走行距離
-    double rightDifference = std::abs(rightActual - leftInitial);
-    double leftDifference = std::abs(leftActual - rightInitial);
+    double rightDifference = std::abs(rightActual - rightInitial);
+    double leftDifference = std::abs(leftActual - leftInitial);
     // タイヤの走行距離の誤差
     double actualError = (rightDifference - leftDifference);
 
@@ -147,8 +147,8 @@ namespace etrobocon2025_test {
     double rightActual = Mileage::calculateWheelMileage(rightCount);
     double leftActual = Mileage::calculateWheelMileage(leftCount);
     // タイヤごとの走行距離
-    double rightDifference = std::abs(rightActual - leftInitial);
-    double leftDifference = std::abs(leftActual - rightInitial);
+    double rightDifference = std::abs(rightActual - rightInitial);
+    double leftDifference = std::abs(leftActual - leftInitial);
     // タイヤの走行距離の誤差
     double actualError = (rightDifference - leftDifference);
 
@@ -196,8 +196,8 @@ namespace etrobocon2025_test {
     double rightActual = Mileage::calculateWheelMileage(rightCount);
     double leftActual = Mileage::calculateWheelMileage(leftCount);
     // タイヤごとの走行距離
-    double rightDifference = std::abs(rightActual - leftInitial);
-    double leftDifference = std::abs(leftActual - rightInitial);
+    double rightDifference = std::abs(rightActual - rightInitial);
+    double leftDifference = std::abs(leftActual - leftInitial);
     // タイヤの走行距離の誤差
     double actualError = (rightDifference - leftDifference);
 
