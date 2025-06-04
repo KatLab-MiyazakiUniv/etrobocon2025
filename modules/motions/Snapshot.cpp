@@ -6,8 +6,6 @@
 
 #include "Snapshot.h"
 
-const std::string Snapshot::path = "etrobocon2025/datafiles/snapshots/";
-
 Snapshot::Snapshot(Robot& _robot, const std::string& _fileName)
   : Motion(_robot), fileName(_fileName)
 {
