@@ -6,8 +6,9 @@
 
 #include "AngleRotation.h"
 
-AngleRotation::AngleRotation(Robot& robot, int targetAngle, int speed, bool isClockwise)
-  : Rotation(robot, targetAngle, speed, isClockwise),
+AngleRotation::AngleRotation(Robot& _robot, int _speed, bool _isClockwise, int _targetAngle)
+  : Rotation(_robot, _speed, _isClockwise),
+    targetAngle(_targetAngle),
     targetLeftDistance(0.0),
     targetRightDistance(0.0)
 {
@@ -22,7 +23,7 @@ void AngleRotation::prepare()
   double initRightMileage = Mileage::calculateWheelMileage(motorController.getRightMotorCount());
 
   // 回頭距離 = π × TREAD(両輪間距離[mm]) × (角度 / 360) により各車輪の目標距離を算出
-  double targetDistance = M_PI * TREAD * targetAngle / 360;
+  double targetDistance = PI * TREAD * targetAngle / 360.0;
 
   // 目標走行距離を方向に応じて設定
   targetLeftDistance = initLeftMileage + targetDistance * leftSign;
@@ -33,13 +34,13 @@ bool AngleRotation::isMetPreCondition()
 {
   // スピードが0以下なら終了
   if(speed <= 0) {
-    std::cerr << "speed=" << speed << " は無効な値です。\n";
+    std::cerr << "speed=" << speed << " は無効な値です" << std::endl;
     return false;
   }
 
   // 角度が0以下または360以上なら終了
   if(targetAngle <= 0 || targetAngle >= 360) {
-    std::cerr << "targetAngle=" << targetAngle << " は範囲外です。\n";
+    std::cerr << "targetAngle=" << targetAngle << " は範囲外です。" << std::endl;
     return false;
   }
 

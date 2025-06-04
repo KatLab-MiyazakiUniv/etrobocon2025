@@ -16,11 +16,11 @@ class AngleRotation : public Rotation {
   /**
    * コンストラクタ
    * @param _robot       ロボット制御クラスへの参照
-   * @param _targetAngle 目標回転角度(deg) 0~360
    * @param _speed       指定する速度（mm/秒）
    * @param _isClockwise 回頭方向 true:時計回り, false:反時計回り
+   * @param _targetAngle 目標回転角度(deg) 0~360
    */
-  AngleRotation(Robot& _robot, int _targetAngle, int _speed, bool _isClockwise);
+  AngleRotation(Robot& _robot, int _speed, bool _isClockwise, int _targetAngle);
 
   /**
    * @brief 回頭する
@@ -45,9 +45,10 @@ class AngleRotation : public Rotation {
    */
   bool isMetContinuationCondition() override;
 
- protected:
-  double targetLeftDistance;   // 左モーターの目標移動距離（
+ private:
+  double targetLeftDistance;   // 左モーターの目標移動距離
   double targetRightDistance;  // 右モーターの目標移動距離
+  int targetAngle;             // 目標回転角度(deg) 0~360
 };
 
 #endif

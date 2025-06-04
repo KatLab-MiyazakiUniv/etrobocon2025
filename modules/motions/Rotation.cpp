@@ -6,9 +6,8 @@
 
 #include "Rotation.h"
 
-Rotation::Rotation(Robot& _robot, int _targetAngle, int _speed, bool _isClockwise)
+Rotation::Rotation(Robot& _robot, int _speed, bool _isClockwise)
   : Motion(_robot),
-    targetAngle(_targetAngle),
     speed(_speed),
     isClockwise(_isClockwise),
     leftSign(_isClockwise ? 1 : -1),
@@ -29,7 +28,7 @@ void Rotation::run()
   motorController.setRightMotorSpeed(speed * rightSign);
 
   while(isMetContinuationCondition()) {
-    clock.sleep(10000);  // 10000μs(10ms)程度のスリープでループを安定させる
+    // 回頭継続条件が満たされるまで待機する（モーターが走行中）
   }
 
   // モーターを停止
