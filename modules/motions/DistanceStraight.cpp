@@ -47,6 +47,6 @@ bool DistanceStraight::isMetContinuationCondition()
     return false;
   }
 
-  // 現在の走行距離が目標走行距離に達していなければtrueを返す
+  // 現在の走行距離が目標走行距離に達していなければ走行を続ける
   return true;
 }
