@@ -17,13 +17,15 @@ namespace etrobocon2025_test {
     Robot robot;
     COLOR targetColor = COLOR::GREEN;
     double targetSpeed = 100.0;
+    double basePower = 100.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
 
     double expected = 0.0;
 
-    // 最初10回の色取得分の走行距離を許容誤差とする
-    int error
-        = Mileage::calculateMileage(targetSpeed * 0.05 * 10, targetSpeed * 0.05 * 10);  // 許容誤差
+    // モーターに1回setMotorPower()を呼ぶと、モータカウントが power × 0.05分進む
+    // 10ステップ分の走行距離を許容誤差とする
+    double error
+        = Mileage::calculateMileage(basePower * 0.05 * 10, basePower * 0.05 * 10);  // 許容誤差
 
     srand(9037);  // 最初に緑を取得する乱数シード
 

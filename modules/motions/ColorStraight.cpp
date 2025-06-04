@@ -14,7 +14,7 @@ ColorStraight::ColorStraight(Robot& _robot, COLOR _targetColor, double _targetSp
 bool ColorStraight::isMetPreCondition()
 {
   // 目標速度が0の場合は終了する
-  if(targetSpeed == 0) {
+  if(targetSpeed == 0.0) {
     return false;
   }
   // 目標の色がNoneの場合は終了する
