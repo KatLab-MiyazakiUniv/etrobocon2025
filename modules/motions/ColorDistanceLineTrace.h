@@ -51,7 +51,7 @@ class ColorDistanceLineTrace : public LineTrace {
   bool isMetContinuationCondition() override;
 
  private:
-  static constexpr int JUDGE_COUNT = 3;  // 色取得の決定に必要な連続回数
+  static constexpr int JUDGE_COUNT = 2;  // 色取得の決定に必要な連続回数
   int colorCount;                        // 色取得した回数
   COLOR targetColor;                     // 指定色
   double targetDistance;                 // 目標距離 0~
