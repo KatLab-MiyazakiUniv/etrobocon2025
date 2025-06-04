@@ -1,7 +1,7 @@
 /**
  * @file   ColorDistanceLineTrace.cpp
  * @brief  色距離指定ライントレース動作
- * @author miyahara046
+ * @author miyahara046 nishijima515
  */
 
 #include "ColorDistanceLineTrace.h"

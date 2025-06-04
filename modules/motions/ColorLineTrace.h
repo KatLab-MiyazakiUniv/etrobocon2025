@@ -1,7 +1,7 @@
 /**
  * @file   ColorLineTrace.h
  * @brief  指定色ライントレース動作
- * @author miyahara046
+ * @author miyahara046 nishijima515
  */
 
 #ifndef COLOR_LINE_TRACE_H

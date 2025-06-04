@@ -1,7 +1,7 @@
 /**
  * @file   ColorLineTrace.cpp
  * @brief  色指定ライントレース動作
- * @author miyahara046
+ * @author miyahara046 nishijima515
  */
 
 #include "ColorLineTrace.h"

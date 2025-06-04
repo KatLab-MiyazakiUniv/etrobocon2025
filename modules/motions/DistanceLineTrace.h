@@ -1,7 +1,7 @@
 /**
  * @file   DistanceLineTrace.h
  * @brief  指定距離ライントレース動作
- * @author miyahara046
+ * @author miyahara046 nishijima515
  */
 
 #ifndef DISTANCE_LINE_TRACE_H
