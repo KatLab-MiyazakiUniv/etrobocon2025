@@ -5,7 +5,6 @@
  */
 
 #include "ColorStraight.h"
-using namespace std;
 
 ColorStraight::ColorStraight(Robot& _robot, COLOR _targetColor, double _targetSpeed)
   : Straight(_robot, _targetSpeed), targetColor(_targetColor)

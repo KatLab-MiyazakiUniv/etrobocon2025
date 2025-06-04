@@ -17,7 +17,7 @@ class Straight : public Motion {
   /**
    * @brief コンストラクタ
    * @param _robot ロボット本体への参照
-   * @param _speed   目標速度[mm/s]
+   * @param _speed 目標速度[mm/s]
    */
   Straight(Robot& _robot, double _speed);
 
