@@ -5,7 +5,6 @@
  */
 
 #include "DistanceStraight.h"
-using namespace std;
 
 DistanceStraight::DistanceStraight(Robot& _robot, double _targetDistance, double _targetSpeed)
   : Straight(_robot, _targetSpeed), targetDistance(_targetDistance)
