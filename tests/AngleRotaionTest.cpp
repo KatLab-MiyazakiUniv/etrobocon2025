@@ -16,7 +16,7 @@ namespace etrobocon2024_test {
   constexpr double TRANSFORM = 2.0 * WHEEL_RADIUS / TREAD;  // 回頭角度を求める式の係数
 
   // 右回頭のテスト
-  TEST(AngleRotationTest, runRight)
+  TEST(AngleRotationTest, RunRight)
   {
     Robot robot;
     MotorController& motorController = robot.getMotorControllerInstance();
@@ -25,7 +25,7 @@ namespace etrobocon2024_test {
     int speed = 300;
     bool isClockwise = true;
 
-    AngleRotation angleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
     double expected = angle;  // 指定した回頭角度を期待値とする
 
@@ -49,8 +49,8 @@ namespace etrobocon2024_test {
     EXPECT_GE(expected + error, actual);
   }
 
-  //   左回頭のテスト
-  TEST(AngleRotationTest, runLeft)
+  // 左回頭のテスト
+  TEST(AngleRotationTest, RunLeft)
   {
     Robot robot;
     MotorController& motorController = robot.getMotorControllerInstance();
@@ -60,7 +60,7 @@ namespace etrobocon2024_test {
     int speed = 300;
     bool isClockwise = false;
 
-    AngleRotation angleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
     double expected = angle;  // 指定した回頭角度を期待値とする
 
@@ -84,8 +84,8 @@ namespace etrobocon2024_test {
     EXPECT_GE(expected + error, actual);
   }
 
-  // speedを0に設定して回頭するテスト
-  TEST(AngleRotationTest, runZeroSpeed)
+  // speedを0に設定したときに回頭をせずに終了するかのテスト
+  TEST(AngleRotationTest, RunZeroSpeed)
   {
     Robot robot;
     MotorController& motorController = robot.getMotorControllerInstance();
@@ -95,7 +95,7 @@ namespace etrobocon2024_test {
     int speed = 0;
     bool isClockwise = true;
 
-    AngleRotation angleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
     double expected = 0;  // 回頭しない
 
@@ -113,8 +113,8 @@ namespace etrobocon2024_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // speedをマイナスに設定して回頭するテスト
-  TEST(AngleRotationTest, runMinusSpeed)
+  // speedをマイナスに設定したときに回頭をせずに終了するかのテスト
+  TEST(AngleRotationTest, RunMinusSpeed)
   {
     Robot robot;
     MotorController& motorController = robot.getMotorControllerInstance();
@@ -124,7 +124,7 @@ namespace etrobocon2024_test {
     int speed = -300;
     bool isClockwise = true;
 
-    AngleRotation angleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
     double expected = 0;  // 回頭しない
 
@@ -142,8 +142,8 @@ namespace etrobocon2024_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 回頭角度を0に設定して回頭するテスト
-  TEST(AngleRotationTest, runZeroAngle)
+  // 回頭角度を0に設定したときに回頭をせずに終了するかのテスト
+  TEST(AngleRotationTest, RunZeroAngle)
   {
     Robot robot;
     MotorController& motorController = robot.getMotorControllerInstance();
@@ -153,7 +153,7 @@ namespace etrobocon2024_test {
     int speed = 300;
     bool isClockwise = true;
 
-    AngleRotation angleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
     double expected = 0;  // 回頭しない
 
@@ -171,8 +171,8 @@ namespace etrobocon2024_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 回頭角度をマイナスに設定して回頭するテスト
-  TEST(AngleRotationTest, runMinusAngle)
+  // 回頭角度をマイナスに設定したときに回頭をせずに終了するかのテスト
+  TEST(AngleRotationTest, RunMinusAngle)
   {
     Robot robot;
     MotorController& motorController = robot.getMotorControllerInstance();
@@ -182,7 +182,7 @@ namespace etrobocon2024_test {
     int speed = 300;
     bool isClockwise = true;
 
-    AngleRotation angleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
     double expected = 0;  // 回頭しない
 
@@ -200,8 +200,8 @@ namespace etrobocon2024_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 回頭角度を360度以上に設定して回頭するテスト
-  TEST(AngleRotationTest, runOverAngle)
+  // 回頭角度を360度以上に設定したときに回頭をせずに終了するかのテスト
+  TEST(AngleRotationTest, RunOverAngle)
   {
     Robot robot;
     MotorController& motorController = robot.getMotorControllerInstance();
@@ -211,7 +211,7 @@ namespace etrobocon2024_test {
     int speed = 300;
     bool isClockwise = true;
 
-    AngleRotation angleRotation(robot, angle, speed, isClockwise);
+    AngleRotation angleRotation(robot, speed, isClockwise, angle);
 
     double expected = 0;  // 回頭しない
 
