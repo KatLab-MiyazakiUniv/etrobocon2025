@@ -28,7 +28,7 @@ void Rotation::run()
   motorController.setRightMotorSpeed(speed * rightSign);
 
   while(isMetContinuationCondition()) {
-    // 回頭継続条件が満たされるまで待機する（モーターが走行中）
+    // 回頭継続条件が満たされるまで待機（モーターが走行中）
   }
 
   // モーターを停止
