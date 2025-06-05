@@ -7,23 +7,25 @@
 #ifndef SNAPSHOT_H
 #define SNAPSHOT_H
 
-#include "Robot.h"
+#include "Motion.h"
 
-class Motion {
+class Snapshot : public Motion {
  public:
   /**
    * コンストラクタ
-   * @brief 外部リソースのインスタンスを初期化する
+   * @param _robot 外部リソースのインスタンス
+   *
    */
-  Motion(Robot& _robot);
+  Snapshot(Robot& _robot, const std::string& _fileName);
 
   /**
-   * @brief 動作を実行する純粋仮想関数
+   * @brief カメラ撮影を行い、画像を保存する
    */
-  virtual void run() = 0;
+  void run() override;
 
- protected:
-  Robot& robot;  // Robotインスタンスの参照
+ private:
+  std::string fileName;                                     // 保存するファイル名
+  std::string path = "etrobocon2025/datafiles/snapshots/";  // 保存するパス
 };
 
 #endif
