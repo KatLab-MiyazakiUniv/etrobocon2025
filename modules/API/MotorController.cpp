@@ -4,7 +4,6 @@
  * @author nishijima515
  */
 #include "MotorController.h"
-using namespace spikeapi;
 
 using namespace spikeapi;
 

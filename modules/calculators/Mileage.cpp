@@ -11,7 +11,7 @@
 double Mileage::calculateWheelMileage(int32_t angle)
 {
   // タイヤの累計走行距離 ＝ 2 * π * タイヤの半径　* (タイヤの回転角度 / 360[deg])
-  return 2.0 * M_PI * WHEEL_RADIUS * static_cast<double>(angle) / 360.0;
+  return 2.0 * PI * WHEEL_RADIUS * static_cast<double>(angle) / 360.0;
 }
 
 double Mileage::calculateMileage(int32_t rightAngle, int32_t leftAngle)

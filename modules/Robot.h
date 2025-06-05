@@ -11,8 +11,8 @@
 #include "MotorController.h"
 #include "CameraCapture.h"
 #include "ColorSensor.h"
+#include "Clock.h"
 #include "EdgeChange.h"
-
 class Robot {
  public:
   /**
@@ -40,6 +40,12 @@ class Robot {
   spikeapi::ColorSensor& getColorSensorInstance();
 
   /**
+   * @brief Clockのインスタンスの参照を返す
+   * @return メンバ変数clock(Clockのインスタンス)の参照
+   */
+  spikeapi::Clock& getClockInstance();
+
+  /**
    * @brief エッジの状態を取得
    * @return true: 左エッジ, false: 右エッジ
    */
@@ -49,6 +55,7 @@ class Robot {
   MotorController motorController;    // MotorControllerインスタンス
   CameraCapture cameraCapture;        // CameraCaptureインスタンス
   spikeapi::ColorSensor colorSensor;  // ColorSensorインスタンス
+  spikeapi::Clock clock;              // Clockインスタンス
   EdgeChange edgeChange;              // EdgeChangeインスタンス
 };
 
