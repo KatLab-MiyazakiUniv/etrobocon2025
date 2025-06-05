@@ -8,7 +8,6 @@
 #define STRAIGHT_H
 
 #include "Motion.h"
-#include "Mileage.h"
 #include "SpeedCalculator.h"
 
 class Straight : public Motion {

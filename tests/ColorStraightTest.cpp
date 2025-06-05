@@ -5,6 +5,7 @@
  */
 
 #include "ColorStraight.h"
+#include "Mileage.h"
 #include <gtest/gtest.h>
 
 using namespace std;

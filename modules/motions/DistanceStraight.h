@@ -8,6 +8,7 @@
 #define DISTANCE_STRAIGHT_H
 
 #include "Straight.h"
+#include "Mileage.h"
 
 class DistanceStraight : public Straight {
  public:

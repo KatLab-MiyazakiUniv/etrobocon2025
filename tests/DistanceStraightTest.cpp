@@ -60,7 +60,7 @@ namespace etrobocon2025_test {
     EXPECT_NEAR(actualError, 0.0, expectedError);
   }
 
-  // 最大速度での直進テスト
+  // 十分大きい速度での直進テスト
   TEST(DistanceStraightTest, RunFullPower)
   {
     Robot robot;
@@ -158,7 +158,7 @@ namespace etrobocon2025_test {
     EXPECT_NEAR(actualError, 0.0, expectedError);
   }
 
-  // 最大速度での後退テスト
+  // 十分大きい速度での後退テスト
   TEST(DistanceStraightTest, RunBackFullPower)
   {
     Robot robot;
