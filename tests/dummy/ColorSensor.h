@@ -17,6 +17,8 @@
 #define PBIO_COLOR_HUE_GREEN 120
 #define PBIO_COLOR_HUE_BLUE 240
 
+#define REFLECTION_RESULT 10  // ダミーの反射率値
+
 namespace spikeapi {
 
   // カラーセンサークラス
@@ -70,6 +72,8 @@ namespace spikeapi {
           break;
       }
     }
+
+    int32_t getReflection() const { return REFLECTION_RESULT; }
   };
 }  // namespace spikeapi
 
