@@ -13,8 +13,8 @@ class Snapshot : public Motion {
  public:
   /**
    * コンストラクタ
-   * @param _robot 外部リソースのインスタンス
-   *
+   * @param _robot ロボットインスタンス
+   * @param _robot ファイル名
    */
   Snapshot(Robot& _robot, const std::string& _fileName);
 
