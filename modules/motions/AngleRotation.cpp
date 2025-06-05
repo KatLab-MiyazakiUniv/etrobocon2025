@@ -6,7 +6,7 @@
 
 #include "AngleRotation.h"
 
-AngleRotation::AngleRotation(Robot& _robot, double _speed, bool _isClockwise, int _targetAngle)
+AngleRotation::AngleRotation(Robot& _robot, int _targetAngle, double _speed, bool _isClockwise)
   : Rotation(_robot, _speed, _isClockwise),
     targetAngle(_targetAngle),
     targetLeftDistance(0.0),
