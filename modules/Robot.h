@@ -11,6 +11,7 @@
 #include "MotorController.h"
 #include "CameraCapture.h"
 #include "ColorSensor.h"
+#include "EdgeChange.h"
 
 class Robot {
  public:
@@ -38,10 +39,17 @@ class Robot {
    */
   spikeapi::ColorSensor& getColorSensorInstance();
 
+  /**
+   * @brief エッジの状態を取得
+   * @return true: 左エッジ, false: 右エッジ
+   */
+  EdgeChange& getEdgeChangeInstance();
+
  private:
   MotorController motorController;    // MotorControllerインスタンス
   CameraCapture cameraCapture;        // CameraCaptureインスタンス
   spikeapi::ColorSensor colorSensor;  // ColorSensorインスタンス
+  EdgeChange edgeChange;              // EdgeChangeインスタンス
 };
 
 #endif
