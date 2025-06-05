@@ -6,7 +6,7 @@
 
 #include "EdgeChange.h"
 
-EdgeChange::EdgeChange(bool& _isLeftEdge, bool _nextEdge)
+EdgeChange::edgeChange(bool& _isLeftEdge, bool _nextEdge)
   : isLeftEdge(_isLeftEdge), nextEdge(_nextEdge)
 {
 }
