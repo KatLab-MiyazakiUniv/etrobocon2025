@@ -16,12 +16,11 @@ class AngleRotation : public Rotation {
   /**
    * コンストラクタ
    * @param _robot       ロボット制御クラスへの参照
+   * @param _targetAngle 目標回転角度(deg) 0~360
    * @param _speed       指定する速度（mm/秒）
    * @param _isClockwise 回頭方向 true:時計回り, false:反時計回り
-   * @param _targetAngle 目標回転角度(deg) 0~360
    */
-  AngleRotation(Robot& _robot, double _speed, bool _isClockwise, int _targetAngle);
-
+  AngleRotation(Robot& _robot, int _targetAngle, double _speed, bool _isClockwise);
   /**
    * @brief 回頭する
    * @note run() メソッドは Rotation クラスの実装をそのまま使用する
