@@ -16,7 +16,7 @@ class EdgeChange {
    * @param _isLeftEdge エッジの左右判定(true:左エッジ, false:右エッジ)
    * @param _nextEdge 切り替え後のエッジ(true:左エッジ, false:右エッジ)
    */
-  EdgeChange(bool& _isLeftEdge, bool _nextEdge);
+  edgeChange(bool& _isLeftEdge, bool _nextEdge);
 
   /**
    * @brief エッジを切り替える
