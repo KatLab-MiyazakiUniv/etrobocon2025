@@ -12,9 +12,11 @@ namespace etrobocon2025_test {
   // 右エッジへの切り替えのテスト
   TEST(EdgeChangeTest, RunToFalse)
   {
+    Robot robot;
+
     // 右エッジへ変更
     bool nextEdge = false;
-    EdgeChange ec(Robot & robot, nextEdge);
+    EdgeChange ec(robot, nextEdge);
     ec.run();
 
     bool expected = nextEdge;
@@ -29,9 +31,11 @@ namespace etrobocon2025_test {
   // 左エッジへの切り替えのテスト
   TEST(EdgeChangeTest, RunToTrue)
   {
+    Robot robot;
+
     // 左エッジへの変更
     bool nextEdge = true;
-    EdgeChange ec(Robot & robot, nextEdge);
+    EdgeChange ec(robot, nextEdge);
     ec.run();
 
     bool expected = nextEdge;
