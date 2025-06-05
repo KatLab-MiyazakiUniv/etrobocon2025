@@ -42,7 +42,7 @@ bool DistanceStraight::isMetContinuationCondition()
   double currentDistance = Mileage::calculateMileage(currentRightMotorCount, currentLeftMotorCount);
 
   // 現在の走行距離が目標走行距離に達した場合falseを返す
-  // ここでは、左右どちらとも達したかどうかで判断する
+  // ここでは、走行体全体の距離 (左右の距離の平均) が達したかどうかで判断する
   if((fabs(currentDistance - initialDistance) >= targetDistance)) {
     return false;
   }
