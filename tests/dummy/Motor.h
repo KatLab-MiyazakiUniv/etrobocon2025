@@ -48,7 +48,6 @@ namespace spikeapi {
      * エンコーダの値を取得する
      * @return エンコーダの値 [°]
      */
-
     int32_t getCount()
     {
       if(!isSetSpeed) {
