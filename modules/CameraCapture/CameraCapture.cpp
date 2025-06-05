@@ -1,7 +1,7 @@
 /**
  * @file   CameraCapture.cpp
  * @brief  カメラを制御するクラス
- * @author Hara1274
+ * @author Hara1274 takuchi17
  */
 
 #include "CameraCapture.h"
