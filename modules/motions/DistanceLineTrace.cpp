@@ -7,10 +7,8 @@
 #include "DistanceLineTrace.h"
 
 DistanceLineTrace::DistanceLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
-                                     int _targetBrightness, const PidGain& _pidGain,
-                                     bool& _isLeftEdge)
-  : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain, _isLeftEdge),
-    targetDistance(_targetDistance)
+                                     int _targetBrightness, const PidGain& _pidGain)
+  : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain), targetDistance(_targetDistance)
 {
 }
 

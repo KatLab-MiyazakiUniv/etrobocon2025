@@ -17,10 +17,9 @@ class ColorLineTrace : public LineTrace {
    * @param _targetSpeed 目標速度
    * @param _targetBrightness 目標輝度 0~
    * @param _gain PIDゲイン
-   * @param _isLeftEdge エッジの左右判定(true:左エッジ, false:右エッジ)
    */
   ColorLineTrace(Robot& _robot, COLOR _targetColor, double _targetSpeed, int _targetBrightness,
-                 const PidGain& _gain, bool& _isLeftEdge);
+                 const PidGain& _gain);
 
   /**
    * @brief 指定色までライントレースする

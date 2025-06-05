@@ -7,7 +7,7 @@
 #include "Robot.h"
 
 Robot::Robot()
-  : motorController(), cameraCapture(), colorSensor(EPort::PORT_E), clock(), edgeChange()
+  : motorController(), cameraCapture(), colorSensor(EPort::PORT_E), clock(), isLeftEdge(true)
 {
 }
 
@@ -31,7 +31,12 @@ spikeapi::Clock& Robot::getClockInstance()
   return clock;
 }
 
-EdgeChange& Robot::getEdgeChangeInstance()
+void Robot::setIsLeftEdge(bool isLeft)
 {
-  return edgeChange;
+  isLeftEdge = isLeft;  // エッジの左右判定を設定
+}
+
+bool Robot::getIsLeftEdge() const
+{
+  return isLeftEdge;
 }

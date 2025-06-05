@@ -4,34 +4,25 @@
  * @author miyahara046
  */
 
-#ifndef EDGE_CHANGE
-#define EDGE_CHANGE
+#ifndef EDGE_CHANGE_H
+#define EDGE_CHANGE_H
 
-#include "Robot.h"
+#include "Motion.h"
 
-class EdgeChange {
+class EdgeChange : public Motion {
  public:
   /**
-   * コンストラクタ
-   * @param _isLeftEdge エッジの左右判定(true:左エッジ, false:右エッジ)
-   * @param _nextEdge 切り替え後のエッジ(true:左エッジ, false:右エッジ)
+   * @brief エッジを切り替えるクラス
    */
-  edgeChange(bool& _isLeftEdge, bool _nextEdge);
+  EdgeChange(Robot& _robot, const bool& _isLeftEdge);
 
   /**
    * @brief エッジを切り替える
    */
-  void run();
-
-  /**
-   * @brief 現在のエッジの状態を取得
-   * @return true: 左エッジ, false: 右エッジ
-   */
-  bool getIsLeftEdge() const;
+  void run() override;
 
  private:
-  bool& isLeftEdge;  // 参照によって外部の isLeftEdge を操作
-  bool nextEdge;
+  const bool& isLeftEdge;  // 切り替え後のエッジ(true:左エッジ, false:右エッジ)
 };
 
 #endif

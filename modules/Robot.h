@@ -12,7 +12,6 @@
 #include "CameraCapture.h"
 #include "ColorSensor.h"
 #include "Clock.h"
-#include "EdgeChange.h"
 class Robot {
  public:
   /**
@@ -46,17 +45,23 @@ class Robot {
   spikeapi::Clock& getClockInstance();
 
   /**
-   * @brief エッジの状態を取得
-   * @return true: 左エッジ, false: 右エッジ
+   * @brief エッジの左右判定を設定する
+   * @param isLeft true:左エッジ, false:右エッジ
    */
-  EdgeChange& getEdgeChangeInstance();
+  void setIsLeftEdge(bool isLeft);
+
+  /**
+   * @brief エッジの左右判定を取得する
+   * @return true:左エッジ, false:右エッジ
+   */
+  bool getIsLeftEdge() const;
 
  private:
   MotorController motorController;    // MotorControllerインスタンス
   CameraCapture cameraCapture;        // CameraCaptureインスタンス
   spikeapi::ColorSensor colorSensor;  // ColorSensorインスタンス
   spikeapi::Clock clock;              // Clockインスタンス
-  EdgeChange edgeChange;              // EdgeChangeインスタンス
+  bool isLeftEdge;                    // エッジの左右判定(true:左エッジ, false:右エッジ)
 };
 
 #endif
