@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 #include "Port.h"
+#include "spikeapi.h"
 
 namespace spikeapi {
   /**
