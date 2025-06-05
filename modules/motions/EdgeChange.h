@@ -7,9 +7,9 @@
 #ifndef EDGE_CHANGE
 #define EDGE_CHANGE
 
-#include "Motion.h"
+#include "Robot.h"
 
-class EdgeChange : public Motion {
+class EdgeChange {
  public:
   /**
    * コンストラクタ
