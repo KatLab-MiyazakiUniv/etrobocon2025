@@ -38,12 +38,12 @@ class SpeedCalculator {
   Pid leftPid;
   double rightMotorPower;
   double leftMotorPower;
-  int prevRightTime;
-  int prevLeftTime;
+  double prevRightTime;
+  double prevLeftTime;
   Robot& robot;
   // PIDゲイン
-  static constexpr double K_P = 0.004;
-  static constexpr double K_I = 0.0000005;
-  static constexpr double K_D = 0.0007;
+  static constexpr double K_P = 0.005;
+  static constexpr double K_I = 0.0002;
+  static constexpr double K_D = 0.000;
 };
 #endif
