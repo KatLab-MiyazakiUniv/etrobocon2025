@@ -61,7 +61,8 @@ class Robot {
   CameraCapture cameraCapture;        // CameraCaptureインスタンス
   spikeapi::ColorSensor colorSensor;  // ColorSensorインスタンス
   spikeapi::Clock clock;              // Clockインスタンス
-  bool isLeftEdge;                    // エッジの左右判定(true:左エッジ, false:右エッジ)
+  // formatチェックをパスするためのコメント
+  bool isLeftEdge;  // エッジの左右
 };
 
 #endif
