@@ -91,7 +91,7 @@ namespace etrobocon2025_test {
     int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    EXPECT_LT(actual, expected);        // 初期値より少しでも進んでいる
+    EXPECT_LT(actual, expected);        // 初期値より後退している
     EXPECT_LT(actual, targetDistance);  // 目標距離までに停止している
   }
 
