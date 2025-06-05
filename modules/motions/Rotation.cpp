@@ -33,5 +33,4 @@ void Rotation::run()
 
   // モーターを停止
   motorController.stopWheelsMotor();
-  clock.sleep(10000);
 }
