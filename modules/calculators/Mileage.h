@@ -7,7 +7,7 @@
 #ifndef MILEAGE_H
 #define MILEAGE_H
 
-#include <cmath>
+#include <stdint.h>
 #include "SystemInfo.h"
 
 class Mileage {
