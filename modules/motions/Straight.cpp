@@ -37,5 +37,4 @@ void Straight::run()
 
   // モータを停止
   robot.getMotorControllerInstance().stopWheelsMotor();
-  robot.getClockInstance().sleep(10000);
 }

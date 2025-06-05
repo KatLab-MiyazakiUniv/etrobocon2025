@@ -5,6 +5,7 @@
  */
 
 #include "ColorStraight.h"
+#include "Mileage.h"
 #include <gtest/gtest.h>
 
 using namespace std;
@@ -16,7 +17,7 @@ namespace etrobocon2025_test {
   {
     Robot robot;
     COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = 100.0;
+    double targetSpeed = 300.0;
     double basePower = 100.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
 
@@ -45,7 +46,7 @@ namespace etrobocon2025_test {
   {
     Robot robot;
     COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = 100.0;
+    double targetSpeed = 500.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
 
     double expected = 0.0;
@@ -66,7 +67,7 @@ namespace etrobocon2025_test {
   {
     Robot robot;
     COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = 100.0;
+    double targetSpeed = 500.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
 
     double expectedMinDistance = 10.0;  // 少なくとも10mmは直進する設定
@@ -90,7 +91,7 @@ namespace etrobocon2025_test {
   {
     Robot robot;
     COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = -100.0;
+    double targetSpeed = -500.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
 
     double expectedMinDistance = -10.0;  // 少なくとも10mmは後退する設定
