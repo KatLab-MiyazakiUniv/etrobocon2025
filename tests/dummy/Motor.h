@@ -49,6 +49,15 @@ namespace spikeapi {
      * エンコーダの値を取得する
      * @return エンコーダの値 [°]
      */
+    int32_t getCount()
+    {
+      if(!isSetSpeed) {
+        return count;
+      }
+
+      count += speed * 0.05;
+      return count;
+    }
     int32_t getCount() const { return count; }
 
     /**
@@ -65,6 +74,7 @@ namespace spikeapi {
     void setSpeed(int speed)
     {
       this->speed = speed;
+      isSetSpeed = true;
       count += speed * 0.05;
     }
 
@@ -83,6 +93,7 @@ namespace spikeapi {
     {
       this->power = power;
       count += power * 0.05;
+      isSetSpeed = false;
     }
 
     /**
@@ -93,6 +104,7 @@ namespace spikeapi {
     {
       speed = 0;
       power = 0;
+      isSetSpeed = false;
     }
 
     /**
@@ -103,6 +115,7 @@ namespace spikeapi {
     {
       speed = 0;
       power = 0;
+      isSetSpeed = false;
     }
 
     /**
@@ -150,7 +163,7 @@ namespace spikeapi {
     int power = 0;
     int duty_limit = 100;
     bool is_stalled = false;
-
+    bool isSetSpeed = false;
   };  // class Motor
 }  // namespace spikeapi
 

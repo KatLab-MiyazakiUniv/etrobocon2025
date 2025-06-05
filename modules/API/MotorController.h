@@ -8,6 +8,7 @@
 
 #include "Motor.h"
 #include "SystemInfo.h"  // WHEEL_RADIUS, PI, RAD_TO_DEG, DEG_TO_RADの定義を含む
+
 class MotorController {
  public:
   /** Power値の上限 */
