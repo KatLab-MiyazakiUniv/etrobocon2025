@@ -20,6 +20,12 @@ namespace etrobocon2025_test {
     double targetDistance = 1000.0;
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
+
+    // 左エッジに変更
+    bool nextEdge = true;
+    EdgeChange ec(robot, nextEdge);
+    ec.run();
+
     DistanceLineTrace dl(robot, targetDistance, targetSpeed, targetBrightness, gain);
 
     double expected = targetDistance;
@@ -43,7 +49,12 @@ namespace etrobocon2025_test {
     double targetDistance = 1000.0;
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = false;
+
+    // エッジを右に変更
+    bool nextEdge = false;
+    EdgeChange ec(robot, nextEdge);
+    ec.run();
+
     DistanceLineTrace dl(robot, targetDistance, targetSpeed, targetBrightness, gain);
 
     double expected = targetDistance;
@@ -68,6 +79,11 @@ namespace etrobocon2025_test {
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
+    // 左エッジに変更
+    bool nextEdge = true;
+    EdgeChange ec(robot, nextEdge);
+    ec.run();
+
     DistanceLineTrace dl(robot, targetDistance, targetSpeed, targetBrightness, gain);
 
     double expected = -targetDistance;
@@ -91,7 +107,12 @@ namespace etrobocon2025_test {
     double targetDistance = 1000.0;
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = false;
+
+    // 右エッジに変更
+    bool nextEdge = false;
+    EdgeChange ec(robot, nextEdge);
+    ec.run();
+
     DistanceLineTrace dl(robot, targetDistance, targetSpeed, targetBrightness, gain);
 
     double expected = -targetDistance;
