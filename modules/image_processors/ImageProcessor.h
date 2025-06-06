@@ -11,12 +11,12 @@
 #include <opencv2/opencv.hpp>
 
 struct DetectionResult {
-  bool wasDetected;       // 検出できたかどうか
-  std::string label;      // 検出したラベル
-  cv::Point topLeft;      // 検出した領域の左上の座標
-  cv::Point topRight;     // 検出した領域の右上の座標
-  cv::Point bottomLeft;   // 検出した領域の左下の座標
-  cv::Point bottomRight;  // 検出した領域の右下の座標
+  bool wasDetected = false;  // 検出できたかどうか
+  std::string label;         // 検出したラベル
+  cv::Point topLeft;         // 検出した領域の左上の座標
+  cv::Point topRight;        // 検出した領域の右上の座標
+  cv::Point bottomLeft;      // 検出した領域の左下の座標
+  cv::Point bottomRight;     // 検出した領域の右下の座標
 };
 
 class ImageProcessor {
