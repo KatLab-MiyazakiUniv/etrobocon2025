@@ -12,6 +12,7 @@
 #include "CameraCapture.h"
 #include "ColorSensor.h"
 #include "Clock.h"
+
 class Robot {
  public:
   /**
