@@ -63,7 +63,8 @@ class Robot {
   spikeapi::ColorSensor colorSensor;  // ColorSensorインスタンス
   spikeapi::Clock clock;              // Clockインスタンス
   // formatチェックをパスするためのコメント
-  bool isLeftEdge;  // エッジの左右
+  bool isLeftEdge;  // 左エッジを走行するかの真偽値
+                    // （true: 左エッジ、false: 右エッジ）、初期値は左エッジ
 };
 
 #endif

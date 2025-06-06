@@ -28,17 +28,12 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 左エッジへの切り替えのテスト
-  TEST(EdgeChangeTest, RunToTrue)
+  // 初期値が左エッジかのテスト
+  TEST(EdgeChangeTest, FirstEdgeIsTrue)
   {
     Robot robot;
 
-    // 左エッジへの変更
-    bool nextEdge = true;
-    EdgeChange ec(robot, nextEdge);
-    ec.run();
-
-    bool expected = nextEdge;
+    bool expected = true;
 
     // 現在のエッジを取得
     bool actual = robot.getIsLeftEdge();

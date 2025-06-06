@@ -14,7 +14,7 @@ class EdgeChange : public Motion {
   /**
    * @brief エッジを切り替えるクラス
    */
-  EdgeChange(Robot& _robot, const bool& _isLeftEdge);
+  EdgeChange(Robot& _robot, const bool& _isLeftEdge) : Motion(_robot), isLeftEdge(_isLeftEdge) {}
 
   /**
    * @brief エッジを切り替える
