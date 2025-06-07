@@ -27,3 +27,13 @@ spikeapi::Clock& Robot::getClockInstance()
 {
   return clock;
 }
+
+void Robot::setIsLeftEdge(bool isLeft)
+{
+  isLeftEdge = isLeft;  // エッジの左右判定を設定
+}
+
+bool Robot::getIsLeftEdge() const
+{
+  return isLeftEdge;
+}

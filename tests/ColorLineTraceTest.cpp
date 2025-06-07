@@ -19,8 +19,8 @@ namespace etrobocon2025_test {
     double targetSpeed = 500.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
+
+    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain);
 
     double expected = 0.0;
     srand(9037);  // 3回連続して緑を取得する乱数シード
@@ -42,8 +42,8 @@ namespace etrobocon2025_test {
     double targetSpeed = 100.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
+
+    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain);
 
     double expected = 0.0;
     srand(9037);  // 最初に緑を取得できるよう調整
@@ -71,8 +71,8 @@ namespace etrobocon2025_test {
     double targetSpeed = -500.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
+
+    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain);
 
     double expected = 0.0;
     srand(0);
@@ -94,8 +94,8 @@ namespace etrobocon2025_test {
     double targetSpeed = 0.0;
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
+
+    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain);
 
     double expected = 0.0;
 
@@ -118,8 +118,8 @@ namespace etrobocon2025_test {
     double targetSpeed = 100.0;
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain, isLeftEdge);
+
+    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain);
 
     double expected = 0.0;
 

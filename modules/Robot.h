@@ -45,11 +45,26 @@ class Robot {
    */
   spikeapi::Clock& getClockInstance();
 
+  /**
+   * @brief エッジの左右判定を設定する
+   * @param isLeft true:左エッジ, false:右エッジ
+   */
+  void setIsLeftEdge(bool isLeft);
+
+  /**
+   * @brief エッジの左右判定を取得する
+   * @return true:左エッジ, false:右エッジ
+   */
+  bool getIsLeftEdge() const;
+
  private:
   MotorController motorController;    // MotorControllerインスタンス
   CameraCapture cameraCapture;        // CameraCaptureインスタンス
   spikeapi::ColorSensor colorSensor;  // ColorSensorインスタンス
   spikeapi::Clock clock;              // Clockインスタンス
+  // formatチェックをパスするためのコメント
+  bool isLeftEdge = true;  // 左エッジを走行するかの真偽値
+                           // （true: 左エッジ、false: 右エッジ）、初期値は左エッジ
 };
 
 #endif
