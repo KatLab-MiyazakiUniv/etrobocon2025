@@ -8,9 +8,8 @@
 
 ColorDistanceLineTrace::ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor,
                                                double _targetDistance, double _targetSpeed,
-                                               int _targetBrightness, const PidGain& _pidGain,
-                                               bool& _isLeftEdge)
-  : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain, _isLeftEdge),
+                                               int _targetBrightness, const PidGain& _pidGain)
+  : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain),
     targetColor(_targetColor),
     targetDistance(_targetDistance),
     colorCount(0)

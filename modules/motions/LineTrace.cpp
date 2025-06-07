@@ -7,12 +7,11 @@
 #include "LineTrace.h"
 
 LineTrace::LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness,
-                     const PidGain& _pidGain, bool& _isLeftEdge)
+                     const PidGain& _pidGain)
   : Motion(_robot),
     targetSpeed(_targetSpeed),
     targetBrightness(_targetBrightness),
-    pidGain(_pidGain),
-    isLeftEdge(_isLeftEdge)
+    pidGain(_pidGain)
 {
 }
 
@@ -29,7 +28,7 @@ void LineTrace::run()
   prepare();
 
   // 左右で符号を変える
-  int edgeSign = isLeftEdge ? -1 : 1;
+  int edgeSign = robot.getIsLeftEdge() ? -1 : 1;
 
   SpeedCalculator speedCalculator(robot, targetSpeed);
 
