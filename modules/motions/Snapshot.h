@@ -14,7 +14,7 @@ class Snapshot : public Motion {
   /**
    * コンストラクタ
    * @param _robot ロボットインスタンス
-   * @param _robot ファイル名 (デフォルト: snapshot.JPEG)
+   * @param _fileName ファイル名 (デフォルト: snapshot.JPEG)
    */
   Snapshot(Robot& _robot, const std::string& _fileName = "snapshot");
 
