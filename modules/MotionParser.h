@@ -23,8 +23,6 @@
 #include "Sleeping.h"
 #include "Snapshot.h"
 
-#define READ_BUF_SIZE 256  // コマンドのパラメータ読み込み用の領域
-
 enum class COMMAND {
   AR,   // 角度指定回頭
   DS,   // 指定距離直進
