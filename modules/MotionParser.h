@@ -9,8 +9,8 @@
 
 #include <vector>
 #include <string>
-#include <cstdio>
 #include <iostream>
+#include <fstream>
 #include "StringOperator.h"
 #include "Motion.h"
 #include "AngleRotation.h"
@@ -19,11 +19,9 @@
 #include "ColorLineTrace.h"
 #include "DistanceLineTrace.h"
 #include "ColorDistanceLineTrace.h"
-// #include "EdgeChanging.h"
-// #include "Sleeping.h"
-// #include "StopWheelsMotor.h"
-// #include "ResetWheelsMotorPower.h"
-// #include "CameraAction.h"
+#include "EdgeChange.h"
+#include "Sleeping.h"
+#include "Snapshot.h"
 
 #define READ_BUF_SIZE 256  // コマンドのパラメータ読み込み用の領域
 
@@ -36,9 +34,7 @@ enum class COMMAND {
   CDL,  // 色距離指定ライントレース
   EC,   // エッジ切り替え
   SL,   // 自タスクスリープ
-  SM,   // 両輪モーターのパワーをリセット
-  RM,   // 両輪モーターのパワーをリセット
-  CA,   // カメラ撮影動作
+  SS,   // カメラ撮影動作
   NONE
 };
 
@@ -47,7 +43,7 @@ class MotionParser {
   /**
    * @brief ファイルを解析して動作インスタンスのリストを生成する
    * @param robot ロボット本体の参照
-   * @param filePath ファイルパス
+   * @param commandFilePath ファイルパス
    * @param targetBrightness 目標輝度
    * @return 動作インスタンスリスト
    */

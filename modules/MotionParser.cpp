@@ -8,141 +8,159 @@
 
 using namespace std;
 
-std::vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePath,
-                                                 int targetBrightness)
-
+vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePath,
+                                            int targetBrightness)
 {
-  // 消す
-  bool isLeftEdge = true;
-
-  // ファイルの行番符号
+  // 行番号カウンタ
   int lineNum = 1;
-
   // 動作インスタンスのリスト
   vector<Motion*> motionList;
 
-  // ファイル読み込み。失敗したらエラーメッセージを表示して終了
-  FILE* fp = fopen(commandFilePath.c_str(), "r");
-  if(fp == NULL) {
-    cout << commandFilePath << "file not open!" << endl;
+  // ファイルを開き、// 開けなければ空のリストを返す
+  ifstream file(commandFilePath);
+  if(!file) {
+    cout << "Failed to open file: " << commandFilePath << endl;
     return motionList;
   }
 
-  // 1行分の文字列を保持する配列と、区切り文字（カンマ）を定義
-  char row[READ_BUF_SIZE];
-  const char* separator = ",";
+  // 各行を格納する変数と、区切り文字としてカンマを定義
+  string line;
+  constexpr char separator = ',';
 
-  // ファイルを1行ずつ読み込む
-  while(fgets(row, READ_BUF_SIZE, fp) != NULL) {
-    // 1行のコマンドと引数の項目を格納する配列
-    vector<char*> params;
+  // fileから1行ずつ文字列として line に読み込む
+  while(getline(file, line)) {
+    // 文字列 line をストリームに変換
+    stringstream ss(line);
 
-    // 1行の文字列をカンマで区切り、paramで順番に各項目を取り出してparamsに格納する
-    char* param = strtok(row, separator);
-    while(param != NULL) {
-      params.push_back(param);
-      param = strtok(NULL, separator);
+    // カンマ区切りでコマンド名とその引数を1つずつ取り出して params に追加
+    vector<string> params;
+    for(string token; getline(ss, token, separator);) {
+      params.push_back(move(token));
     }
 
-    // paramsの0番目はコマンド名なので、それを使って対応する動作コマンドに変換
+    // コマンド名(paramsの0番目)を対応する動作コマンドに変換
     COMMAND command = convertCommand(params[0]);
 
     // コマンドに応じて対応する動作オブジェクトを生成し、動作リスト（motionList）に追加する処理
-
     switch(command) {
+      // AR: 角度指定回頭
+      // [1]:int 角度[deg], [2]:double 速度[mm/s], [3]:string 方向(clockwise or anticlockwise)
       case COMMAND::AR: {
-        // =====  角度指定回頭（AngleRotation） =====
-        // params[1] : 目標回転角度(deg) 0~360
-        // params[2] : 指定する速度（mm/秒）
-        // params[3] : 回頭方向 true:時計回り, false:反時計回り
-
-        AngleRotation* ar = new AngleRotation(robot, atoi(params[1]), atoi(params[2]),
+        AngleRotation* ar = new AngleRotation(robot, stoi(params[1]), stod(params[2]),
                                               convertBool(params[0], params[3]));
         motionList.push_back(ar);
         break;
       }
 
+      // DS: 指定距離直進
+      // [1]:double 距離[mm], [2]:double 速度[mm/s]
       case COMMAND::DS: {
-        // =====  指定距離直進（DistanceStraight） =====
-        // params[1] : 目標距離 [mm]
-        // params[2] : 目標速度[mm/s]
-
-        DistanceStraight* ds = new DistanceStraight(robot, atoi(params[1]), atoi(params[2]));
+        DistanceStraight* ds = new DistanceStraight(robot, stod(params[1]), stod(params[2]));
         motionList.push_back(ds);
         break;
       }
 
+      // CS: 指定色直進
+      // [1]:string 色, [2]:double 速度[mm/s]
       case COMMAND::CS: {
-        // ===== 指定色直進（ColorStraight） =====
-        // params[1] : 目標色（文字列）
-        // params[2] : 目標速度[mm/s]
-
         ColorStraight* cs = new ColorStraight(robot, ColorJudge::convertStringToColor(params[1]),
-                                              atof(params[2]));
+                                              stod(params[2]));
         motionList.push_back(cs);
         break;
       }
 
+      // DL: 指定距離ライントレース
+      // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
       case COMMAND::DL: {
-        // ===== 指定距離ライントレース（DistanceLineTracing） =====
-        // params[1] : 目標距離 [mm]
-        // params[2] : 目標速度[mm/s]
-        // params[3] : 輝度補正値（targetBrightness に加算するオフセット値）
-        // params[4] : Pゲイン
-        // params[5] : Iゲイン
-        // params[6] : Dゲイン
-
         DistanceLineTrace* dl = new DistanceLineTrace(
-            robot, atof(params[1]), atof(params[2]), targetBrightness + atoi(params[3]),
-            PidGain(atof(params[4]), atof(params[5]), atof(params[6])), isLeftEdge);
-
-        motionList.push_back(dl);  // 動作リストに追加
-
+            robot, stod(params[1]), stod(params[2]), targetBrightness + stoi(params[3]),
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
+        motionList.push_back(dl);
         break;
       }
 
+      // CL: 指定色ライントレース
+      // [1]:string 色, [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
+      case COMMAND::CL: {
+        ColorLineTrace* cl
+            = new ColorLineTrace(robot, ColorJudge::convertStringToColor(params[1]),
+                                 stod(params[2]), targetBrightness + stoi(params[3]),
+                                 PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
+        motionList.push_back(cl);
+        break;
+      }
+
+      // CDL: 色距離指定ライントレース
+      // [1]:string 色, [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int 輝度補正,
+      // [5-7]:double PIDゲイン
+      case COMMAND::CDL: {
+        ColorDistanceLineTrace* cdl = new ColorDistanceLineTrace(
+            robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
+            targetBrightness + stoi(params[4]),
+            PidGain(stod(params[5]), stod(params[6]), stod(params[7])));
+        motionList.push_back(cdl);
+        break;
+      }
+
+      // EC: エッジ切り替え
+      // [1]:string 切り替え後エッジ (left or right)
+      case COMMAND::EC: {
+        EdgeChange* ec = new EdgeChange(robot, convertBool(params[0], params[1]));
+        motionList.push_back(ec);
+        break;
+      }
+
+      // SL:　自タスクスリープ
+      // [1]:double 時間(マイクロ秒)[μs]
+      case COMMAND::SL: {
+        Sleeping* sl = new Sleeping(robot, stod(params[1]));
+        motionList.push_back(sl);
+        break;
+      }
+
+      // SS: カメラ撮影動作
+      // [1]:string ファイル名
+      case COMMAND::SS: {
+        Snapshot* ss = new Snapshot(robot, params[1]);
+        motionList.push_back(ss);
+        break;
+      }
+
+      // 未定義コマンド
       default: {
-        // 未定義のコマンド
-        cout << commandFilePath << ":" << lineNum << " コマンド " << params[0] << " は未定義です。"
+        cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " is undefined."
              << endl;
         break;
       }
     }
-    // 行番号をインクリメントする
-    lineNum++;
+
+    lineNum++;  // 行番号をインクリメントする
   }
-  // ファイルを閉じる
-  fclose(fp);
 
   return motionList;
 }
 
 COMMAND MotionParser::convertCommand(const string& str)
 {
-  if(str == "AR") {  // 角度指定回答
-    return COMMAND::AR;
-  } else if(str == "DS") {  // 指定距離直進
-    return COMMAND::DS;
-  } else if(str == "CS") {  // 指定色直進
-    return COMMAND::CS;
-  } else if(str == "DL") {  // 指定距離ライントレース
-    return COMMAND::DL;
-  } else if(str == "CL") {  // 指定色ライントレース
-    return COMMAND::CL;
-  } else if(str == "CDL") {  // 色距離指定ライントレース
-    return COMMAND::CDL;
-  } else if(str == "EC") {  // エッジ切り替え
-    return COMMAND::EC;
-  } else if(str == "SL") {  // 自タスクスリープ
-    return COMMAND::SL;
-  } else if(str == "SM") {  // 両輪モーターリセット
-    return COMMAND::SM;
-  } else if(str == "RM") {  // 両輪モーターリセット
-    return COMMAND::RM;
-  } else if(str == "CA") {  // カメラ撮影動作
-    return COMMAND::CA;
+  // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
+  static const unordered_map<string, COMMAND> commandMap = {
+    { "AR", COMMAND::AR },    // 角度指定回頭
+    { "DS", COMMAND::DS },    // 指定距離直進
+    { "CS", COMMAND::CS },    // 指定色直進
+    { "DL", COMMAND::DL },    // 指定距離ライントレース
+    { "CL", COMMAND::CL },    // 指定色ライントレース
+    { "CDL", COMMAND::CDL },  // 色距離指定ライントレース
+    { "EC", COMMAND::EC },    // エッジ切り替え
+    { "SL", COMMAND::SL },    // スリープ
+    { "SS", COMMAND::SS }     // カメラ撮影動作
+  };
+
+  // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
+  auto it = commandMap.find(str);
+  if(it != commandMap.end()) {
+    return it->second;
   } else {
-    return COMMAND::NONE;  // 一致しない場合
+    return COMMAND::NONE;
   }
 }
 
@@ -159,7 +177,7 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
       return false;
     } else {
       cout << "Parameter before conversion must be 'clockwise' or 'anticlockwise'" << endl;
-      return true;  // デフォルトtrueにしてる場合
+      return true;
     }
   }
 
@@ -175,7 +193,7 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
     }
   }
 
-  // ここまでに条件を満たしてreturnしていなかった場合のデフォルト値としてtrueを返す
+  // ここまでに条件を満たしていなかった場合は、デフォルト値としてtrueを返す
   cout << "convertBool function received an unrecognized command: '" << command << endl;
   return true;
 }
