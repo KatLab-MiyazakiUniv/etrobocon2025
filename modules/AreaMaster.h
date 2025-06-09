@@ -32,7 +32,7 @@ class AreaMaster {
 
  private:
   Robot& robot;
-  enum Area area;
+  Area area;
   bool isLeftCourse;
   int targetBrightness;
 

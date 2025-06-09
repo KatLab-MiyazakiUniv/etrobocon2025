@@ -16,7 +16,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
   // 動作インスタンスのリスト
   vector<Motion*> motionList;
 
-  // ファイルを開き、// 開けなければ空のリストを返す
+  // ファイルを開き、開けなければ空のリストを返す
   ifstream file(commandFilePath);
   if(!file) {
     cout << "Failed to open file: " << commandFilePath << endl;
@@ -110,7 +110,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-      // SL:　自タスクスリープ
+      // SL: 自タスクスリープ
       // [1]:double 時間(マイクロ秒)[μs]
       case COMMAND::SL: {
         Sleeping* sl = new Sleeping(robot, stod(params[1]));
