@@ -6,7 +6,6 @@
 #ifndef STRING_OPERATOR_H
 #define STRING_OPERATOR_H
 
-// #include "Logger.h"
 #include <string>
 
 class StringOperator {
