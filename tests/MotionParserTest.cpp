@@ -32,7 +32,7 @@ namespace etrobocon2025_test {
     int targetBrightness = 45;
 
     vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
-    ASSERT_EQ(actualList.size(), 9);
+    ASSERT_EQ(actualList.size(), 10);
 
     ASSERT_NE(dynamic_cast<AngleRotation*>(actualList[0]), nullptr);
     ASSERT_NE(dynamic_cast<DistanceStraight*>(actualList[1]), nullptr);

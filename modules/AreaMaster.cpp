@@ -5,7 +5,6 @@
  */
 
 #include "AreaMaster.h"
-#include <typeinfo>
 
 const std::string AreaMaster::basePath = "etrobocon2025/datafiles/commands/";
 using namespace std;

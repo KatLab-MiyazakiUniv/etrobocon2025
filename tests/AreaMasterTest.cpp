@@ -20,7 +20,7 @@ namespace etrobocon2025_test {
     bool isLeftCourse = true;
     int targetBrightness = 45;
 
-    class AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
+    AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
     EXPECT_NO_THROW({ areaMaster.run(); });
   }
 
@@ -32,7 +32,7 @@ namespace etrobocon2025_test {
     bool isLeftCourse = false;
     int targetBrightness = 45;
 
-    class AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
+    AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
     EXPECT_NO_THROW({ areaMaster.run(); });
   }
 }  // namespace etrobocon2025_test
