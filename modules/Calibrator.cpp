@@ -6,7 +6,10 @@
 
 #include "Calibrator.h"
 
-Calibrator::Calibrator(Robot& _robot) : robot(_robot), isLeftCourse(true), targetBrightness(50) {}
+Calibrator::Calibrator(Robot& _robot)
+  : robot(_robot), isLeftCourse(true), isLeftEdge(true), targetBrightness(50)
+{
+}
 
 void Calibrator::run()
 {
@@ -24,7 +27,8 @@ void Calibrator::selectAndSetCourse()
     if(robot.getButtonInstance().isLeftPressed() && !isLeftCourse) {
       // 左ボタンが押されたときRコースがセットされていれば、Lコースをセットする
       isLeftCourse = true;
-      // isLeftEdge = true;  // Lコースを選択したので、左エッジとする
+      isLeftEdge = true;
+      robot.setIsLeftEdge(isLeftEdge);  // Lコースを選択したので、左エッジとする
       // 画面にLコースが選択されたことを表示
       robot.getDisplayInstance().off();
       robot.getDisplayInstance().showChar(LEFT);
@@ -32,7 +36,8 @@ void Calibrator::selectAndSetCourse()
     } else if(robot.getButtonInstance().isLeftPressed() && isLeftCourse) {
       // 左ボタンが押されたときLコースがセットされていれば、Rコースをセットする
       isLeftCourse = false;
-      // isLeftEdge = false;  // Rコースを選択したので、右エッジとする
+      isLeftEdge = false;
+      robot.setIsLeftEdge(isLeftEdge);  // Rコースを選択したので、右エッジとする
       // 画面にRコースが選択されたことを表示
       robot.getDisplayInstance().off();
       robot.getDisplayInstance().showChar(RIGHT);

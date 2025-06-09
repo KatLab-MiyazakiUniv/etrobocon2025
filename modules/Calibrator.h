@@ -11,7 +11,7 @@
 
 #define LEFT 'L'
 #define RIGHT 'R'
-#define OK 'OK'
+#define OK 'O'
 #define FINISH 'F'
 #define PRESS_POWER 0.5f
 
@@ -49,6 +49,7 @@ class Calibrator {
 
  private:
   bool isLeftCourse;     // true:Lコース, false: Rコース
+  bool isLeftEdge;       // true:左エッジ, false: 右エッジ
   int targetBrightness;  // 目標輝度
 
   /**
