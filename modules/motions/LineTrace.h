@@ -24,10 +24,8 @@ class LineTrace : public Motion {
    * @param _targetSpeed 目標速度 0~
    * @param _targetBrightness 目標輝度 0~
    * @param _pidGain PIDゲイン
-   * @param _isLeftEdge エッジの左右判定(true:左エッジ, false:右エッジ)
    */
-  LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain,
-            bool& _isLeftEdge);
+  LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain);
 
   /**
    * @brief ライントレースする
@@ -58,6 +56,5 @@ class LineTrace : public Motion {
   double targetSpeed;    // 目標速度 0~
   int targetBrightness;  // 目標輝度 0~
   PidGain pidGain;       // PIDゲイン
-  bool& isLeftEdge;      // エッジの左右判定(true:左エッジ, false:右エッジ)
 };
 #endif

@@ -1,10 +1,12 @@
 /**
  * @file   CameraCapture.cpp
  * @brief  カメラを制御するクラス
- * @author Hara1274
+ * @author Hara1274 takuchi17
  */
 
 #include "CameraCapture.h"
+#include <filesystem>
+
 using namespace std;
 
 CameraCapture::CameraCapture()
@@ -119,6 +121,15 @@ bool CameraCapture::saveFrame(const cv::Mat& frame, string filepath, string file
     cerr << "保存するフレームがありません。" << endl;
     return false;
   }
+
+  // ディレクトリが存在しない場合は作成
+  if(!filesystem::exists(filepath)) {
+    if(!filesystem::create_directories(filepath)) {
+      std::cerr << "ディレクトリの作成に失敗しました: " << filepath << std::endl;
+      return false;
+    }
+  }
+
   string imagePath = filepath + "/" + filename + imgExtension;
   if(!cv::imwrite(imagePath, frame)) {
     cerr << "画像の保存に失敗しました: " << imagePath << endl;
