@@ -74,6 +74,16 @@ PRIVATE
     ${PROJECT_TEST_DIR}/dummy  # spikeapi ダミー用
 )
 
+# ビルドディレクトリ内に etrobocon2025/datafiles をコピーするカスタムターゲット
+add_custom_target(copy_datafiles ALL
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/etrobocon2025/datafiles
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${PROJECT_SOURCE_DIR}/datafiles
+    ${CMAKE_BINARY_DIR}/etrobocon2025/datafiles
+  COMMENT "Copying datafiles to build/etrobocon2025/datafiles"
+)
+
+
 target_link_libraries(${PROJECT_NAME}_test
   PRIVATE
     ${PROJECT_NAME}_impl

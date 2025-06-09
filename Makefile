@@ -44,7 +44,11 @@ test-exec:
 		echo " $$ make test-build"; \
 		exit 1; \
 	fi
-	cd $(MAKEFILE_PATH)bin/build && ./etrobocon2025_test
+	@cd $(MAKEFILE_PATH)bin/build && \
+	mkdir -p etrobocon2025/datafiles && \
+	cp ../../datafiles/commands/*.csv etrobocon2025/datafiles && \
+	./etrobocon2025_test && \
+	rm -rf etrobocon2025
 
 # テストをビルドして実行する
 test: smart-clean test-build test-exec
