@@ -37,7 +37,7 @@ class AreaMaster {
   int targetBrightness;
 
   // 各エリアのコマンドファイルベースパス
-  std::string basePath = "etrobocon2025/datafiles/";
+  static const std::string basePath;
 
   // コマンドファイル名（各エリア名）
   std::array<std::string, 4> areaCommandNames

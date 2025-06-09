@@ -122,6 +122,11 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [1]:string ファイル名
       case COMMAND::SS: {
         Snapshot* ss = new Snapshot(robot, params[1]);
+        if(params.size() == 2) {
+          ss = new Snapshot(robot, params[1]);
+        } else {
+          ss = new Snapshot(robot);
+        }
         motionList.push_back(ss);
         break;
       }

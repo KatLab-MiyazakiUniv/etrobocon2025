@@ -46,7 +46,7 @@ test-exec:
 	fi
 	@cd $(MAKEFILE_PATH)bin/build && \
 	mkdir -p etrobocon2025/datafiles && \
-	cp ../../datafiles/*.csv etrobocon2025/datafiles && \
+	cp ../../datafiles/commands/*.csv etrobocon2025/datafiles && \
 	./etrobocon2025_test && \
 	rm -rf etrobocon2025
 

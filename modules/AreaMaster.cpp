@@ -7,7 +7,7 @@
 #include "AreaMaster.h"
 #include <typeinfo>
 
-namespace fs = std::filesystem;
+const std::string AreaMaster::basePath = "etrobocon2025/datafiles/commands/";
 using namespace std;
 
 AreaMaster::AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)
