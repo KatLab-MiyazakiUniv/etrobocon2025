@@ -11,8 +11,6 @@
 
 #define LEFT 'L'
 #define RIGHT 'R'
-#define OK 'O'
-#define FINISH 'F'
 #define PRESS_POWER 0.5f
 
 class Calibrator {
