@@ -24,7 +24,7 @@ void Calibrator::run()
 
 void Calibrator::selectAndSetCourse()
 {
-  const char* text1 = "SELECT A COURSE";
+  const char* text1 = "L OR R";
   robot.getDisplayInstance().scrollText(text1, 50);
   // 右ボタンが押されたら確定する
   while(!robot.getButtonInstance().isRightPressed()) {
@@ -59,7 +59,7 @@ void Calibrator::selectAndSetCourse()
   }
   const char* course = isLeftCourse ? "Left" : "Right";
   printf("\nWill Run on the %s Course\n", course);
-  const char* text2 = "OK!";
+  const char* text2 = "OK";
   robot.getDisplayInstance().scrollText(text2, 50);
   robot.getClockInstance().sleep(2000000);  // 2秒スリープ
 }
@@ -69,72 +69,84 @@ void Calibrator::measureAndSetTargetBrightness()
   int blackBrightness = -1;
   int whiteBrightness = -1;
 
-  const char* text1 = "BLACK";
+  const char* text1 = "B";
   robot.getDisplayInstance().scrollText(text1, 50);
+
   // 黒の輝度測定
   // 左ボタンで輝度を取得し、右ボタンで黒の輝度を決定する
+  bool isLoopStarted = false;
   while(1) {
-    // 左ボタンが押されたら輝度を取得
-    if(robot.getButtonInstance().isLeftPressed()) {
-      blackBrightness = robot.getColorSensorInstance().getReflection();
-
-      // 黒の輝度を取得したことをディスプレイに表示
-      robot.getDisplayInstance().showNumber(blackBrightness);
-      robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
-
+    // 左ボタンが押されたら連続取得ループを開始
+    if(robot.getButtonInstance().isLeftPressed() && !isLoopStarted) {
+      isLoopStarted = true;
       // // ボタンが離されるまで待機
       // while(robot.getButtonInstance().isLeftPressed()) {
       //   robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
       // }
     }
 
-    // 輝度が取得済み、かつ右ボタンが押されたら確定
-    if(blackBrightness >= 0 && robot.getButtonInstance().isRightPressed()) {
-      // 黒の輝度を確定したことをディスプレイに表示
-      const char* text2 = "OK!";
-      robot.getDisplayInstance().scrollText(text2, 50);
-      robot.getClockInstance().sleep(200000);  // 2秒スリープ
+    // ループが開始されたら連続的に輝度を取得
+    if(isLoopStarted) {
+      blackBrightness = robot.getColorSensorInstance().getReflection();
+      // 現在の輝度値をリアルタイムで表示
+      robot.getDisplayInstance().showNumber(blackBrightness);
 
-      // // ボタンが離されるまで待機
-      // while(robot.getButtonInstance().isRightPressed()) {
-      //   robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
-      // }
-      break;
+      // 右ボタンが押されたら確定
+      if(robot.getButtonInstance().isRightPressed()) {
+        // 黒の輝度を確定したことをディスプレイに表示
+        const char* text2 = "OK";
+        robot.getDisplayInstance().scrollText(text2, 50);
+        robot.getClockInstance().sleep(2000000);  // 2秒スリープ
+
+        // // ボタンが離されるまで待機
+        // while(robot.getButtonInstance().isRightPressed()) {
+        //   robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+        // }
+        break;
+      }
     }
+
+    robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
   }
 
-  const char* text3 = "WHITE";
+  const char* text3 = "W";
   robot.getDisplayInstance().scrollText(text3, 50);
+
   // 白の輝度測定
   // 左ボタンで輝度を取得し、右ボタンで白の輝度を決定する
+  isLoopStarted = false;
   while(1) {
-    // 左ボタンが押されたら輝度を取得
-    if(robot.getButtonInstance().isLeftPressed()) {
-      whiteBrightness = robot.getColorSensorInstance().getReflection();
-
-      // 輝度を取得したことをディスプレイに表示
-      robot.getDisplayInstance().showNumber(whiteBrightness);
-      robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
-
+    // 左ボタンが押されたら連続取得ループを開始
+    if(robot.getButtonInstance().isLeftPressed() && !isLoopStarted) {
+      isLoopStarted = true;
       // // ボタンが離されるまで待機
       // while(robot.getButtonInstance().isLeftPressed()) {
       //   robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
       // }
     }
 
-    // 輝度が取得済み、かつ右ボタンが押されたら確定
-    if(whiteBrightness >= 0 && robot.getButtonInstance().isRightPressed()) {
-      // 白の輝度を確定したことをディスプレイに表示
-      const char* text4 = "OK!";
-      robot.getDisplayInstance().scrollText(text4, 50);
-      robot.getClockInstance().sleep(200000);  // 2秒スリープ
+    // ループが開始されたら連続的に輝度を取得
+    if(isLoopStarted) {
+      whiteBrightness = robot.getColorSensorInstance().getReflection();
+      // 現在の輝度値をリアルタイムで表示
+      robot.getDisplayInstance().showNumber(whiteBrightness);
 
-      // // ボタンが離されるまで待機
-      // while(robot.getButtonInstance().isRightPressed()) {
-      //   robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
-      // }
-      break;
+      // 右ボタンが押されたら確定
+      if(robot.getButtonInstance().isRightPressed()) {
+        // 黒の輝度を確定したことをディスプレイに表示
+        const char* text2 = "OK";
+        robot.getDisplayInstance().scrollText(text2, 50);
+        robot.getClockInstance().sleep(2000000);  // 2秒スリープ
+
+        // // ボタンが離されるまで待機
+        // while(robot.getButtonInstance().isRightPressed()) {
+        //   robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+        // }
+        break;
+      }
     }
+
+    robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
   }
 
   targetBrightness = (whiteBrightness + blackBrightness) / 2;
