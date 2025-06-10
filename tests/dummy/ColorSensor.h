@@ -17,7 +17,8 @@
 #define PBIO_COLOR_HUE_GREEN 120
 #define PBIO_COLOR_HUE_BLUE 240
 
-#define REFLECTION_RESULT 10  // ダミーの反射率値
+#define REFLECTION_BLACK 20  // ダミーの黒の反射率
+#define REFLECTION_WHITE 90  // ダミーの白の反射率
 
 namespace spikeapi {
 
@@ -73,7 +74,14 @@ namespace spikeapi {
       }
     }
 
-    int32_t getReflection() const { return REFLECTION_RESULT; }
+    /**
+     * 反射率を取得
+     * @return ダミーの反射率（黒か白の輝度どれか）
+     */
+    int32_t getReflection() { return (callCount++ == 0) ? REFLECTION_BLACK : REFLECTION_WHITE; }
+
+   private:
+    int callCount = 0;  // 黒、白の交互出力カウント
   };
 }  // namespace spikeapi
 
