@@ -24,7 +24,7 @@ namespace etrobocon2025_test {
     EXPECT_TRUE(actualList.empty());
   }
 
-  // 複数の異なるモーションタイプを正しく解析するテスト
+  // 複数の異なるモーションタイプを正しく作成するテスト
   TEST(MotionParserTest, createMotions)
   {
     Robot robot;
@@ -43,6 +43,7 @@ namespace etrobocon2025_test {
     ASSERT_NE(dynamic_cast<EdgeChange*>(actualList[6]), nullptr);
     ASSERT_NE(dynamic_cast<Sleeping*>(actualList[7]), nullptr);
     ASSERT_NE(dynamic_cast<Snapshot*>(actualList[8]), nullptr);
+    ASSERT_NE(dynamic_cast<Snapshot*>(actualList[9]), nullptr);
 
     for(Motion* m : actualList) {
       delete m;
@@ -58,7 +59,7 @@ namespace etrobocon2025_test {
 
     vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
 
-    // 無効なコマンド（XXX,YYY）は無視され、残りの4つが登録される
+    // 無効なコマンド（XXX,YYY）は無視され、残りの4つが格納される
     ASSERT_EQ(actualList.size(), 4);
 
     ASSERT_NE(dynamic_cast<AngleRotation*>(actualList[0]), nullptr);
@@ -70,4 +71,33 @@ namespace etrobocon2025_test {
       delete m;
     }
   }
+
+  // 実際のLineTraceLeftファイルで実行できるかのテスト
+  TEST(MotionParserTest, parseLineTraceLeftFile)
+  {
+    Robot robot;
+    string csvPath = "../../datafiles/commands/LineTraceLeft.csv";
+    int targetBrightness = 45;
+
+    ifstream file(csvPath);
+    if(!file.is_open()) {
+      ASSERT_TRUE(file.is_open());
+    }
+
+    int lines = 0;
+    string line;
+    while(getline(file, line)) {
+      ++lines;
+    }
+
+    vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
+
+    // ファイルの行数分だけ、motionのリストに格納されたことを確認
+    ASSERT_EQ(actualList.size(), lines);
+
+    for(Motion* m : actualList) {
+      delete m;
+    }
+  }
+
 }  // namespace etrobocon2025_test
