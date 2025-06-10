@@ -26,7 +26,6 @@ void Calibrator::selectAndSetCourse()
 {
   const char* text1 = "SELECT A COURSE";
   robot.getDisplayInstance().scrollText(text1, 50);
-
   // 右ボタンが押されたら確定する
   while(!robot.getButtonInstance().isRightPressed()) {
     if(robot.getButtonInstance().isLeftPressed() && !isLeftCourse) {
@@ -37,10 +36,12 @@ void Calibrator::selectAndSetCourse()
       // 画面にLコースが選択されたことを表示
       robot.getDisplayInstance().showChar(LEFT);
       robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+
       // // ボタンが離されるまで待機
       // while(robot.getButtonInstance().isLeftPressed()) {
       //   robot.getClockInstance().sleep(10000);
       // }
+
     } else if(robot.getButtonInstance().isLeftPressed() && isLeftCourse) {
       // 左ボタンが押されたときLコースがセットされていれば、Rコースをセットする
       isLeftCourse = false;
@@ -49,24 +50,24 @@ void Calibrator::selectAndSetCourse()
       // 画面にRコースが選択されたことを表示
       robot.getDisplayInstance().showChar(RIGHT);
       robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+
       // // ボタンが離されるまで待機
       // while(robot.getButtonInstance().isLeftPressed()) {
       //   robot.getClockInstance().sleep(10000);
       // }
     }
   }
-  const char* text2 = "OK!";
   const char* course = isLeftCourse ? "Left" : "Right";
-  cout << "Will Run on the" << course << " Course" << endl;
+  printf("\nWill Run on the %s Course\n", course);
+  const char* text2 = "OK!";
   robot.getDisplayInstance().scrollText(text2, 50);
   robot.getClockInstance().sleep(2000000);  // 2秒スリープ
 }
 
 void Calibrator::measureAndSetTargetBrightness()
 {
-  u_int8_t blackBrightness = -1;
-  u_int8_t whiteBrightness = -1;
-  u_int8_t targetBrightness = -1;
+  int blackBrightness = -1;
+  int whiteBrightness = -1;
 
   const char* text1 = "BLACK";
   robot.getDisplayInstance().scrollText(text1, 50);
@@ -139,13 +140,14 @@ void Calibrator::measureAndSetTargetBrightness()
   targetBrightness = (whiteBrightness + blackBrightness) / 2;
   // 目標輝度をディスプレイに表示
   robot.getDisplayInstance().showNumber(targetBrightness);
-  cout << "Target Brightness Value is" << targetBrightness << endl;
+  cout << "Target Brightness Value is " << targetBrightness << endl;
   robot.getClockInstance().sleep(100000);  // 1秒スリープ
   robot.getDisplayInstance().off();
 }
 
 void Calibrator::waitForStart()
 {
+  printf("On standby.\n");
   // ForceSensorが押されるまで待機
   while(!robot.getForceSensorInstance().isPressed(PRESS_POWER)) {
     robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
