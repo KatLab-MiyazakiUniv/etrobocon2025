@@ -13,7 +13,7 @@ using namespace std;
 namespace etrobocon2025_test {
 
   // 左コースでライントレースを行う場合のテスト
-  TEST(AreaMasterTest, runLineTraceLeft)
+  TEST(AreaMasterTest, RunLineTraceLeft)
   {
     Robot robot;
     Area area = Area::LineTrace;
@@ -25,7 +25,7 @@ namespace etrobocon2025_test {
   }
 
   // 右コースでライントレースを行う場合のテスト
-  TEST(AreaMasterTest, runLineTraceRight)
+  TEST(AreaMasterTest, RunLineTraceRight)
   {
     Robot robot;
     Area area = Area::LineTrace;

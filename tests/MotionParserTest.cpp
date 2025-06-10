@@ -12,7 +12,7 @@ using namespace std;
 
 namespace etrobocon2025_test {
   // ファイルパスが存在しない場合のテスト
-  TEST(MotionParserTest, notCreateMotions)
+  TEST(MotionParserTest, NotCreateMotions)
   {
     Robot robot;
     string csvPath = "../../tests/test_data/NonExistent.csv";  // 存在しないファイルパス
@@ -25,7 +25,7 @@ namespace etrobocon2025_test {
   }
 
   // 複数の異なるモーションタイプを正しく作成するテスト
-  TEST(MotionParserTest, createMotions)
+  TEST(MotionParserTest, CreateMotions)
   {
     Robot robot;
     string csvPath = "../../tests/test_data/MotionParserTestData.csv";
@@ -73,7 +73,7 @@ namespace etrobocon2025_test {
   }
 
   // 実際のLineTraceLeftファイルで実行できるかのテスト
-  TEST(MotionParserTest, parseLineTraceLeftFile)
+  TEST(MotionParserTest, ParseLineTraceLeftFile)
   {
     Robot robot;
     string csvPath = "../../datafiles/commands/LineTraceLeft.csv";

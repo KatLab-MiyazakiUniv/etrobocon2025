@@ -13,7 +13,7 @@ using namespace std;
 namespace etrobocon2025_test {
 
   // 改行コードを削除するテスト（LF）
-  TEST(StringOperatorTest, removeEOL_LF)
+  TEST(StringOperatorTest, RemoveEOL_LF)
   {
     string actual = "StringOperator test\n";
     string expected = "StringOperator test";
@@ -24,7 +24,7 @@ namespace etrobocon2025_test {
   }
 
   // 改行コードを削除するテスト（CR）
-  TEST(StringOperatorTest, removeEOL_CR)
+  TEST(StringOperatorTest, RemoveEOL_CR)
   {
     string actual = "StringOperator test\r";
     string expected = "StringOperator test";
@@ -35,7 +35,7 @@ namespace etrobocon2025_test {
   }
 
   // 改行コードを削除するテスト（CRLF）
-  TEST(StringOperatorTest, removeEOL_CRLF)
+  TEST(StringOperatorTest, RemoveEOL_CRLF)
   {
     string actual = "StringOperator test\r\n";
     string expected = "StringOperator test";
@@ -46,7 +46,7 @@ namespace etrobocon2025_test {
   }
 
   // 改行のない文字列が渡された場合
-  TEST(StringOperatorTest, notRemove)
+  TEST(StringOperatorTest, NotRemove)
   {
     string actual = "No newline here";
     string expected = "No newline here";
@@ -57,7 +57,7 @@ namespace etrobocon2025_test {
   }
 
   // 空の文字列が渡された場合
-  TEST(StringOperatorTest, emptyString)
+  TEST(StringOperatorTest, EmptyString)
   {
     string actual = "";
     string expected = "";
