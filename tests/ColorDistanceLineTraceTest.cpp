@@ -21,9 +21,8 @@ namespace etrobocon2025_test {
     double targetSpeed = 500.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
     ColorDistanceLineTrace cd(robot, targetColor, targetDistance, targetSpeed, targetBrightness,
-                              gain, isLeftEdge);
+                              gain);
 
     double expected = 0.0;  // 走行していない時の走行距離
 
@@ -49,9 +48,8 @@ namespace etrobocon2025_test {
     double targetSpeed = 500.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
     ColorDistanceLineTrace cd(robot, targetColor, targetDistance, targetSpeed, targetBrightness,
-                              gain, isLeftEdge);
+                              gain);
 
     double expected = 0.0;  // 走行していない時の走行距離
 
@@ -77,9 +75,8 @@ namespace etrobocon2025_test {
     double targetSpeed = -500.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
     ColorDistanceLineTrace cd(robot, targetColor, targetDistance, targetSpeed, targetBrightness,
-                              gain, isLeftEdge);
+                              gain);
 
     double expected = 0.0;
 
@@ -104,9 +101,8 @@ namespace etrobocon2025_test {
     double targetSpeed = 0.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
     ColorDistanceLineTrace cd(robot, targetColor, targetDistance, targetSpeed, targetBrightness,
-                              gain, isLeftEdge);
+                              gain);
 
     double expected = 0.0;
 
@@ -130,9 +126,8 @@ namespace etrobocon2025_test {
     double targetSpeed = 500.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
     ColorDistanceLineTrace cd(robot, targetColor, targetDistance, targetSpeed, targetBrightness,
-                              gain, isLeftEdge);
+                              gain);
 
     double expected = 0.0;
 
@@ -155,9 +150,8 @@ namespace etrobocon2025_test {
     double targetSpeed = 500.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
     ColorDistanceLineTrace cd(robot, targetColor, targetDistance, targetSpeed, targetBrightness,
-                              gain, isLeftEdge);
+                              gain);
 
     double expected = targetDistance;
 
@@ -182,9 +176,8 @@ namespace etrobocon2025_test {
     double targetSpeed = 500.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
-    bool isLeftEdge = true;
     ColorDistanceLineTrace cd(robot, targetColor, targetDistance, targetSpeed, targetBrightness,
-                              gain, isLeftEdge);
+                              gain);
 
     double expected = 0.0;
 
