@@ -1,7 +1,7 @@
 /**
  * @file Button.h
  * @brief ボタンクラス(ダミー)
- * @author HaruArima08
+ * @author HaruArima08 nishijima515
  */
 
 #ifndef BUTTON_H
@@ -23,17 +23,8 @@ namespace spikeapi {
     /**
      * RIGHTボタンが押されているかを確認する
      */
-    bool isRightPressed() { return isPressedFlag; }
+    bool isRightPressed() const { return isPressedFlag; }
 
-    /**
-     * CENTERボタンが押されているかを確認する
-     */
-    bool isCenterPressed() { return isPressedFlag; }
-
-    /**
-     * BLUETOOTHボタンが押されているかを確認する
-     */
-    bool isBluetoothPressed() { return isPressedFlag; }
     /**
      * インスタンス生成が正常にできたかどうかを確認するための共通メソッド
      * Buttonでは複数生成が問題ないので、常にfalseを返す
