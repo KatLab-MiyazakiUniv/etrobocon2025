@@ -19,7 +19,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
   // ファイルを開き、開けなければ空のリストを返す
   ifstream file(commandFilePath);
   if(!file) {
-    cout << "Failed to open file: " << commandFilePath << endl;
+    cout << "コマンドファイルを開けませんでした: " << commandFilePath << endl;
     return motionList;
   }
 
@@ -133,7 +133,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
 
       // 未定義コマンド
       default: {
-        cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " is undefined."
+        cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
              << endl;
         break;
       }
@@ -181,7 +181,7 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
     } else if(param == "anticlockwise") {
       return false;
     } else {
-      cout << "Parameter before conversion must be 'clockwise' or 'anticlockwise'" << endl;
+      cout << "'clockwise' か 'anticlockwise'を入力してください" << endl;
       return true;
     }
   }
@@ -193,12 +193,12 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
     } else if(param == "right") {
       return false;
     } else {
-      cout << "Parameter before conversion must be 'left' or 'right'" << endl;
+      cout << "'left' か 'right'を入力してください" << endl;
       return true;
     }
   }
 
   // ここまでに条件を満たしていなかった場合は、デフォルト値としてtrueを返す
-  cout << "convertBool function received an unrecognized command: '" << command << endl;
+  cout << "convertBool関数の処理の対象外です: '" << command << endl;
   return true;
 }
