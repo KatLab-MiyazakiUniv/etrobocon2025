@@ -11,14 +11,14 @@
 #include <array>
 #include "MotionParser.h"
 
-// エリア名を持つ列挙型変数（LineTrace = 0, DoubleLoop = 1, DebrisRemoval = 2, SmartCarry = 3）
-enum Area { LineTrace, DoubleLoop, DebrisRemoval, SmartCarry };
+// エリア名を持つ列挙型変数（LineTrace = 0, DoubleLoop = 1, SmartCarry = 2）
+enum Area { LineTrace, DoubleLoop, SmartCarry };
 
 class AreaMaster {
  public:
   /**
    * コンストラクタ
-   * @param robot ロボット本体の参照
+   * @param robot Robotインスタンスの参照
    * @param area エリアの指定(Enum型のArea)
    * @param isLeftCourse コースのLR判定(true:Lコース, false:Rコース)
    * @param targetBrightness 目標輝度
@@ -31,17 +31,16 @@ class AreaMaster {
   void run();
 
  private:
-  Robot& robot;
-  Area area;
-  bool isLeftCourse;
-  int targetBrightness;
+  Robot& robot;          // Robotインスタンスの参照
+  Area area;             // エリアの指定(Enum型のArea)
+  bool isLeftCourse;     // コースのLR判定(true:Lコース, false:Rコース)
+  int targetBrightness;  // 目標輝度
 
   // 各エリアのコマンドファイルベースパス
   static const std::string basePath;
 
   // コマンドファイル名（各エリア名）
-  std::array<std::string, 4> areaCommandNames
-      = { "LineTrace", "DoubleLoop", "DebrisRemoval", "SmartCarry" };
+  static const std::array<std::string, 4> areaCommandNames;
 };
 
 #endif

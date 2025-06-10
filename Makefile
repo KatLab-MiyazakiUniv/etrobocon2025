@@ -45,7 +45,7 @@ test-exec:
 		exit 1; \
 	fi
 	@cd $(MAKEFILE_PATH)bin/build && \
-	mkdir -p etrobocon2025/datafiles && \
+	mkdir -p etrobocon2025/datafiles/commands && \
 	cp ../../datafiles/commands/*.csv etrobocon2025/datafiles && \
 	./etrobocon2025_test && \
 	rm -rf etrobocon2025
