@@ -40,7 +40,7 @@ class AreaMaster {
   static const std::string basePath;
 
   // コマンドファイル名（各エリア名）
-  static const std::array<std::string, 4> areaCommandNames;
+  static const std::array<std::string, 3> areaCommandNames;
 };
 
 #endif

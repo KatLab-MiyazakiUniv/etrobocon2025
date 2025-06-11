@@ -43,12 +43,13 @@ test-exec:
 		echo "テスト実行ファイルが見つかりません。まずビルドを実行してください。"; \
 		echo " $$ make test-build"; \
 		exit 1; \
+	else \
+		cd $(MAKEFILE_PATH)bin/build && \
+		mkdir -p etrobocon2025/datafiles/commands && \
+		cp ../../datafiles/commands/*.csv etrobocon2025/datafiles && \
+		./etrobocon2025_test && \
+		rm -rf etrobocon2025; \
 	fi
-	@cd $(MAKEFILE_PATH)bin/build && \
-	mkdir -p etrobocon2025/datafiles/commands && \
-	cp ../../datafiles/commands/*.csv etrobocon2025/datafiles && \
-	./etrobocon2025_test && \
-	rm -rf etrobocon2025
 
 # テストをビルドして実行する
 test: smart-clean test-build test-exec

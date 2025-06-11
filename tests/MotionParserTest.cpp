@@ -100,4 +100,32 @@ namespace etrobocon2025_test {
     }
   }
 
+  // 実際のLineTraceRightファイルで実行できるかのテスト
+  TEST(MotionParserTest, ParseLineTraceRightFile)
+  {
+    Robot robot;
+    string csvPath = "../../datafiles/commands/LineTraceRight.csv";
+    int targetBrightness = 45;
+
+    ifstream file(csvPath);
+    if(!file.is_open()) {
+      ASSERT_TRUE(file.is_open());
+    }
+
+    int lines = 0;
+    string line;
+    while(getline(file, line)) {
+      ++lines;
+    }
+
+    vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
+
+    // ファイルの行数分だけ、motionのリストに格納されたことを確認
+    ASSERT_EQ(actualList.size(), lines);
+
+    for(Motion* m : actualList) {
+      delete m;
+    }
+  }
+
 }  // namespace etrobocon2025_test
