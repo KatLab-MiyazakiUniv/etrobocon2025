@@ -8,7 +8,7 @@
 
 using namespace std;
 const string AreaMaster::basePath = "etrobocon2025/datafiles/commands/";
-const array<string, 4> AreaMaster::areaCommandNames = { "LineTrace", "DoubleLoop", "SmartCarry" };
+const array<string, 3> AreaMaster::areaCommandNames = { "LineTrace", "DoubleLoop", "SmartCarry" };
 
 AreaMaster::AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)
   : robot(_robot), area(_area), isLeftCourse(_isLeftCourse), targetBrightness(_targetBrightness)
