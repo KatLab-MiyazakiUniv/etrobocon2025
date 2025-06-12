@@ -17,8 +17,9 @@ void Calibrator::selectAndSetCourse()
     // 左ボタンが押されたときRコースがセットされていれば、Lコースをセットする
     if(robot.getButtonInstance().isLeftPressed() && !isLeftCourse) {
       isLeftCourse = true;
-      robot.getDisplayInstance().showChar('L');  // 画面にLコースが選択されたことを表示
-      robot.getClockInstance().sleep(10000);     // 10ミリ秒スリープ
+      // 画面にLコースが選択されたことを表示
+      robot.getDisplayInstance().showChar('L');
+      robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
       // ボタンが離されるまで待機
       while(robot.getButtonInstance().isLeftPressed()) {
         robot.getClockInstance().sleep(10000);
@@ -27,8 +28,9 @@ void Calibrator::selectAndSetCourse()
     // 左ボタンが押されたときLコースがセットされていれば、Rコースをセットする
     else if(robot.getButtonInstance().isLeftPressed() && isLeftCourse) {
       isLeftCourse = false;
-      robot.getDisplayInstance().showChar('R');  // 画面にRコースが選択されたことを表示
-      robot.getClockInstance().sleep(10000);     // 10ミリ秒スリープ
+      // 画面にRコースが選択されたことを表示
+      robot.getDisplayInstance().showChar('R');
+      robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
       // ボタンが離されるまで待機
       while(robot.getButtonInstance().isLeftPressed()) {
         robot.getClockInstance().sleep(10000);
