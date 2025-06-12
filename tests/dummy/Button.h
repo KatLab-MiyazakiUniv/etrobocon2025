@@ -16,14 +16,14 @@ namespace spikeapi {
     Button(void) = default;
 
     /**
-     * LEFTボタンが押されているかを確認する
+     * LEFTボタンが押されているかをランダムに判定
      */
-    bool isLeftPressed() const { return isPressedFlag; }
+    bool isLeftPressed() const { return std::rand() % 2 == 0; }
 
     /**
-     * RIGHTボタンが押されているかを確認する
+     * RIGHTボタンが押されているかをランダムに判定
      */
-    bool isRightPressed() const { return isPressedFlag; }
+    bool isRightPressed() const { return std::rand() % 2 == 0; }
 
     /**
      * インスタンス生成が正常にできたかどうかを確認するための共通メソッド
