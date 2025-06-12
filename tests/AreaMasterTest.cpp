@@ -20,8 +20,21 @@ namespace etrobocon2025_test {
     bool isLeftCourse = true;
     int targetBrightness = 45;
 
+    // 実行前のカウントを保存
+    int beforeRight = robot.getMotorControllerInstance().getRightMotorCount();
+    int beforeLeft = robot.getMotorControllerInstance().getLeftMotorCount();
+
     AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
-    EXPECT_NO_THROW({ areaMaster.run(); });
+    areaMaster.run();
+
+    // 実行後のカウント
+    int afterRight = robot.getMotorControllerInstance().getRightMotorCount();
+    int afterLeft = robot.getMotorControllerInstance().getLeftMotorCount();
+
+    // カウントが1つでも変わっていれば動作ありとみなす
+    bool isMoved = (beforeRight != afterRight) || (beforeLeft != afterLeft);
+
+    EXPECT_TRUE(isMoved);
   }
 
   // 右コースでライントレースを行う場合のテスト
@@ -32,7 +45,20 @@ namespace etrobocon2025_test {
     bool isLeftCourse = false;
     int targetBrightness = 45;
 
+    // 実行前のカウントを保存
+    int beforeRight = robot.getMotorControllerInstance().getRightMotorCount();
+    int beforeLeft = robot.getMotorControllerInstance().getLeftMotorCount();
+
     AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
-    EXPECT_NO_THROW({ areaMaster.run(); });
+    areaMaster.run();
+
+    // 実行後のカウント
+    int afterRight = robot.getMotorControllerInstance().getRightMotorCount();
+    int afterLeft = robot.getMotorControllerInstance().getLeftMotorCount();
+
+    // カウントが1つでも変わっていれば動作ありとみなす
+    bool isMoved = (beforeRight != afterRight) || (beforeLeft != afterLeft);
+
+    EXPECT_TRUE(isMoved);
   }
 }  // namespace etrobocon2025_test
