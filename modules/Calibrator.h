@@ -9,8 +9,6 @@
 
 #include "Robot.h"
 
-#define LEFT 'L'
-#define RIGHT 'R'
 #define PRESS_POWER 0.5f
 
 class Calibrator {
@@ -21,9 +19,14 @@ class Calibrator {
   Calibrator(Robot& _robot);
 
   /**
-   * @brief キャリブレーション処理（入力系）をまとめて実行する
+   * @brief 左右ボタンでLRコースを選択してisLeftCourseをセットする
    */
-  void run();
+  void selectAndSetCourse();
+
+  /**
+   * @brief 黒と白の輝度を測定して目標輝度を求めtargetBrightnessをセットする
+   */
+  void measureAndSetTargetBrightness();
 
   /**
    * @brief スタート合図が出るまで待機状態にする
@@ -42,23 +45,10 @@ class Calibrator {
    */
   int getTargetBrightness();
 
- protected:
-  Robot& robot;  // Robotインスタンスの参照
-
  private:
+  Robot& robot;          // Robotインスタンスの参照
   bool isLeftCourse;     // true:Lコース, false: Rコース
-  bool isLeftEdge;       // true:左エッジ, false: 右エッジ
   int targetBrightness;  // 目標輝度
-
-  /**
-   * @brief 左右ボタンでLRコースを選択してisLeftCourseをセットする
-   */
-  void selectAndSetCourse();
-
-  /**
-   * @brief 黒と白の輝度を測定して目標輝度を求めtargetBrightnessをセットする
-   */
-  void measureAndSetTargetBrightness();
 };
 
 #endif

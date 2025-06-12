@@ -12,20 +12,6 @@ using namespace std;
 
 namespace etrobocon2025_test {
 
-  // run()において期待した出力がされており，WarningやErrorが出ていないかテスト
-  TEST(CalibratorTest, run)
-  {
-    Robot robot;
-    Calibrator calibrator(robot);
-    testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
-    calibrator.run();
-    string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
-    // find("str")はstrが見つからない場合string::nposを返す
-    bool actual = output.find("Will Run on the Left Course") != string::npos
-                  && output.find("Warning") == string::npos  // Warningがない
-                  && output.find("Error") == string::npos;   // Errorがない
-    EXPECT_TRUE(actual);
-  }
   // waitForStart()において期待した出力がされており，WarningやErrorが出ていないかテスト
   TEST(CalibratorTest, WaitForStart)
   {
@@ -40,13 +26,14 @@ namespace etrobocon2025_test {
                   && output.find("Error") == string::npos;   // Errorがない
     EXPECT_TRUE(actual);
   }
-  // getIsLeftCourse()により、isLeftCourseの値を取得できるかのテスト
+
+  // 左右ボタンでLRコースを選択できるかのテスト
   TEST(CalibratorTest, GetIsLeftCourse)
   {
     Robot robot;
     Calibrator calibrator(robot);
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
-    calibrator.run();
+    calibrator.selectAndSetCourse();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
     bool expected;
     // Leftコースと出力されていた場合
@@ -71,7 +58,7 @@ namespace etrobocon2025_test {
     Robot robot;
     Calibrator calibrator(robot);
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
-    calibrator.run();
+    calibrator.measureAndSetTargetBrightness();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
 
     string targetString = "Target Brightness Value is ";  // 目標輝度値の直前に書かれている文字列
