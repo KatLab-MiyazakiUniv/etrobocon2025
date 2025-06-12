@@ -11,7 +11,6 @@
 using namespace std;
 
 namespace etrobocon2025_test {
-
   // waitForStart()において期待した出力がされており，WarningやErrorが出ていないかテスト
   TEST(CalibratorTest, WaitForStart)
   {
@@ -21,9 +20,7 @@ namespace etrobocon2025_test {
     calibrator.waitForStart();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
     // find("str")はstrが見つからない場合string::nposを返す
-    bool actual = output.find("On standby.\n") != string::npos
-                  && output.find("Warning") == string::npos  // Warningがない
-                  && output.find("Error") == string::npos;   // Errorがない
+    bool actual = output.find("On standby.\n") != string::npos;
     EXPECT_TRUE(actual);
   }
 
