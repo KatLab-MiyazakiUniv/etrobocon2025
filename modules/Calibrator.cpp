@@ -8,33 +8,18 @@
 
 using namespace std;
 
-Calibrator::Calibrator(Robot& _robot)
-  : robot(_robot), isLeftCourse(true), isLeftEdge(true), targetBrightness(50)
-{
-}
-
-void Calibrator::run()
-{
-  // 左右ボタンでコースのLRを選択する
-  selectAndSetCourse();
-
-  // 目標輝度を測定する
-  measureAndSetTargetBrightness();
-}
+Calibrator::Calibrator(Robot& _robot) : robot(_robot), isLeftCourse(true), targetBrightness(50) {}
 
 void Calibrator::selectAndSetCourse()
 {
-  const char* text1 = "L OR R";
-  robot.getDisplayInstance().scrollText(text1, 50);
+  robot.getDisplayInstance().scrollText("L OR R", 50);
   // 右ボタンが押されたら確定する
   while(!robot.getButtonInstance().isRightPressed()) {
     if(robot.getButtonInstance().isLeftPressed() && !isLeftCourse) {
       // 左ボタンが押されたときRコースがセットされていれば、Lコースをセットする
       isLeftCourse = true;
-      isLeftEdge = true;
-      robot.setIsLeftEdge(isLeftEdge);  // Lコースを選択したので、左エッジとする
       // 画面にLコースが選択されたことを表示
-      robot.getDisplayInstance().showChar(LEFT);
+      robot.getDisplayInstance().showChar('L');
       robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
 
       // // ボタンが離されるまで待機
@@ -45,10 +30,8 @@ void Calibrator::selectAndSetCourse()
     } else if(robot.getButtonInstance().isLeftPressed() && isLeftCourse) {
       // 左ボタンが押されたときLコースがセットされていれば、Rコースをセットする
       isLeftCourse = false;
-      isLeftEdge = false;
-      robot.setIsLeftEdge(isLeftEdge);  // Rコースを選択したので、右エッジとする
       // 画面にRコースが選択されたことを表示
-      robot.getDisplayInstance().showChar(RIGHT);
+      robot.getDisplayInstance().showChar('R');
       robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
 
       // // ボタンが離されるまで待機
@@ -59,8 +42,7 @@ void Calibrator::selectAndSetCourse()
   }
   const char* course = isLeftCourse ? "Left" : "Right";
   printf("\nWill Run on the %s Course\n", course);
-  const char* text2 = "OK";
-  robot.getDisplayInstance().scrollText(text2, 50);
+  robot.getDisplayInstance().scrollText("OK", 50);
   robot.getClockInstance().sleep(2000000);  // 2秒スリープ
 }
 
@@ -69,16 +51,14 @@ void Calibrator::measureAndSetTargetBrightness()
   int blackBrightness = -1;
   int whiteBrightness = -1;
 
-  const char* text1 = "B";
-  robot.getDisplayInstance().scrollText(text1, 50);
-
+  robot.getDisplayInstance().scrollText("B", 50);
   // 黒の輝度測定
   // 左ボタンで輝度を取得し、右ボタンで黒の輝度を決定する
-  bool isLoopStarted = false;
+  bool isBrightnessMeasuring = false;
   while(1) {
-    // 左ボタンが押されたら連続取得ループを開始
-    if(robot.getButtonInstance().isLeftPressed() && !isLoopStarted) {
-      isLoopStarted = true;
+    // 左ボタンが押されたら輝度値の連続取得を開始
+    if(robot.getButtonInstance().isLeftPressed() && !isBrightnessMeasuring) {
+      isBrightnessMeasuring = true;
       // // ボタンが離されるまで待機
       // while(robot.getButtonInstance().isLeftPressed()) {
       //   robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
@@ -86,18 +66,15 @@ void Calibrator::measureAndSetTargetBrightness()
     }
 
     // ループが開始されたら連続的に輝度を取得
-    if(isLoopStarted) {
+    if(isBrightnessMeasuring) {
       blackBrightness = robot.getColorSensorInstance().getReflection();
       // 現在の輝度値をリアルタイムで表示
       robot.getDisplayInstance().showNumber(blackBrightness);
-
       // 右ボタンが押されたら確定
       if(robot.getButtonInstance().isRightPressed()) {
         // 黒の輝度を確定したことをディスプレイに表示
-        const char* text2 = "OK";
-        robot.getDisplayInstance().scrollText(text2, 50);
+        robot.getDisplayInstance().scrollText("OK", 50);
         robot.getClockInstance().sleep(2000000);  // 2秒スリープ
-
         // // ボタンが離されるまで待機
         // while(robot.getButtonInstance().isRightPressed()) {
         //   robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
@@ -109,16 +86,14 @@ void Calibrator::measureAndSetTargetBrightness()
     robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
   }
 
-  const char* text3 = "W";
-  robot.getDisplayInstance().scrollText(text3, 50);
-
+  robot.getDisplayInstance().scrollText("W", 50);
   // 白の輝度測定
   // 左ボタンで輝度を取得し、右ボタンで白の輝度を決定する
-  isLoopStarted = false;
+  isBrightnessMeasuring = false;
   while(1) {
-    // 左ボタンが押されたら連続取得ループを開始
-    if(robot.getButtonInstance().isLeftPressed() && !isLoopStarted) {
-      isLoopStarted = true;
+    // 左ボタンが押されたら輝度値の連続取得を開始
+    if(robot.getButtonInstance().isLeftPressed() && !isBrightnessMeasuring) {
+      isBrightnessMeasuring = true;
       // // ボタンが離されるまで待機
       // while(robot.getButtonInstance().isLeftPressed()) {
       //   robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
@@ -126,18 +101,15 @@ void Calibrator::measureAndSetTargetBrightness()
     }
 
     // ループが開始されたら連続的に輝度を取得
-    if(isLoopStarted) {
+    if(isBrightnessMeasuring) {
       whiteBrightness = robot.getColorSensorInstance().getReflection();
       // 現在の輝度値をリアルタイムで表示
       robot.getDisplayInstance().showNumber(whiteBrightness);
-
       // 右ボタンが押されたら確定
       if(robot.getButtonInstance().isRightPressed()) {
-        // 黒の輝度を確定したことをディスプレイに表示
-        const char* text2 = "OK";
-        robot.getDisplayInstance().scrollText(text2, 50);
+        // 白の輝度を確定したことをディスプレイに表示
+        robot.getDisplayInstance().scrollText("OK", 50);
         robot.getClockInstance().sleep(2000000);  // 2秒スリープ
-
         // // ボタンが離されるまで待機
         // while(robot.getButtonInstance().isRightPressed()) {
         //   robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
