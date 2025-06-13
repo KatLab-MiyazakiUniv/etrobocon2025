@@ -1,17 +1,16 @@
 /**
- * @file   LineTraceImageProcessor.h
+ * @file   LineDetector.h
  * @brief  ライントレース用の画像処理クラス
  * @author takuchi17 miyahara046 HaruArima08
  */
-#include "LineTraceImageProcessor.h"
+#include "LineDetector.h"
 
-LineTraceImageProcessor::LineTraceImageProcessor(const cv::Scalar& _lowerHSV,
-                                                 const cv::Scalar& _upperHSV)
+LineDetector::LineDetector(const cv::Scalar& _lowerHSV, const cv::Scalar& _upperHSV)
   : lowerHSV(_lowerHSV), upperHSV(_upperHSV)
 {
 }
 
-DetectionResult LineTraceImageProcessor::process(const cv::Mat& frame)
+DetectionResult LineDetector::process(const cv::Mat& frame)
 {
   // 注目領域の設定
   // 例: 解像度 640x480 の画像の場合

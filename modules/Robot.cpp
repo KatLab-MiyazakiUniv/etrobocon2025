@@ -37,6 +37,21 @@ spikeapi::Clock& Robot::getClockInstance()
   return clock;
 }
 
+spikeapi::Button& Robot::getButtonInstance()
+{
+  return button;
+}
+
+spikeapi::ForceSensor& Robot::getForceSensorInstance()
+{
+  return forceSensor;
+}
+
+spikeapi::Display& Robot::getDisplayInstance()
+{
+  return display;
+}
+
 void Robot::setIsLeftEdge(bool isLeft)
 {
   isLeftEdge = isLeft;  // エッジの左右判定を設定

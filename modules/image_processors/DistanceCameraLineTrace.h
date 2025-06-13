@@ -20,7 +20,7 @@ class DistanceCameraLineTrace : public CameraPidTracking {
    */
   DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
                           int _targetPoint, const PidGain& _pidGain,
-                          ImageProcessor& _imageProcessor);
+                          ObjectDetector& _objectDetector);
 
   /**
    * @brief 指定距離だけライントレースする

@@ -1,11 +1,11 @@
 /**
- * @file   ImageProcessors.h
+ * @file   ObjectDetector.h
  * @brief  画像処理の親クラス
  * @author takuchi17
  */
 
-#ifndef IMAGE_PROCESSOR_H
-#define IMAGE_PROCESSOR_H
+#ifndef OBJECT_DETECTOR_H
+#define OBJECT_DETECTOR_H
 
 #include <string>
 #include <opencv2/opencv.hpp>
@@ -19,13 +19,13 @@ struct DetectionResult {
   cv::Point bottomRight;     // 検出した領域の右下の座標
 };
 
-class ImageProcessor {
+class ObjectDetector {
  public:
   /**
    * 仮想デストラクタ
    * @brief 派生クラスのデストラクタが正しく呼ばれるようにするために必要
    */
-  virtual ~ImageProcessor() = default;
+  virtual ~ObjectDetector() = default;
 
   /**
    * @brief 画像処理を実行する純粋仮想関数
