@@ -6,7 +6,16 @@
 
 #include "Robot.h"
 
-Robot::Robot() : motorController(), cameraCapture(), colorSensor(EPort::PORT_E), clock() {}
+Robot::Robot()
+  : motorController(),
+    cameraCapture(),
+    colorSensor(EPort::PORT_E),
+    clock(),
+    button(),
+    forceSensor(EPort::PORT_D),
+    display()
+{
+}
 
 MotorController& Robot::getMotorControllerInstance()
 {
@@ -26,6 +35,21 @@ spikeapi::ColorSensor& Robot::getColorSensorInstance()
 spikeapi::Clock& Robot::getClockInstance()
 {
   return clock;
+}
+
+spikeapi::Button& Robot::getButtonInstance()
+{
+  return button;
+}
+
+spikeapi::ForceSensor& Robot::getForceSensorInstance()
+{
+  return forceSensor;
+}
+
+spikeapi::Display& Robot::getDisplayInstance()
+{
+  return display;
 }
 
 void Robot::setIsLeftEdge(bool isLeft)
