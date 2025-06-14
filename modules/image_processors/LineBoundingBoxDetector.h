@@ -4,8 +4,8 @@
  * @author takuchi17
  */
 
-#ifndef LiNE_BOUNDING_BOX_DETECTOR_H
-#define LiNE_BOUNDING_BOX_DETECTOR_H
+#ifndef LINE_BOUNDING_BOX_DETECTOR_H
+#define LINE_BOUNDING_BOX_DETECTOR_H
 
 #include "BoundingBoxDetector.h"
 
@@ -21,7 +21,7 @@ class LineBoundingBoxDetector : public BoundingBoxDetector {
   /**
    * @brief 画像処理を実行する純粋仮想関数
    * @param frame 処理対象の画像フレーム
-   * @param rusult バウンディングボックスを格納する構造体
+   * @param rusult 結果を格納するBoundingBoxDetectionResult構造体の参照
    */
   void detect(const cv::Mat& frame, BoundingBoxDetectionResult& result) override;
 

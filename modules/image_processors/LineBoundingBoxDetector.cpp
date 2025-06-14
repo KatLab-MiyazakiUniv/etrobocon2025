@@ -7,7 +7,7 @@
 
 LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
                                                  const cv::Scalar& _upperHSV)
-  : BoundingBoxDetector(result), lowerHSV(_lowerHSV), upperHSV(_upperHSV)
+  : lowerHSV(_lowerHSV), upperHSV(_upperHSV)
 {
 }
 

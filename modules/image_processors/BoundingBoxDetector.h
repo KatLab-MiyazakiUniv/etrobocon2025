@@ -22,9 +22,8 @@ class BoundingBoxDetector {
  public:
   /**
    * @brief コンストラクタ
-   * @param result 検出結果を格納する構造体への参照
    */
-  BoundingBoxDetector(BoundingBoxDetectionResult& result);
+  BoundingBoxDetector();
   /**
    * 仮想デストラクタ
    * @brief 派生クラスのデストラクタが正しく呼ばれるようにするために必要
@@ -32,14 +31,11 @@ class BoundingBoxDetector {
   virtual ~BoundingBoxDetector() = default;
 
   /**
-   * @brief 画像処理を実行する純粋仮想関数
+   * @brief 物体検出を実行する純粋仮想関数
    * @param frame 処理対象の画像フレーム
-   * @return 検出結果を含むDetectionResult構造体
+   * @param result 結果を格納するBoundingBoxDetectionResult構造体の参照
    */
   virtual void detect(const cv::Mat& frame, BoundingBoxDetectionResult& result) = 0;
-
- protected:
-  BoundingBoxDetectionResult& result;
 };
 
 #endif
