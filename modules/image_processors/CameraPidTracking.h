@@ -8,7 +8,7 @@
 #define CAMERA_PID_TRACKING_H
 
 #include "Motion.h"
-#include "ObjectDetector.h"
+#include "BoundingBoxDetector.h"
 #include "Pid.h"
 #include "SpeedCalculator.h"
 #include "Mileage.h"
@@ -23,10 +23,10 @@ class CameraPidTracking : public Motion {
    * @param targetSpeed 目標速度
    * @param targetPoint 目標点
    * @param pidGain PIDゲイン
-   * @param objectDetector 画像処理クラスのポインタ
+   * @param boundingBoxDetector 画像処理クラスのポインタ
    */
   CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetPoint, const PidGain& _pidGain,
-                    ObjectDetector& _objectDetector);
+                    BoundingBoxDetector& _boundingBoxDetector);
 
   /**
    * @brief ライントレースを実行する
@@ -54,9 +54,10 @@ class CameraPidTracking : public Motion {
   virtual bool isMetContinuationCondition() = 0;
 
  protected:
-  double targetSpeed;  // 目標速度
-  PidGain pidGain;     // PIDゲイン
-  ObjectDetector& objectDetector;
+  BoundingBoxDetectionResult result;  // バウンディングボックスを格納するための構造体
+  double targetSpeed;                 // 目標速度
+  PidGain pidGain;                    // PIDゲイン
+  BoundingBoxDetector& boundingBoxDetector;
   int targetPoint;  // 目標X座標
 };
 

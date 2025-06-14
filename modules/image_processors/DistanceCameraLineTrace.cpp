@@ -9,8 +9,8 @@
 DistanceCameraLineTrace::DistanceCameraLineTrace(Robot& _robot, double _targetDistance,
                                                  double _targetSpeed, int _targetPoint,
                                                  const PidGain& _pidGain,
-                                                 ObjectDetector& _objectDetector)
-  : CameraPidTracking(_robot, _targetSpeed, _targetPoint, _pidGain, _objectDetector),
+                                                 BoundingBoxDetector& _boundingBoxDetector)
+  : CameraPidTracking(_robot, _targetSpeed, _targetPoint, _pidGain, _boundingBoxDetector),
     targetDistance(_targetDistance)
 {
 }

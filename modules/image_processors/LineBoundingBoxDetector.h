@@ -1,15 +1,15 @@
 /**
- * @file   LineDetector.h
+ * @file   LineBoundingBoxDetector.h
  * @brief  ライントレース用の画像処理クラス
  * @author takuchi17
  */
 
-#ifndef LiNE_TRACE_IMAGE_PROCESSOR_H
-#define LiNE_TRACE_IMAGE_PROCESSOR_H
+#ifndef LiNE_BOUNDING_BOX_DETECTOR_H
+#define LiNE_BOUNDING_BOX_DETECTOR_H
 
-#include "ObjectDetector.h"
+#include "BoundingBoxDetector.h"
 
-class LineDetector : public ObjectDetector {
+class LineBoundingBoxDetector : public BoundingBoxDetector {
  public:
   /**
    * コンストラクタ
@@ -17,13 +17,13 @@ class LineDetector : public ObjectDetector {
    * @param lowerHSV ライントレース対象の色の下限HSV値
    * @param upperHSV ライントレース対象の色の上限HSV値
    */
-  LineDetector(const cv::Scalar& _lowerHSV, const cv::Scalar& _upperHSV);
+  LineBoundingBoxDetector(const cv::Scalar& _lowerHSV, const cv::Scalar& _upperHSV);
   /**
    * @brief 画像処理を実行する純粋仮想関数
    * @param frame 処理対象の画像フレーム
-   * @return 検出結果を含むDetectionResult構造体
+   * @param rusult バウンディングボックスを格納する構造体
    */
-  DetectionResult process(const cv::Mat& frame) override;
+  void detect(const cv::Mat& frame, BoundingBoxDetectionResult& result) override;
 
  private:
   cv::Scalar lowerHSV;  // ライントレース対象の色の下限HSV値
