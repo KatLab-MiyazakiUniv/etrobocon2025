@@ -5,79 +5,48 @@
  */
 
 #include "Straight.h"
-#include <fstream>
-#include <iomanip>
 
-Straight::Straight(Robot& _robot, double _targetSpeed)
-  : Motion(_robot), targetSpeed(_targetSpeed), speedCalculator(_robot, _targetSpeed)
+Straight::Straight(Robot& _robot, double _targetSpeed,double _rightKp, double _rightKi, double _rightKd, double _leftKp, double _leftKi,
+                       double _leftKd)
+  : Motion(_robot), targetSpeed(_targetSpeed),rightKp(_rightKp),rightKi(_rightKi),rightKd(_rightKd),leftKp(_leftKp),leftKi(_leftKi),leftKd(_leftKd) ,speedCalculator(_robot, _targetSpeed)
 {
 }
 
-void Straight::setSpeedPidGain(double rightKp, double rightKi, double rightKd, double leftKp,
-                               double leftKi, double leftKd)
-{
-  speedCalculator.setSpeedPidGain(rightKp, rightKi, rightKd, leftKp, leftKi, leftKd);
-}
+ void Straight::run()
+ {
+   // 事前条件判定が真でないときは終了する
+   if(!isMetPreCondition()) {
+     return;   }
 
-// クラス内メンバにログファイルを持つのも可
-std::ofstream logFile("speed_log.csv");
+   // 事前準備
+   prepare();
 
-void Straight::run()
-{
-  if(!isMetPreCondition()) return;
-  prepare();
+   std::ofstream csvFile("etrobocon2025/datafiles/commands/StraightSpeed.csv");
+   csvFile << "left,right\n";
 
-  logFile << "Time,TargetSpeed,RightSpeed,LeftSpeed,RightPower,LeftPower\n";
+    SpeedCalculator speedCalculator(robot,targetSpeed);
+    speedCalculator.setSpeedPidGain(rightKp, rightKi, rightKd, leftKp, leftKi, leftKd);
 
-  uint64_t startTime = robot.getClockInstance().now();
+   // 継続条件を満たしている間繰り返す
+   while(isMetContinuationCondition()) {
+    // Power値を計算
+     double currentRightPower = speedCalculator.calculateRightMotorPower();
+     double currentLeftPower = speedCalculator.calculateLeftMotorPower();
 
-  while(isMetContinuationCondition()) {
-    double rightPower = speedCalculator.calculateRightMotorPower();
-    double leftPower = speedCalculator.calculateLeftMotorPower();
+     // モーターにPower値をセット
+     robot.getMotorControllerInstance().setRightMotorPower(currentRightPower);
+     robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower);
 
-    robot.getMotorControllerInstance().setRightMotorPower(rightPower);
-    robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
+     double right = robot.getMotorControllerInstance().getRightMotorSpeed();
+     double left = robot.getMotorControllerInstance().getLeftMotorSpeed();
 
-    double rightSpeed = robot.getMotorControllerInstance().getRightMotorSpeed();  // 仮関数
-    double leftSpeed = robot.getMotorControllerInstance().getLeftMotorSpeed();    // 仮関数
+     std::cout <<left<<"  |  "<<right<<std::endl;
+     csvFile << left <<","<<right<<"\n";
+     robot.getClockInstance().sleep(10000);  // 10000マイクロ秒(10ミリ秒)待機
+   }
 
-    uint64_t nowTime = robot.getClockInstance().now();  // マイクロ秒単位
-    double elapsed = (nowTime - startTime) / 1000000.0;
+   csvFile.close();
 
-    logFile << std::fixed << std::setprecision(3) << elapsed << "," << targetSpeed << ","
-            << rightSpeed << "," << leftSpeed << "," << rightPower << "," << leftPower << "\n";
-
-    robot.getClockInstance().sleep(10000);
-  }
-
-  robot.getMotorControllerInstance().stopWheelsMotor();
-  logFile.close();
-}
-// void Straight::run()
-// {
-//   // 事前条件判定が真でないときは終了する
-//   if(!isMetPreCondition()) {
-//     return;
-//   }
-
-//   // 事前準備
-//   prepare();
-
-//   // SpeedCalculator speedCalculator(robot,targetSpeed);
-
-//   // 継続条件を満たしている間繰り返す
-//   while(isMetContinuationCondition()) {
-//     // Power値を計算
-//     double currentRightPower = speedCalculator.calculateRightMotorPower();
-//     double currentLeftPower = speedCalculator.calculateLeftMotorPower();
-
-//     // モーターにPower値をセット
-//     robot.getMotorControllerInstance().setRightMotorPower(currentRightPower);
-//     robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower);
-
-//     robot.getClockInstance().sleep(10000);  // 10000マイクロ秒(10ミリ秒)待機
-//   }
-
-//   // モータを停止
-//   robot.getMotorControllerInstance().stopWheelsMotor();
-// }
+   // モータを停止
+   robot.getMotorControllerInstance().stopWheelsMotor();
+ }

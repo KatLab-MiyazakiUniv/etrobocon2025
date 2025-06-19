@@ -55,7 +55,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // DS: 指定距離直進
       // [1]:double 距離[mm], [2]:double 速度[mm/s]
       case COMMAND::DS: {
-        DistanceStraight* ds = new DistanceStraight(robot, stod(params[1]), stod(params[2]));
+        DistanceStraight* ds = new DistanceStraight(robot, stod(params[1]), stod(params[2]),stod(params[3]),stod(params[4]),stod(params[5]),stod(params[6]),stod(params[7]),stod(params[8]));
         motionList.push_back(ds);
         break;
       }
@@ -64,7 +64,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [1]:string 色, [2]:double 速度[mm/s]
       case COMMAND::CS: {
         ColorStraight* cs = new ColorStraight(robot, ColorJudge::convertStringToColor(params[1]),
-                                              stod(params[2]));
+                                              stod(params[2]),stod(params[3]),stod(params[4]),stod(params[5]),stod(params[6]),stod(params[7]),stod(params[8]));
         motionList.push_back(cs);
         break;
       }

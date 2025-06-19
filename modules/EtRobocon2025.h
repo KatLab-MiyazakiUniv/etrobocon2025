@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include "Robot.h"
+#include "MotionParser.h"
 
 class EtRobocon2025 {
  public:
