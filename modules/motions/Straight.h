@@ -19,6 +19,9 @@ class Straight : public Motion {
    */
   Straight(Robot& _robot, double _speed);
 
+  void setSpeedPidGain(double rightKp, double rightKi, double rightKd, double leftKp, double leftKi,
+                       double leftKd);
+
   /**
    * @brief 直進する
    */
@@ -42,6 +45,7 @@ class Straight : public Motion {
 
  protected:
   double targetSpeed;  // 目標速度[mm/s]
+  SpeedCalculator speedCalculator;
 };
 
 #endif
