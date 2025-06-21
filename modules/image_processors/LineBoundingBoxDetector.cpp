@@ -1,17 +1,17 @@
 /**
- * @file   LineTraceImageProcessor.h
+ * @file   LineBoundingBoxDetector.h
  * @brief  ライントレース用の画像処理クラス
  * @author takuchi17 miyahara046 HaruArima08
  */
-#include "LineTraceImageProcessor.h"
+#include "LineBoundingBoxDetector.h"
 
-LineTraceImageProcessor::LineTraceImageProcessor(const cv::Scalar& _lowerHSV,
+LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
                                                  const cv::Scalar& _upperHSV)
   : lowerHSV(_lowerHSV), upperHSV(_upperHSV)
 {
 }
 
-DetectionResult LineTraceImageProcessor::process(const cv::Mat& frame)
+void LineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionResult& result)
 {
   // 注目領域の設定
   // 例: 解像度 640x480 の画像の場合
@@ -25,14 +25,14 @@ DetectionResult LineTraceImageProcessor::process(const cv::Mat& frame)
   // ROIが空でないか、または画像範囲外でないかのチェック
   if(frame.empty()) {
     std::cerr << "Error: Input frame is empty." << std::endl;
-    return DetectionResult();
+    return;
   }
   // ROIが画像サイズを超えないようにクリップする処理
   roiRect = roiRect & cv::Rect(0, 0, frame.cols, frame.rows);
   // クリップした結果ROIが空になった場合
   if(roiRect.empty()) {
     std::cerr << "Error: ROI is empty after clipping." << std::endl;
-    return DetectionResult();
+    return;
   }
 
   // 入力画像を複製し、ROI領域を赤枠で描画
@@ -67,7 +67,6 @@ DetectionResult LineTraceImageProcessor::process(const cv::Mat& frame)
   // デバッグ表示（オプション）
   cv::imwrite("etrobocon2025/datafiles/snapshots/debug2.JPEG", mask);
 
-  DetectionResult result;
   result.wasDetected = false;  // 初期状態は検出失敗
 
   // マスクの輪郭を検出
@@ -98,7 +97,6 @@ DetectionResult LineTraceImageProcessor::process(const cv::Mat& frame)
   // ラインが見つかった場合
   if(lineFound) {
     result.wasDetected = true;
-    result.label = "LineTrace";  // ライントレースのラベルを設定
 
     // 最大輪郭の外接矩形を計算
     cv::Rect boundingBox = cv::boundingRect(largestContour);
@@ -124,5 +122,4 @@ DetectionResult LineTraceImageProcessor::process(const cv::Mat& frame)
                      2);  // 緑色(BGR: 0,255,0)
     cv::imwrite("etrobocon2025/datafiles/snapshots/debug_contours.JPEG", debugContoursImage);
   }
-  return result;
 }

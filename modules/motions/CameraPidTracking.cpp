@@ -7,8 +7,13 @@
 #include "CameraPidTracking.h"
 
 CameraPidTracking::CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetPoint,
-                                     const PidGain& _pidGain, ImageProcessor& _imageProcessor)
-  : Motion(_robot), targetSpeed(_targetSpeed), pidGain(_pidGain), imageProcessor(_imageProcessor)
+                                     const PidGain& _pidGain,
+                                     BoundingBoxDetector& _boundingBoxDetector)
+  : Motion(_robot),
+    targetSpeed(_targetSpeed),
+    targetPoint(_targetPoint),
+    pidGain(_pidGain),
+    boundingBoxDetector(_boundingBoxDetector)
 {
 }
 
@@ -39,7 +44,7 @@ void CameraPidTracking::run()
     robot.getCameraCaptureInstance().getFrame(frame);
 
     // 画像処理を実行
-    DetectionResult result = imageProcessor.process(frame);
+    boundingBoxDetector.detect(frame, result);
 
     // バウンディングボックスの中心X座標を計算
     double centerX = (result.topLeft.x + result.bottomRight.x) / 2.0;
