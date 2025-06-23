@@ -1,0 +1,84 @@
+/**
+ * @file SpeedCalculatorTest.cpp
+ * @brief SpeedCalculatorクラスをテストする
+ * @author miyahara046
+ */
+
+#include "SpeedCalculator.h"
+#include <gtest/gtest.h>
+
+namespace etrobocon2025_test {
+
+  TEST(SpeedCalculatorTest, CalculateLeftMotorPower)
+  {
+    Robot robot;
+    // Powerの初期化
+    robot.getMotorControllerInstance().setRightMotorPower(0.0);
+    robot.getMotorControllerInstance().setLeftMotorPower(0.0);
+    SpeedCalculator speedCalculator(robot, 300.0);
+    double actualPower = speedCalculator.calculateLeftMotorPower();
+    double expected = 0.0;
+    EXPECT_LT(expected, actualPower);
+  }
+
+  TEST(SpeedCalculatorTest, CalculateRightMotorPower)
+  {
+    Robot robot;
+    // Powerの初期化
+    robot.getMotorControllerInstance().setRightMotorPower(0.0);
+    robot.getMotorControllerInstance().setLeftMotorPower(0.0);
+    SpeedCalculator speedCalculator(robot, 300.0);
+    double actualPower = speedCalculator.calculateRightMotorPower();
+    double expected = 0.0;
+    EXPECT_LT(expected, actualPower);
+  }
+
+  TEST(SpeedCalculatorTest, CalculateLeftMotorPoewerFromMinusSpeed)
+  {
+    Robot robot;
+    // Powerの初期化
+    robot.getMotorControllerInstance().setRightMotorPower(0.0);
+    robot.getMotorControllerInstance().setLeftMotorPower(0.0);
+    SpeedCalculator speedCalculator(robot, -300.0);
+    double actualPower = speedCalculator.calculateLeftMotorPower();
+    double expected = 0.0;
+    EXPECT_GT(expected, actualPower);
+  }
+
+  TEST(SpeedCalculatorTest, CalculateRightMotorPoewerFromMinusSpeed)
+  {
+    Robot robot;
+    // Powerの初期化
+    robot.getMotorControllerInstance().setRightMotorPower(0.0);
+    robot.getMotorControllerInstance().setLeftMotorPower(0.0);
+    SpeedCalculator speedCalculator(robot, -300.0);
+    double actualPower = speedCalculator.calculateRightMotorPower();
+    double expected = 0.0;
+    EXPECT_GT(expected, actualPower);
+  }
+
+  TEST(SpeedCalculatorTest, CalculateLeftMotorPowerFromZeroSpeed)
+  {
+    Robot robot;
+    // Powerの初期化
+    robot.getMotorControllerInstance().setRightMotorPower(0.0);
+    robot.getMotorControllerInstance().setLeftMotorPower(0.0);
+    SpeedCalculator speedCalculator(robot, 0.0);
+    double actualPower = speedCalculator.calculateLeftMotorPower();
+    double expected = 0.0;
+    EXPECT_EQ(expected, actualPower);
+  }
+
+  TEST(SpeedCalculatorTest, CalculateRightMotorPowerFromZeroSpeed)
+  {
+    Robot robot;
+    // Powerの初期化
+    robot.getMotorControllerInstance().setRightMotorPower(0.0);
+    robot.getMotorControllerInstance().setLeftMotorPower(0.0);
+    SpeedCalculator speedCalculator(robot, 0.0);
+    double actualPower = speedCalculator.calculateRightMotorPower();
+    double expected = 0.0;
+    EXPECT_EQ(expected, actualPower);
+  }
+
+}  // namespace etrobocon2025_test
