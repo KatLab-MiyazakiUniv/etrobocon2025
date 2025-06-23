@@ -51,9 +51,11 @@ class CameraPidTracking : public Motion {
   virtual bool isMetContinuationCondition() = 0;
 
  protected:
-  BoundingBoxDetectionResult result;         // バウンディングボックスの座標を格納する構造体
   BoundingBoxDetector& boundingBoxDetector;  // 画像処理クラスの参照
-  CameraCapture& cameraCapture;              // カメラキャプチャクラスの参照
+
+  // FormatCheck用の改行
+  BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
+  CameraCapture& cameraCapture;       // カメラキャプチャクラスの参照
 
   // FormatCheck用の改行
   double targetSpeed;  // 目標速度
