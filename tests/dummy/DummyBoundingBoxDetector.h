@@ -1,7 +1,7 @@
 /**
  * @file DummyBoundingBoxDetector.h
  * @brief 画像処理の親クラス(ダミー)
- * @author HaruArima08
+ * @author HaruArima08 miyahara046
  */
 
 #ifndef DUMMY_BOUNDING_BOX_DETECTOR_H
