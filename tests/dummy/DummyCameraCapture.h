@@ -1,16 +1,22 @@
 /**
  * @file   DummyCameraCapture.h
  * @brief  カメラを制御するクラス（ダミー）
- * @author HaruArima08
+ * @author HaruArima08 miyahara046
  */
 
 #ifndef DUMMY_CAMERA_CAPTURE_H
 #define DUMMY_CAMERA_CAPTURE_H
 
+#include "ICameraCapture.h"
 #include <queue>
 
-class DummyCameraCapture : public CameraCapture {
+class DummyCameraCapture : public ICameraCapture {
  public:
+  int findAvailableCameraID(int maxTested = 10) override { return 0; }
+  int getCameraID() override { return 0; }
+  bool setCameraID(int id) override { return true; }
+  bool openCamera() override { return true; }
+  void setCapProps(double width, double height) override {}
   /**
    * @brief フレーム取得の成功・失敗の順番を設定
    */
@@ -46,6 +52,16 @@ class DummyCameraCapture : public CameraCapture {
       outFrame = cv::Mat::zeros(480, 640, CV_8UC3);
       return true;
     }
+  }
+
+  bool getFrames(std::vector<cv::Mat>& frames, int numFrames, int millisecondInterval) override
+  {
+    return true;
+  }
+
+  bool saveFrame(const cv::Mat& frame, std::string filepath, std::string filename) override
+  {
+    return true;
   }
 
  private:
