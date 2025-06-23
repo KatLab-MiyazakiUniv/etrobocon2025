@@ -79,6 +79,39 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // DCL: 指定距離カメラライントレース
+      // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int X座標[px], [4-6]:double PIDゲイン,
+      // [7-9]int lowerHSV, [10-12]int upperHSV, [13-16]int ROI座標[px], [17-18]int 解像度[px]
+      case COMMAND::DCL: {
+        cv::Scalar lowerHSV, upperHSV;
+        cv::Rect roi;
+        cv::Size resolution;
+        BoundingBoxDetector* detector = nullptr;
+
+        lowerHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        upperHSV = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
+        // パラメータ配列のサイズによってコンストラクタを切り替え
+        if(params.size() > 18) {
+          // ROI + 解像度
+          roi = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
+          resolution = cv::Size(stoi(params[17]), stoi(params[18]));
+          detector = new LineBoundingBoxDetector(lowerHSV, upperHSV, roi, resolution);
+        } else if(params.size() > 16) {
+          // ROIのみ
+          roi = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
+          detector = new LineBoundingBoxDetector(lowerHSV, upperHSV, roi);
+        } else {
+          // HSVのみ
+          detector = new LineBoundingBoxDetector(lowerHSV, upperHSV);
+        }
+
+        DistanceCameraLineTrace* dcl = new DistanceCameraLineTrace(
+            robot, stod(params[1]), stod(params[2]), stoi(params[3]),
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), *detector);
+        motionList.push_back(dcl);
+        break;
+      }
+
       // CL: 指定色ライントレース
       // [1]:string 色, [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
       case COMMAND::CL: {
@@ -153,6 +186,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "DS", COMMAND::DS },    // 指定距離直進
     { "CS", COMMAND::CS },    // 指定色直進
     { "DL", COMMAND::DL },    // 指定距離ライントレース
+    { "DCL", COMMAND::DCL },  // 指定距離カメラライントレース
     { "CL", COMMAND::CL },    // 指定色ライントレース
     { "CDL", COMMAND::CDL },  // 色距離指定ライントレース
     { "EC", COMMAND::EC },    // エッジ切り替え
