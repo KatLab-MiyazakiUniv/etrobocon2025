@@ -22,7 +22,6 @@ using namespace dnn;
 
 // ミニフィグの向きを表す列挙体
 enum class MiniFigDirection { FRONT, LEFT, BACK, RIGHT };
-// enum class MiniFigDirection { FRONT, BACK, RIGHT, LEFT };
 
 struct MiniFigDirectionResult {
   bool wasDetected = false;    // 検出が成功したかどうか
@@ -36,20 +35,23 @@ class MiniFigDirectionDetector {
 
   // ミニフィグの向き検出を行う処理
   // MiniFigDirectionResult 型の構造体を返す
-  MiniFigDirectionResult detect(const cv::Mat& frame);
+  MiniFigDirectionResult detect(const cv::Mat& frame, const std::string& saveImagePath);
 
  private:
   cv::dnn::Net net;  // DNNモデルを格納する変数
+
   // モデルの前処理を行う関数
   cv::Mat preprocess(const cv::Mat& frame);
-  // 出力結果を後処理して検出結果を生成する関数
-  // outputs: ネットワークの出力結果
-  // frame: 入力画像フレーム
-  // result: 検出結果を格納する構造体
-  // result.wasDetected: 検出が成功したかどうか
-  // result.direction: ミニフィグの向きを表す列挙体
+
+  /**
+   * @brief 出力結果を後処理して検出結果を生成する関数
+   * @param outputs: ネットワークの出力結果
+   * @param frame: 入力画像フレーム
+   * @param result: 検出結果を格納する構造体
+   * @param saveImagePath: 検出結果を保存する画像のパス
+   */
   void postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame,
-                   MiniFigDirectionResult& result);
+                   MiniFigDirectionResult& result, const std::string& saveImagePath);
 };
 
 #endif  // MINIFIG_DIRECTION_DETECTOR_H

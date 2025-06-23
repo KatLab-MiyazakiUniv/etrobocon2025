@@ -23,7 +23,8 @@ MiniFigDirectionDetector::MiniFigDirectionDetector(const std::string& modelPath)
   net.setPreferableTarget(DNN_TARGET_CPU);       // CPUをターゲットに設定
 }
 
-MiniFigDirectionResult MiniFigDirectionDetector::detect(const cv::Mat& frame)
+MiniFigDirectionResult MiniFigDirectionDetector::detect(const cv::Mat& frame,
+                                                        const std::string& saveImagePath)
 {
   MiniFigDirectionResult result;
 
@@ -36,7 +37,7 @@ MiniFigDirectionResult MiniFigDirectionDetector::detect(const cv::Mat& frame)
   net.forward(outputs, net.getUnconnectedOutLayersNames());
 
   // 出力結果の後処理
-  postprocess(outputs, frame, result);
+  postprocess(outputs, frame, result, saveImagePath);
 
   return result;
 }
@@ -51,7 +52,8 @@ cv::Mat MiniFigDirectionDetector::preprocess(const cv::Mat& frame)
 
 // 出力結果を後処理して検出結果を生成する関数
 void MiniFigDirectionDetector::postprocess(const std::vector<cv::Mat>& outputs,
-                                           const cv::Mat& frame, MiniFigDirectionResult& result)
+                                           const cv::Mat& frame, MiniFigDirectionResult& result,
+                                           const std::string& saveImagePath)
 {
   std::vector<int> classIds;
   std::vector<float> confidences;
@@ -133,6 +135,18 @@ void MiniFigDirectionDetector::postprocess(const std::vector<cv::Mat>& outputs,
 
   result.wasDetected = true;
   result.direction = static_cast<MiniFigDirection>(direction);
-  // デバッグ出力を追加
+
+  // 検出結果を画像に描画
+  cv::Mat outputImage = frame.clone();
+  for(size_t i = 0; i < indices.size(); ++i) {
+    int idx = indices[i];
+    cv::rectangle(outputImage, boxes[idx], cv::Scalar(0, 255, 0), 2);
+    std::string label = std::to_string(classIds[idx]);
+    cv::putText(outputImage, label, boxes[idx].tl(), cv::FONT_HERSHEY_SIMPLEX, 0.5,
+                cv::Scalar(255, 0, 0), 1);
+  }
+  cv::imwrite(saveImagePath, outputImage);
+
+  // 検出された方向クラスIDを表示
   std::cout << "検出された方向クラスID: " << direction << std::endl;
 }
