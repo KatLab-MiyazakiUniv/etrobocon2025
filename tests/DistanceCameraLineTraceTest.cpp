@@ -5,7 +5,6 @@
  */
 
 #include <gtest/gtest.h>
-#include <memory>
 #include "DistanceCameraLineTrace.h"
 #include "DummyBoundingBoxDetector.h"
 #include "DummyCameraCapture.h"
