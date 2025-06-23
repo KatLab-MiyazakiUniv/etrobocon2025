@@ -1,7 +1,7 @@
 /**
  * @file   BoundingBoxDetector.h
  * @brief  画像処理の親クラス
- * @author takuchi17 miyahara046
+ * @author takuchi17 miyahara046 HaruArima08
  */
 
 #ifndef BOUNDING_BOX_DETECTOR_H

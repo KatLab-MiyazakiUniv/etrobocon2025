@@ -18,11 +18,10 @@ class DistanceCameraLineTrace : public CameraPidTracking {
    * @param _targetPoint 目標x座標
    * @param _pidGain PIDゲイン
    * @param _boundingBoxDetector 画像処理クラスのポインタ
-   * @param _cameraCapture カメラキャプチャクラスのポインタ
    */
   DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
                           int _targetPoint, const PidGain& _pidGain,
-                          BoundingBoxDetector& _boundingBoxDetector, CameraCapture& _cameraCapture);
+                          BoundingBoxDetector& _boundingBoxDetector);
 
   /**
    * @brief 指定距離だけカメラライントレースする
@@ -50,9 +49,11 @@ class DistanceCameraLineTrace : public CameraPidTracking {
 
  private:
   static constexpr int JUDGE_COUNT = 3;  // フレーム取得最大失敗回数
-  double targetDistance;                 // 目標距離
-  double initDistance;                   // 実行前の走行距離
-  int frameCount;                        // フレーム取得カウント
+  // format check用
+  double targetDistance;  // 目標距離
+  double initDistance;    // 実行前の走行距離
+  // format check用
+  int frameCount;  // フレーム取得カウント
 };
 
 #endif

@@ -24,10 +24,9 @@ class CameraPidTracking : public Motion {
    * @param _targetPoint 目標点
    * @param _pidGain PIDゲイン
    * @param _boundingBoxDetector 画像処理クラスのポインタ
-   * @param _cameraCapture カメラキャプチャクラスのポインタ
    */
   CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetPoint, const PidGain& _pidGain,
-                    BoundingBoxDetector& _boundingBoxDetector, CameraCapture& _cameraCapture);
+                    BoundingBoxDetector& _boundingBoxDetector);
 
   /**
    * @brief ライントレースを実行する
@@ -54,8 +53,6 @@ class CameraPidTracking : public Motion {
   BoundingBoxDetector& boundingBoxDetector;  // 画像処理クラスの参照
   // FormatCheck用の改行
   BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
-  // FormatCheck用の改行
-  CameraCapture& cameraCapture;  // カメラキャプチャクラスの参照
   // FormatCheck用の改行
   double targetSpeed;  // 目標速度
   int targetPoint;     // 目標X座標

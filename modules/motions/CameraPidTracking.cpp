@@ -8,14 +8,12 @@
 
 CameraPidTracking::CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetPoint,
                                      const PidGain& _pidGain,
-                                     BoundingBoxDetector& _boundingBoxDetector,
-                                     CameraCapture& _cameraCapture)
+                                     BoundingBoxDetector& _boundingBoxDetector)
   : Motion(_robot),
     targetSpeed(_targetSpeed),
     targetPoint(_targetPoint),
     pidGain(_pidGain),
-    boundingBoxDetector(_boundingBoxDetector),
-    cameraCapture(_cameraCapture)
+    boundingBoxDetector(_boundingBoxDetector)
 {
 }
 
@@ -43,7 +41,7 @@ void CameraPidTracking::run()
 
     // カメラからフレームを取得
     cv::Mat frame;
-    cameraCapture.getFrame(frame);
+    robot.getCameraCaptureInstance().getFrame(frame);
 
     // 画像処理を実行
     boundingBoxDetector.detect(frame, result);
@@ -67,5 +65,5 @@ void CameraPidTracking::run()
   }
 
   // モータを停止
-  robot.getMotorControllerInstance().brakeWheelsMotor();
+  robot.getMotorControllerInstance().stopWheelsMotor();
 }

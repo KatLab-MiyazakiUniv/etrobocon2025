@@ -9,10 +9,8 @@
 DistanceCameraLineTrace::DistanceCameraLineTrace(Robot& _robot, double _targetDistance,
                                                  double _targetSpeed, int _targetPoint,
                                                  const PidGain& _pidGain,
-                                                 BoundingBoxDetector& _boundingBoxDetector,
-                                                 CameraCapture& _cameraCapture)
-  : CameraPidTracking(_robot, _targetSpeed, _targetPoint, _pidGain, _boundingBoxDetector,
-                      _cameraCapture),
+                                                 BoundingBoxDetector& _boundingBoxDetector)
+  : CameraPidTracking(_robot, _targetSpeed, _targetPoint, _pidGain, _boundingBoxDetector),
     targetDistance(_targetDistance)
 {
 }
@@ -46,7 +44,7 @@ bool DistanceCameraLineTrace::isMetContinuationCondition()
 {
   // フレーム取得をJUDGE_COUNT回数以上失敗するとモータが止まる
   cv::Mat frame;
-  if(!cameraCapture.getFrame(frame) || frame.empty()) {
+  if(!robot.getCameraCaptureInstance().getFrame(frame) || frame.empty()) {
     frameCount++;
     if(frameCount >= JUDGE_COUNT) {
       return false;
