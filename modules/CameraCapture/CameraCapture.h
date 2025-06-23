@@ -57,7 +57,7 @@ class CameraCapture {
    * @param outFrame 取得した画像を格納するcv::Mat参照
    * @return 画像取得に成功した場合はtrue、失敗した場合はfalse
    */
-  bool getFrame(cv::Mat& outFrame);
+  virtual bool getFrame(cv::Mat& outFrame);
 
   /**
    * @brief 指定した枚数だけ、指定したミリ秒間隔でカメラ画像を取得し、配列に保存する
