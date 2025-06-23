@@ -55,6 +55,7 @@ void LineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionR
 {
   result.wasDetected = false;  // 初期状態は検出失敗
 
+  // ROIが空でないか、または画像範囲外でないかのチェック
   if(frame.empty()) {
     std::cerr << "Error: Input frame is empty." << std::endl;
     return;
