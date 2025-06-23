@@ -5,43 +5,86 @@
  */
 #include "LineBoundingBoxDetector.h"
 
+// デフォルトコンストラクタ
 LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
                                                  const cv::Scalar& _upperHSV)
   : lowerHSV(_lowerHSV), upperHSV(_upperHSV)
 {
+  roi = cv::Rect(50, 240, 540, 240);
+  resolution = cv::Size(640, 480);
+  validateParameters();
+}
+
+// ROIを指定するオーバーロードコンストラクタ
+LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& lowerHSV,
+                                                 const cv::Scalar& upperHSV, const cv::Rect& roi)
+  : lowerHSV(lowerHSV), upperHSV(upperHSV), roi(roi)
+{
+  resolution = cv::Size(640, 480);
+  validateParameters();
+}
+
+// ROIと解像度を指定するオーバーロードコンストラクタ
+LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
+                                                 const cv::Scalar& _upperHSV, const cv::Rect& _roi,
+                                                 const cv::Size& _resolution)
+  : lowerHSV(_lowerHSV), upperHSV(_upperHSV), roi(_roi), resolution(_resolution)
+{
+  validateParameters();
+}
+
+void LineBoundingBoxDetector::validateParameters()
+{
+  // 解像度の検証：設定された解像度が定義した最小・最大値内にあるかの確認
+  if(resolution.width < ResolutionRange::MIN_WIDTH) {
+    resolution.width = ResolutionRange::MIN_WIDTH;
+  } else if(resolution.width > ResolutionRange::MAX_WIDTH) {
+    resolution.width = ResolutionRange::MAX_WIDTH;
+  }
+  if(resolution.height < ResolutionRange::MIN_HEIGHT) {
+    resolution.height = ResolutionRange::MIN_HEIGHT;
+  } else if(resolution.height > ResolutionRange::MAX_HEIGHT) {
+    resolution.height = ResolutionRange::MAX_HEIGHT;
+  }
+
+  // ROI検証：ROIの位置とサイズが解像度の枠内に収まるかの確認
+  // ROI左上座標が負の場合は0にクリップ
+  if(roi.x < 0) roi.x = 0;
+  if(roi.y < 0) roi.y = 0;
+  // ROIが解像度を超えている場合は解像度に合わせる
+  if(roi.x + roi.width > resolution.width) roi.width = resolution.width - roi.x;
+  if(roi.y + roi.height > resolution.height) roi.height = resolution.height - roi.y;
 }
 
 void LineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionResult& result)
 {
-  // 注目領域の設定
-  // 例: 解像度 640x480 の画像の場合
-  const int roi_x = 50;        // 左端からの開始X座標
-  const int roi_y = 240;       // 上端からの開始Y座標 (画像の中心より少し下から開始)
-  const int roi_width = 540;   // ROIの幅 (例: 640 - 50 - 50 = 540)
-  const int roi_height = 240;  // ROIの高さ (例: 480 - 140 = 340, 340に設定)
-
-  cv::Rect roiRect(roi_x, roi_y, roi_width, roi_height);
+  result.wasDetected = false;  // 初期状態は検出失敗
 
   // ROIが空でないか、または画像範囲外でないかのチェック
   if(frame.empty()) {
     std::cerr << "Error: Input frame is empty." << std::endl;
     return;
   }
+
+  // 入力画像が指定の解像度と異なる場合、リサイズ処理
+  cv::Mat frameProcessed;
+  if(frame.size() != resolution) {
+    cv::resize(frame, frameProcessed, resolution);
+  } else {
+    frameProcessed = frame;
+  }
+
   // ROIが画像サイズを超えないようにクリップする処理
-  roiRect = roiRect & cv::Rect(0, 0, frame.cols, frame.rows);
+  cv::Rect roiRect = roi;
+  roiRect = roiRect & cv::Rect(0, 0, frameProcessed.cols, frameProcessed.rows);
   // クリップした結果ROIが空になった場合
   if(roiRect.empty()) {
     std::cerr << "Error: ROI is empty after clipping." << std::endl;
     return;
   }
 
-  // 入力画像を複製し、ROI領域を赤枠で描画
-  cv::Mat debugROIImage = frame.clone();
-  cv::rectangle(debugROIImage, roiRect, cv::Scalar(0, 0, 255), 2);  // 赤色(BGR: 0,0,255)
-  cv::imwrite("etrobocon2025/datafiles/snapshots/debug_roi.JPEG", debugROIImage);
-
   // ROIを切り出す
-  cv::Mat roiFrame = frame(roiRect);
+  cv::Mat roiFrame = frameProcessed(roiRect);
 
   // フレームをHSV色空間に変換
   cv::Mat hsvFrame;
@@ -50,9 +93,6 @@ void LineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionR
   // HSV範囲でマスクを設定
   cv::Mat mask;
   cv::inRange(hsvFrame, lowerHSV, upperHSV, mask);
-
-  // デバッグ表示
-  cv::imwrite("etrobocon2025/datafiles/snapshots/debug1.JPEG", mask);
 
   // マスクを綺麗にするモルフォロジー処理のためのカーネルを作成
   // サイズは調整が必要。
@@ -63,11 +103,6 @@ void LineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionR
 
   // クロージング（ラインの結合）
   cv::morphologyEx(mask, mask, cv::MORPH_CLOSE, kernel);
-
-  // デバッグ表示（オプション）
-  cv::imwrite("etrobocon2025/datafiles/snapshots/debug2.JPEG", mask);
-
-  result.wasDetected = false;  // 初期状態は検出失敗
 
   // マスクの輪郭を検出
   std::vector<std::vector<cv::Point>> contours;
@@ -81,11 +116,8 @@ void LineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionR
   // 輪郭をイテレート
   for(const auto& contour : contours) {
     double area = cv::contourArea(contour);
-
     // ある程度の面積がないとノイズとみなす（この閾値は調整）
-    // 例: 50ピクセル以上の面積をライン候補とする
-    if(area > 50) {
-      // 必要に応じてアスペクト比など他のフィルタリングもここに追加
+    if(area > MIN_LINE_CONTOUR_AREA) {
       if(area > maxArea) {
         maxArea = area;
         largestContour = contour;
@@ -109,17 +141,5 @@ void LineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionR
         = cv::Point(boundingBox.x + roiRect.x, boundingBox.y + boundingBox.height + roiRect.y);
     result.bottomRight = cv::Point(boundingBox.x + boundingBox.width + roiRect.x,
                                    boundingBox.y + boundingBox.height + roiRect.y);
-
-    // 元画像にバウンディングボックスを描画（青色）
-    cv::Mat debugBoundingBoxImage = frame.clone();
-    cv::rectangle(debugBoundingBoxImage, result.topLeft, result.bottomRight, cv::Scalar(255, 0, 0),
-                  2);  // 青色(BGR: 255,0,0)
-    cv::imwrite("etrobocon2025/datafiles/snapshots/debug_bbox.JPEG", debugBoundingBoxImage);
-
-    // 元画像に輪郭を緑色で描画（塗りつぶしなし）
-    cv::Mat debugContoursImage = frame.clone();
-    cv::drawContours(debugContoursImage, contours, -1, cv::Scalar(0, 255, 0),
-                     2);  // 緑色(BGR: 0,255,0)
-    cv::imwrite("etrobocon2025/datafiles/snapshots/debug_contours.JPEG", debugContoursImage);
   }
 }
