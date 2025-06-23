@@ -15,4 +15,6 @@ static constexpr double TREAD = 112.0;  // 走行体のトレッド幅（両輪�
 
 static constexpr double WHEEL_RADIUS = 28.0;  // 車輪の半径[mm]
 
+static const int RESOLUTION_WIDTH = 800;   // 解像度の幅（規定値）[px]
+static const int RESOLUTION_HEIGHT = 600;  // 解像度の高さ（規定値）[px]
 #endif
