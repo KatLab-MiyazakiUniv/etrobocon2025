@@ -1,3 +1,7 @@
 # ディレクトリ
 bin
 datafiles/snapshots
+test/test_images
+
+# yoloモデル
+*.onnx
