@@ -8,7 +8,20 @@
 
 Robot::Robot()
   : motorController(),
-    cameraCapture(),
+    defaultCameraCapture(),
+    cameraCapturePtr(&defaultCameraCapture),
+    colorSensor(EPort::PORT_E),
+    clock(),
+    button(),
+    forceSensor(EPort::PORT_D),
+    display()
+{
+}
+
+// DI用コンストラクタ
+Robot::Robot(ICameraCapture& cam)
+  : motorController(),
+    cameraCapturePtr(&cam),
     colorSensor(EPort::PORT_E),
     clock(),
     button(),
@@ -22,9 +35,9 @@ MotorController& Robot::getMotorControllerInstance()
   return motorController;
 }
 
-CameraCapture& Robot::getCameraCaptureInstance()
+ICameraCapture& Robot::getCameraCaptureInstance()
 {
-  return cameraCapture;
+  return *cameraCapturePtr;
 }
 
 spikeapi::ColorSensor& Robot::getColorSensorInstance()
