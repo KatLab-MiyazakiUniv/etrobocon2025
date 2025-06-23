@@ -9,6 +9,7 @@
 
 namespace etrobocon2025_test {
 
+  // LeftMotorに少しでもPower値が入っているかのテスト
   TEST(SpeedCalculatorTest, CalculateLeftMotorPower)
   {
     Robot robot;
@@ -20,7 +21,7 @@ namespace etrobocon2025_test {
     double expected = 0.0;
     EXPECT_LT(expected, actualPower);
   }
-
+  // RightMotorに少しでもPower値が入っているかのテスト
   TEST(SpeedCalculatorTest, CalculateRightMotorPower)
   {
     Robot robot;
@@ -33,6 +34,7 @@ namespace etrobocon2025_test {
     EXPECT_LT(expected, actualPower);
   }
 
+  // LeftMotorに少しでも負のPower値が入っているかのテスト
   TEST(SpeedCalculatorTest, CalculateLeftMotorPoewerFromMinusSpeed)
   {
     Robot robot;
@@ -44,7 +46,7 @@ namespace etrobocon2025_test {
     double expected = 0.0;
     EXPECT_GT(expected, actualPower);
   }
-
+  // RightMotorに少しでも負のPower値が入っているかのテスト
   TEST(SpeedCalculatorTest, CalculateRightMotorPoewerFromMinusSpeed)
   {
     Robot robot;
@@ -56,7 +58,7 @@ namespace etrobocon2025_test {
     double expected = 0.0;
     EXPECT_GT(expected, actualPower);
   }
-
+  // LeftMotorにPower値が入っていないかのテスト
   TEST(SpeedCalculatorTest, CalculateLeftMotorPowerFromZeroSpeed)
   {
     Robot robot;
@@ -69,6 +71,7 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actualPower);
   }
 
+  // RightMotorにPower値が入っていないかのテスト
   TEST(SpeedCalculatorTest, CalculateRightMotorPowerFromZeroSpeed)
   {
     Robot robot;
