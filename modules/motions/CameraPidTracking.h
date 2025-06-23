@@ -52,11 +52,13 @@ class CameraPidTracking : public Motion {
 
  protected:
   BoundingBoxDetectionResult result;         // バウンディングボックスの座標を格納する構造体
-  double targetSpeed;                        // 目標速度
-  int targetPoint;                           // 目標X座標
-  PidGain pidGain;                           // PIDゲイン
   BoundingBoxDetector& boundingBoxDetector;  // 画像処理クラスの参照
   CameraCapture& cameraCapture;              // カメラキャプチャクラスの参照
+
+  // FormatCheck用の改行
+  double targetSpeed;  // 目標速度
+  int targetPoint;     // 目標X座標
+  PidGain pidGain;     // PIDゲイン
 };
 
 #endif
