@@ -17,8 +17,10 @@ namespace etrobocon2025_test {
     Robot robot;
     string csvPath = "../../tests/test_data/NonExistent.csv";  // 存在しないファイルパス
     int targetBrightness = 45;
+    CameraCapture cameraCapture;
 
-    vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
+    vector<Motion*> actualList
+        = MotionParser::createMotions(robot, csvPath, targetBrightness, cameraCapture);
 
     // actualListが空であることを確認
     EXPECT_TRUE(actualList.empty());
@@ -30,8 +32,10 @@ namespace etrobocon2025_test {
     Robot robot;
     string csvPath = "../../tests/test_data/MotionParserTestData.csv";
     int targetBrightness = 45;
+    CameraCapture cameraCapture;
 
-    vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
+    vector<Motion*> actualList
+        = MotionParser::createMotions(robot, csvPath, targetBrightness, cameraCapture);
     ASSERT_EQ(actualList.size(), 10);
 
     ASSERT_NE(dynamic_cast<AngleRotation*>(actualList[0]), nullptr);
@@ -56,8 +60,10 @@ namespace etrobocon2025_test {
     Robot robot;
     string csvPath = "../../tests/test_data/MotionParserInvalidCommandTestData.csv";
     int targetBrightness = 45;
+    CameraCapture cameraCapture;
 
-    vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
+    vector<Motion*> actualList
+        = MotionParser::createMotions(robot, csvPath, targetBrightness, cameraCapture);
 
     // 無効なコマンド（XXX,YYY）は無視され、残りの4つが格納される
     ASSERT_EQ(actualList.size(), 4);
@@ -78,6 +84,7 @@ namespace etrobocon2025_test {
     Robot robot;
     string csvPath = "../../datafiles/commands/LineTraceLeft.csv";
     int targetBrightness = 45;
+    CameraCapture cameraCapture;
 
     ifstream file(csvPath);
     if(!file.is_open()) {
@@ -90,7 +97,8 @@ namespace etrobocon2025_test {
       ++lines;
     }
 
-    vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
+    vector<Motion*> actualList
+        = MotionParser::createMotions(robot, csvPath, targetBrightness, cameraCapture);
 
     // ファイルの行数分だけ、motionのリストに格納されたことを確認
     ASSERT_EQ(actualList.size(), lines);
@@ -106,6 +114,7 @@ namespace etrobocon2025_test {
     Robot robot;
     string csvPath = "../../datafiles/commands/LineTraceRight.csv";
     int targetBrightness = 45;
+    CameraCapture cameraCapture;
 
     ifstream file(csvPath);
     if(!file.is_open()) {
@@ -118,7 +127,8 @@ namespace etrobocon2025_test {
       ++lines;
     }
 
-    vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
+    vector<Motion*> actualList
+        = MotionParser::createMotions(robot, csvPath, targetBrightness, cameraCapture);
 
     // ファイルの行数分だけ、motionのリストに格納されたことを確認
     ASSERT_EQ(actualList.size(), lines);

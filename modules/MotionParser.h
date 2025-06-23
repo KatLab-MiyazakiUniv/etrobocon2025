@@ -15,6 +15,8 @@
 #include "Motion.h"
 #include "AngleRotation.h"
 #include "DistanceStraight.h"
+#include "DistanceCameraLineTrace.h"
+#include "LineBoundingBoxDetector.h"
 #include "ColorStraight.h"
 #include "ColorLineTrace.h"
 #include "DistanceLineTrace.h"
@@ -28,6 +30,7 @@ enum class COMMAND {
   DS,   // 指定距離直進
   CS,   // 指定色直進
   DL,   // 指定距離ライントレース
+  DCL,  // 指定距離カメラライントレース
   CL,   // 指定色ライントレース
   CDL,  // 色距離指定ライントレース
   EC,   // エッジ切り替え
@@ -43,11 +46,12 @@ class MotionParser {
    * @param robot ロボット本体の参照
    * @param commandFilePath ファイルパス
    * @param targetBrightness 目標輝度
+   * @param cameraCapture カメラキャプチャクラスの参照
    * @return 動作インスタンスリスト
    */
 
   static std::vector<Motion*> createMotions(Robot& robot, std::string& commandFilePath,
-                                            int targetBrightness);
+                                            int targetBrightness, CameraCapture& cameraCapture);
 
  private:
   MotionParser();  // インスタンス化を禁止する

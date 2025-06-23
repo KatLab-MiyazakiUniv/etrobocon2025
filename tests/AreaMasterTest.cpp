@@ -19,12 +19,13 @@ namespace etrobocon2025_test {
     Area area = Area::LineTrace;
     bool isLeftCourse = true;
     int targetBrightness = 45;
+    CameraCapture cameraCapture;
 
     // 実行前のカウントを保存
     int beforeRight = robot.getMotorControllerInstance().getRightMotorCount();
     int beforeLeft = robot.getMotorControllerInstance().getLeftMotorCount();
 
-    AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
+    AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness, cameraCapture);
     areaMaster.run();
 
     // 実行後のカウント
@@ -44,12 +45,13 @@ namespace etrobocon2025_test {
     Area area = Area::LineTrace;
     bool isLeftCourse = false;
     int targetBrightness = 45;
+    CameraCapture cameraCapture;
 
     // 実行前のカウントを保存
     int beforeRight = robot.getMotorControllerInstance().getRightMotorCount();
     int beforeLeft = robot.getMotorControllerInstance().getLeftMotorCount();
 
-    AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
+    AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness, cameraCapture);
     areaMaster.run();
 
     // 実行後のカウント

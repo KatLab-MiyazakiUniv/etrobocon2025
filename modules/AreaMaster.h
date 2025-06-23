@@ -23,7 +23,8 @@ class AreaMaster {
    * @param isLeftCourse コースのLR判定(true:Lコース, false:Rコース)
    * @param targetBrightness 目標輝度
    */
-  AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness);
+  AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness,
+             CameraCapture& _cameraCapture);
 
   /**
    * @brief エリアを走行する
@@ -35,6 +36,7 @@ class AreaMaster {
   Area area;             // エリアの指定(Enum型のArea)
   bool isLeftCourse;     // コースのLR判定(true:Lコース, false:Rコース)
   int targetBrightness;  // 目標輝度
+  CameraCapture& cameraCapture;
 
   // 各エリアのコマンドファイルベースパス
   static const std::string basePath;
