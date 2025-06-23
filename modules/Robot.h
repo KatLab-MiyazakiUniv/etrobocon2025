@@ -35,7 +35,7 @@ class Robot {
 
   /**
    * @brief ICameraCaptureのインスタンスの参照を返す
-   * @return メンバ変数cameraCapturePtr(ICameraCaptureの実装インスタンス)への参照
+   * @return メンバ変数cameraCapture(ICameraCaptureの実装インスタンス)への参照
    */
   ICameraCapture& getCameraCaptureInstance();
 
