@@ -10,13 +10,8 @@ using namespace std;
 const string AreaMaster::basePath = "etrobocon2025/datafiles/commands/";
 const array<string, 3> AreaMaster::areaCommandNames = { "LineTrace", "DoubleLoop", "SmartCarry" };
 
-AreaMaster::AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness,
-                       CameraCapture& _cameraCapture)
-  : robot(_robot),
-    area(_area),
-    isLeftCourse(_isLeftCourse),
-    targetBrightness(_targetBrightness),
-    cameraCapture(_cameraCapture)
+AreaMaster::AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)
+  : robot(_robot), area(_area), isLeftCourse(_isLeftCourse), targetBrightness(_targetBrightness)
 {
 }
 
@@ -30,7 +25,7 @@ void AreaMaster::run()
                            + (isLeftCourse ? "Left" : "Right") + ".csv";
 
   // 動作インスタンスのリストを生成する
-  motionList = MotionParser::createMotions(robot, commandFilePath, targetBrightness, cameraCapture);
+  motionList = MotionParser::createMotions(robot, commandFilePath, targetBrightness);
 
   // 各動作を実行し、動作し終えたらメモリを開放する
   for(auto motion = motionList.begin(); motion != motionList.end();) {

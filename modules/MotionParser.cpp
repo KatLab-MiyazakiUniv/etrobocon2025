@@ -9,7 +9,7 @@
 using namespace std;
 
 vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePath,
-                                            int targetBrightness, CameraCapture& cameraCapture)
+                                            int targetBrightness)
 {
   // 行番号カウンタ
   int lineNum = 1;
@@ -107,7 +107,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
 
         DistanceCameraLineTrace* dcl = new DistanceCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stoi(params[3]),
-            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), *detector, cameraCapture);
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), *detector);
         motionList.push_back(dcl);
         break;
       }

@@ -51,7 +51,7 @@ class MotionParser {
    */
 
   static std::vector<Motion*> createMotions(Robot& robot, std::string& commandFilePath,
-                                            int targetBrightness, CameraCapture& cameraCapture);
+                                            int targetBrightness);
 
  private:
   MotionParser();  // インスタンス化を禁止する
