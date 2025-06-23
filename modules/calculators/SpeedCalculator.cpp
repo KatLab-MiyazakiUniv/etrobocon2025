@@ -8,8 +8,8 @@
 SpeedCalculator::SpeedCalculator(Robot& _robot, double _targetSpeed)
   : robot(_robot),
     targetSpeed(_targetSpeed),
-    rightPid(K_P, K_I, K_D, _targetSpeed),
-    leftPid(K_P, K_I, K_D, _targetSpeed)
+    rightPid(R_K_P, R_K_I, R_K_D, _targetSpeed),
+    leftPid(L_K_P, L_K_I, L_K_D, _targetSpeed)
 {
   double currentTime = robot.getClockInstance().now() / 1000000.0;
   prevRightTime = currentTime;
