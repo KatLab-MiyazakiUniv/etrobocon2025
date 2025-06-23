@@ -1,7 +1,7 @@
 /**
  * @file   CameraPidTracking.h
  * @brief  カメラ画像を使ったPIDライントレースの親クラス
- * @author miyahara046
+ * @author miyahara046 HaruArima08
  */
 
 #ifndef CAMERA_PID_TRACKING_H
@@ -19,14 +19,15 @@ class CameraPidTracking : public Motion {
   /**
    * コンストラクタ
    * @brief カメラ画像を使ったPIDライントレースクラスを初期化する
-   * @param robot ロボットインスタンス
-   * @param targetSpeed 目標速度
-   * @param targetPoint 目標点
-   * @param pidGain PIDゲイン
-   * @param boundingBoxDetector 画像処理クラスのポインタ
+   * @param _robot ロボットインスタンス
+   * @param _targetSpeed 目標速度
+   * @param _targetPoint 目標点
+   * @param _pidGain PIDゲイン
+   * @param _boundingBoxDetector 画像処理クラスのポインタ
+   * @param _cameraCapture カメラキャプチャクラスのポインタ
    */
   CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetPoint, const PidGain& _pidGain,
-                    BoundingBoxDetector& _boundingBoxDetector);
+                    BoundingBoxDetector& _boundingBoxDetector, CameraCapture& _cameraCapture);
 
   /**
    * @brief ライントレースを実行する
@@ -36,29 +37,26 @@ class CameraPidTracking : public Motion {
  protected:
   /**
    * @brief ライントレースする際の事前条件判定をする
-   * @param targetSpeed 目標速度
-   * @note オーバーライド必須
    */
   virtual bool isMetPreCondition() = 0;
 
   /**
    * @brief ライントレースする際の事前処理をする
-   * @note オーバーライド必須
    */
   virtual void prepare() = 0;
 
   /**
-   * @brief ライントレースする際の継続条件判定をする　返り値がfalseでモーターが止まる
-   * @note オーバーライド必須
+   * @brief ライントレースする際の継続条件判定をする。返り値がfalseでモーターが止まる
    */
   virtual bool isMetContinuationCondition() = 0;
 
  protected:
-  BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
-  double targetSpeed;                 // 目標速度
-  PidGain pidGain;                    // PIDゲイン
-  BoundingBoxDetector& boundingBoxDetector;
-  int targetPoint;  // 目標X座標
+  BoundingBoxDetectionResult result;         // バウンディングボックスの座標を格納する構造体
+  double targetSpeed;                        // 目標速度
+  int targetPoint;                           // 目標X座標
+  PidGain pidGain;                           // PIDゲイン
+  BoundingBoxDetector& boundingBoxDetector;  // 画像処理クラスの参照
+  CameraCapture& cameraCapture;              // カメラキャプチャクラスの参照
 };
 
 #endif

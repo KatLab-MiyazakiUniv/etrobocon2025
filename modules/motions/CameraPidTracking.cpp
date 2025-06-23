@@ -1,19 +1,21 @@
 /**
  * @file   CameraPidTracking.cpp
  * @brief  カメラ画像を使ったPIDライントレースの親クラス
- * @author miyahara046
+ * @author miyahara046 HaruArima08
  */
 
 #include "CameraPidTracking.h"
 
 CameraPidTracking::CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetPoint,
                                      const PidGain& _pidGain,
-                                     BoundingBoxDetector& _boundingBoxDetector)
+                                     BoundingBoxDetector& _boundingBoxDetector,
+                                     CameraCapture& _cameraCapture)
   : Motion(_robot),
     targetSpeed(_targetSpeed),
     targetPoint(_targetPoint),
     pidGain(_pidGain),
-    boundingBoxDetector(_boundingBoxDetector)
+    boundingBoxDetector(_boundingBoxDetector),
+    cameraCapture(_cameraCapture)
 {
 }
 
@@ -41,7 +43,7 @@ void CameraPidTracking::run()
 
     // カメラからフレームを取得
     cv::Mat frame;
-    robot.getCameraCaptureInstance().getFrame(frame);
+    cameraCapture.getFrame(frame);
 
     // 画像処理を実行
     boundingBoxDetector.detect(frame, result);
