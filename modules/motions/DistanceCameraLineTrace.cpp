@@ -1,7 +1,7 @@
 /**
- * @file   DistanceLineTrace.cpp
- * @brief  指定距離ライントレース動作
- * @author miyahara046
+ * @file   DistanceCameraLineTrace.cpp
+ * @brief  指定距離カメラライントレース動作
+ * @author miyahara046 HaruArima08
  */
 
 #include "DistanceCameraLineTrace.h"
@@ -9,13 +9,15 @@
 DistanceCameraLineTrace::DistanceCameraLineTrace(Robot& _robot, double _targetDistance,
                                                  double _targetSpeed, int _targetPoint,
                                                  const PidGain& _pidGain,
-                                                 BoundingBoxDetector& _boundingBoxDetector)
-  : CameraPidTracking(_robot, _targetSpeed, _targetPoint, _pidGain, _boundingBoxDetector),
+                                                 BoundingBoxDetector& _boundingBoxDetector,
+                                                 CameraCapture& _cameraCapture)
+  : CameraPidTracking(_robot, _targetSpeed, _targetPoint, _pidGain, _boundingBoxDetector,
+                      _cameraCapture),
     targetDistance(_targetDistance)
 {
 }
 
-// 距離ライントレースの事前条件
+// 指定距離カメラライントレースの事前条件
 bool DistanceCameraLineTrace::isMetPreCondition()
 {
   // targetSpeed値が0の場合は終了する
@@ -31,7 +33,7 @@ bool DistanceCameraLineTrace::isMetPreCondition()
   return true;
 }
 
-// 距離ライントレースの事前処理
+// 指定距離カメラライントレースの事前処理
 void DistanceCameraLineTrace::prepare()
 {
   // 初期値を代入
@@ -39,10 +41,20 @@ void DistanceCameraLineTrace::prepare()
                                            robot.getMotorControllerInstance().getLeftMotorCount());
 }
 
-// 距離ライントレースの継続条件
+// 指定距離カメラライントレースの継続条件
 bool DistanceCameraLineTrace::isMetContinuationCondition()
 {
-  // 走行距離が目標距離に到達
+  // フレーム取得をJUDGE_COUNT回数以上失敗するとモータが止まる
+  cv::Mat frame;
+  if(!cameraCapture.getFrame(frame) || frame.empty()) {
+    frameCount++;
+    if(frameCount >= JUDGE_COUNT) {
+      return false;
+    }
+  } else {
+    frameCount = 0;
+  }
+  // 走行距離が目標距離に到達するとモータが止まる
   if(fabs(Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
                                     robot.getMotorControllerInstance().getLeftMotorCount())
           - initDistance)
