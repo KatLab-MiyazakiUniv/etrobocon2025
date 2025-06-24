@@ -46,11 +46,16 @@ void CameraPidTracking::run()
     // 画像処理を実行
     boundingBoxDetector.detect(frame, result);
 
+    // 検出失敗時はスキップする
+    if(!result.wasDetected) {
+      continue;
+    }
+
     // バウンディングボックスの中心X座標を計算
-    double centerX = (result.topLeft.x + result.bottomRight.x) / 2.0;
+    double currentX = (result.topLeft.x + result.bottomRight.x) / 2.0;
 
     // 旋回値の計算
-    double turningPower = pid.calculatePid(centerX) * edgeSign;
+    double turningPower = pid.calculatePid(currentX) * edgeSign;
 
     // モータのPower値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
     double rightPower = baseRightPower > 0.0 ? std::max(baseRightPower - turningPower, 0.0)

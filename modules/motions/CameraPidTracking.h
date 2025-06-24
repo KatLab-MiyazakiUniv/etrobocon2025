@@ -1,6 +1,6 @@
 /**
  * @file   CameraPidTracking.h
- * @brief  カメラ画像を使ったPIDライントレースの親クラス
+ * @brief  カメラ画像を使ったPID走行の親クラス
  * @author miyahara046 HaruArima08
  */
 
@@ -18,7 +18,7 @@ class CameraPidTracking : public Motion {
  public:
   /**
    * コンストラクタ
-   * @brief カメラ画像を使ったPIDライントレースクラスを初期化する
+   * @brief カメラ画像を使ったPID走行クラスを初期化する
    * @param _robot ロボットインスタンス
    * @param _targetSpeed 目標速度
    * @param _targetPoint 目標点
@@ -29,34 +29,32 @@ class CameraPidTracking : public Motion {
                     BoundingBoxDetector& _boundingBoxDetector);
 
   /**
-   * @brief ライントレースを実行する
+   * @brief カメラ走行を実行する
    */
   void run() override;
 
  protected:
   /**
-   * @brief ライントレースする際の事前条件判定をする
+   * @brief カメラ走行する際の事前条件判定をする
    */
   virtual bool isMetPreCondition() = 0;
 
   /**
-   * @brief ライントレースする際の事前処理をする
+   * @brief カメラ走行する際の事前処理をする
    */
   virtual void prepare() = 0;
 
   /**
-   * @brief ライントレースする際の継続条件判定をする。返り値がfalseでモーターが止まる
+   * @brief カメラ走行する際の継続条件判定をする。返り値がfalseでモーターが止まる
    */
   virtual bool isMetContinuationCondition() = 0;
 
  protected:
   BoundingBoxDetector& boundingBoxDetector;  // 画像処理クラスの参照
-  // FormatCheck用の改行
   BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
-  // FormatCheck用の改行
-  double targetSpeed;  // 目標速度
-  int targetPoint;     // 目標X座標
-  PidGain pidGain;     // PIDゲイン
+  double targetSpeed;                 // 目標速度
+  int targetPoint;                    // 目標X座標
+  PidGain pidGain;                    // PIDゲイン
 };
 
 #endif
