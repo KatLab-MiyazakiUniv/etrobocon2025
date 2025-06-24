@@ -18,7 +18,7 @@ Robot::Robot()
 {
 }
 
-// DI用コンストラクタ
+// DI(依存性注入)用コンストラクタ
 Robot::Robot(ICameraCapture& cam)
   : motorController(),
     cameraCapturePtr(&cam),
