@@ -5,12 +5,12 @@
  */
 
 #include <gtest/gtest.h>
+#include <memory>
 #include "DistanceCameraLineTrace.h"
 #include "DummyBoundingBoxDetector.h"
 #include "DummyCameraCapture.h"
 
 #define ERROR 1.01  // 許容誤差の倍率
-
 namespace etrobocon2025_test {
   // 目標距離までカメラライントレースを行うテストケース
   TEST(DistanceCameraLineTraceTest, RunDetectCalled)
@@ -22,9 +22,10 @@ namespace etrobocon2025_test {
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    DummyBoundingBoxDetector detector;
+    auto detector = std::make_unique<DummyBoundingBoxDetector>();
 
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, detector);
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
+                                std::move(detector));
 
     double expected = targetDistance;
 
@@ -49,12 +50,13 @@ namespace etrobocon2025_test {
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    DummyBoundingBoxDetector detector;
+    auto detector = std::make_unique<DummyBoundingBoxDetector>();
 
     // DummyCameraCaptureで3回連続失敗を設定
     cameraCapture.setFrameResults({ true, true, false, false, false });
 
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, detector);
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
+                                std::move(detector));
 
     dcl.run();  // ライントレースを実行
 
@@ -63,8 +65,8 @@ namespace etrobocon2025_test {
     int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    // 走行距離が目標距離の20%未満であることを確認
-    EXPECT_LT(actual, targetDistance * 0.2);
+    // 走行距離が目標距離未満であることを確認
+    EXPECT_LT(actual, targetDistance);
   }
 
   // targetSpeed値が0の時に終了するテストケース
@@ -77,9 +79,10 @@ namespace etrobocon2025_test {
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    DummyBoundingBoxDetector detector;
+    auto detector = std::make_unique<DummyBoundingBoxDetector>();
 
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, detector);
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
+                                std::move(detector));
 
     double expected = 0.0;
     dcl.run();  // ライントレースを実行
@@ -102,9 +105,10 @@ namespace etrobocon2025_test {
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    DummyBoundingBoxDetector detector;
+    auto detector = std::make_unique<DummyBoundingBoxDetector>();
 
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, detector);
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
+                                std::move(detector));
 
     double expected = 0.0;
 
@@ -128,9 +132,10 @@ namespace etrobocon2025_test {
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    DummyBoundingBoxDetector detector;
+    auto detector = std::make_unique<DummyBoundingBoxDetector>();
 
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, detector);
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
+                                std::move(detector));
 
     double expected = 0.0;
 

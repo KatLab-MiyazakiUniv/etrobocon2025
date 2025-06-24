@@ -8,6 +8,7 @@
 #define DISTANCE_CAMERA_LINE_TRACE_H
 
 #include "CameraPidTracking.h"
+#include <memory>
 
 class DistanceCameraLineTrace : public CameraPidTracking {
  public:
@@ -15,13 +16,13 @@ class DistanceCameraLineTrace : public CameraPidTracking {
    * コンストラクタ
    * @param _targetDistance 目標距離
    * @param _targetSpeed 目標速度
-   * @param _targetPoint 目標x座標
+   * @param _targetXCoordinate 目標x座標
    * @param _pidGain PIDゲイン
-   * @param _boundingBoxDetector 画像処理クラスのポインタ
+   * @param _detector 画像処理クラスのポインタ
    */
   DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
-                          int _targetPoint, const PidGain& _pidGain,
-                          BoundingBoxDetector& _boundingBoxDetector);
+                          int _targetXCoordinate, const PidGain& _pidGain,
+                          std::unique_ptr<BoundingBoxDetector> _detector);
 
   /**
    * @brief 指定距離だけカメラライントレースする
@@ -31,7 +32,6 @@ class DistanceCameraLineTrace : public CameraPidTracking {
  protected:
   /**
    * @brief 指定距離カメラライントレースする際の事前条件判定をする
-   * @param targetSpeed 目標速度
    */
 
   bool isMetPreCondition() override;
@@ -43,17 +43,16 @@ class DistanceCameraLineTrace : public CameraPidTracking {
 
   /**
    * @brief
-   * 指定距離カメラライントレースする際の継続条件判定をする。返り値がfalseでモーターが止まる
+   * 指定距離カメラライントレースする際の継続条件判定をする。
    */
   bool isMetContinuationCondition() override;
 
  private:
-  static constexpr int JUDGE_COUNT = 3;  // フレーム取得最大失敗回数
-  // format check用
-  double targetDistance;  // 目標距離
-  double initDistance;    // 実行前の走行距離
-  // format check用
-  int frameCount;  // フレーム取得カウント
+  static constexpr int JUDGE_COUNT = 3;           // フレーム取得最大失敗回数
+  double targetDistance;                          // 目標距離
+  double initDistance;                            // 実行前の走行距離
+  int frameCount = 0;                             // フレーム取得カウント
+  std::unique_ptr<BoundingBoxDetector> detector;  // 画像処理クラスのポインタ
 };
 
 #endif
