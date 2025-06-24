@@ -24,7 +24,7 @@ class Robot {
    */
   Robot();
 
-  // DI 用（カメラを差し替えたいテストで使用）
+  // DI用（カメラを差し替えたいテストで使用）
   Robot(ICameraCapture& cam);
 
   /**
@@ -35,7 +35,7 @@ class Robot {
 
   /**
    * @brief ICameraCaptureのインスタンスの参照を返す
-   * @return メンバ変数cameraCapture(CameraCaptureのインスタンス)の参照
+   * @return メンバ変数cameraCapturePtr(ICameraCaptureの実装インスタンス)への参照
    */
   ICameraCapture& getCameraCaptureInstance();
 
@@ -84,7 +84,7 @@ class Robot {
  private:
   MotorController motorController;     // MotorControllerインスタンス
   ICameraCapture* cameraCapturePtr;    // 実際に使うカメラ（抽象ポインタ）
-  CameraCapture defaultCameraCapture;  // デフォルトでもっておく実体
+  CameraCapture defaultCameraCapture;  // 実機用のCameraCaptureインスタンス
   spikeapi::ColorSensor colorSensor;   // ColorSensorインスタンス
   spikeapi::Clock clock;               // Clockインスタンス
   spikeapi::Button button;             // Buttonインスタンス

@@ -11,6 +11,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <memory>
 #include "StringOperator.h"
 #include "Motion.h"
 #include "AngleRotation.h"

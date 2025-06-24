@@ -8,7 +8,8 @@
 #include "Snapshot.h"
 
 namespace etrobocon2025_test {
-  // CameraCaptureクラスがインスタンス化できるか確認するテスト
+
+  // Snapshotの()メソッドが実行できるか確認するテスト
   TEST(SnapshotTest, SnapshotInit)
   {
     Robot robot;
