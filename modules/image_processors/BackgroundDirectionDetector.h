@@ -1,4 +1,3 @@
-
 /**
  * @file   BackgroundDirectionDetector.h
  * @brief  風景の向きを判定のするクラス
