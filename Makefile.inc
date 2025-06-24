@@ -18,7 +18,8 @@ APPL_DIRS += \
 	$(mkfile_path)modules/calculators\
 	$(mkfile_path)modules/common\
 	$(mkfile_path)modules/motions\
-	$(mkfile_path)modules/CameraCapture\
+	$(mkfile_path)modules/image_processors\
+	$(mkfile_path)modules/cameraCapture\
 	$(mkfile_path)../../common/library/libcpp-spike/src
 
 INCLUDES += \
@@ -27,7 +28,8 @@ INCLUDES += \
 	-I$(mkfile_path)modules/calculators\
 	-I$(mkfile_path)modules/common\
 	-I$(mkfile_path)modules/motions\
-	-I$(mkfile_path)modules/CameraCapture \
+	-I$(mkfile_path)modules/image_processors\
+	-I$(mkfile_path)modules/cameraCapture \
 	-I$(mkfile_path)../../common/library/libcpp-spike/include \
 	-I/usr/include/opencv4
 
