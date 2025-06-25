@@ -10,9 +10,9 @@
 // namespace etrobocon2025_test {
 
 //   // テスト用の画像を読み込めるかのテスト
-//   TEST(BackgroundDirectionDetectorTese, DetectsBackgroundDirectionFromImage)
+//   TEST(BackgroundDirectionDetectorTest, DetectsBackgroundDirectionFromImage)
 //   {
-//     BackgroundDirectionDetector detector("../../BackgroundDirectionDetector.onnx");
+//     BackgroundDirectionDetector detector("../../BackgroundDetector.onnx");
 
 //     // 入力画像を読み込み
 //     cv::Mat img = cv::imread("../../tests/test_images/Background_Back_image.JPEG");

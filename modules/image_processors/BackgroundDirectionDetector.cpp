@@ -64,9 +64,10 @@ Mat BackgroundDirectionDetector::preprocess(const Mat& frame, float scale, int p
   resize(frame, output(Rect(padX, padY, newWidth, newHeight)), Size(newWidth, newHeight));
 
   // YOLO用に画像を正規化・RGB変換
-  blobFromImage(output, output, 1.0 / 255.0, Size(), Scalar(), true, false);
+  Mat blob;
+  blobFromImage(output, blob, 1.0 / 255.0, Size(), Scalar(), true, false);
 
-  return output;
+  return blob;
 }
 
 void BackgroundDirectionDetector::postprocess(const vector<Mat>& outputs, const Mat& frame,
