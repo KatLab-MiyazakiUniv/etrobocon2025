@@ -1,6 +1,6 @@
 /**
  * @file   CameraPidTracking.h
- * @brief  カメラ画像を使ったPID走行の親クラス
+ * @brief  カメラを使ったPID走行の親クラス
  * @author miyahara046 HaruArima08
  */
 
@@ -21,12 +21,12 @@ class CameraPidTracking : public Motion {
    * @brief カメラ画像を使ったPID走行クラスを初期化する
    * @param _robot ロボットインスタンス
    * @param _targetSpeed 目標速度
-   * @param _targetPoint 目標点
+   * @param _targetXCoordinate 目標x座標
    * @param _pidGain PIDゲイン
    * @param _boundingBoxDetector 画像処理クラスのポインタ
    */
-  CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetPoint, const PidGain& _pidGain,
-                    BoundingBoxDetector& _boundingBoxDetector);
+  CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
+                    const PidGain& _pidGain, BoundingBoxDetector& _boundingBoxDetector);
 
   /**
    * @brief カメラ走行を実行する
@@ -53,7 +53,7 @@ class CameraPidTracking : public Motion {
   BoundingBoxDetector& boundingBoxDetector;  // 画像処理クラスの参照
   BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
   double targetSpeed;                 // 目標速度
-  int targetPoint;                    // 目標X座標
+  int targetXCoordinate;              // 目標X座標
   PidGain pidGain;                    // PIDゲイン
 };
 

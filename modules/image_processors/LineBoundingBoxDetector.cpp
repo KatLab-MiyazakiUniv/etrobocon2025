@@ -61,7 +61,7 @@ void LineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionR
   }
 
   // 入力画像が指定の解像度と異なる場合、リサイズ処理
-  cv::Mat frameProcessed = frame;
+  cv::Mat frameProcessed;
   if(frame.size() != resolution) {
     cv::resize(frame, frameProcessed, resolution);
   } else {
