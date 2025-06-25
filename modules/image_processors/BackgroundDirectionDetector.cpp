@@ -64,88 +64,92 @@ Mat BackgroundDirectionDetector::preprocess(const Mat& frame, float scale, int p
   resize(frame, output(Rect(padX, padY, newWidth, newHeight)), Size(newWidth, newHeight));
 
   // YOLO用に画像を正規化・RGB変換
-  blobFromImage(output, output, 1.0 / 255.0, Size(), Scalar(), true, false);
+  Mat blob;
+  blobFromImage(output, blob, 1.0 / 255.0, Size(), Scalar(), true, false);
 
-  return output;
+  return blob;
 }
 
 void BackgroundDirectionDetector::postprocess(const vector<Mat>& outputs, const Mat& frame,
                                               float scale, int padX, int padY,
                                               BackgroundDirectionResult& result)
 {
-  vector<int> classIds;
-  vector<float> confidences;
-  vector<Rect> boxes;
-
-  const float confThreshold = CONFIDENCE_THRESHOLD;
-  const float nmsThreshold = NMS_THRESHOLD;
+  vector<int> classIds;       // 最も高いスコアを持つクラスIDを格納するリスト
+  vector<float> confidences;  // 信頼度を格納するリスト
+  vector<Rect> boxes;         // バウンディングボックスを格納するリスト
 
   for(const auto& output : outputs) {
-    int numAnchors = output.size[1];
-    int gridHeight = output.size[2];
-    int gridWidth = output.size[3];
-    int attributes = output.size[4];
-    const float* data = (float*)output.data;
+    int numBoxes = output.size[1];    // 検出候補の総数
+    int attributes = output.size[2];  // ボックスが属性の数　（座標やスコアなど）
 
-    for(int y = 0; y < gridHeight; ++y) {
-      for(int x = 0; x < gridWidth; ++x) {
-        for(int anchor = 0; anchor < numAnchors; ++anchor) {
-          int idx = ((anchor * gridHeight + y) * gridWidth + x) * attributes;
+    const float* data = (float*)output.data;  // 出力の実体をdataに格納する
 
-          float conf = data[idx + 4];
-          if(conf < confThreshold) continue;
+    // 検出候補の数だけループを回す
+    for(int i = 0; i < numBoxes; ++i) {
+      // 処理中の候補の先頭のデータ位置を計算
+      int idx = i * attributes;
 
-          float* classScores = (float*)&data[idx + 5];
-          Mat scores(1, attributes - 5, CV_32FC1, classScores);
-          Point classIdPoint;
-          double maxScore;
-          minMaxLoc(scores, 0, &maxScore, 0, &classIdPoint);
+      // 5番目にあるボックスの信頼度（confidence）スコアを取得。頼度が閾値未満なら次の候補へ
+      float conf = data[idx + 4];
+      if(conf < CONFIDENCE_THRESHOLD) continue;
 
-          if(maxScore > confThreshold) {
-            // 正規化座標を元画像座標に正しく変換
-            float cx_norm = data[idx + 0];
-            float cy_norm = data[idx + 1];
-            float w_norm = data[idx + 2];
-            float h_norm = data[idx + 3];
+      // 最も高いクラススコアとそのクラスID（インデックス）を取得
+      float* classScores = (float*)&data[idx + 5];
+      Mat scores(1, attributes - 5, CV_32FC1, classScores);
+      Point classIdPoint;
+      double maxScore;
+      minMaxLoc(scores, 0, &maxScore, 0, &classIdPoint);
 
-            // 640x640空間での座標 → パディング除去 → スケール逆変換
-            int centerX = static_cast<int>((cx_norm * MODEL_INPUT_SIZE - padX) / scale);
-            int centerY = static_cast<int>((cy_norm * MODEL_INPUT_SIZE - padY) / scale);
-            int width = static_cast<int>((w_norm * MODEL_INPUT_SIZE) / scale);
-            int height = static_cast<int>((h_norm * MODEL_INPUT_SIZE) / scale);
+      // 最大クラススコアも閾値を超えているかチェック
+      if(maxScore > CONFIDENCE_THRESHOLD) {
+        // バウンディングボックスの中心座標とサイズを表す値
+        float cx_norm = data[idx + 0];
+        float cy_norm = data[idx + 1];
+        float w_norm = data[idx + 2];
+        float h_norm = data[idx + 3];
 
-            int left = centerX - width / 2;
-            int top = centerY - height / 2;
+        int centerX = static_cast<int>((cx_norm - padX) / scale);
+        int centerY = static_cast<int>((cy_norm - padY) / scale);
+        int width = static_cast<int>(w_norm / scale);
+        int height = static_cast<int>(h_norm / scale);
 
-            // 境界チェック
-            left = max(0, min(left, frame.cols - 1));
-            top = max(0, min(top, frame.rows - 1));
-            width = min(width, frame.cols - left);
-            height = min(height, frame.rows - top);
+        int left = centerX - width / 2;
+        int top = centerY - height / 2;
 
-            boxes.emplace_back(left, top, width, height);
-            confidences.push_back(static_cast<float>(maxScore));
-            classIds.push_back(classIdPoint.x);
-          }
-        }
+        // 画面内に収まるように処理
+        left = max(0, min(left, frame.cols - 1));
+        top = max(0, min(top, frame.rows - 1));
+        width = min(width, frame.cols - left);
+        height = min(height, frame.rows - top);
+
+        // リストに追加
+        boxes.emplace_back(left, top, width, height);
+        confidences.push_back(static_cast<float>(maxScore));
+        classIds.push_back(classIdPoint.x);
       }
     }
   }
 
+  // 信頼度を超えるバウンディングボックスがなかった時の処理
   if(boxes.empty()) {
     result.wasDetected = false;
     return;
   }
 
+  // Non-Maximum Suppression (NMS) を実行し、重複する検出ボックスを削減する
   vector<int> indices;
-  NMSBoxes(boxes, confidences, confThreshold, nmsThreshold, indices);
+  NMSBoxes(boxes, confidences, CONFIDENCE_THRESHOLD, NMS_THRESHOLD, indices);
 
+  // NMS の結果、検出がなければ処理を終了
   if(indices.empty()) {
     result.wasDetected = false;
     return;
   }
 
+  // NMS 後の最良の検出ボックスのインデックスを取得
   int bestIdx = indices[0];
+
+  // 最良検出ボックスのクラスIDに応じて方向を設定
   if(classIds[bestIdx] == 0) {
     result.direction = BackgroundDirection::FRONT;
   } else if(classIds[bestIdx] == 1) {
@@ -165,7 +169,7 @@ void BackgroundDirectionDetector::postprocess(const vector<Mat>& outputs, const 
     string label = to_string(classIds[idx]);
     putText(outputImage, label, boxes[idx].tl(), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 1);
   }
-  imwrite("etrobocon2025/datafiles/snapshots/background_debug.JPEG", outputImage);
+  imwrite("etrobocon2025/datafiles/snapshots/background_result.JPEG", outputImage);
 
   // 検出された方向クラスIDを表示
   cout << "検出された方向クラスID: " << classIds[bestIdx] << endl;
