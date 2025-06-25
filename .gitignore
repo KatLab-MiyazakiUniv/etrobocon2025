@@ -1,6 +1,7 @@
 # ディレクトリ
 bin
 datafiles/snapshots
+datafiles/processed_images
 tests/test_images
 
 # yoloモデル
