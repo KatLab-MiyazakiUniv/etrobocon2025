@@ -16,7 +16,7 @@ class BackgroundDirectionDetection {
    * コンストラクタ
    * @param _robot                          ロボット制御クラスへの参照
    * @param _backgroundDirectionResult      判定結果への参照
-   * @param _backgroundDirectionDetector    風景向き判定器クラスへの参照
+   * @param _backgroundDirectionDetector    風景向き判定クラスへの参照
    */
   BackgroundDirectionDetection(Robot& _robot, BackgroundDirectionResult& _backgroundDirectionResult,
                                BackgroundDirectionDetector& _backgroundDirectionDetector);
