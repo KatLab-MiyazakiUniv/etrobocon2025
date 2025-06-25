@@ -28,15 +28,19 @@ struct MiniFigDirectionResult {
 class MiniFigDirectionDetector {
  public:
   // コンストラクタ
-  MiniFigDirectionDetector(const std::string& modelPath);
+  MiniFigDirectionDetector(const std::string& modelPath = "etrobocon2025/yolo_optimized.onnx",
+                           const std::string& saveImagePath
+                           = "etrobocon2025/datafiles/snapshots/detected_result.jpg");
 
   // ミニフィグの向き検出を行う処理
   // MiniFigDirectionResult 型の構造体を返す
-  void detect(const cv::Mat& frame, const std::string& saveImagePath,
+  void detect(const cv::Mat& frame, /*const std::string& saveImagePath,*/
               MiniFigDirectionResult& result);
 
  private:
-  cv::dnn::Net net;  // DNNモデルを格納する変数
+  cv::dnn::Net net;                 // DNNモデルを格納する変数
+  const std::string modelPath;      // モデルのパス
+  const std::string saveImagePath;  // 検出結果を保存する画像のパス
 
   // モデルの前処理を行う関数
   cv::Mat preprocess(const cv::Mat& frame);
@@ -49,7 +53,7 @@ class MiniFigDirectionDetector {
    * @param saveImagePath: 検出結果を保存する画像のパス
    */
   void postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame,
-                   MiniFigDirectionResult& result, const std::string& saveImagePath);
+                   MiniFigDirectionResult& result /*, const std::string& saveImagePath*/);
 };
 
 #endif  // MINIFIG_DIRECTION_DETECTOR_H

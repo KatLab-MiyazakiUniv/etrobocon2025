@@ -6,7 +6,9 @@
 
 #include "MiniFigDirectionDetector.h"
 
-MiniFigDirectionDetector::MiniFigDirectionDetector(const std::string& modelPath)
+MiniFigDirectionDetector::MiniFigDirectionDetector(const std::string& modelPath,
+                                                   const std::string& saveImagePath)
+  : modelPath(modelPath), saveImagePath(saveImagePath)
 {
   // ネットワークの読み込み
   net = cv::dnn::readNetFromONNX(modelPath);  // モデルのパスを設定する
@@ -19,7 +21,7 @@ MiniFigDirectionDetector::MiniFigDirectionDetector(const std::string& modelPath)
   net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);       // CPUをターゲットに設定
 }
 
-void MiniFigDirectionDetector::detect(const cv::Mat& frame, const std::string& saveImagePath,
+void MiniFigDirectionDetector::detect(const cv::Mat& frame, /*const std::string& saveImagePath,*/
                                       MiniFigDirectionResult& result)
 {
   // 入力画像の前処理
@@ -31,7 +33,7 @@ void MiniFigDirectionDetector::detect(const cv::Mat& frame, const std::string& s
   net.forward(outputs, net.getUnconnectedOutLayersNames());
 
   // 出力結果の後処理
-  postprocess(outputs, frame, result, saveImagePath);
+  postprocess(outputs, frame, result /*, saveImagePath*/);
 }
 
 // 入力画像の前処理を行う関数
@@ -45,8 +47,8 @@ cv::Mat MiniFigDirectionDetector::preprocess(const cv::Mat& frame)
 
 // 出力結果を後処理して検出結果を生成する関数
 void MiniFigDirectionDetector::postprocess(const std::vector<cv::Mat>& outputs,
-                                           const cv::Mat& frame, MiniFigDirectionResult& result,
-                                           const std::string& saveImagePath)
+                                           const cv::Mat& frame, MiniFigDirectionResult& result/*,
+                                           const std::string& saveImagePath*/)
 {
   std::vector<int> classIds;
   std::vector<float> confidences;
