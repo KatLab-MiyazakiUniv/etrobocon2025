@@ -38,7 +38,7 @@ MotorController& Robot::getMotorControllerInstance()
 
 ICameraCapture& Robot::getCameraCaptureInstance()
 {
-  return *cameraCapturePtr;
+  return cameraCapture;
 }
 
 spikeapi::ColorSensor& Robot::getColorSensorInstance()
