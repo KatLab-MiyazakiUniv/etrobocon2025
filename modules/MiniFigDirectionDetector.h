@@ -18,7 +18,7 @@
 #define NMS_THRESHOLD 0.4         // 検出ボックス同士の重なりを判断する閾値
 
 // ミニフィグの向きを表す列挙体
-enum class MiniFigDirection { FRONT, LEFT, BACK, RIGHT };
+enum class MiniFigDirection { FRONT, RIGHT, BACK, LEFT };
 
 struct MiniFigDirectionResult {
   bool wasDetected = false;    // 検出が成功したかどうか
