@@ -5,22 +5,21 @@
  */
 
 // モデルが必要なため、コメントアウト
-/*
-#include <gtest/gtest.h>
-#include "MiniFigDirectionDetector.h"
 
-TEST(MiniFigDirectionDetectorTest, DetectsDirectionFromImage)
-{
-  MiniFigDirectionDetector detector("../../yolo_optimized.onnx");
+// #include <gtest/gtest.h>
+// #include "MiniFigDirectionDetector.h"
 
-  // 入力画像を読み込み
-  cv::Mat img = cv::imread("../../tests/test_images/Fig1-3.jpeg");
-  ASSERT_FALSE(img.empty()) << "画像の読み込みに失敗しました";
+// TEST(MiniFigDirectionDetectorTest, DetectsDirectionFromImage)
+// {
+//   MiniFigDirectionDetector detector("../../yolo_optimized.onnx");
 
-  MiniFigDirectionResult result
-      = detector.detect(img, "../../datafiles/snapshots/detected_result.jpg");
+//   // 入力画像を読み込み
+//   cv::Mat img = cv::imread("../../tests/test_images/Fig1-3.jpeg");
+//   ASSERT_FALSE(img.empty()) << "画像の読み込みに失敗しました";
 
-  ASSERT_TRUE(result.wasDetected);
-  EXPECT_EQ(result.direction, MiniFigDirection::BACK);
-}
-*/
+//   MiniFigDirectionResult result;
+//   detector.detect(img, "../../datafiles/snapshots/detected_result.jpg", result);
+
+//   ASSERT_TRUE(result.wasDetected);
+//   EXPECT_EQ(result.direction, MiniFigDirection::BACK);
+// }
