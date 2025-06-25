@@ -14,8 +14,9 @@
 #include <vector>
 #include <string>
 
-#define CONFIDENCE_THRESHOLD 0.5  // 検出結果を採用する最低信頼度の閾値
-#define NMS_THRESHOLD 0.5         // 検出ボックス同士の重なりを判断する閾値
+#define MODEL_INPUT_SIZE 640
+#define CONFIDENCE_THRESHOLD 0.5f  // 検出結果を採用する最低信頼度の閾値
+#define NMS_THRESHOLD 0.5f         // 検出ボックス同士の重なりを判断する閾値
 
 // 風景の向きを表す列挙体
 // enum class BackgroundDirection { FRONT, LEFT, BACK, RIGHT };

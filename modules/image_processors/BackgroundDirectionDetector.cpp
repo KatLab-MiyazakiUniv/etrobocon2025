@@ -33,14 +33,13 @@ void BackgroundDirectionDetector::detect(const Mat& frame, BackgroundDirectionRe
     return;
   }
 
-  // 前処理パラメータを一度だけ計算
-  const int inputSize = 640;
-  const float scale
-      = min(inputSize / static_cast<float>(frame.cols), inputSize / static_cast<float>(frame.rows));
-  const int padX = (inputSize - static_cast<int>(frame.cols * scale)) / 2;
-  const int padY = (inputSize - static_cast<int>(frame.rows * scale)) / 2;
+  // 前処理パラメータを計算
+  const float scale = min(MODEL_INPUT_SIZE / static_cast<float>(frame.cols),
+                          MODEL_INPUT_SIZE / static_cast<float>(frame.rows));
+  const int padX = (MODEL_INPUT_SIZE - static_cast<int>(frame.cols * scale)) / 2;
+  const int padY = (MODEL_INPUT_SIZE - static_cast<int>(frame.rows * scale)) / 2;
 
-  // 画像の前処理
+  // 前処理で入力画像を640x640にリサイズ＆パディングする
   Mat inputBlob = preprocess(frame, scale, padX, padY);
 
   // ネットワークに入力をセット
@@ -50,20 +49,18 @@ void BackgroundDirectionDetector::detect(const Mat& frame, BackgroundDirectionRe
   vector<Mat> outputs;
   net.forward(outputs, net.getUnconnectedOutLayersNames());
 
-  // 後処理（前処理パラメータを渡す）
+  // 後処理で出力結果を検出結果を生成する
   postprocess(outputs, frame, scale, padX, padY, result);
 }
 
 Mat BackgroundDirectionDetector::preprocess(const Mat& frame, float scale, int padX, int padY)
 {
-  const int inputSize = 640;
-
   // リサイズ後のサイズ
   int new_w = static_cast<int>(frame.cols * scale);
   int new_h = static_cast<int>(frame.rows * scale);
 
   // 640×640ピクセルの背景が灰色の空画像を作り、リサイズしたものを中央に貼り付ける
-  Mat output(inputSize, inputSize, frame.type(), Scalar(114, 114, 114));
+  Mat output(MODEL_INPUT_SIZE, MODEL_INPUT_SIZE, frame.type(), Scalar(114, 114, 114));
   resize(frame, output(Rect(padX, padY, new_w, new_h)), Size(new_w, new_h));
 
   // YOLO用に画像を正規化・RGB変換
@@ -82,7 +79,6 @@ void BackgroundDirectionDetector::postprocess(const vector<Mat>& outputs, const 
 
   const float confThreshold = CONFIDENCE_THRESHOLD;
   const float nmsThreshold = NMS_THRESHOLD;
-  const int inputSize = 640;
 
   for(const auto& output : outputs) {
     int numAnchors = output.size[1];
@@ -113,10 +109,10 @@ void BackgroundDirectionDetector::postprocess(const vector<Mat>& outputs, const 
             float h_norm = data[idx + 3];
 
             // 640x640空間での座標 → パディング除去 → スケール逆変換
-            int centerX = static_cast<int>((cx_norm * inputSize - padX) / scale);
-            int centerY = static_cast<int>((cy_norm * inputSize - padY) / scale);
-            int width = static_cast<int>((w_norm * inputSize) / scale);
-            int height = static_cast<int>((h_norm * inputSize) / scale);
+            int centerX = static_cast<int>((cx_norm * MODEL_INPUT_SIZE - padX) / scale);
+            int centerY = static_cast<int>((cy_norm * MODEL_INPUT_SIZE - padY) / scale);
+            int width = static_cast<int>((w_norm * MODEL_INPUT_SIZE) / scale);
+            int height = static_cast<int>((h_norm * MODEL_INPUT_SIZE) / scale);
 
             int left = centerX - width / 2;
             int top = centerY - height / 2;
@@ -160,4 +156,17 @@ void BackgroundDirectionDetector::postprocess(const vector<Mat>& outputs, const 
     result.direction = BackgroundDirection::LEFT;
   }
   result.wasDetected = true;
+
+  // デバッグ用: 検出結果を画像に描画して保存
+  Mat outputImage = frame.clone();
+  for(size_t i = 0; i < indices.size(); ++i) {
+    int idx = indices[i];
+    rectangle(outputImage, boxes[idx], Scalar(0, 255, 0), 2);
+    string label = to_string(classIds[idx]);
+    putText(outputImage, label, boxes[idx].tl(), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 1);
+  }
+  imwrite("debug_detection.jpg", outputImage);
+
+  // 検出された方向クラスIDを表示
+  cout << "検出された方向クラスID: " << classIds[bestIdx] << endl;
 }
