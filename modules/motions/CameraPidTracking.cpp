@@ -1,17 +1,17 @@
 /**
  * @file   CameraPidTracking.cpp
- * @brief  カメラ画像を使ったPIDライントレースの親クラス
+ * @brief  カメラを使ったPID走行の親クラス
  * @author miyahara046 HaruArima08
  */
 
 #include "CameraPidTracking.h"
 
-CameraPidTracking::CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetPoint,
+CameraPidTracking::CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
                                      const PidGain& _pidGain,
                                      BoundingBoxDetector& _boundingBoxDetector)
   : Motion(_robot),
     targetSpeed(_targetSpeed),
-    targetPoint(_targetPoint),
+    targetXCoordinate(_targetXCoordinate),
     pidGain(_pidGain),
     boundingBoxDetector(_boundingBoxDetector)
 {
@@ -19,7 +19,7 @@ CameraPidTracking::CameraPidTracking(Robot& _robot, double _targetSpeed, int _ta
 
 void CameraPidTracking::run()
 {
-  Pid pid(pidGain.kp, pidGain.ki, pidGain.kd, targetPoint);
+  Pid pid(pidGain.kp, pidGain.ki, pidGain.kd, targetXCoordinate);
   // 事前条件を判定する
   if(!isMetPreCondition()) {
     return;

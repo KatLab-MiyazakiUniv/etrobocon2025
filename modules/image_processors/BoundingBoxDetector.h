@@ -1,6 +1,6 @@
 /**
  * @file   BoundingBoxDetector.h
- * @brief  画像処理の親クラス
+ * @brief  バウンディングボックス検出処理の親クラス
  * @author takuchi17 miyahara046 HaruArima08
  */
 
