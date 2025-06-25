@@ -81,8 +81,10 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
 
       // DCL: 指定距離カメラライントレース
       // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int X座標[px], [4-6]:double PIDゲイン,
-      // [7-9]int lowerHSV, [10-12]int upperHSV, [13-16]int ROI座標[px], [17-18]int 解像度[px]
-      // 補足：ROI（Region of Interest: ライントレース用の画像内注目領域（四角形））
+      // [7-9]int lowerHSV, [10-12]int upperHSV,
+      // [13-16]int ROI座標[px] ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ),
+      // [17-18]int 解像度[px] ([17]幅, [18]高さ)
+      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
       case COMMAND::DCL: {
         cv::Scalar lowerHSV, upperHSV;
         cv::Rect roi;
