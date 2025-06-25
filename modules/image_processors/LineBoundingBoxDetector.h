@@ -8,14 +8,7 @@
 #define LINE_BOUNDING_BOX_DETECTOR_H
 
 #include "BoundingBoxDetector.h"
-
-// 解像度の最小・最大値
-struct ResolutionRange {
-  static constexpr int MIN_WIDTH = 320;
-  static constexpr int MIN_HEIGHT = 240;
-  static constexpr int MAX_WIDTH = 1920;
-  static constexpr int MAX_HEIGHT = 1080;
-};
+#include "SystemInfo.h"
 
 class LineBoundingBoxDetector : public BoundingBoxDetector {
  public:
@@ -32,8 +25,8 @@ class LineBoundingBoxDetector : public BoundingBoxDetector {
    * @param upperHSV ライントレース対象の色の上限HSV値
    * @param roi 注目領域
    */
-  LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV,
-                          const cv::Rect& roi);
+  LineBoundingBoxDetector(const cv::Scalar& _lowerHSV, const cv::Scalar& _upperHSV,
+                          const cv::Rect& _roi);
 
   /**
    * @brief ROIと解像度を指定するオーバーロードコンストラクタ
@@ -42,8 +35,8 @@ class LineBoundingBoxDetector : public BoundingBoxDetector {
    * @param roi 注目領域
    * @param resolution 画像処理に用いる解像度
    */
-  LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV,
-                          const cv::Rect& roi, const cv::Size& resolution);
+  LineBoundingBoxDetector(const cv::Scalar& _lowerHSV, const cv::Scalar& _upperHSV,
+                          const cv::Rect& _roi, const cv::Size& _resolution);
 
   /**
    * @brief 画像処理を実行する関数

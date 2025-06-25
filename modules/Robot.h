@@ -83,8 +83,8 @@ class Robot {
 
  private:
   MotorController motorController;     // MotorControllerインスタンス
-  ICameraCapture* cameraCapturePtr;    // 実際に使うカメラ（抽象ポインタ）
   CameraCapture defaultCameraCapture;  // 実機用のCameraCaptureインスタンス
+  ICameraCapture& cameraCapture;       // 実際に使うカメラ（参照）
   spikeapi::ColorSensor colorSensor;   // ColorSensorインスタンス
   spikeapi::Clock clock;               // Clockインスタンス
   spikeapi::Button button;             // Buttonインスタンス

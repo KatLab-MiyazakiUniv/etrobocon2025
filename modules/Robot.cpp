@@ -9,7 +9,7 @@
 Robot::Robot()
   : motorController(),
     defaultCameraCapture(),
-    cameraCapturePtr(&defaultCameraCapture),
+    cameraCapture(defaultCameraCapture),
     colorSensor(EPort::PORT_E),
     clock(),
     button(),
@@ -21,7 +21,8 @@ Robot::Robot()
 // DI(依存性注入)用コンストラクタ
 Robot::Robot(ICameraCapture& cam)
   : motorController(),
-    cameraCapturePtr(&cam),
+    defaultCameraCapture(),
+    cameraCapture(cam),
     colorSensor(EPort::PORT_E),
     clock(),
     button(),

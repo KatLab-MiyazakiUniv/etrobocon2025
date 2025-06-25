@@ -11,7 +11,6 @@
 #include "DummyCameraCapture.h"
 
 #define ERROR 1.01  // 許容誤差の倍率
-
 namespace etrobocon2025_test {
   // 目標距離までカメラライントレースを行うテストケース
   TEST(DistanceCameraLineTraceTest, RunDetectCalled)
