@@ -56,12 +56,12 @@ void BackgroundDirectionDetector::detect(const Mat& frame, BackgroundDirectionRe
 Mat BackgroundDirectionDetector::preprocess(const Mat& frame, float scale, int padX, int padY)
 {
   // リサイズ後のサイズ
-  int new_w = static_cast<int>(frame.cols * scale);
-  int new_h = static_cast<int>(frame.rows * scale);
+  int newWidth = static_cast<int>(frame.cols * scale);
+  int newHeight = static_cast<int>(frame.rows * scale);
 
   // 640×640ピクセルの背景が灰色の空画像を作り、リサイズしたものを中央に貼り付ける
   Mat output(MODEL_INPUT_SIZE, MODEL_INPUT_SIZE, frame.type(), Scalar(114, 114, 114));
-  resize(frame, output(Rect(padX, padY, new_w, new_h)), Size(new_w, new_h));
+  resize(frame, output(Rect(padX, padY, newWidth, newHeight)), Size(newWidth, newHeight));
 
   // YOLO用に画像を正規化・RGB変換
   blobFromImage(output, output, 1.0 / 255.0, Size(), Scalar(), true, false);
