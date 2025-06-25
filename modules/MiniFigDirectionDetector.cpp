@@ -145,7 +145,7 @@ void MiniFigDirectionDetector::postprocess(const std::vector<cv::Mat>& outputs,
     cv::putText(outputImage, label, boxes[idx].tl(), cv::FONT_HERSHEY_SIMPLEX, 0.5,
                 cv::Scalar(255, 0, 0), 1);
   }
-  cv::imwrite("etrobocon2025/datafiles/snapshots/detected_result.jpg", outputImage);
+  cv::imwrite(outputImagePath, outputImage);
 
   // 検出された方向クラスIDを表示
   std::cout << "検出された方向クラスID: " << static_cast<int>(result.direction) << std::endl;

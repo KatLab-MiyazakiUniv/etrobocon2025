@@ -37,6 +37,8 @@ class MiniFigDirectionDetector {
  private:
   cv::dnn::Net net;             // DNNモデルを格納する変数
   const std::string modelPath;  // モデルのパス
+  const std::string outputImagePath
+      = "etrobocon2025/datafiles/snapshots/detected_result.jpg";  // バウンディングボックス付きの画像のパス
 
   // モデルの前処理を行う関数
   cv::Mat preprocess(const cv::Mat& frame);
