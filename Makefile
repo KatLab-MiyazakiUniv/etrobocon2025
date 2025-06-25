@@ -46,6 +46,7 @@ test-exec:
 	else \
 		cd $(MAKEFILE_PATH)bin/build && \
 		mkdir -p etrobocon2025/datafiles/commands && \
+		mkdir -p etrobocon2025/datafiles/snapshots && \
 		cp ../../datafiles/commands/*.csv etrobocon2025/datafiles/commands && \
 		./etrobocon2025_test && \
 		rm -rf etrobocon2025; \
