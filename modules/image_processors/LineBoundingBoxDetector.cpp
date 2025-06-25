@@ -5,26 +5,7 @@
  */
 #include "LineBoundingBoxDetector.h"
 
-// デフォルトコンストラクタ
-LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
-                                                 const cv::Scalar& _upperHSV)
-  : lowerHSV(_lowerHSV), upperHSV(_upperHSV)
-{
-  roi = cv::Rect(50, 240, 540, 240);
-  resolution = cv::Size(640, 480);
-  validateParameters();
-}
-
-// ROIを指定するオーバーロードコンストラクタ
-LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& lowerHSV,
-                                                 const cv::Scalar& upperHSV, const cv::Rect& roi)
-  : lowerHSV(lowerHSV), upperHSV(upperHSV), roi(roi)
-{
-  resolution = cv::Size(640, 480);
-  validateParameters();
-}
-
-// ROIと解像度を指定するオーバーロードコンストラクタ
+// ROIと解像度を指定するメインコンストラクタ
 LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
                                                  const cv::Scalar& _upperHSV, const cv::Rect& _roi,
                                                  const cv::Size& _resolution)
@@ -33,18 +14,32 @@ LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
   validateParameters();
 }
 
+// ROIを指定するコンストラクタ
+LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
+                                                 const cv::Scalar& _upperHSV, const cv::Rect& _roi)
+  : LineBoundingBoxDetector(_lowerHSV, _upperHSV, _roi, cv::Size(640, 480))
+{
+}
+
+// 最小限のコンストラクタ
+LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
+                                                 const cv::Scalar& _upperHSV)
+  : LineBoundingBoxDetector(_lowerHSV, _upperHSV, cv::Rect(50, 240, 540, 240), cv::Size(640, 480))
+{
+}
+
 void LineBoundingBoxDetector::validateParameters()
 {
   // 解像度の検証：設定された解像度が定義した最小・最大値内にあるかの確認
-  if(resolution.width < ResolutionRange::MIN_WIDTH) {
-    resolution.width = ResolutionRange::MIN_WIDTH;
-  } else if(resolution.width > ResolutionRange::MAX_WIDTH) {
-    resolution.width = ResolutionRange::MAX_WIDTH;
+  if(resolution.width < MIN_WIDTH) {
+    resolution.width = MIN_WIDTH;
+  } else if(resolution.width > MAX_WIDTH) {
+    resolution.width = MAX_WIDTH;
   }
-  if(resolution.height < ResolutionRange::MIN_HEIGHT) {
-    resolution.height = ResolutionRange::MIN_HEIGHT;
-  } else if(resolution.height > ResolutionRange::MAX_HEIGHT) {
-    resolution.height = ResolutionRange::MAX_HEIGHT;
+  if(resolution.height < MIN_HEIGHT) {
+    resolution.height = MIN_HEIGHT;
+  } else if(resolution.height > MAX_HEIGHT) {
+    resolution.height = MAX_HEIGHT;
   }
 
   // ROI検証：ROIの位置とサイズが解像度の枠内に収まるかの確認
@@ -66,9 +61,11 @@ void LineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionR
   }
 
   // 入力画像が指定の解像度と異なる場合、リサイズ処理
-  cv::Mat frameProcessed;
+  cv::Mat frameProcessed = frame;
   if(frame.size() != resolution) {
     cv::resize(frame, frameProcessed, resolution);
+  } else {
+    frameProcessed = frame.clone();
   }
 
   // ROIが画像サイズを超えないようにクリップする処理
