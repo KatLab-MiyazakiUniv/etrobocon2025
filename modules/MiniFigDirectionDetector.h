@@ -1,5 +1,5 @@
 /**
- * @file   MinifigDirectionDetector.h
+ * @file   MiniFigDirectionDetector.h
  * @brief  ミニフィグの向きを検出するクラス
  * @author nishijima515
  */
@@ -17,9 +17,6 @@
 #define CONFIDENCE_THRESHOLD 0.4  // 検出結果を採用する最低信頼度の閾値
 #define NMS_THRESHOLD 0.4         // 検出ボックス同士の重なりを判断する閾値
 
-using namespace cv;
-using namespace dnn;
-
 // ミニフィグの向きを表す列挙体
 enum class MiniFigDirection { FRONT, LEFT, BACK, RIGHT };
 
@@ -35,7 +32,8 @@ class MiniFigDirectionDetector {
 
   // ミニフィグの向き検出を行う処理
   // MiniFigDirectionResult 型の構造体を返す
-  MiniFigDirectionResult detect(const cv::Mat& frame, const std::string& saveImagePath);
+  void detect(const cv::Mat& frame, const std::string& saveImagePath,
+              MiniFigDirectionResult& result);
 
  private:
   cv::dnn::Net net;  // DNNモデルを格納する変数
