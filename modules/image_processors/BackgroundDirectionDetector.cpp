@@ -1,6 +1,6 @@
 /**
  * @file   BackgroundDirectionDetector.cpp
- * @brief  風景の向きを判定のするクラス
+ * @brief  風景の向きを判定する画像処理クラス
  * @author Hara1274
  */
 
@@ -10,7 +10,8 @@ using namespace cv;
 using namespace dnn;
 using namespace std;
 
-BackgroundDirectionDetector::BackgroundDirectionDetector(const string& modelPath)
+BackgroundDirectionDetector::BackgroundDirectionDetector(const string& _modelPath)
+  : modelPath(_modelPath)
 {
   net = readNetFromONNX(modelPath);              // モデルのパスを設定する
   net.setPreferableBackend(DNN_BACKEND_OPENCV);  // OpenCVバックエンドを使用
@@ -49,7 +50,7 @@ void BackgroundDirectionDetector::detect(const Mat& frame, BackgroundDirectionRe
   vector<Mat> outputs;
   net.forward(outputs, net.getUnconnectedOutLayersNames());
 
-  // 後処理で出力結果を検出結果を生成する
+  // 後処理で検出結果を生成する
   postprocess(outputs, frame, scale, padX, padY, result);
 }
 
@@ -170,7 +171,7 @@ void BackgroundDirectionDetector::postprocess(const vector<Mat>& outputs, const 
     string label = to_string(classIds[idx]);
     putText(outputImage, label, boxes[idx].tl(), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 1);
   }
-  imwrite("etrobocon2025/datafiles/snapshots/background_result.JPEG", outputImage);
+  imwrite(outputImagePath, outputImage);
 
   // 検出された方向クラスIDを表示
   cout << "検出された方向クラスID: " << classIds[bestIdx] << endl;
