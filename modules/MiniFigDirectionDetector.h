@@ -28,7 +28,8 @@ struct MiniFigDirectionResult {
 class MiniFigDirectionDetector {
  public:
   // コンストラクタ
-  MiniFigDirectionDetector(const std::string& modelPath = "etrobocon2025/yolo_optimized.onnx");
+  MiniFigDirectionDetector(const std::string& modelPath
+                           = "etrobocon2025/models/yolo_optimized.onnx");
 
   // ミニフィグの向き検出を行う処理
   // MiniFigDirectionResult 型の構造体を返す

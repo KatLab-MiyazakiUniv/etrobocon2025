@@ -3,6 +3,7 @@ bin
 datafiles/snapshots
 datafiles/processed_images
 tests/test_images
+models
 
 # yoloモデル
 *.onnx

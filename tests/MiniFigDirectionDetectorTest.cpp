@@ -15,7 +15,7 @@
 //   char cwd[1024];
 //   getcwd(cwd, sizeof(cwd));
 //   std::cout << "Current working directory: " << cwd << std::endl;
-//   MiniFigDirectionDetector detector("../../yolo_optimized.onnx");
+//   MiniFigDirectionDetector detector("../../models/yolo_optimized.onnx");
 
 //   // 入力画像を読み込み
 //   cv::Mat img = cv::imread("../../tests/test_images/Fig1-3.jpeg");
