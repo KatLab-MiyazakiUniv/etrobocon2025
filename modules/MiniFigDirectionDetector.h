@@ -14,8 +14,9 @@
 #include <vector>
 #include <string>
 
-#define CONFIDENCE_THRESHOLD 0.4  // 検出結果を採用する最低信頼度の閾値
-#define NMS_THRESHOLD 0.4         // 検出ボックス同士の重なりを判断する閾値
+#define MODEL_INPUT_SIZE 640       // モデルの入力サイズ（640x640）
+#define CONFIDENCE_THRESHOLD 0.5f  // 検出結果を採用する最低信頼度の閾値
+#define NMS_THRESHOLD 0.5f         // 検出ボックス同士の重なりを判断する閾値
 
 // ミニフィグの向きを表す列挙体
 enum class MiniFigDirection { FRONT, RIGHT, BACK, LEFT };
@@ -43,7 +44,7 @@ class MiniFigDirectionDetector {
         "fig_detected_result.jpg";  // バウンディングボックス付きの画像のパス
 
   // モデルの前処理を行う関数
-  cv::Mat preprocess(const cv::Mat& frame);
+  cv::Mat preprocess(const cv::Mat& frame, float scale, int padX, int padY);
 
   /**
    * @brief 出力結果を後処理して検出結果を生成する関数
@@ -51,8 +52,8 @@ class MiniFigDirectionDetector {
    * @param frame: 入力画像フレーム
    * @param result: 検出結果を格納する構造体
    */
-  void postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame,
-                   MiniFigDirectionResult& result);
+  void postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX,
+                   int padY, MiniFigDirectionResult& result);
 };
 
 #endif  // MINIFIG_DIRECTION_DETECTOR_H

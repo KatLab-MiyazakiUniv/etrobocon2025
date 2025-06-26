@@ -22,8 +22,14 @@ MiniFigDirectionDetector::MiniFigDirectionDetector(const std::string& modelPath)
 
 void MiniFigDirectionDetector::detect(const cv::Mat& frame, MiniFigDirectionResult& result)
 {
+  // 前処理パラメータを計算
+  const float scale = std::min(MODEL_INPUT_SIZE / static_cast<float>(frame.cols),
+                               MODEL_INPUT_SIZE / static_cast<float>(frame.rows));
+  const int padX = (MODEL_INPUT_SIZE - static_cast<int>(frame.cols * scale)) / 2;
+  const int padY = (MODEL_INPUT_SIZE - static_cast<int>(frame.rows * scale)) / 2;
+
   // 入力画像の前処理
-  cv::Mat blob = preprocess(frame);
+  cv::Mat blob = preprocess(frame, scale, padX, padY);
   net.setInput(blob);
 
   // ネットワークの推論を実行
@@ -31,21 +37,31 @@ void MiniFigDirectionDetector::detect(const cv::Mat& frame, MiniFigDirectionResu
   net.forward(outputs, net.getUnconnectedOutLayersNames());
 
   // 出力結果の後処理
-  postprocess(outputs, frame, result);
+  postprocess(outputs, frame, scale, padX, padY, result);
 }
 
 // 入力画像の前処理を行う関数
 // 画像をモデルに合うサイズ(640x640）にリサイズし、画素値を0~1に正規化する
-cv::Mat MiniFigDirectionDetector::preprocess(const cv::Mat& frame)
+cv::Mat MiniFigDirectionDetector::preprocess(const cv::Mat& frame, float scale, int padX, int padY)
 {
+  // リサイズ後のサイズ
+  int newWidth = static_cast<int>(frame.cols * scale);
+  int newHeight = static_cast<int>(frame.rows * scale);
+
+  // 640×640ピクセルの背景が灰色の空画像を作り、リサイズしたものを中央に貼り付ける
+  cv::Mat output(MODEL_INPUT_SIZE, MODEL_INPUT_SIZE, frame.type(), cv::Scalar(114, 114, 114));
+  cv::resize(frame, output(cv::Rect(padX, padY, newWidth, newHeight)),
+             cv::Size(newWidth, newHeight));
+
   cv::Mat blob;
-  cv::dnn::blobFromImage(frame, blob, 1.0 / 255.0, cv::Size(640, 640), cv::Scalar(), true, false);
+  cv::dnn::blobFromImage(output, blob, 1.0 / 255.0, cv::Size(), cv::Scalar(), true, false);
   return blob;
 }
 
 // 出力結果を後処理して検出結果を生成する関数
 void MiniFigDirectionDetector::postprocess(const std::vector<cv::Mat>& outputs,
-                                           const cv::Mat& frame, MiniFigDirectionResult& result)
+                                           const cv::Mat& frame, float scale, int padX, int padY,
+                                           MiniFigDirectionResult& result)
 {
   // 推論結果からの抽出用データ構造を初期化
   std::vector<int> classIds;
@@ -55,53 +71,55 @@ void MiniFigDirectionDetector::postprocess(const std::vector<cv::Mat>& outputs,
   const float confThreshold = CONFIDENCE_THRESHOLD;
   const float nmsThreshold = NMS_THRESHOLD;
 
-  // 各出力（YOLOでは複数層出力）を走査
-  for(const auto& output : outputs) {
-    if(output.dims != 5) continue;
+  for(const cv::Mat& output : outputs) {
+    // 出力outputがYOLOv5の最終的な推論結果（簡略化された形式）かどうかを判定して、それ以外の出力は無視する
+    if(output.dims != 3 || output.size[1] != 25200) continue;
 
-    int numAnchors = output.size[1];  // 1グリッドセルあたりのアンカー数
-    int gridHeight = output.size[2];  // グリッドの高さ
-    int gridWidth = output.size[3];   // グリッドの幅
-    int attributes = output.size[4];  // 属性数
-    const float* data = (float*)output.data;
+    int numBoxes = output.size[1];    // 検出候補の総数
+    int attributes = output.size[2];  // ボックスが属性の数　（座標やスコアなど）
 
-    // グリッド全体を走査(縦・横・アンカー)
-    for(int y = 0; y < gridHeight; ++y) {
-      for(int x = 0; x < gridWidth; ++x) {
-        for(int anchor = 0; anchor < numAnchors; ++anchor) {
-          // 5次元配列の中で対象データのインデックスを計算
-          int idx = ((anchor * gridHeight + y) * gridWidth + x) * attributes;
+    const float* data = reinterpret_cast<float*>(output.data);  // 出力の実体をdataに格納する
 
-          // 信頼度が閾値未満の場合はスキップ
-          float conf = data[idx + 4];
-          if(conf < confThreshold) continue;
+    // 検出候補の数だけループを回す
+    for(int i = 0; i < numBoxes; ++i) {
+      int idx = i * attributes;
 
-          // クラススコアをMatとして取得し、最大スコアとそのクラスIDを求める
-          float* classScores = (float*)&data[idx + 5];
-          cv::Mat scores(1, attributes - 5, CV_32FC1, classScores);
-          cv::Point classIdPoint;
-          double maxScore;
-          cv::minMaxLoc(scores, 0, &maxScore, 0, &classIdPoint);
+      // 処理中の候補の先頭のデータ位置を計算
+      float conf = data[idx + 4];
+      if(conf < confThreshold) continue;
 
-          if(maxScore > confThreshold) {
-            // バウンディングボックス中心座標とサイズを取得
-            float cx = data[idx + 0];
-            float cy = data[idx + 1];
-            float w = data[idx + 2];
-            float h = data[idx + 3];
+      // 5番目にあるボックスの信頼度（confidence）スコアを取得。頼度が閾値未満なら次の候補へ
+      float* classScores = const_cast<float*>(&data[idx + 5]);
+      cv::Mat scores(1, attributes - 5, CV_32FC1, classScores);
+      cv::Point classIdPoint;
+      double maxScore;
+      cv::minMaxLoc(scores, nullptr, &maxScore, nullptr, &classIdPoint);
 
-            int centerX = int(cx * frame.cols);
-            int centerY = int(cy * frame.rows);
-            int width = int(w * frame.cols);
-            int height = int(h * frame.rows);
-            int left = centerX - width / 2;
-            int top = centerY - height / 2;
+      // 最大クラススコアも閾値を超えているかチェック
+      if(maxScore > confThreshold) {
+        float cx = data[idx + 0];
+        float cy = data[idx + 1];
+        float w = data[idx + 2];
+        float h = data[idx + 3];
 
-            boxes.emplace_back(left, top, width, height);
-            confidences.push_back(maxScore);
-            classIds.push_back(classIdPoint.x);
-          }
-        }
+        // バウンディングボックスの中心座標とサイズを表す値
+        int centerX = static_cast<int>((cx - padX) / scale);
+        int centerY = static_cast<int>((cy - padY) / scale);
+        int width = static_cast<int>(w / scale);
+        int height = static_cast<int>(h / scale);
+
+        int left = centerX - width / 2;
+        int top = centerY - height / 2;
+
+        // 画面内に収まるように処理
+        left = std::max(0, std::min(left, frame.cols - 1));
+        top = std::max(0, std::min(top, frame.rows - 1));
+        width = std::min(width, frame.cols - left);
+        height = std::min(height, frame.rows - top);
+
+        boxes.emplace_back(left, top, width, height);
+        confidences.push_back(static_cast<float>(maxScore));
+        classIds.push_back(classIdPoint.x);
       }
     }
   }
