@@ -9,7 +9,7 @@
 
 namespace etrobocon2025_test {
 
-  // Snapshotの()メソッドが実行できるか確認するテスト
+  // Snapshotのrun()メソッドが実行できるか確認するテスト
   TEST(SnapshotTest, SnapshotInit)
   {
     Robot robot;
