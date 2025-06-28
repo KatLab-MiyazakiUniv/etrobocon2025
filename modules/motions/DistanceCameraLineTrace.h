@@ -8,7 +8,6 @@
 #define DISTANCE_CAMERA_LINE_TRACE_H
 
 #include "CameraPidTracking.h"
-#include <memory>
 
 class DistanceCameraLineTrace : public CameraPidTracking {
  public:
