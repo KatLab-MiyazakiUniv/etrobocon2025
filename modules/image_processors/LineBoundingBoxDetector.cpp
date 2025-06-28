@@ -105,7 +105,7 @@ void LineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionR
 
   // 最大輪郭の特定
   double maxArea = 0;
-  std::vector<cv::Point> largestContour = null;
+  std::vector<cv::Point> largestContour;
 
   // 輪郭をイテレート
   for(const auto& contour : contours) {
