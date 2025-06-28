@@ -5,7 +5,7 @@
  */
 #include "LineBoundingBoxDetector.h"
 
-// ROIと解像度を指定するメインコンストラクタ
+// ROIと解像度を指定するオーバーロードコンストラクタ
 LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
                                                  const cv::Scalar& _upperHSV, const cv::Rect& _roi,
                                                  const cv::Size& _resolution)
@@ -14,14 +14,14 @@ LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
   validateParameters();
 }
 
-// ROIを指定するコンストラクタ
+// ROIを指定するオーバーロードコンストラクタ
 LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
                                                  const cv::Scalar& _upperHSV, const cv::Rect& _roi)
   : LineBoundingBoxDetector(_lowerHSV, _upperHSV, _roi, cv::Size(640, 480))
 {
 }
 
-// 最小限のコンストラクタ
+// デフォルトのROIおよび解像度を使用するコンストラクタ
 LineBoundingBoxDetector::LineBoundingBoxDetector(const cv::Scalar& _lowerHSV,
                                                  const cv::Scalar& _upperHSV)
   : LineBoundingBoxDetector(_lowerHSV, _upperHSV, cv::Rect(50, 240, 540, 240), cv::Size(640, 480))

@@ -46,7 +46,7 @@ class LineBoundingBoxDetector : public BoundingBoxDetector {
   void detect(const cv::Mat& frame, BoundingBoxDetectionResult& result) override;
 
  private:
-  // ラインの輪郭とみなす最小面積（この閾値は調整）
+  // 対象の輪郭とみなす最小面積（この閾値は調整）
   static constexpr double MIN_LINE_CONTOUR_AREA = 50.0;
   cv::Scalar lowerHSV;  // ライントレース対象の色の下限HSV値
   cv::Scalar upperHSV;  // ライントレース対象の色の上限HSV値
