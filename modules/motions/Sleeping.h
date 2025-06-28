@@ -13,6 +13,7 @@ class Sleeping : public Motion {
  public:
   /**
    * コンストラクタ
+   * @param _robot ロボットのインスタンス
    * @param _microSec スリープ時間 (マイクロ秒)
    */
   Sleeping(Robot& _robot, int _microSec);
@@ -20,7 +21,7 @@ class Sleeping : public Motion {
   /**
    * @brief 自タスクスリープする
    */
-  void run();
+  void run() override;
 
  private:
   int microSec;  // スリープ時間 (マイクロ秒)

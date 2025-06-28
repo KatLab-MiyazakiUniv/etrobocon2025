@@ -47,7 +47,6 @@ class MotionParser {
    * @param robot ロボット本体の参照
    * @param commandFilePath ファイルパス
    * @param targetBrightness 目標輝度
-   * @param cameraCapture カメラキャプチャクラスの参照
    * @return 動作インスタンスリスト
    */
 
