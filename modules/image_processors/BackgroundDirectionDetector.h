@@ -1,6 +1,6 @@
 /**
  * @file   BackgroundDirectionDetector.h
- * @brief  風景の向きを判定のするクラス
+ * @brief  風景の向きを判定する画像処理クラス
  * @author Hara1274
  */
 
