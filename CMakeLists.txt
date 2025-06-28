@@ -35,7 +35,7 @@ set(PROJECT_TEST_DIR ${PROJECT_SOURCE_DIR}/tests)
 # 必要なインクルードディレクトリの設定 (適宜登録)
 set(INCLUDE_DIRS
   ${PROJECT_MODULE_DIR}
-  ${PROJECT_MODULE_DIR}/cameraCapture
+  ${PROJECT_MODULE_DIR}/camera
   ${PROJECT_MODULE_DIR}/calculators
   ${PROJECT_MODULE_DIR}/common
   ${PROJECT_MODULE_DIR}/motions
@@ -50,7 +50,7 @@ set(INCLUDE_DIRS
 # ソースファイルの登録 (適宜登録)
 file(GLOB_RECURSE PROJECT_SOURCES
   "${PROJECT_MODULE_DIR}/*.cpp"
-  "${PROJECT_MODULE_DIR}/cameraCapture/*.cpp"
+  "${PROJECT_MODULE_DIR}/camera/*.cpp"
   "${PROJECT_MODULE_DIR}/calculators/*.cpp"
   "${PROJECT_MODULE_DIR}/motions/*.cpp"
   "${PROJECT_MODULE_DIR}/image_processors/*.cpp"
