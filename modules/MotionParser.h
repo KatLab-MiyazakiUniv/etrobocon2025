@@ -11,10 +11,13 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <memory>
 #include "StringOperator.h"
 #include "Motion.h"
 #include "AngleRotation.h"
 #include "DistanceStraight.h"
+#include "DistanceCameraLineTrace.h"
+#include "LineBoundingBoxDetector.h"
 #include "ColorStraight.h"
 #include "ColorLineTrace.h"
 #include "DistanceLineTrace.h"
@@ -28,6 +31,7 @@ enum class COMMAND {
   DS,   // 指定距離直進
   CS,   // 指定色直進
   DL,   // 指定距離ライントレース
+  DCL,  // 指定距離カメラライントレース
   CL,   // 指定色ライントレース
   CDL,  // 色距離指定ライントレース
   EC,   // エッジ切り替え

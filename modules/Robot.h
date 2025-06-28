@@ -24,6 +24,9 @@ class Robot {
    */
   Robot();
 
+  // DI用（カメラを差し替えたいテストで使用）
+  Robot(ICameraCapture& cam);
+
   /**
    * @brief MotorControllerのインスタンスの参照を返す
    * @return メンバ変数motorController(MotorControllerのインスタンス)の参照
@@ -31,10 +34,10 @@ class Robot {
   MotorController& getMotorControllerInstance();
 
   /**
-   * @brief CameraCaptureのインスタンスの参照を返す
-   * @return メンバ変数cameraCapture(CameraCaptureのインスタンス)の参照
+   * @brief ICameraCaptureのインスタンスの参照を返す
+   * @return メンバ変数cameraCapture(ICameraCaptureの実装インスタンス)への参照
    */
-  CameraCapture& getCameraCaptureInstance();
+  ICameraCapture& getCameraCaptureInstance();
 
   /**
    * @brief ColorSensorのインスタンスの参照を返す
@@ -79,13 +82,14 @@ class Robot {
   bool getIsLeftEdge() const;
 
  private:
-  MotorController motorController;    // MotorControllerインスタンス
-  CameraCapture cameraCapture;        // CameraCaptureインスタンス
-  spikeapi::ColorSensor colorSensor;  // ColorSensorインスタンス
-  spikeapi::Clock clock;              // Clockインスタンス
-  spikeapi::Button button;            // Buttonインスタンス
-  spikeapi::ForceSensor forceSensor;  // ForceSensorインスタンス
-  spikeapi::Display display;          // Displayインスタンス
+  MotorController motorController;     // MotorControllerインスタンス
+  CameraCapture defaultCameraCapture;  // 実機用のCameraCaptureインスタンス
+  ICameraCapture& cameraCapture;       // 実際に使うカメラ（参照）
+  spikeapi::ColorSensor colorSensor;   // ColorSensorインスタンス
+  spikeapi::Clock clock;               // Clockインスタンス
+  spikeapi::Button button;             // Buttonインスタンス
+  spikeapi::ForceSensor forceSensor;   // ForceSensorインスタンス
+  spikeapi::Display display;           // Displayインスタンス
   // formatチェックをパスするためのコメント
   bool isLeftEdge = true;  // 左エッジを走行するかの真偽値
                            // （true: 左エッジ、false: 右エッジ）、初期値は左エッジ

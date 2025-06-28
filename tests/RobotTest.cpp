@@ -23,8 +23,8 @@ namespace etrobocon2025_test {
   TEST(RobotTest, GetCameraCaptureInstanceReturnsReference)
   {
     Robot robot;
-    CameraCapture& cameraRef1 = robot.getCameraCaptureInstance();
-    CameraCapture& cameraRef2 = robot.getCameraCaptureInstance();
+    ICameraCapture& cameraRef1 = robot.getCameraCaptureInstance();
+    ICameraCapture& cameraRef2 = robot.getCameraCaptureInstance();
 
     EXPECT_EQ(&cameraRef1, &cameraRef2);
   }

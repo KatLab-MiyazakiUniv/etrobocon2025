@@ -42,8 +42,11 @@ class SpeedCalculator {
   double prevLeftTime;
   Robot& robot;
   // PIDゲイン
-  static constexpr double K_P = 0.005;
-  static constexpr double K_I = 0.0002;
-  static constexpr double K_D = 0.000;
+  static constexpr double RIGHT_K_P = 0.00535;
+  static constexpr double RIGHT_K_I = 0.00115;
+  static constexpr double RIGHT_K_D = 0.000;
+  static constexpr double LEFT_K_P = 0.00578;
+  static constexpr double LEFT_K_I = 0.0008535;
+  static constexpr double LEFT_K_D = 0.000;
 };
 #endif
