@@ -20,6 +20,7 @@ class Sleeping : public Motion {
 
   /**
    * @brief 自タスクスリープする
+   * @note オーバーライド必須
    */
   void run() override;
 
