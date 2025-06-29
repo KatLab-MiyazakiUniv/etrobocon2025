@@ -5,6 +5,8 @@
  */
 
 #include "CameraPidTracking.h"
+#include <chrono>
+#include <thread>
 
 CameraPidTracking::CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
                                      const PidGain& _pidGain,
@@ -64,7 +66,8 @@ void CameraPidTracking::run()
                                            : std::min(baseLeftPower - turningPower, 0.0);
     robot.getMotorControllerInstance().setRightMotorPower(rightPower);
     robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
-    robot.getClockInstance().sleep(33000);
+    std::this_thread::sleep_for(std::chrono::milliseconds(33));
+    // robot.getClockInstance().sleep(33000);
   }
 
   // モータを停止

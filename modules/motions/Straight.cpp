@@ -5,6 +5,8 @@
  */
 
 #include "Straight.h"
+#include <chrono>
+#include <thread>
 
 Straight::Straight(Robot& _robot, double _targetSpeed) : Motion(_robot), targetSpeed(_targetSpeed)
 {
@@ -32,7 +34,8 @@ void Straight::run()
     robot.getMotorControllerInstance().setRightMotorPower(currentRightPower);
     robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower);
 
-    robot.getClockInstance().sleep(10000);  // 10000マイクロ秒(10ミリ秒)待機
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    // robot.getClockInstance().sleep(10000);  // 10000マイクロ秒(10ミリ秒)待機
   }
 
   // モータを停止
