@@ -5,6 +5,7 @@
  */
 
 #include "CameraPidTracking.h"
+#include <chrono>
 
 CameraPidTracking::CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
                                      const PidGain& _pidGain,
@@ -35,6 +36,7 @@ void CameraPidTracking::run()
 
   // 継続条件を満たしている間ループ
   while(isMetContinuationCondition()) {
+    auto loopStart = std::chrono::steady_clock::now();
     // 初期Speed値を計算
     double baseRightPower = speedCalculator.calculateRightMotorPower();
     double baseLeftPower = speedCalculator.calculateLeftMotorPower();
@@ -66,7 +68,9 @@ void CameraPidTracking::run()
     robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
 
     // 10ms待機
-    robot.getClockInstance().sleep(10000);
+    auto loopEnd = std::chrono::steady_clock::now();
+auto loopDuration = std::chrono::duration_cast<std::chrono::milliseconds>(loopEnd - loopStart).count();
+std::cout << "Loop duration: " << loopDuration << " ms" << std::endl;
   }
 
   // モータを停止
