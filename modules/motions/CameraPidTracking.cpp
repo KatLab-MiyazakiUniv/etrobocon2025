@@ -1,7 +1,7 @@
 /**
  * @file   CameraPidTracking.cpp
  * @brief  カメラを使ったPID走行の親クラス
- * @author miyahara046 HaruArima08
+ * @author miyahara046 HaruArima08 takuchi17
  */
 
 #include "CameraPidTracking.h"
@@ -64,9 +64,7 @@ void CameraPidTracking::run()
                                            : std::min(baseLeftPower - turningPower, 0.0);
     robot.getMotorControllerInstance().setRightMotorPower(rightPower);
     robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
-
-    // 10ms待機
-    robot.getClockInstance().sleep(10000);
+    robot.getClockInstance().sleep(33000);
   }
 
   // モータを停止

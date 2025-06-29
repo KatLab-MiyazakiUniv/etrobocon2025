@@ -55,11 +55,41 @@ bool CameraCapture::setCameraID(int id)
 
 bool CameraCapture::openCamera()
 {
-  cap.open(cameraID);
+  // V4L2を指定してカメラを開く
+  cap.open(cameraID, cv::CAP_V4L2);
   if(!cap.isOpened()) {
     cerr << "カメラを開くことができませんでした。" << endl;
     return false;
   }
+
+  // MJPEG形式に設定（V4L2の場合はMJPEG形式がサポートされることがあります）
+  if(!cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'))) {
+    cerr << "MJPEG形式の設定に失敗しました。" << endl;
+    return false;
+  }
+
+  // FPSを30に設定
+  if(!cap.set(cv::CAP_PROP_FPS, 30)) {
+    cerr << "FPS設定に失敗しました。" << endl;
+    return false;
+  }
+
+  // 解像度設定
+  if(!cap.set(cv::CAP_PROP_FRAME_WIDTH, 800)) {
+    cerr << "幅設定に失敗しました。" << endl;
+    return false;
+  }
+
+  if(!cap.set(cv::CAP_PROP_FRAME_HEIGHT, 600)) {
+    cerr << "高さ設定に失敗しました。" << endl;
+    return false;
+  }
+
+  // 設定後の確認
+  double width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
+  double height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+  double fps = cap.get(cv::CAP_PROP_FPS);
+  cerr << "設定後の解像度: " << width << "x" << height << ", FPS: " << fps << endl;
 
   return true;
 }
@@ -76,11 +106,20 @@ bool CameraCapture::getFrame(cv::Mat& outFrame)
     cerr << "カメラを開いていません" << endl;
     return false;
   }
+
+  auto start = std::chrono::steady_clock::now();
+
   cap >> outFrame;
+
+  auto end = std::chrono::steady_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+  std::cout << "Frame capture duration: " << duration << " ms" << std::endl;
+
   if(outFrame.empty()) {
     cerr << "フレームの取得に失敗しました。" << endl;
     return false;
   }
+
   return true;
 }
 
