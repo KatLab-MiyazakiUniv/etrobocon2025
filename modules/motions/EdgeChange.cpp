@@ -11,7 +11,6 @@ EdgeChange::EdgeChange(Robot& _robot, const bool& _isLeftEdge)
 {
 }
 
-// エッジを指定した値へ変更
 void EdgeChange::run()
 {
   robot.setIsLeftEdge(isLeftEdge);

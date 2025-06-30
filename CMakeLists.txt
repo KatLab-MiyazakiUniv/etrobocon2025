@@ -44,7 +44,6 @@ set(INCLUDE_DIRS
   ${PROJECT_TEST_DIR}
   ${PROJECT_TEST_DIR}/dummy
   ${PROJECT_TEST_DIR}/helpers
-  /usr/include/opencv4
 )
 
 # ソースファイルの登録 (適宜登録)
