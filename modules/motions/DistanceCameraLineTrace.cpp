@@ -43,16 +43,6 @@ void DistanceCameraLineTrace::prepare()
 // 指定距離カメラライントレースの継続条件
 bool DistanceCameraLineTrace::isMetContinuationCondition()
 {
-  // フレーム取得をJUDGE_COUNT回数以上失敗
-  cv::Mat frame;
-  if(!robot.getCameraCaptureInstance().getFrame(frame) || frame.empty()) {
-    frameCount++;
-    if(frameCount >= JUDGE_COUNT) {
-      return false;
-    }
-  } else {
-    frameCount = 0;
-  }
   // 走行距離が目標距離に到達
   if(fabs(Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
                                     robot.getMotorControllerInstance().getLeftMotorCount())
