@@ -6,6 +6,7 @@
 
 #include "EtRobocon2025.h"
 #include "AreaMaster.h"
+#include "Calibrator.h"
 
 Robot EtRobocon2025::robot;  // Robotインスタンス
 
@@ -25,7 +26,7 @@ void EtRobocon2025::start()
   calibrator.waitForStart();
   Area area = Area::LineTrace;
   bool isLeftCourse = true;
-  int targetBrightness = getTargetBrightness();
+  int targetBrightness = calibrator.getTargetBrightness();
   AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
   areaMaster.run();
 }
