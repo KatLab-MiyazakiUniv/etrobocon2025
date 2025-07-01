@@ -12,20 +12,20 @@ Robot EtRobocon2025::robot;  // Robotインスタンス
 void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
-
   robot.getCameraCaptureInstance().setCameraID(
       robot.getCameraCaptureInstance().findAvailableCameraID());
-  if(!robot.getCameraCaptureInstance().openCamera()) {
-    std::cout << "dame" << std::endl;
-    return;
+  robot.getCameraCaptureInstance().openCamera();
+  cv::Mat frame;
+  while(!robot.getCameraCaptureInstance().getFrame(frame)) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
-
-  robot.getClockInstance().sleep(10000);  // カメラの起動待ち
-
-  Area area = Area::DoubleLoop;
+  Calibrator calibrator(robot);
+  calibrator.selectAndSetCourse();
+  calibrator.measureAndSetTargetBrightness();
+  calibrator.waitForStart();
+  Area area = Area::LineTrace;
   bool isLeftCourse = true;
-  int targetBrightness = 45;
-
+  int targetBrightness = getTargetBrightness();
   AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
   areaMaster.run();
 }
