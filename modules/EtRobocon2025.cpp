@@ -24,7 +24,7 @@ void EtRobocon2025::start()
   calibrator.selectAndSetCourse();
   calibrator.measureAndSetTargetBrightness();
   calibrator.waitForStart();
-  Area area = Area::LineTrace;
+  Area area = Area::DoubleLoop;
   bool isLeftCourse = true;
   int targetBrightness = calibrator.getTargetBrightness();
   AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
