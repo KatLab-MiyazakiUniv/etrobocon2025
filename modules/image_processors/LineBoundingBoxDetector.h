@@ -47,7 +47,7 @@ class LineBoundingBoxDetector : public BoundingBoxDetector {
 
  private:
   // 対象の輪郭とみなす最小面積（この閾値は調整）
-  static constexpr double MIN_LINE_CONTOUR_AREA = 50.0;
+  static constexpr double MIN_LINE_CONTOUR_AREA = 10.0;
   cv::Scalar lowerHSV;  // ライントレース対象の色の下限HSV値
   cv::Scalar upperHSV;  // ライントレース対象の色の上限HSV値
   cv::Rect roi;         // 注目領域

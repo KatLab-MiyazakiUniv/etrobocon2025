@@ -24,7 +24,7 @@ void EtRobocon2025::start()
 
   Area area = Area::DoubleLoop;
   bool isLeftCourse = true;
-  int targetBrightness = calibrator.getTargetBrightness();
+  int targetBrightness = 50;
   AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
   areaMaster.run();
 }
