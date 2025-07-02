@@ -66,7 +66,7 @@ void CameraPidTracking::run()
                                            : std::min(baseLeftPower - turningPower, 0.0);
     robot.getMotorControllerInstance().setRightMotorPower(rightPower);
     robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
-    std::this_thread::sleep_for(std::chrono::milliseconds(33));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     // robot.getClockInstance().sleep(33000);
   }
 

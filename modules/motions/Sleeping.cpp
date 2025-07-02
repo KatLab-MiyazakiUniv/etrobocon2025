@@ -5,10 +5,12 @@
  */
 
 #include "Sleeping.h"
+#include <chrono>
+#include <thread>
 
 Sleeping::Sleeping(Robot& _robot, int _microSec) : Motion(_robot), microSec(_microSec) {}
 
 void Sleeping::run()
 {
-  robot.getClockInstance().sleep(microSec);
+ std::this_thread::sleep_for(std::chrono::milliseconds(microSec));
 }

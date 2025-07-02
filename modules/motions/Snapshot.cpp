@@ -17,9 +17,9 @@ void Snapshot::run()
 {
   // 写真を撮影する
   cv::Mat frame;
-  if(!robot.getCameraCaptureInstance().getFrame(frame)) {
-    return;
-  }
+  while(!robot.getCameraCaptureInstance().getFrame(frame)){ 
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  } 
   // 写真を保存する
   robot.getCameraCaptureInstance().saveFrame(frame, path, fileName);
 }

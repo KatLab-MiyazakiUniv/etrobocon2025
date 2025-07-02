@@ -20,7 +20,10 @@ void EtRobocon2025::start()
     return;
   }
 
-  robot.getClockInstance().sleep(10000);  // カメラの起動待ち
+  cv::Mat frame;
+  while(!robot.getCameraCaptureInstance().getFrame(frame)){ 
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  } 
 
   Area area = Area::DoubleLoop;
   bool isLeftCourse = true;
