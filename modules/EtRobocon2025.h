@@ -9,6 +9,8 @@
 
 #include <iostream>
 #include "Robot.h"
+#include "DistanceCameraLineTrace.h"
+#include "Calibrator.h"
 
 class EtRobocon2025 {
  public:
