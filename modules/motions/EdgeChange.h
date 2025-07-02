@@ -14,7 +14,7 @@ class EdgeChange : public Motion {
   /**
    * @brief エッジを切り替えるクラス
    */
-  EdgeChange(Robot& _robot, const bool& _isLeftEdge);
+  EdgeChange(Robot& _robot,bool _isLeftEdge);
 
   /**
    * @brief エッジを切り替える
@@ -22,7 +22,7 @@ class EdgeChange : public Motion {
   void run() override;
 
  private:
-  const bool& isLeftEdge;  // 切り替え後のエッジ(true:左エッジ, false:右エッジ)
+ bool isLeftEdge;  // 切り替え後のエッジ(true:左エッジ, false:右エッジ)
 };
 
 #endif
