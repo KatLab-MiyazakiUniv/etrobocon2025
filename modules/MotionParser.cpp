@@ -168,12 +168,16 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-      // MCA: ミニフィグのカメラ撮影動作
-      // [1]:int 角度[deg], [2]:int 角度[deg], [3]:double 速度[mm/s], [4]:double 距離[mm],
-      // [5]:double 速度[mm/s], [6]:double 速度[mm/s], [7]:string 方向(clockwise or anticlockwise)
-      // [8]:int 撮影位置(0が初期位置)
+        // MCA: ミニフィグのカメラ撮影動作
+        // [1]:int フロントカメラをミニフィグに向けるための回頭角度[deg],
+        // [2]:int 黒線復帰のための回頭角度[deg],
+        // [3]:double 撮影前後の回頭のための目標速度,
+        // [4]:double 撮影前後の移動距離,
+        // [5]:double 撮影後の前進速度の絶対値[mm/s]
+        // [6]:double 撮影前の後退速度の絶対値[mm/s],
+        // [7] : string 回頭の方向(clockwise oranticlockwise)
+        // [8] : int 撮影位置(0が初期位置)
       case COMMAND::MCA: {
-        std::cout << "MCA" << std::endl;
         MiniFigCameraAction* mca = new MiniFigCameraAction(
             robot, convertBool(params[0], params[7]), stoi(params[1]), stoi(params[2]),
             stod(params[3]), stod(params[4]), stod(params[5]), stod(params[6]), stoi(params[8]));

@@ -22,9 +22,9 @@ class MiniFigCameraAction : public CompositeMotion {
    * @param _preTargetAngle フロントカメラをミニフィグに向けるための回頭角度
    * @param _postTargetAngle 黒線復帰のための回頭角度
    * @param _targetRotationSpeed 撮影前後の回頭のための目標速度
-   * @param _targetDistance 撮影前後の後退距離
-   * @param _forwardSpeed 撮影後の前進速度
-   * @param _backSpeed 撮影前の後退速度
+   * @param _targetDistance 撮影前後の移動距離
+   * @param _forwardSpeed 撮影後の前進速度の絶対値
+   * @param _backSpeed 撮影前の後退速度の絶対値
    * @param position 撮影位置（0が初期位置）
    */
   MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle,
@@ -37,9 +37,9 @@ class MiniFigCameraAction : public CompositeMotion {
   void run() override;
 
  private:
-  bool isClockwise;     // リアカメラをミニフィグに向けるための回頭方向
-  int preTargetAngle;   // フロントカメラをミニフィグに向けるための回頭角度
-  int postTargetAngle;  // 黒線復帰のための目標角度
+  bool isClockwise;         // リアカメラをミニフィグに向けるための回頭方向
+  int preTargetAngle;       // フロントカメラをミニフィグに向けるための回頭角度
+  int postTargetAngle;      // 黒線復帰のための目標角度
   int targetRotationSpeed;  // 撮影前後の回頭のための目標速度
   double targetDistance;    // 撮影前後の後退距離
   double forwardSpeed;      // 撮影前の前進速度

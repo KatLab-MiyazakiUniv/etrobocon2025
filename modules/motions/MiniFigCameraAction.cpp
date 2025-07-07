@@ -36,17 +36,19 @@ void MiniFigCameraAction::run()
   MiniFigDirectionDetection detection(robot, frame);
   // figの向きがFRONTの場合はそれ以外の場合は、撮影動作を行う。
 
-  AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, !isClockwise);
-  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, isClockwise);
+  AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
+  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
 
   // 撮影のための回頭をする
   if(preTargetAngle != 0) {
     preAR.run();
   }
 
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
   // 後退
   // DistanceStraight(Robot& _robot, double _targetDistance, double _speed);
-  DistanceStraight back(robot, targetDistance, backSpeed);
+  DistanceStraight back(robot, targetDistance, -backSpeed);
   back.run();
 
   // 撮影動作（撮影・判定・保存）を行う。
@@ -67,6 +69,8 @@ void MiniFigCameraAction::run()
     FrameSave::frameSave(frame, "etrobocon2025/datafiles/figures/",
                          "Fig_" + to_string(position) + ".jpeg");
   }
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
   // 前進
   DistanceStraight forward(robot, targetDistance, forwardSpeed);
