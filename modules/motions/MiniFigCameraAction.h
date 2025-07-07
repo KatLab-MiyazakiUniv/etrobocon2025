@@ -11,8 +11,6 @@
 #include "CompositeMotion.h"
 #include "AngleRotation.h"
 #include "DistanceStraight.h"
-#include "CameraAction.h"
-#include "Sleeping.h"
 #include "MiniFigDirectionDetection.h"
 
 class MiniFigCameraAction : public CompositeMotion {
