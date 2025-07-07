@@ -17,15 +17,13 @@ void EtRobocon2025::start()
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }    
   
-  // Calibrator calibrator(robot);
-  // calibrator.selectAndSetCourse();
-  // calibrator.measureAndSetTargetBrightness();
-  // bool isLeftCourse = calibrator.getIsLeftCourse();
-  // int targetBrightness = calibrator.getTargetBrightness();
-  // calibrator.waitForStart();
-
-  bool isLeftCourse = true;
-  int targetBrightness = 45;
+  Calibrator calibrator(robot);
+  calibrator.selectAndSetCourse();
+  calibrator.measureAndSetTargetBrightness();
+  bool isLeftCourse = calibrator.getIsLeftCourse();
+  int targetBrightness = calibrator.getTargetBrightness();
+  calibrator.getAngleCheckFrame();
+  calibrator.waitForStart();
 
   Area area = Area::LineTrace;
   AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
