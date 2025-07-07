@@ -37,9 +37,9 @@ class MiniFigCameraAction : public CompositeMotion {
   void run() override;
 
  private:
-  bool isClockwise;         // リアカメラをミニフィグに向けるための回頭方向
-  int preTargetAngle;       // フロントカメラをミニフィグに向けるための回頭角度
-  int postTargetAngle;      // 黒線復帰のための目標角度
+  bool isClockwise;     // リアカメラをミニフィグに向けるための回頭方向
+  int preTargetAngle;   // フロントカメラをミニフィグに向けるための回頭角度
+  int postTargetAngle;  // 黒線復帰のための目標角度
   int targetRotationSpeed;  // 撮影前後の回頭のための目標速度
   double targetDistance;    // 撮影前後の後退距離
   double forwardSpeed;      // 撮影前の前進速度
