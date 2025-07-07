@@ -107,20 +107,15 @@ bool CameraCapture::getFrame(cv::Mat& outFrame)
     return false;
   }
 
-  auto start = std::chrono::steady_clock::now();
-
-  for(int i=0; i < 5; i++){
-  cap >> outFrame;
-  auto end = std::chrono::steady_clock::now();
-  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-  std::cout << "Frame capture duration: " << duration << " ms" << std::endl;
-  if(!outFrame.empty()) {
-    return true;
+  for(int i = 0; i < 5; i++) {
+    cap >> outFrame;
+    if(!outFrame.empty()) {
+      return true;
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
   }
-  std::this_thread::sleep_for(std::chrono::milliseconds(5));
-}
   cerr << "フレームの取得に失敗しました。" << endl;
-    return false;
+  return false;
 }
 
 bool CameraCapture::getFrames(vector<cv::Mat>& frames, int numFrames, int millisecondInterval)
