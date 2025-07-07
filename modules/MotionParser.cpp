@@ -168,6 +168,20 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // MCA: ミニフィグのカメラ撮影動作
+      // [1]:int 角度[deg], [2]:int 角度[deg], [3]:double 速度[mm/s], [4]:double 距離[mm],
+      // [5]:double 速度[mm/s], [6]:double 速度[mm/s], [7]:string 方向(clockwise or anticlockwise)
+      // [8]:int 撮影位置(0が初期位置)
+      case COMMAND::MCA: {
+        std::cout << "MCA" << std::endl;
+        MiniFigCameraAction* mca = new MiniFigCameraAction(
+            robot, convertBool(params[0], params[7]), stoi(params[1]), stoi(params[2]),
+            stod(params[3]), stod(params[4]), stod(params[5]), stod(params[6]), stoi(params[8]));
+        motionList.push_back(mca);
+
+        break;
+      }
+
       // 未定義コマンド
       default: {
         cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
@@ -195,7 +209,9 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "CDL", COMMAND::CDL },  // 色距離指定ライントレース
     { "EC", COMMAND::EC },    // エッジ切り替え
     { "SL", COMMAND::SL },    // スリープ
-    { "SS", COMMAND::SS }     // カメラ撮影動作
+    { "SS", COMMAND::SS },    // カメラ撮影動作
+    { "MCA", COMMAND::MCA }   // ミニフィグのカメラ撮影動作
+
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
@@ -213,7 +229,7 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   string param = StringOperator::removeEOL(stringParameter);
 
   // 回転動作(AR)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-  if(command == "AR") {
+  if(command == "AR" || command == "MCA") {
     if(param == "clockwise") {
       return true;
     } else if(param == "anticlockwise") {
