@@ -86,7 +86,7 @@ void MiniFigCameraAction::run()
   DistanceStraight back(robot, backTargetDistance, -backSpeed);
   back.run();
 
-  // 判定用の写真を撮影
+    // 判定用の写真を撮影
   cv::Mat frame;
   robot.getCameraCaptureInstance().getFrame(frame);
 
@@ -116,6 +116,8 @@ void MiniFigCameraAction::run()
   // 動作安定のためのスリープ
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
+  robot.getMotorControllerInstance().setLeftMotorPower(0);
+  robot.getMotorControllerInstance().setRightMotorPower(0);
   // 前進
   DistanceStraight forward(robot, forwardTargetDistance, forwardSpeed);
   forward.run();
