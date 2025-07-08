@@ -11,16 +11,17 @@ const string MiniFigCameraAction::filePath = "etrobocon2025/datafiles/figures/";
 
 MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
                                          int _postTargetAngle, double _targetRotationSpeed,
-                                         double _targetDistance, double _forwardSpeed,
-                                         double _backSpeed, int position)
+                                         double _backTargetDistance, double _forwardTargetDistance,
+                                         double _backSpeed, double _forwardSpeed, int position)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
     postTargetAngle(_postTargetAngle),
     targetRotationSpeed(_targetRotationSpeed),
-    targetDistance(_targetDistance),
-    forwardSpeed(_forwardSpeed),
+    backTargetDistance(_backTargetDistance),
+    forwardTargetDistance(_forwardTargetDistance),
     backSpeed(_backSpeed),
+    forwardSpeed(_forwardSpeed),
     position(position)
 {
 }
@@ -48,7 +49,7 @@ void MiniFigCameraAction::run()
 
   // 後退
   // DistanceStraight(Robot& _robot, double _targetDistance, double _speed);
-  DistanceStraight back(robot, targetDistance, -backSpeed);
+  DistanceStraight back(robot, backTargetDistance, -backSpeed);
   back.run();
 
   // 判定用の写真を撮影
@@ -59,7 +60,9 @@ void MiniFigCameraAction::run()
     // 向きの判定とresultの更新(detection)は一回目(初期位置での)の撮影でしか行わない
     MiniFigDirectionDetection detection(robot, frame);
     std::cout << "判定動作実施" << std::endl;
+    MiniFigDirectionDetection detection(robot, frame);
     detection.run();
+    FrameSave::frameSave(frame, "etrobocon2025/datafiles/figures/", "upload_front_fig.jpeg");
     std::cout << "判定動作終了" << std::endl;
 
     if(robot.getMiniFigDirectionResult().wasDetected
@@ -85,8 +88,10 @@ void MiniFigCameraAction::run()
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
   // 前進
-  DistanceStraight forward(robot, targetDistance, forwardSpeed);
+  DistanceStraight forward(robot, forwardTargetDistance, forwardSpeed);
   forward.run();
+
+  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
 
   // 黒線復帰のための回頭をする
   AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);

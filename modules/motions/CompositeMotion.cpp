@@ -1,6 +1,6 @@
 /**
  * @file   CompositeMotion.cpp
- * @brief  合成動作クラス
+ * @brief  合成動作の親クラス
  * @author nishijima515
  */
 
