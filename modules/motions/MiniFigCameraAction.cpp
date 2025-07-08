@@ -25,24 +25,25 @@ MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _
 {
 }
 
-void MiniFigCameraAction::run()
-{
-  // ミニフィグの向きがFRONTの場合は、撮影動作を行わない
+void MiniFigCameraAction::prepare()
+{  // ミニフィグの向きがFRONTの場合は、撮影動作を行わない
   if(robot.getMiniFigDirectionResult().wasDetected
      && robot.getMiniFigDirectionResult().direction == MiniFigDirection::FRONT) {
     printf("ミニフィグの向きがFRONTなので撮影動作は行いません。\n");
     return;
   }
+}
 
-  // figの向きがFRONTの場合はそれ以外の場合は、撮影動作を行う。
-
-  AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
+void MiniFigCameraAction::run()
+{
+  // 事前準備
+  prepare();
 
   // 撮影のための回頭をする
-  if(preTargetAngle != 0) {
-    preAR.run();
-  }
+  AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
+  preAR.run();
 
+  // 動作安定のためのスリープ
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
   // 後退
@@ -50,38 +51,45 @@ void MiniFigCameraAction::run()
   DistanceStraight back(robot, backTargetDistance, -backSpeed);
   back.run();
 
-  // 撮影動作（撮影・判定・保存）を行う。
+  // 判定用の写真を撮影
   cv::Mat frame;
   robot.getCameraCaptureInstance().getFrame(frame);
+
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は一回目(初期位置での)の撮影でしか行わない
     std::cout << "判定動作実施" << std::endl;
     MiniFigDirectionDetection detection(robot, frame);
     detection.run();
-    FrameSave::frameSave(frame, "etrobocon2025/datafiles/figures/", "upload_front_fig.jpeg");
+    FrameSave::frameSave(frame, filePath, "upload_front_fig.jpeg");
     std::cout << "判定動作終了" << std::endl;
-  } else if(position != 0 && robot.getMiniFigDirectionResult().wasDetected) {
+
+    if(robot.getMiniFigDirectionResult().wasDetected
+       && robot.getMiniFigDirectionResult().direction == MiniFigDirection::FRONT) {
+      // FRONT方向の画像を保存
+      FrameSave::frameSave(frame, filePath, "upload_front_fig.jpg");
+    }
+
+  } else if(position != 0 && robot.getMiniFigDirectionResult().wasDetected
+            && robot.getMiniFigDirectionResult().direction
+                   == static_cast<MiniFigDirection>(position)) {
     // 一回目の撮影でミニフィグが検出されていて、向きがFRONTじゃなければ、二回目の撮影でのミニフィグの向きは確実にFRONTになる。
     std::cout << "2回目検出あり" << std::endl;
-    FrameSave::frameSave(frame, "etrobocon2025/datafiles/figures/", "upload_front_fig.jpeg");
+    FrameSave::frameSave(frame, filePath, "upload_front_fig.jpeg");
   } else if(position != 0 && !robot.getMiniFigDirectionResult().wasDetected) {
     // 一回目検出falseなら、残り、3回の撮影は確定する。
     // 一回目の撮影でミニフィグが検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
     std::cout << "2回目検出なし" << std::endl;
-    FrameSave::frameSave(frame, "etrobocon2025/datafiles/figures/",
-                         "Fig_" + to_string(position) + ".jpeg");
+    FrameSave::frameSave(frame, filePath, "Fig_" + to_string(position) + ".jpeg");
   }
 
+  // 動作安定のためのスリープ
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
   // 前進
   DistanceStraight forward(robot, forwardTargetDistance, forwardSpeed);
   forward.run();
 
-  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
-
   // 黒線復帰のための回頭をする
-  if(postTargetAngle != 0) {
-    postAR.run();
-  }
+  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
+  postAR.run();
 }

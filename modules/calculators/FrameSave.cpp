@@ -16,11 +16,19 @@
 
 void FrameSave::frameSave(cv::Mat& frame, const std::string& filepath, const std::string& filename)
 {
-  // 画像を保存
-  CameraCapture cameraCapture;
-  if(!cameraCapture.saveFrame(frame, filepath, filename)) {
-    printf("画像の保存に失敗しました: %s\n", (filepath + filename).c_str());
-  } else {
-    printf("画像を保存しました: %s\n", (filepath + filename).c_str());
+  if(frame.empty()) {
+    std::cerr << "保存するフレームがありません。" << std::endl;
+  }
+
+  // ディレクトリが存在しない場合は作成
+  if(!std::filesystem::exists(filepath)) {
+    if(!std::filesystem::create_directories(filepath)) {
+      std::cerr << "ディレクトリの作成に失敗しました: " << filepath << std::endl;
+    }
+  }
+
+  std::string imagePath = filepath + "/" + filename + imagePath;
+  if(!cv::imwrite(imagePath, frame)) {
+    std::cerr << "画像の保存に失敗しました: " << imagePath << std::endl;
   }
 }

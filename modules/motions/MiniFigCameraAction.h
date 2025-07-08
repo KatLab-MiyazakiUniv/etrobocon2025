@@ -34,7 +34,12 @@ class MiniFigCameraAction : public CompositeMotion {
                       int position);
 
   /**
-   * @brief 撮影動作を行う
+   * @brief 回頭動作の事前準備を行う
+   */
+  void prepare();
+
+  /**
+   * @brief ミニフィグの向きを判定し、必要なら撮影動作をスキップする準備処理
    */
   void run() override;
 
@@ -42,11 +47,12 @@ class MiniFigCameraAction : public CompositeMotion {
   bool isClockwise;              // カメラをミニフィグに向けるための回頭方向
   int preTargetAngle;            // カメラをミニフィグに向けるための回頭角度
   int postTargetAngle;           // 黒線復帰のための目標角度
-  int targetRotationSpeed;       // 撮影前後の回頭のための目標速度
+  double targetRotationSpeed;    // 撮影前後の回頭のための目標速度
   double backTargetDistance;     // 撮影前の後退距離
   double forwardTargetDistance;  // 撮影後の前進距離
   double backSpeed;              // 撮影後の後退速度
   double forwardSpeed;           // 撮影前の前進速度
   int position;                  // 撮影位置（0が1回目の撮影箇所）
+  static constexpr const char* filePath = "etrobocon2025/datafiles/figures/";  // 保存先のパス
 };
 #endif

@@ -21,5 +21,5 @@ void Snapshot::run()
     return;
   }
   // 写真を保存する
-  robot.getCameraCaptureInstance().saveFrame(frame, path, fileName);
+  FrameSave::frameSave(frame, path, fileName);
 }

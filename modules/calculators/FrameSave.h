@@ -24,10 +24,8 @@ class FrameSave {
   static void frameSave(cv::Mat& frame, const std::string& filepath, const std::string& filename);
 
  private:
-  std::string filepath;  // 保存するパス
-  std::string filename;  // 保存するファイル名
-  cv::Mat& frame;        // カメラから取得した画像フレーム
-  FrameSave();
+  std::string imgExtension = ".JPEG";  // 保存するときの拡張
+  FrameSave();                         // インスタンス化の禁止
 };
 
 #endif  // FRAME_SAVE_H
