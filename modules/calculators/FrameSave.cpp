@@ -4,6 +4,7 @@
  * @author nishijima515
  */
 #include "FrameSave.h"
+const std::string FrameSave::imgExtension = ".JPEG";
 
 // const std::string FrameSave::filepath = "etrobocon2025/datafiles/検討中/";
 
@@ -19,7 +20,6 @@ void FrameSave::frameSave(cv::Mat& frame, const std::string& filepath, const std
   if(frame.empty()) {
     std::cerr << "保存するフレームがありません。" << std::endl;
   }
-
   // ディレクトリが存在しない場合は作成
   if(!std::filesystem::exists(filepath)) {
     if(!std::filesystem::create_directories(filepath)) {
@@ -27,7 +27,8 @@ void FrameSave::frameSave(cv::Mat& frame, const std::string& filepath, const std
     }
   }
 
-  std::string imagePath = filepath + "/" + filename + imagePath;
+  std::string imagePath = filepath + filename + imgExtension;
+  std::cout << imagePath << std::endl;
   if(!cv::imwrite(imagePath, frame)) {
     std::cerr << "画像の保存に失敗しました: " << imagePath << std::endl;
   }

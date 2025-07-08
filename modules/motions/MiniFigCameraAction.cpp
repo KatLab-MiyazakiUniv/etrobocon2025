@@ -60,13 +60,13 @@ void MiniFigCameraAction::run()
     std::cout << "判定動作実施" << std::endl;
     MiniFigDirectionDetection detection(robot, frame);
     detection.run();
-    FrameSave::frameSave(frame, filePath, "upload_front_fig.jpeg");
+    FrameSave::frameSave(frame, filePath, "upload_front_fig");
     std::cout << "判定動作終了" << std::endl;
 
     if(robot.getMiniFigDirectionResult().wasDetected
        && robot.getMiniFigDirectionResult().direction == MiniFigDirection::FRONT) {
       // FRONT方向の画像を保存
-      FrameSave::frameSave(frame, filePath, "upload_front_fig.jpg");
+      FrameSave::frameSave(frame, filePath, "upload_front_fig");
     }
 
   } else if(position != 0 && robot.getMiniFigDirectionResult().wasDetected
@@ -74,20 +74,20 @@ void MiniFigCameraAction::run()
                    == static_cast<MiniFigDirection>(position)) {
     // 一回目の撮影でミニフィグが検出されていて、向きがFRONTじゃなければ、二回目の撮影でのミニフィグの向きは確実にFRONTになる。
     std::cout << "2回目検出あり" << std::endl;
-    FrameSave::frameSave(frame, filePath, "upload_front_fig.jpeg");
+    FrameSave::frameSave(frame, filePath, "upload_front_fig");
   } else if(position != 0 && !robot.getMiniFigDirectionResult().wasDetected) {
     // 一回目検出falseなら、残り、3回の撮影は確定する。
     // 一回目の撮影でミニフィグが検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
     std::cout << "2回目検出なし" << std::endl;
-    FrameSave::frameSave(frame, filePath, "Fig_" + to_string(position) + ".jpeg");
+    FrameSave::frameSave(frame, filePath, "Fig_" + to_string(position) );
   }
-
-  // 動作安定のためのスリープ
-  std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
   // 前進
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
   DistanceStraight forward(robot, forwardTargetDistance, forwardSpeed);
   forward.run();
+
+    // 動作安定のためのスリープ
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
   AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);

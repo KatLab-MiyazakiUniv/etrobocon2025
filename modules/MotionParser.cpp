@@ -176,8 +176,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [5]:double 撮影後の前進距離
         // [6]:double 撮影前の後退速度の絶対値[mm/s],
         // [7]:double 撮影後の前進速度の絶対値[mm/s]
-        // [8] : string 回頭の方向(clockwise oranticlockwise)
-        // [9] : int 撮影位置(0が初期位置)
+        // [8]:string 回頭の方向(clockwise oranticlockwise)
+        // [9]:int 撮影位置(0が初期位置)
       case COMMAND::MCA: {
         MiniFigCameraAction* mca = new MiniFigCameraAction(
             robot, convertBool(params[0], params[8]), stoi(params[1]), stoi(params[2]),
