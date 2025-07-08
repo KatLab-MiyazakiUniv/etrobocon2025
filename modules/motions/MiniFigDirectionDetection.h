@@ -18,8 +18,7 @@ class MiniFigDirectionDetection : public Motion {
   void run();
 
  private:
-  const char* imageName;  // 画像ファイル名
-  cv::Mat& frame;         // カメラから取得した画像フレーム
+  cv::Mat& frame;  // カメラから取得した画像フレーム
 };
 
 #endif  // MINIFIG_DIRECTION_DETECTION_H

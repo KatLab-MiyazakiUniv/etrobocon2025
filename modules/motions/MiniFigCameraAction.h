@@ -32,18 +32,24 @@ class MiniFigCameraAction : public CompositeMotion {
                       double _backSpeed, int position);
 
   /**
+   * @brief 回頭動作の事前準備を行う
+   */
+  void prepare();
+
+  /**
    * @brief 撮影動作を行う
    */
   void run() override;
 
  private:
-  bool isClockwise;     // リアカメラをミニフィグに向けるための回頭方向
-  int preTargetAngle;   // フロントカメラをミニフィグに向けるための回頭角度
-  int postTargetAngle;  // 黒線復帰のための目標角度
-  int targetRotationSpeed;  // 撮影前後の回頭のための目標速度
-  double targetDistance;    // 撮影前後の後退距離
-  double forwardSpeed;      // 撮影前の前進速度
-  double backSpeed;         // 撮影後の後退速度
-  int position;             // 撮影位置（0が初期位置）
+  static const std::string filePath;  // 各エリアのコマンドファイルベースパス
+  bool isClockwise;                   // リアカメラをミニフィグに向けるための回頭方向
+  int preTargetAngle;                 // フロントカメラをミニフィグに向けるための回頭角度
+  int postTargetAngle;                // 黒線復帰のための目標角度
+  int targetRotationSpeed;            // 撮影前後の回頭のための目標速度
+  double targetDistance;              // 撮影前後の後退距離
+  double forwardSpeed;                // 撮影前の前進速度
+  double backSpeed;                   // 撮影後の後退速度
+  int position;                       // 撮影位置（0が初期位置）
 };
 #endif
