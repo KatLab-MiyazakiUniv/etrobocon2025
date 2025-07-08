@@ -8,6 +8,7 @@
 #define SNAPSHOT_H
 
 #include "Motion.h"
+#include "FrameSave.h"
 
 class Snapshot : public Motion {
  public:
