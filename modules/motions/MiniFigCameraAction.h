@@ -17,19 +17,21 @@ class MiniFigCameraAction : public CompositeMotion {
  public:
   /**
    * コンストラクタ
-   * @param _isClockwise フロントカメラをミニフィグに向けるための回頭方向　true:時計回り,
-   * false:反時計回り
+   * @param _isClockwise
+   * フロントカメラをミニフィグに向けるための回頭方向　true:時計回り, false:反時計回り
    * @param _preTargetAngle フロントカメラをミニフィグに向けるための回頭角度
    * @param _postTargetAngle 黒線復帰のための回頭角度
    * @param _targetRotationSpeed 撮影前後の回頭のための目標速度
-   * @param _targetDistance 撮影前後の移動距離
-   * @param _forwardSpeed 撮影後の前進速度の絶対値
+   * @param _backTargetDistance 撮影前の後退距離
+   * @param _forwardTargetDistance 撮影後の前進距離
    * @param _backSpeed 撮影前の後退速度の絶対値
+   * @param _forwardSpeed 撮影後の前進速度の絶対値
    * @param position 撮影位置（0が初期位置）
    */
   MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle,
-                      double _targetRotationSpeed, double _targetDistance, double _forwardSpeed,
-                      double _backSpeed, int position);
+                      double _targetRotationSpeed, double _backTargetDistance,
+                      double _forwardTargetDistance, double _backSpeed, double _forwardSpeed,
+                      int position);
 
   /**
    * @brief 撮影動作を行う
@@ -37,13 +39,14 @@ class MiniFigCameraAction : public CompositeMotion {
   void run() override;
 
  private:
-  bool isClockwise;     // リアカメラをミニフィグに向けるための回頭方向
-  int preTargetAngle;   // フロントカメラをミニフィグに向けるための回頭角度
-  int postTargetAngle;  // 黒線復帰のための目標角度
-  int targetRotationSpeed;  // 撮影前後の回頭のための目標速度
-  double targetDistance;    // 撮影前後の後退距離
-  double forwardSpeed;      // 撮影前の前進速度
-  double backSpeed;         // 撮影後の後退速度
-  int position;             // 撮影位置（0が初期位置）
+  bool isClockwise;              // カメラをミニフィグに向けるための回頭方向
+  int preTargetAngle;            // カメラをミニフィグに向けるための回頭角度
+  int postTargetAngle;           // 黒線復帰のための目標角度
+  int targetRotationSpeed;       // 撮影前後の回頭のための目標速度
+  double backTargetDistance;     // 撮影前の後退距離
+  double forwardTargetDistance;  // 撮影後の前進距離
+  double backSpeed;              // 撮影後の後退速度
+  double forwardSpeed;           // 撮影前の前進速度
+  int position;                  // 撮影位置（0が1回目の撮影箇所）
 };
 #endif

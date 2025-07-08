@@ -23,15 +23,11 @@ void MiniFigDirectionDetection::run()
   // 検出結果を取得
   MiniFigDirectionResult& result = robot.getMiniFigDirectionResult();
 
-  const std::string filepath = "etrobocon2025/datafiles/figures/";
-
   // デバッグ出力
   if(result.wasDetected) {
     switch(result.direction) {
       case MiniFigDirection::FRONT:
         printf("ミニフィグの向き: FRONT\n");
-        // FRONT方向の画像を保存
-        FrameSave::frameSave(frame, filepath, "upload_front_fig.jpg");
         break;
       case MiniFigDirection::BACK:
         printf("ミニフィグの向き: BACK\n");

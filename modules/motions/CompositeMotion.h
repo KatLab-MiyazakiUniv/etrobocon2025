@@ -1,6 +1,6 @@
 /**
  * @file   CompositeMotion.h
- * @brief  合成動作クラス
+ * @brief  合成動作の親クラス
  * @author nishijima515
  */
 
@@ -13,6 +13,7 @@ class CompositeMotion : public Motion {
  public:
   /**
    * コンストラクタ
+   * @brief 外部リソースのインスタンスを初期化する
    */
   CompositeMotion(Robot& _robot);
 

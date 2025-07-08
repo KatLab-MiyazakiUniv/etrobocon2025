@@ -172,15 +172,17 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [1]:int フロントカメラをミニフィグに向けるための回頭角度[deg],
         // [2]:int 黒線復帰のための回頭角度[deg],
         // [3]:double 撮影前後の回頭のための目標速度,
-        // [4]:double 撮影前後の移動距離,
-        // [5]:double 撮影後の前進速度の絶対値[mm/s]
+        // [4]:double 撮影前の後退距離,
+        // [5]:double 撮影後の前進距離
         // [6]:double 撮影前の後退速度の絶対値[mm/s],
-        // [7] : string 回頭の方向(clockwise oranticlockwise)
-        // [8] : int 撮影位置(0が初期位置)
+        // [7]:double 撮影後の前進速度の絶対値[mm/s]
+        // [8] : string 回頭の方向(clockwise oranticlockwise)
+        // [9] : int 撮影位置(0が初期位置)
       case COMMAND::MCA: {
         MiniFigCameraAction* mca = new MiniFigCameraAction(
-            robot, convertBool(params[0], params[7]), stoi(params[1]), stoi(params[2]),
-            stod(params[3]), stod(params[4]), stod(params[5]), stod(params[6]), stoi(params[8]));
+            robot, convertBool(params[0], params[8]), stoi(params[1]), stoi(params[2]),
+            stod(params[3]), stod(params[4]), stod(params[5]), stod(params[6]), stod(params[7]),
+            stoi(params[9]));
         motionList.push_back(mca);
 
         break;
@@ -232,7 +234,7 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   // 末尾の改行を削除
   string param = StringOperator::removeEOL(stringParameter);
 
-  // 回転動作(AR)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  // 回転動作(AR,MCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
   if(command == "AR" || command == "MCA") {
     if(param == "clockwise") {
       return true;

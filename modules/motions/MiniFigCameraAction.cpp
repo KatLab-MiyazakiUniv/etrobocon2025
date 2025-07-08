@@ -10,34 +10,33 @@ using namespace std;
 
 MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
                                          int _postTargetAngle, double _targetRotationSpeed,
-                                         double _targetDistance, double _forwardSpeed,
-                                         double _backSpeed, int position)
+                                         double _backTargetDistance, double _forwardTargetDistance,
+                                         double _backSpeed, double _forwardSpeed, int position)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
     postTargetAngle(_postTargetAngle),
     targetRotationSpeed(_targetRotationSpeed),
-    targetDistance(_targetDistance),
-    forwardSpeed(_forwardSpeed),
+    backTargetDistance(_backTargetDistance),
+    forwardTargetDistance(_forwardTargetDistance),
     backSpeed(_backSpeed),
+    forwardSpeed(_forwardSpeed),
     position(position)
 {
 }
 
 void MiniFigCameraAction::run()
 {
+  // ミニフィグの向きがFRONTの場合は、撮影動作を行わない
   if(robot.getMiniFigDirectionResult().wasDetected
      && robot.getMiniFigDirectionResult().direction == MiniFigDirection::FRONT) {
-    // ミニフィグの向きがFRONTの場合は、撮影動作を行わない
     printf("ミニフィグの向きがFRONTなので撮影動作は行いません。\n");
     return;
   }
-  cv::Mat frame;
-  MiniFigDirectionDetection detection(robot, frame);
+
   // figの向きがFRONTの場合はそれ以外の場合は、撮影動作を行う。
 
   AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
-  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
 
   // 撮影のための回頭をする
   if(preTargetAngle != 0) {
@@ -48,15 +47,18 @@ void MiniFigCameraAction::run()
 
   // 後退
   // DistanceStraight(Robot& _robot, double _targetDistance, double _speed);
-  DistanceStraight back(robot, targetDistance, -backSpeed);
+  DistanceStraight back(robot, backTargetDistance, -backSpeed);
   back.run();
 
   // 撮影動作（撮影・判定・保存）を行う。
+  cv::Mat frame;
   robot.getCameraCaptureInstance().getFrame(frame);
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は一回目(初期位置での)の撮影でしか行わない
     std::cout << "判定動作実施" << std::endl;
+    MiniFigDirectionDetection detection(robot, frame);
     detection.run();
+    FrameSave::frameSave(frame, "etrobocon2025/datafiles/figures/", "upload_front_fig.jpeg");
     std::cout << "判定動作終了" << std::endl;
   } else if(position != 0 && robot.getMiniFigDirectionResult().wasDetected) {
     // 一回目の撮影でミニフィグが検出されていて、向きがFRONTじゃなければ、二回目の撮影でのミニフィグの向きは確実にFRONTになる。
@@ -73,8 +75,10 @@ void MiniFigCameraAction::run()
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
   // 前進
-  DistanceStraight forward(robot, targetDistance, forwardSpeed);
+  DistanceStraight forward(robot, forwardTargetDistance, forwardSpeed);
   forward.run();
+
+  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
 
   // 黒線復帰のための回頭をする
   if(postTargetAngle != 0) {
