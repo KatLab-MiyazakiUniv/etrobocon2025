@@ -7,7 +7,6 @@
 #include "MiniFigCameraAction.h"
 
 using namespace std;
-const string MiniFigCameraAction::filePath = "etrobocon2025/datafiles/figures/";
 
 MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
                                          int _postTargetAngle, double _targetRotationSpeed,
@@ -58,11 +57,10 @@ void MiniFigCameraAction::run()
 
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は一回目(初期位置での)の撮影でしか行わない
-    MiniFigDirectionDetection detection(robot, frame);
     std::cout << "判定動作実施" << std::endl;
     MiniFigDirectionDetection detection(robot, frame);
     detection.run();
-    FrameSave::frameSave(frame, "etrobocon2025/datafiles/figures/", "upload_front_fig.jpeg");
+    FrameSave::frameSave(frame, filePath, "upload_front_fig.jpeg");
     std::cout << "判定動作終了" << std::endl;
 
     if(robot.getMiniFigDirectionResult().wasDetected
@@ -90,8 +88,6 @@ void MiniFigCameraAction::run()
   // 前進
   DistanceStraight forward(robot, forwardTargetDistance, forwardSpeed);
   forward.run();
-
-  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
 
   // 黒線復帰のための回頭をする
   AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
