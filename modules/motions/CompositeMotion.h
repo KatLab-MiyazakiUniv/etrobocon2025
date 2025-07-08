@@ -4,8 +4,8 @@
  * @author nishijima515
  */
 
-#ifndef COMPOSITEMOTION_H
-#define COMPOSITEMOTION_H
+#ifndef COMPOSITE_MOTION_H
+#define COMPOSITE_MOTION_H
 
 #include "Motion.h"
 
@@ -14,6 +14,7 @@ class CompositeMotion : public Motion {
   /**
    * コンストラクタ
    * @brief 外部リソースのインスタンスを初期化する
+   * @param _robot ロボット制御クラスへの参照
    */
   CompositeMotion(Robot& _robot);
 

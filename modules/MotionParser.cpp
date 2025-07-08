@@ -171,12 +171,12 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // MCA: ミニフィグのカメラ撮影動作
         // [1]:int フロントカメラをミニフィグに向けるための回頭角度[deg],
         // [2]:int 黒線復帰のための回頭角度[deg],
-        // [3]:double 撮影前後の回頭のための目標速度,
-        // [4]:double 撮影前の後退距離,
-        // [5]:double 撮影後の前進距離
+        // [3]:double 撮影前後の回頭のための目標速度[mm/s],
+        // [4]:double 撮影前の後退距離[mm],
+        // [5]:double 撮影後の前進距離[mm],
         // [6]:double 撮影前の後退速度の絶対値[mm/s],
-        // [7]:double 撮影後の前進速度の絶対値[mm/s]
-        // [8] : string 回頭の方向(clockwise oranticlockwise)
+        // [7]:double 撮影後の前進速度の絶対値[mm/s],
+        // [8] : string 回頭の方向(clockwise oranticlockwise),
         // [9] : int 撮影位置(0が初期位置)
       case COMMAND::MCA: {
         MiniFigCameraAction* mca = new MiniFigCameraAction(
