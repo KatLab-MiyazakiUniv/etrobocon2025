@@ -25,19 +25,21 @@ MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _
 {
 }
 
-void MiniFigCameraAction::prepare()
-{  // ミニフィグの向きがFRONTの場合は、撮影動作を行わない
-  if(robot.getMiniFigDirectionResult().wasDetected
-     && robot.getMiniFigDirectionResult().direction == MiniFigDirection::FRONT) {
-    printf("ミニフィグの向きがFRONTなので撮影動作は行いません。\n");
-    return;
+bool MiniFigCameraAction::isMetPreCondition()
+{
+  if(position != 0 && robot.getMiniFigDirectionResult().wasDetected
+     && robot.getMiniFigDirectionResult().direction != static_cast<MiniFigDirection>(position)) {
+    printf("ミニフィグの撮影動作は行わない。\n");
+    return false;
+  } else {
+    return true;
   }
 }
 
 void MiniFigCameraAction::run()
 {
   // 事前準備
-  prepare();
+  isMetPreCondition();
 
   // 撮影のための回頭をする
   AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
@@ -60,7 +62,6 @@ void MiniFigCameraAction::run()
     std::cout << "判定動作実施" << std::endl;
     MiniFigDirectionDetection detection(robot, frame);
     detection.run();
-    FrameSave::frameSave(frame, filePath, "upload_front_fig.jpeg");
     std::cout << "判定動作終了" << std::endl;
 
     if(robot.getMiniFigDirectionResult().wasDetected
@@ -73,13 +74,13 @@ void MiniFigCameraAction::run()
             && robot.getMiniFigDirectionResult().direction
                    == static_cast<MiniFigDirection>(position)) {
     // 一回目の撮影でミニフィグが検出されていて、向きがFRONTじゃなければ、二回目の撮影でのミニフィグの向きは確実にFRONTになる。
-    std::cout << "2回目検出あり" << std::endl;
-    FrameSave::frameSave(frame, filePath, "upload_front_fig.jpeg");
+    std::cout << "正面での撮影" << std::endl;
+    FrameSave::frameSave(frame, filePath, "upload_front_fig");
   } else if(position != 0 && !robot.getMiniFigDirectionResult().wasDetected) {
     // 一回目検出falseなら、残り、3回の撮影は確定する。
     // 一回目の撮影でミニフィグが検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
-    std::cout << "2回目検出なし" << std::endl;
-    FrameSave::frameSave(frame, filePath, "Fig_" + to_string(position) + ".jpeg");
+    std::cout << "ミニフィグ向き判定用写真の撮影" << std::endl;
+    FrameSave::frameSave(frame, filePath, "Fig_" + to_string(position));
   }
 
   // 動作安定のためのスリープ
