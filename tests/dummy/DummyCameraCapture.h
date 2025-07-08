@@ -61,7 +61,7 @@ class DummyCameraCapture : public ICameraCapture {
 
  private:
   std::queue<bool> frameResults;  // フレーム取得の成功・失敗の順番を保持する
-  bool hasCustomFlag = false;     // setFrameResults()で結果リストを設定したかどうかを表すフラグ
+  bool hasCustomFlag = false;  // setFrameResults()で結果リストを設定したかどうかを表すフラグ
 };
 
 #endif
