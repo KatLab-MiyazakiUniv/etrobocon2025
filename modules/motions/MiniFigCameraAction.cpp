@@ -38,8 +38,10 @@ bool MiniFigCameraAction::isMetPreCondition()
 
 void MiniFigCameraAction::run()
 {
-  // 事前準備
-  isMetPreCondition();
+  // 事前条件判定
+  if(!isMetPreCondition()) {
+    return;
+  }
 
   // 撮影のための回頭をする
   AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
@@ -67,16 +69,14 @@ void MiniFigCameraAction::run()
     if(robot.getMiniFigDirectionResult().wasDetected
        && robot.getMiniFigDirectionResult().direction == MiniFigDirection::FRONT) {
       // FRONT方向の画像を保存
-      FrameSave::frameSave(frame, filePath, "upload_front_fig.jpg");
+      FrameSave::frameSave(frame, filePath, "upload_front_fig");
     }
 
-  } else if(position != 0 && robot.getMiniFigDirectionResult().wasDetected
-            && robot.getMiniFigDirectionResult().direction
-                   == static_cast<MiniFigDirection>(position)) {
+  } else if(robot.getMiniFigDirectionResult().wasDetected) {
     // 一回目の撮影でミニフィグが検出されていて、向きがFRONTじゃなければ、二回目の撮影でのミニフィグの向きは確実にFRONTになる。
     std::cout << "正面での撮影" << std::endl;
     FrameSave::frameSave(frame, filePath, "upload_front_fig");
-  } else if(position != 0 && !robot.getMiniFigDirectionResult().wasDetected) {
+  } else {
     // 一回目検出falseなら、残り、3回の撮影は確定する。
     // 一回目の撮影でミニフィグが検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
     std::cout << "ミニフィグ向き判定用写真の撮影" << std::endl;
