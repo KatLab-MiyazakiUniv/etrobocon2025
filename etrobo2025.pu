@@ -1,0 +1,532 @@
+@startuml
+!define ABSTRACT_STYLE <<abstract>>
+
+package "etrobocon2025" {
+
+  ' メインクラス
+  class EtRobocon2025 {
+    + {static} start(): void
+    - {static} robot: Robot
+  }
+
+  ' ロボット管理クラス
+  class Robot {
+    + Robot()
+    + Robot(ICameraCapture& cam)
+    + getMotorControllerInstance(): MotorController&
+    + getCameraCaptureInstance(): ICameraCapture&
+    + getColorSensorInstance(): spikeapi::ColorSensor&
+    + getClockInstance(): spikeapi::Clock&
+    + getButtonInstance(): spikeapi::Button&
+    + getForceSensorInstance(): spikeapi::ForceSensor&
+    + getDisplayInstance(): spikeapi::Display&
+    + setIsLeftEdge(bool isLeft): void
+    + getIsLeftEdge(): bool
+    - motorController: MotorController
+    - defaultCameraCapture: CameraCapture
+    - cameraCapture: ICameraCapture&
+    - colorSensor: spikeapi::ColorSensor
+    - clock: spikeapi::Clock
+    - button: spikeapi::Button
+    - forceSensor: spikeapi::ForceSensor
+    - display: spikeapi::Display
+    - isLeftEdge: bool
+  }
+
+  ' エリア管理クラス
+  class AreaMaster {
+    + AreaMaster(Robot& robot, Area area, bool isLeftCourse, int targetBrightness)
+    + run(): void
+    - robot: Robot&
+    - area: Area
+    - isLeftCourse: bool
+    - targetBrightness: int
+    - {static} basePath: std::string
+    - {static} areaCommandNames: std::array<std::string, 3>
+  }
+
+  ' キャリブレータクラス
+  class Calibrator {
+    + Calibrator(Robot& robot)
+    + selectAndSetCourse(): void
+    + measureAndSetTargetBrightness(): void
+    + waitForStart(): void
+    + getIsLeftCourse(): bool
+    + getTargetBrightness(): int
+    - robot: Robot&
+    - isLeftCourse: bool
+    - targetBrightness: int
+  }
+
+  ' パーサークラス
+  class MotionParser {
+    + {static} createMotions(Robot& robot, std::string& commandFilePath, int targetBrightness): std::vector<Motion*>
+    - MotionParser()
+    - {static} convertCommand(const std::string& str): COMMAND
+    - {static} convertBool(const std::string& command, const std::string& stringParameter): bool
+  }
+
+  ' 列挙型・構造体
+  enum Area {
+    LineTrace
+    DoubleLoop
+    SmartCarry
+  }
+
+  enum COMMAND {
+    AR
+    DS
+    CS
+    DL
+    DCL
+    CL
+    CDL
+    EC
+    SL
+    SS
+    NONE
+  }
+
+  enum COLOR {
+    NONE
+    BLACK
+    WHITE
+    BLUE
+    GREEN
+    YELLOW
+    RED
+  }
+
+  struct PidGain {
+    + kp: double
+    + ki: double
+    + kd: double
+    + PidGain(double kp, double ki, double kd)
+  }
+
+  ' API層
+  class MotorController {
+    + MotorController()
+    + setRightMotorPower(int power): void
+    + setLeftMotorPower(int power): void
+    + resetRightMotorPower(): void
+    + resetLeftMotorPower(): void
+    + resetWheelsMotorPower(): void
+    + setRightMotorSpeed(double speed): void
+    + setLeftMotorSpeed(double speed): void
+    + stopWheelsMotor(): void
+    + brakeWheelsMotor(): void
+    + setArmMotorPower(int power): void
+    + resetArmMotorPower(): void
+    + stopArmMotor(): void
+    + holdArmMotor(): void
+    + getRightMotorCount(): int32_t
+    + getLeftMotorCount(): int32_t
+    + getArmMotorCount(): int32_t
+    + getRightMotorPower(): int
+    + getLeftMotorPower(): int
+    + getArmMotorPower(): int
+    + getRightMotorSpeed(): double
+    + getLeftMotorSpeed(): double
+    - rightWheel: spikeapi::Motor
+    - leftWheel: spikeapi::Motor
+    - armMotor: spikeapi::Motor
+    - limitPowerValue(int inputPower): int
+    + {static} MOTOR_POWER_MAX: int
+    + {static} MOTOR_POWER_MIN: int
+  }
+
+  ' 計算系クラス
+  class Pid {
+    + Pid(double kp, double ki, double kd, double targetValue, double maxIntegral, double minIntegral)
+    + Pid(double kp, double ki, double kd, double targetValue)
+    + setPidGain(double kp, double ki, double kd): void
+    + calculatePid(double currentValue, double delta): double
+    - pidGain: PidGain
+    - prevDeviation: double
+    - integral: double
+    - filteredDerivative: double
+    - targetValue: double
+    - maxIntegral: double
+    - minIntegral: double
+    - {static} alpha: double
+  }
+
+  class ColorJudge {
+    + {static} convertStringToColor(const std::string& str): COLOR
+    + {static} convertColorToString(const COLOR& color): const char*
+    + {static} convertHsvToColor(const spikeapi::ColorSensor::HSV& hsv): COLOR
+    - ColorJudge()
+  }
+
+  class Mileage {
+    + {static} calculateWheelMileage(int32_t angle): double
+    + {static} calculateMileage(int32_t rightAngle, int32_t leftAngle): double
+    - Mileage()
+  }
+
+  class SpeedCalculator {
+    + SpeedCalculator(Robot& robot, double targetSpeed)
+    + calculateRightMotorPower(): double
+    + calculateLeftMotorPower(): double
+    - targetSpeed: double
+    - rightPid: Pid
+    - leftPid: Pid
+    - rightMotorPower: double
+    - leftMotorPower: double
+    - prevRightTime: double
+    - prevLeftTime: double
+    - robot: Robot&
+    - {static} RIGHT_K_P: double
+    - {static} RIGHT_K_I: double
+    - {static} RIGHT_K_D: double
+    - {static} LEFT_K_P: double
+    - {static} LEFT_K_I: double
+    - {static} LEFT_K_D: double
+  }
+
+  ' カメラ系
+  abstract class ICameraCapture {
+    + {abstract} findAvailableCameraID(int maxTested): int
+    + {abstract} getCameraID(): int
+    + {abstract} setCameraID(int id): bool
+    + {abstract} openCamera(): bool
+    + {abstract} setCapProps(double width, double height): void
+    + {abstract} getFrame(cv::Mat& outFrame): bool
+    + {abstract} getFrames(std::vector<cv::Mat>& frames, int numFrames, int millisecondInterval): bool
+    + {abstract} saveFrame(const cv::Mat& frame, std::string filepath, std::string filename): bool
+  }
+
+  class CameraCapture {
+    + CameraCapture()
+    + ~CameraCapture()
+    + findAvailableCameraID(int maxTested): int
+    + getCameraID(): int
+    + setCameraID(int id): bool
+    + openCamera(): bool
+    + setCapProps(double width, double height): void
+    + getFrame(cv::Mat& outFrame): bool
+    + getFrames(std::vector<cv::Mat>& frames, int numFrames, int millisecondInterval): bool
+    + saveFrame(const cv::Mat& frame, std::string filepath, std::string filename): bool
+    - cap: cv::VideoCapture
+    - imgExtension: std::string
+    - cameraID: int
+  }
+
+  ' 画像処理系
+  struct BoundingBoxDetectionResult {
+    + wasDetected: bool
+    + topLeft: cv::Point
+    + topRight: cv::Point
+    + bottomLeft: cv::Point
+    + bottomRight: cv::Point
+  }
+
+  abstract class BoundingBoxDetector {
+    + {abstract} detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
+  }
+
+  class LineBoundingBoxDetector {
+    + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV)
+    + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi)
+    + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi, const cv::Size& resolution)
+    + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
+    - {static} MIN_LINE_CONTOUR_AREA: double
+    - lowerHSV: cv::Scalar
+    - upperHSV: cv::Scalar
+    - roi: cv::Rect
+    - resolution: cv::Size
+    - validateParameters(): void
+  }
+
+  enum BackgroundDirection {
+    FRONT
+    BACK
+    RIGHT
+    LEFT
+  }
+
+  struct BackgroundDirectionResult {
+    + wasDetected: bool
+    + direction: BackgroundDirection
+  }
+
+  class BackgroundDirectionDetector {
+    + BackgroundDirectionDetector(const std::string& modelPath)
+    + detect(const cv::Mat& frame, BackgroundDirectionResult& result): void
+    - net: cv::dnn::Net
+    - modelPath: std::string
+    - outputImagePath: std::string
+    - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
+    - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, BackgroundDirectionResult& result): void
+  }
+
+  enum MiniFigDirection {
+    FRONT
+    RIGHT
+    BACK
+    LEFT
+  }
+
+  struct MiniFigDirectionResult {
+    + wasDetected: bool
+    + direction: MiniFigDirection
+  }
+
+  class MiniFigDirectionDetector {
+    + MiniFigDirectionDetector(const std::string& modelPath)
+    + detect(const cv::Mat& frame, MiniFigDirectionResult& result): void
+    - net: cv::dnn::Net
+    - modelPath: std::string
+    - outputImagePath: std::string
+    - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
+    - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, MiniFigDirectionResult& result): void
+  }
+
+  ' Motion基底クラス
+  abstract class Motion {
+    + Motion(Robot& robot)
+    + {abstract} run(): void
+    # robot: Robot&
+  }
+
+  abstract class LineTrace ABSTRACT_STYLE {
+    + LineTrace(Robot& robot, double targetSpeed, int targetBrightness, const PidGain& pidGain)
+    + run(): void
+    # {abstract} isMetPreCondition(): bool
+    # {abstract} prepare(): void
+    # {abstract} isMetContinuationCondition(): bool
+    # targetSpeed: double
+    # targetBrightness: int
+    # pidGain: PidGain
+  }
+
+  abstract class Straight ABSTRACT_STYLE {
+    + Straight(Robot& robot, double speed)
+    + run(): void
+    # {abstract} isMetPreCondition(): bool
+    # {abstract} prepare(): void
+    # {abstract} isMetContinuationCondition(): bool
+    # targetSpeed: double
+  }
+
+  abstract class Rotation ABSTRACT_STYLE {
+    + Rotation(Robot& robot, double speed, bool isClockwise)
+    + run(): void
+    + {abstract} prepare(): void
+    + {abstract} isMetPreCondition(): bool
+    + {abstract} isMetContinuationCondition(): bool
+    # speed: double
+    # isClockwise: bool
+    # leftSign: int
+    # rightSign: int
+  }
+
+  ' Motion具体実装
+  class DistanceLineTrace {
+    + DistanceLineTrace(Robot& robot, double targetDistance, double targetSpeed, int targetBrightness, const PidGain& pidGain)
+    # isMetPreCondition(): bool
+    # prepare(): void
+    # isMetContinuationCondition(): bool
+    - targetDistance: double
+    - initDistance: double
+  }
+
+  class ColorLineTrace {
+    + ColorLineTrace(Robot& robot, COLOR targetColor, double targetSpeed, int targetBrightness, const PidGain& gain)
+    # isMetPreCondition(): bool
+    # prepare(): void
+    # isMetContinuationCondition(): bool
+    - {static} JUDGE_COUNT: int
+    - colorCount: int
+    - targetColor: COLOR
+  }
+
+  class DistanceStraight {
+    + DistanceStraight(Robot& robot, double targetDistance, double speed)
+    # isMetPreCondition(): bool
+    # prepare(): void
+    # isMetContinuationCondition(): bool
+    - targetDistance: double
+    - initialDistance: double
+  }
+
+  abstract class CameraPidTracking ABSTRACT_STYLE {
+    + CameraPidTracking(Robot& robot, double targetSpeed, int targetXCoordinate, const PidGain& pidGain, BoundingBoxDetector& boundingBoxDetector)
+    + run(): void
+    # {abstract} isMetPreCondition(): bool
+    # {abstract} prepare(): void
+    # {abstract} isMetContinuationCondition(): bool
+    # boundingBoxDetector: BoundingBoxDetector&
+    # result: BoundingBoxDetectionResult
+    # targetSpeed: double
+    # targetXCoordinate: int
+    # pidGain: PidGain
+  }
+
+  class DistanceCameraLineTrace {
+    + DistanceCameraLineTrace(Robot& robot, double targetDistance, double targetSpeed, int targetXCoordinate, const PidGain& pidGain, std::unique_ptr<BoundingBoxDetector> detector)
+    # isMetPreCondition(): bool
+    # prepare(): void
+    # isMetContinuationCondition(): bool
+    - {static} JUDGE_COUNT: int
+    - targetDistance: double
+    - initDistance: double
+    - frameCount: int
+    - detector: std::unique_ptr<BoundingBoxDetector>
+  }
+
+  class AngleRotation {
+    + AngleRotation(Robot& robot, int targetAngle, double speed, bool isClockwise)
+    # prepare(): void
+    # isMetPreCondition(): bool
+    # isMetContinuationCondition(): bool
+    - targetLeftDistance: double
+    - targetRightDistance: double
+    - targetAngle: int
+  }
+
+  class ColorStraight {
+    + ColorStraight(Robot& robot, COLOR targetColor, double speed)
+    # isMetPreCondition(): bool
+    # prepare(): void
+    # isMetContinuationCondition(): bool
+    - colorCount: int
+    - targetColor: COLOR
+    - {static} JUDGE_COUNT: int
+  }
+
+  class ColorDistanceLineTrace {
+    + ColorDistanceLineTrace(Robot& robot, COLOR targetColor, double targetDistance, double targetSpeed, int targetBrightness, const PidGain& pidGain)
+    # isMetPreCondition(): bool
+    # prepare(): void
+    # isMetContinuationCondition(): bool
+    - {static} JUDGE_COUNT: int
+    - colorCount: int
+    - targetColor: COLOR
+    - targetDistance: double
+    - initDistance: double
+  }
+
+  class EdgeChange {
+    + EdgeChange(Robot& robot, const bool& isLeftEdge)
+    + run(): void
+    - isLeftEdge: const bool&
+  }
+
+  class Sleeping {
+    + Sleeping(Robot& robot, int microSec)
+    + run(): void
+    - microSec: int
+  }
+
+  class Snapshot {
+    + Snapshot(Robot& robot, const std::string& fileName)
+    + run(): void
+    - fileName: std::string
+    - {static} path: std::string
+  }
+
+  ' ユーティリティ
+  class StringOperator {
+    + {static} removeEOL(const std::string& str): std::string
+    - StringOperator()
+  }
+
+  ' システム定数
+  class SystemInfo <<constants>> {
+    + {static} PI: double
+    + {static} RAD_TO_DEG: double
+    + {static} DEG_TO_RAD: double
+    + {static} TREAD: double
+    + {static} WHEEL_RADIUS: double
+    + {static} RESOLUTION_WIDTH: int
+    + {static} RESOLUTION_HEIGHT: int
+    + {static} MIN_WIDTH: int
+    + {static} MIN_HEIGHT: int
+    + {static} MAX_WIDTH: int
+    + {static} MAX_HEIGHT: int
+  }
+
+}
+
+' 関係性の定義
+EtRobocon2025 --> Robot : 使用
+Robot *-- MotorController : 組成
+Robot *-- CameraCapture : 組成  
+Robot *-- ICameraCapture : 関連
+
+AreaMaster --> Robot : 使用
+AreaMaster --> MotionParser : 使用
+AreaMaster --> Area : 使用
+
+Calibrator --> Robot : 使用
+
+MotionParser --> Motion : 生成
+MotionParser --> COMMAND : 使用
+
+Robot --> spikeapi::ColorSensor : 管理
+Robot --> spikeapi::Clock : 管理
+Robot --> spikeapi::Button : 管理
+Robot --> spikeapi::ForceSensor : 管理
+Robot --> spikeapi::Display : 管理
+
+MotorController *-- spikeapi::Motor : 組成
+
+Pid *-- PidGain : 組成
+
+SpeedCalculator --> Robot : 使用
+SpeedCalculator *-- Pid : 組成
+
+CameraCapture --|> ICameraCapture : 実装
+
+LineBoundingBoxDetector --|> BoundingBoxDetector : 継承
+BoundingBoxDetector --> BoundingBoxDetectionResult : 使用
+LineBoundingBoxDetector --> BoundingBoxDetectionResult : 使用
+
+BackgroundDirectionDetector --> BackgroundDirectionResult : 使用
+BackgroundDirectionDetector --> BackgroundDirection : 使用
+
+MiniFigDirectionDetector --> MiniFigDirectionResult : 使用
+MiniFigDirectionDetector --> MiniFigDirection : 使用
+
+Motion --> Robot : 使用
+LineTrace --|> Motion : 継承
+Straight --|> Motion : 継承
+Rotation --|> Motion : 継承
+
+LineTrace --> PidGain : 使用
+LineTrace --> ColorJudge : 使用
+LineTrace --> Mileage : 使用
+LineTrace --> SpeedCalculator : 使用
+
+DistanceLineTrace --|> LineTrace : 継承
+ColorLineTrace --|> LineTrace : 継承
+ColorLineTrace --> COLOR : 使用
+
+DistanceStraight --|> Straight : 継承
+Straight --> SpeedCalculator : 使用
+
+CameraPidTracking --|> Motion : 継承
+CameraPidTracking --> BoundingBoxDetector : 使用
+CameraPidTracking --> PidGain : 使用
+CameraPidTracking --> BoundingBoxDetectionResult : 使用
+
+DistanceCameraLineTrace --|> CameraPidTracking : 継承
+DistanceCameraLineTrace --> BoundingBoxDetector : 使用
+
+AngleRotation --|> Rotation : 継承
+AngleRotation --> Mileage : 使用
+AngleRotation --> SystemInfo : 使用
+
+ColorStraight --|> Straight : 継承
+ColorStraight --> COLOR : 使用
+
+ColorDistanceLineTrace --|> LineTrace : 継承
+ColorDistanceLineTrace --> COLOR : 使用
+
+EdgeChange --|> Motion : 継承
+Sleeping --|> Motion : 継承
+Snapshot --|> Motion : 継承
+
+@enduml
