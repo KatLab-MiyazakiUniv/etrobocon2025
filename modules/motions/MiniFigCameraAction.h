@@ -47,7 +47,7 @@ class MiniFigCameraAction : public CompositeMotion {
   double forwardTargetDistance;  // 撮影後の前進距離
   double backSpeed;              // 撮影後の後退速度
   double forwardSpeed;           // 撮影前の前進速度
-  int position = 0;              // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
+  int position = 0;  // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
   static constexpr const char* filePath = "etrobocon2025/datafiles/figures/";  // 保存先のパス
 
   /**
