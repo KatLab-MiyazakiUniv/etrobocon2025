@@ -32,7 +32,7 @@ void Straight::run()
     robot.getMotorControllerInstance().setRightMotorPower(currentRightPower);
     robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower);
 
-    robot.getClockInstance().sleep(10000);  // 10000マイクロ秒(10ミリ秒)待機
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10000マイクロ秒(10ミリ秒)待機
   }
 
   // モータを停止
