@@ -8,6 +8,7 @@
 #define CALIBRATOR_H
 
 #include "Robot.h"
+#include "Snapshot.h"
 
 #define PRESS_POWER 0.5f
 
@@ -27,6 +28,11 @@ class Calibrator {
    * @brief 黒と白の輝度を測定して目標輝度を求めtargetBrightnessをセットする
    */
   void measureAndSetTargetBrightness();
+
+  /**
+   * @brief カメラ角度調整用のフレーム取得をする
+   */
+  void getAngleCheckFrame();
 
   /**
    * @brief スタート合図が出るまで待機状態にする

@@ -21,6 +21,11 @@ namespace spikeapi {
     bool isLeftPressed() const { return std::rand() % 2 == 0; }
 
     /**
+     * CENTERボタンが押されているかをランダムに判定
+     */
+    bool isCenterPressed() const { return std::rand() % 2 == 0; }
+
+    /**
      * RIGHTボタンが押されているかをランダムに判定
      */
     bool isRightPressed() const { return std::rand() % 2 == 0; }

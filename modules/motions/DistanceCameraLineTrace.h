@@ -47,10 +47,8 @@ class DistanceCameraLineTrace : public CameraPidTracking {
   bool isMetContinuationCondition() override;
 
  private:
-  static constexpr int JUDGE_COUNT = 3;           // フレーム取得最大失敗回数
   double targetDistance;                          // 目標距離
   double initDistance;                            // 実行前の走行距離
-  int frameCount = 0;                             // フレーム取得カウント
   std::unique_ptr<BoundingBoxDetector> detector;  // 画像処理クラスのポインタ
 };
 
