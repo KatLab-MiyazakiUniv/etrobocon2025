@@ -86,7 +86,7 @@ void MiniFigCameraAction::run()
   DistanceStraight back(robot, backTargetDistance, -backSpeed);
   back.run();
 
-    // 判定用の写真を撮影
+  // 判定用の写真を撮影
   cv::Mat frame;
   robot.getCameraCaptureInstance().getFrame(frame);
 
