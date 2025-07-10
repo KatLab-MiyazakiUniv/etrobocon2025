@@ -11,7 +11,9 @@
 #include "CompositeMotion.h"
 #include "AngleRotation.h"
 #include "DistanceStraight.h"
-#include "MiniFigDirectionDetection.h"
+// #include "MiniFigDirectionDetection.h"
+#include "MiniFigDirectionDetector.h"
+#include "FrameSave.h"
 
 class MiniFigCameraAction : public CompositeMotion {
  public:
@@ -54,5 +56,12 @@ class MiniFigCameraAction : public CompositeMotion {
    * @brief ミニフィグ撮影動作をする際の事前条件判定をする
    */
   bool isMetPreCondition();
+
+  /**
+   * @brief 判定動作を行う
+   * @param robot ロボットインスタンス
+   * @param frame 処理対象の画像フレーム
+   */
+  void detection(Robot& robot, cv::Mat& frame);
 };
 #endif

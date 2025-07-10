@@ -62,8 +62,7 @@ void MiniFigCameraAction::run()
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は一回目(初期位置での)の撮影でしか行わない
     std::cout << "判定動作実施" << std::endl;
-    MiniFigDirectionDetection detection(robot, frame);
-    detection.run();
+    detection(robot, frame);
     std::cout << "判定動作終了" << std::endl;
 
     if(robot.getMiniFigDirectionResult().wasDetected
@@ -93,4 +92,34 @@ void MiniFigCameraAction::run()
   // 黒線復帰のための回頭をする
   AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
   postAR.run();
+}
+
+void MiniFigCameraAction::detection(Robot& robot, cv::Mat& frame)
+{
+  MiniFigDirectionDetector detector;
+  // ミニフィグの向きを判定
+  detector.detect(frame, robot.getMiniFigDirectionResult());
+
+  // 検出結果を取得
+  MiniFigDirectionResult& result = robot.getMiniFigDirectionResult();
+
+  // デバッグ出力
+  if(result.wasDetected) {
+    switch(result.direction) {
+      case MiniFigDirection::FRONT:
+        printf("ミニフィグの向き: FRONT\n");
+        break;
+      case MiniFigDirection::BACK:
+        printf("ミニフィグの向き: BACK\n");
+        break;
+      case MiniFigDirection::LEFT:
+        printf("ミニフィグの向き: LEFT\n");
+        break;
+      case MiniFigDirection::RIGHT:
+        printf("ミニフィグの向き: RIGHT\n");
+        break;
+    }
+  } else {
+    printf("ミニフィグが検出されませんでした\n");
+  }
 }
