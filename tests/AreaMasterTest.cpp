@@ -7,6 +7,7 @@
 #include "AreaMaster.h"
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-port.h>
+#include "DummyCameraCapture.h"
 
 using namespace std;
 
@@ -15,7 +16,8 @@ namespace etrobocon2025_test {
   // 左コースでライントレースを行う場合のテスト
   TEST(AreaMasterTest, RunLineTraceLeft)
   {
-    Robot robot;
+    DummyCameraCapture cameraCapture;
+    Robot robot(cameraCapture);
     Area area = Area::LineTrace;
     bool isLeftCourse = true;
     int targetBrightness = 45;
@@ -40,7 +42,8 @@ namespace etrobocon2025_test {
   // 右コースでライントレースを行う場合のテスト
   TEST(AreaMasterTest, RunLineTraceRight)
   {
-    Robot robot;
+    DummyCameraCapture cameraCapture;
+    Robot robot(cameraCapture);
     Area area = Area::LineTrace;
     bool isLeftCourse = false;
     int targetBrightness = 45;
