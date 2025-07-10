@@ -120,6 +120,15 @@ void MiniFigCameraAction::run()
   DistanceStraight forward(robot, forwardTargetDistance, forwardSpeed);
   forward.run();
 
+  // 動作安定のためのスリープ
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+  robot.getMotorControllerInstance().setLeftMotorPower(0);
+  robot.getMotorControllerInstance().setRightMotorPower(0);
+
+  // 動作安定のためのスリープ
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
   // 黒線復帰のための回頭をする
   AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
   postAR.run();
