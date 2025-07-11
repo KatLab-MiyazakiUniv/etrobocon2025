@@ -25,6 +25,7 @@
 #include "EdgeChange.h"
 #include "Sleeping.h"
 #include "Snapshot.h"
+#include "MiniFigCameraAction.h"
 
 enum class COMMAND {
   AR,   // 角度指定回頭
@@ -37,6 +38,7 @@ enum class COMMAND {
   EC,   // エッジ切り替え
   SL,   // 自タスクスリープ
   SS,   // カメラ撮影動作
+  MCA,  // ミニフィグのカメラ撮影動作
   NONE
 };
 

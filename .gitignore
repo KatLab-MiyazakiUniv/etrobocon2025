@@ -3,6 +3,7 @@ bin
 datafiles/snapshots
 datafiles/processed_images
 datafiles/models
+datafiles/figures
 tests/test_images
 
 # yoloモデル
