@@ -11,7 +11,6 @@
 #include "CompositeMotion.h"
 #include "AngleRotation.h"
 #include "DistanceStraight.h"
-// #include "MiniFigDirectionDetection.h"
 #include "MiniFigDirectionDetector.h"
 #include "FrameSave.h"
 
@@ -51,6 +50,7 @@ class MiniFigCameraAction : public CompositeMotion {
   double forwardSpeed;           // 撮影前の前進速度
   int position = 0;  // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
   static constexpr const char* filePath = "etrobocon2025/datafiles/figures/";  // 保存先のパス
+  static constexpr const char* uploadFileName = "upload_front_fig";  // アップロード用の画像名
 
   /**
    * @brief ミニフィグ撮影動作をする際の事前条件判定をする
@@ -62,6 +62,6 @@ class MiniFigCameraAction : public CompositeMotion {
    * @param robot ロボットインスタンス
    * @param frame 処理対象の画像フレーム
    */
-  void detection(Robot& robot, cv::Mat& frame);
+  void detectDirection(cv::Mat& frame);
 };
 #endif

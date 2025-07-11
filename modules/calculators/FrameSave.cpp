@@ -5,7 +5,7 @@
  */
 #include "FrameSave.h"
 
-void FrameSave::frameSave(cv::Mat& frame, const std::string& filePath, const std::string& fileName)
+void FrameSave::save(cv::Mat& frame, const std::string& filePath, const std::string& fileName)
 {
   if(frame.empty()) {
     std::cerr << "保存するフレームがありません。" << std::endl;

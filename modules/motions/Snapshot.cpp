@@ -21,5 +21,5 @@ void Snapshot::run()
     return;
   }
   // 写真を保存する
-  FrameSave::frameSave(frame, path, fileName);
+  FrameSave::save(frame, path, fileName);
 }
