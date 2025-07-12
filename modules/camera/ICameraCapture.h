@@ -22,7 +22,6 @@ class ICameraCapture {
   virtual void setCapProps(double width, double height) = 0;
   virtual bool getFrame(cv::Mat& outFrame) = 0;
   virtual bool getFrames(std::vector<cv::Mat>& frames, int numFrames, int millisecondInterval) = 0;
-  virtual bool saveFrame(const cv::Mat& frame, std::string filepath, std::string filename) = 0;
 };
 
 #endif
