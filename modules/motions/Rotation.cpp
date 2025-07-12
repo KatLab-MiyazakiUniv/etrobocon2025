@@ -27,8 +27,20 @@ void Rotation::run()
   motorController.setLeftMotorSpeed(speed * leftSign);
   motorController.setRightMotorSpeed(speed * rightSign);
 
+  SpeedCalculator rightSpeedCalculator(robot, speed * rightSign);
+  SpeedCalculator leftSpeedCalculator(robot, speed * leftSign);
+
   while(isMetContinuationCondition()) {
     // 回頭継続条件が満たされるまで待機（モーターが走行中）
+    // Power値を計算
+    double currentRightPower = rightSpeedCalculator.calculateRightMotorPower();
+    double currentLeftPower = leftSpeedCalculator.calculateLeftMotorPower();
+
+    // モーターにPower値をセット
+    robot.getMotorControllerInstance().setRightMotorPower(currentRightPower);
+    robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 
   // モーターを停止

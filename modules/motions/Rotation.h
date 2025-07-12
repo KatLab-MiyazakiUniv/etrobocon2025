@@ -8,6 +8,7 @@
 #define ROTATION_H
 
 #include "Motion.h"
+#include "SpeedCalculator.h"
 
 class Rotation : public Motion {
  public:
