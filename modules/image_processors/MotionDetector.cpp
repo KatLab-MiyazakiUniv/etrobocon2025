@@ -44,14 +44,21 @@ void MotionDetector::detect(const cv::Mat& frame, BoundingBoxDetectionResult& re
 
   // 平滑化してノイズを減らす
   cv::GaussianBlur(gray, gray, cv::Size(21, 21), 0);
+  //デバッグ用
+  cv::imwrite("etrobocon2025/datafiles/snapshots/gray.JPEG", gray);
 
   // 現在のフレームと静的背景モデルとの差分を計算
   cv::Mat frameDelta;
   cv::absdiff(gray, bgModel, frameDelta);
+  // デバッグ用
+  cv::imwrite("etrobocon2025/datafiles/snapshots/delta.JPEG", frameDelta);
+
 
   // 差分画像を閾値処理して、動きのあった領域を二値化
   cv::Mat thresh;
   cv::threshold(frameDelta, thresh, threshold, 255, cv::THRESH_BINARY);
+  // デバッグ用
+  cv::imwrite("etrobocon2025/datafiles/snapshots/thresh.JPEG", thresh);
 
   // 膨張処理で検出領域の穴を埋め、より明確な輪郭を得る
   cv::dilate(thresh, thresh, cv::Mat(), cv::Point(-1, -1), 2);
