@@ -87,7 +87,9 @@ void MiniFigCameraAction::run()
 
   // 判定用の写真を撮影
   cv::Mat frame;
-  robot.getCameraCaptureInstance().getFrame(frame);
+  for(int i = 0; i < 5; i++) {
+    robot.getCameraCaptureInstance().getFrame(frame);
+  }
 
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は一回目(初期位置での)の撮影でしか行わない
