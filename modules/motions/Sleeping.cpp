@@ -6,9 +6,9 @@
 
 #include "Sleeping.h"
 
-Sleeping::Sleeping(Robot& _robot, int _microSec) : Motion(_robot), microSec(_microSec) {}
+Sleeping::Sleeping(Robot& _robot, int _milliSec) : Motion(_robot), milliSec(_milliSec) {}
 
 void Sleeping::run()
 {
-  std::this_thread::sleep_for(std::chrono::milliseconds(microSec));
+  std::this_thread::sleep_for(std::chrono::milliseconds(milliSec));
 }

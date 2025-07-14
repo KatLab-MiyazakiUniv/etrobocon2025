@@ -12,7 +12,7 @@ Calibrator::Calibrator(Robot& _robot) : robot(_robot), isLeftCourse(true), targe
 
 void Calibrator::selectAndSetCourse()
 {
-  robot.getDisplayInstance().showChar('C');
+  robot.getDisplayInstance().showChar('C');  // C:コース
   while(1) {
     // 左ボタンが押されたときRコースがセットされていれば、Lコースをセットする
     if(robot.getButtonInstance().isLeftPressed() && !isLeftCourse) {
@@ -162,6 +162,7 @@ void Calibrator::getAngleCheckFrame()
 
 void Calibrator::waitForStart()
 {
+  // 5×5のディスプレイ上に"ET"という文字を出力するための配列データ
   uint8_t ET_image[25]
       = { 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0 };
   printf("On standby.\n");
