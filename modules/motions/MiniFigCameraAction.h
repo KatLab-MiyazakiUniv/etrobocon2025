@@ -40,26 +40,27 @@ class MiniFigCameraAction : public CompositeMotion {
   void run() override;
 
  private:
-  bool isClockwise = false;      // カメラをミニフィグに向けるための回頭方向
-  int preTargetAngle;            // カメラをミニフィグに向けるための回頭角度
-  int postTargetAngle;           // 黒線復帰のための目標角度
-  double targetRotationSpeed;    // 撮影前後の回頭のための目標速度
-  double backTargetDistance;     // 撮影前の後退距離
-  double forwardTargetDistance;  // 撮影後の前進距離
-  double backSpeed;              // 撮影後の後退速度
-  double forwardSpeed;           // 撮影前の前進速度
+  bool isClockwise = false;          // カメラをミニフィグに向けるための回頭方向
+  int preTargetAngle = 90;           // カメラをミニフィグに向けるための回頭角度
+  int postTargetAngle = 90;          // 黒線復帰のための目標角度
+  double targetRotationSpeed = 200;  // 撮影前後の回頭のための目標速度
+  double backTargetDistance = 150;   // 撮影前の後退距離
+  double forwardTargetDistance = 150;  // 撮影後の前進距離
+  double backSpeed = 200;              // 撮影後の後退速度
+  double forwardSpeed = 200;           // 撮影前の前進速度
   int position = 0;  // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
-  static constexpr const char* filePath = "etrobocon2025/datafiles/figures/";  // 保存先のパス
+  static constexpr const char* filePath
+      = "etrobocon2025/datafiles/figures/";  // ミニフィグ画像保存先のディレクトリパス
   static constexpr const char* uploadFileName = "upload_front_fig";  // アップロード用の画像名
 
   /**
    * @brief ミニフィグ撮影動作をする際の事前条件判定をする
+   * @return true: 事前条件を満たす,false: 事前条件を満たさない
    */
   bool isMetPreCondition();
 
   /**
    * @brief 判定動作を行う
-   * @param robot ロボットインスタンス
    * @param frame 処理対象の画像フレーム
    */
   void detectDirection(cv::Mat& frame);

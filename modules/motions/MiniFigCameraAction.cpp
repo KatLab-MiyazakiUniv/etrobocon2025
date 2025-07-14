@@ -29,7 +29,7 @@ bool MiniFigCameraAction::isMetPreCondition()
 {
   if(position != 0 && robot.getMiniFigDirectionResult().wasDetected
      && robot.getMiniFigDirectionResult().direction != static_cast<MiniFigDirection>(position)) {
-    printf("ミニフィグの撮影動作は行わない。\n");
+    std::cout << "ミニフィグの撮影動作は行わない。" << std::endl;
     return false;
   } else {
     return true;
@@ -50,20 +50,20 @@ void MiniFigCameraAction::detectDirection(cv::Mat& frame)
   if(result.wasDetected) {
     switch(result.direction) {
       case MiniFigDirection::FRONT:
-        printf("ミニフィグの向き: FRONT\n");
+        std::cout << "ミニフィグの向き: FRONT" << std::endl;
         break;
       case MiniFigDirection::BACK:
-        printf("ミニフィグの向き: BACK\n");
+        std::cout << "ミニフィグの向き: BACK" << std::endl;
         break;
       case MiniFigDirection::LEFT:
-        printf("ミニフィグの向き: LEFT\n");
+        std::cout << "ミニフィグの向き: LEFT" << std::endl;
         break;
       case MiniFigDirection::RIGHT:
-        printf("ミニフィグの向き: RIGHT\n");
+        std::cout << "ミニフィグの向き: RIGHT" << std::endl;
         break;
     }
   } else {
-    printf("ミニフィグが検出されませんでした\n");
+    std::cout << "ミニフィグが検出されませんでした" << std::endl;
   }
 }
 

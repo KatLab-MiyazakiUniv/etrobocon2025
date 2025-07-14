@@ -15,11 +15,8 @@
 
 class FrameSave {
  public:
-  // FrameSave(Robot& _robot, cv::Mat& _frame, const std::string& _filepath,
-  //           const std::string& _filename);
-
   /**
-   * @brief カメラ撮影を行い、画像を保存する
+   * @brief 画像を保存する
    */
   static void save(cv::Mat& frame, const std::string& filePath, const std::string& fileName);
 
