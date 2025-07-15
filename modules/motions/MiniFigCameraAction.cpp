@@ -47,23 +47,22 @@ void MiniFigCameraAction::detectDirection(cv::Mat& frame)
   MiniFigDirectionResult& result = robot.getMiniFigDirectionResult();
 
   // デバッグ出力
-  if(result.wasDetected) {
-    switch(result.direction) {
-      case MiniFigDirection::FRONT:
-        std::cout << "ミニフィグの向き: FRONT" << std::endl;
-        break;
-      case MiniFigDirection::BACK:
-        std::cout << "ミニフィグの向き: BACK" << std::endl;
-        break;
-      case MiniFigDirection::LEFT:
-        std::cout << "ミニフィグの向き: LEFT" << std::endl;
-        break;
-      case MiniFigDirection::RIGHT:
-        std::cout << "ミニフィグの向き: RIGHT" << std::endl;
-        break;
-    }
-  } else {
+  if(!result.wasDetected) {
     std::cout << "ミニフィグが検出されませんでした" << std::endl;
+  }
+  switch(result.direction) {
+    case MiniFigDirection::FRONT:
+      std::cout << "ミニフィグの向き: FRONT" << std::endl;
+      break;
+    case MiniFigDirection::BACK:
+      std::cout << "ミニフィグの向き: BACK" << std::endl;
+      break;
+    case MiniFigDirection::LEFT:
+      std::cout << "ミニフィグの向き: LEFT" << std::endl;
+      break;
+    case MiniFigDirection::RIGHT:
+      std::cout << "ミニフィグの向き: RIGHT" << std::endl;
+      break;
   }
 }
 
