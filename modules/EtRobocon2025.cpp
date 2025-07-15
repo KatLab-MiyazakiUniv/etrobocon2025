@@ -1,3 +1,9 @@
+/**
+ * @file   EtRobocon2025.cpp
+ * @brief  全体を制御するクラス
+ * @author takahashitom takuchi17
+ */
+
 #include "EtRobocon2025.h"
 #include "AreaMaster.h"
 
@@ -7,9 +13,10 @@ void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
 
-  robot.getCameraCaptureInstance().setCameraID(
-      robot.getCameraCaptureInstance().findAvailableCameraID());
-  robot.getCameraCaptureInstance().openCamera();
+  if(!robot.getCameraCaptureInstance().setCameraID(
+         robot.getCameraCaptureInstance().findAvailableCameraID()))
+    return;
+  if(!robot.getCameraCaptureInstance().openCamera()) return;
 
   cv::Mat frame;
   while(!robot.getCameraCaptureInstance().getFrame(frame)) {
@@ -24,7 +31,7 @@ void EtRobocon2025::start()
   calibrator.getAngleCheckFrame();
   calibrator.waitForStart();
 
-  Area area = Area::LineTrace;
-  AreaMaster areaMaster(robot, area, isLeftCourse, targetBrightness);
+  Area lineTraceArea = Area::LineTrace;
+  AreaMaster areaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
   areaMaster.run();
 }
