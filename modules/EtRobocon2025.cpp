@@ -5,6 +5,7 @@
  */
 
 #include "EtRobocon2025.h"
+#include "AreaMaster.h"
 
 Robot EtRobocon2025::robot;  // Robotインスタンス
 
@@ -13,15 +14,17 @@ void EtRobocon2025::start()
   std::cout << "Hello KATLAB" << std::endl;
 
   // 背景画像と動体画像を読み込む
-  cv::Mat bg = cv::imread("datafiles/snapshots/background.jpg", cv::IMREAD_GRAYSCALE);
-  cv::Mat frame = cv::imread("datafiles/snapshots/test_frame.jpg");
+  cv::Mat bg = cv::imread("etrobocon2025/datafiles/snapshots/bg1.JPEG", cv::IMREAD_GRAYSCALE);
+  cv::Mat frame = cv::imread("etrobocon2025/datafiles/snapshots/m1.JPEG");
 
   if(bg.empty() || frame.empty()) {
     std::cerr << "Error: 画像の読み込みに失敗しました。" << std::endl;
   }
 
+  cv::Rect roi(0, 0, 800, 450);
+
   // 動体検知器を初期化
-  MotionDetector detector(25.0, 500.0);
+  MotionDetector detector(30.0, 500.0, roi);
 
   // 背景モデルをセット
   detector.setBackground(bg);
@@ -38,5 +41,5 @@ void EtRobocon2025::start()
     std::cout << "Bottom Right: " << result.bottomRight << std::endl;
   } else {
     std::cout << "動体は検知されませんでした。" << std::endl;
-  }
+  }  
 }

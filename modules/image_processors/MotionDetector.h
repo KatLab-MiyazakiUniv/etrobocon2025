@@ -15,9 +15,10 @@ class MotionDetector : public BoundingBoxDetector {
   /**
    * コンストラクタ
    * @param _threshold 差分の閾値（この値より大きい差分を動体として検出する）
-   *  @param _minArea 動体として認識する最小の輪郭面積
+   * @param _minArea 動体として認識する最小の輪郭面積
+   * @param roi 注目領域
    */
-  MotionDetector(double _threshold, double _minArea);
+  MotionDetector(double _threshold, double _minArea, const cv::Rect& _roi);
 
   /**
    * @brief         静的な背景画像を設定する
@@ -34,7 +35,8 @@ class MotionDetector : public BoundingBoxDetector {
 
  private:
   double threshold;       // 差分の閾値
-  double minArea = 50.0;  // 動体として認識する最小の輪郭面積
+  double minArea;  // 動体として認識する最小の輪郭面積
+  cv::Rect roi;         // 注目領域
   cv::Mat bgModel;        // 背景モデル
 };
 
