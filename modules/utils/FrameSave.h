@@ -17,6 +17,9 @@ class FrameSave {
  public:
   /**
    * @brief 画像を保存する
+   * @param frame 保存する画像を格納するcv::Mat参照
+   * @param filePath　画像保存先のディレクトリパス
+   * @param fileName 保存する画像の名前
    */
   static void save(cv::Mat& frame, const std::string& filePath, const std::string& fileName);
 
