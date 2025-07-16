@@ -14,7 +14,7 @@ MotionDetector::MotionDetector(double _threshold, double _minArea, const cv::Rec
 
 void MotionDetector::setBackground(const cv::Mat& background)
 {
-  if(background.empty() || background.channels() != 1) {
+  if(background.empty()) {
     std::cerr << "Error: Invalid background image. It must be a non-empty, single-channel "
                  "(grayscale) image."
               << std::endl;

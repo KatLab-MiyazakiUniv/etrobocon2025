@@ -87,7 +87,7 @@ void PlaCameraAction::run()
     }
 
     // 約30fpsの速度を想定して33msのウェイトを入れる
-    std::this_thread::sleep_for(std::chrono::milliseconds(33));
+    std::this_thread::sleep_for(std::chrono::milliseconds(30));
   }
 
   // 撮影されたフレームの数を出力

@@ -13,33 +13,27 @@ void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
 
-  // 背景画像と動体画像を読み込む
-  cv::Mat bg = cv::imread("etrobocon2025/datafiles/snapshots/bg1.JPEG", cv::IMREAD_GRAYSCALE);
-  cv::Mat frame = cv::imread("etrobocon2025/datafiles/snapshots/m1.JPEG");
+  // // 背景画像と動体画像を読み込む
+  // cv::Mat bg = cv::imread("etrobocon2025/datafiles/snapshots/bg1.JPEG", cv::IMREAD_GRAYSCALE);
+  // cv::Mat frame = cv::imread("etrobocon2025/datafiles/snapshots/m1.JPEG");
 
-  if(bg.empty() || frame.empty()) {
-    std::cerr << "Error: 画像の読み込みに失敗しました。" << std::endl;
+  // if(bg.empty() || frame.empty()) {
+  //   std::cerr << "Error: 画像の読み込みに失敗しました。" << std::endl;
+  // }
+
+  robot.getCameraCaptureInstance().setCameraID(
+      robot.getCameraCaptureInstance().findAvailableCameraID());
+  robot.getCameraCaptureInstance().openCamera();
+
+  cv::Mat frame;
+  while(!robot.getCameraCaptureInstance().getFrame(frame)) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 
-  cv::Rect roi(0, 0, 800, 450);
+  cv::Rect roi(100, 0, 600, 350);
 
   // 動体検知器を初期化
-  MotionDetector detector(30.0, 500.0, roi);
+  PlaCameraAction plaCameraAction(robot, 30.0, 500.0, roi);
 
-  // 背景モデルをセット
-  detector.setBackground(bg);
-
-  // 動体検知
-  BoundingBoxDetectionResult result;
-  detector.detect(frame, result);
-
-  if(result.wasDetected) {
-    std::cout << "動体検知成功！" << std::endl;
-    std::cout << "Top Left: " << result.topLeft << std::endl;
-    std::cout << "Top Right: " << result.topRight << std::endl;
-    std::cout << "Bottom Left: " << result.bottomLeft << std::endl;
-    std::cout << "Bottom Right: " << result.bottomRight << std::endl;
-  } else {
-    std::cout << "動体は検知されませんでした。" << std::endl;
-  }
+  plaCameraAction.run();
 }
