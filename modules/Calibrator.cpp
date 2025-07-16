@@ -162,15 +162,11 @@ void Calibrator::getAngleCheckFrame()
 
 void Calibrator::waitForStart()
 {
-  // 5×5のディスプレイ上に"ET"という文字を出力するための配列データ
-  uint8_t ET_image[25]
-      = { 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0 };
   printf("On standby.\n");
   // ForceSensorが押されるまで待機
   while(!robot.getForceSensorInstance().isPressed(PRESS_POWER)) {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
   }
-  robot.getDisplayInstance().setImage(ET_image);
 }
 
 bool Calibrator::getIsLeftCourse()
