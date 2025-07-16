@@ -85,11 +85,7 @@ void PlaCameraAction::run()
   cv::Mat bestFrame = capturedFrames.at(indexOfFrames);
 
   // bestFrameをJPEGで出力
-  if(FrameSave::save(bestFrame, filePath, uploadFile)) {
-    std::cout << "Center frame saved  " << std::endl;
-  } else {
-    std::cerr << "Failed to save" << std::endl;
-  }
+  FrameSave::save(bestFrame, filePath, uploadFile)
 }
 
 void PlaCameraAction::getBackgroundFrame()
@@ -108,7 +104,8 @@ void PlaCameraAction::getBackgroundFrame()
     // 撮影間隔をあけ動体検出の正確性の向上
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     robot.getCameraCaptureInstance().getFrame(secondFrame);
-    std::vector<cv::Point> largestContour = motionDetector.compareTwoFrames(frame, secondFrame);
+    std::vector<cv::Point> largestContour
+        = motionDetector.compareTwoFrames(firstFrame, secondFrame);
 
     // 動体が検知されなかったら背景画像を撮影できたと判断
     if(largestContour.empty()) {
