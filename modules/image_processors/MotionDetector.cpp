@@ -14,65 +14,48 @@ MotionDetector::MotionDetector(double _threshold, double _minArea, const cv::Rec
 
 void MotionDetector::setBackground(const cv::Mat& background)
 {
-  // 背景が空でないこと、グレースケールであることを確認
   if(background.empty() || background.channels() != 1) {
     std::cerr << "Error: Invalid background image. It must be a non-empty, single-channel "
                  "(grayscale) image."
               << std::endl;
     return;
   }
-  bgModel = background.clone();
+  bgFrame = background.clone();
 }
 
-void MotionDetector::detect(const cv::Mat& frame, BoundingBoxDetectionResult& result)
+std::vector<cv::Point> MotionDetector::compareTwoFrames(const cv::Mat& firstFrame,
+                                                        const cv::Mat& secondFrame)
 {
-  result.wasDetected = false;  // 初期状態は検出失敗
-
-  if(frame.empty()) {
+  if(firstFrame.empty() || secondFrame.empty()) {
     std::cerr << "Error: Input frame is empty." << std::endl;
-    return;
+    return {};
   }
 
-  if(bgModel.empty()) {
-    std::cerr << "Error: Background model is not set. Call setBackground() first." << std::endl;
-    return;
-  }
-
-  // ROIが画像サイズを超えないようにクリップ
-  cv::Rect clippedRoi = roi & cv::Rect(0, 0, frame.cols, frame.rows);
+  // ROI clip
+  cv::Rect clippedRoi = roi & cv::Rect(0, 0, firstFrame.cols, firstFrame.rows);
   if(clippedRoi.empty()) {
     std::cerr << "Error: ROI is empty after clipping." << std::endl;
-    return;
+    return {};
   }
 
-  // ROI部分を抽出
-  cv::Mat roiFrame = frame(clippedRoi);
-  cv::Mat roiBgModel = bgModel(clippedRoi);
-
-  // グレースケール化
+  cv::Mat roiFrame = secondFrame(clippedRoi);
   cv::Mat gray;
   cv::cvtColor(roiFrame, gray, cv::COLOR_BGR2GRAY);
-
-  // 平滑化
   cv::GaussianBlur(gray, gray, cv::Size(21, 21), 0);
-  cv::imwrite("etrobocon2025/datafiles/snapshots/gray.JPEG", gray);
 
-  // 差分計算
+  cv::Mat roiFirstFrameGray;
+  cv::cvtColor(firstFrame(clippedRoi), roiFirstFrameGray, cv::COLOR_BGR2GRAY);
+  cv::GaussianBlur(roiFirstFrameGray, roiFirstFrameGray, cv::Size(21, 21), 0);
+
   cv::Mat frameDelta;
-  cv::absdiff(gray, roiBgModel, frameDelta);
-  cv::imwrite("etrobocon2025/datafiles/snapshots/delta.JPEG", frameDelta);
-
-  // 閾値処理と膨張
+  cv::absdiff(gray, roiFirstFrameGray, frameDelta);
   cv::Mat thresh;
   cv::threshold(frameDelta, thresh, threshold, 255, cv::THRESH_BINARY);
-  cv::imwrite("etrobocon2025/datafiles/snapshots/thresh.JPEG", thresh);
   cv::dilate(thresh, thresh, cv::Mat(), cv::Point(-1, -1), 2);
 
-  // 輪郭検出
   std::vector<std::vector<cv::Point>> contours;
   cv::findContours(thresh.clone(), contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
-  // 最大輪郭を見つける
   double maxArea = 0;
   std::vector<cv::Point> largestContour;
   for(const auto& contour : contours) {
@@ -83,23 +66,32 @@ void MotionDetector::detect(const cv::Mat& frame, BoundingBoxDetectionResult& re
     }
   }
 
-  // 動体が見つかった場合
-  if(!largestContour.empty()) {
-    result.wasDetected = true;
-    cv::Rect boundingBox = cv::boundingRect(largestContour);
+  return largestContour;
+}
 
-    // ROI内の座標 → 元画像の座標に変換
-    boundingBox.x += clippedRoi.x;
-    boundingBox.y += clippedRoi.y;
+void MotionDetector::detect(const cv::Mat& frame, BoundingBoxDetectionResult& result)
+{
+  result.wasDetected = false;
 
-    result.topLeft = boundingBox.tl();
-    result.topRight = cv::Point(boundingBox.x + boundingBox.width, boundingBox.y);
-    result.bottomLeft = cv::Point(boundingBox.x, boundingBox.y + boundingBox.height);
-    result.bottomRight = boundingBox.br();
-
-    // デバッグ用
-    cv::Mat debugFrame = frame.clone();
-    cv::rectangle(debugFrame, boundingBox, cv::Scalar(0, 255, 0), 2);
-    cv::imwrite("etrobocon2025/datafiles/snapshots/debug.JPEG", debugFrame);
+  if(bgFrame.empty()) {
+    std::cerr << "Error: Background model is not set. Call setBackground() first." << std::endl;
+    return;
   }
+
+  std::vector<cv::Point> largestContour = compareTwoFrames(bgFrame, frame);
+  if(largestContour.empty()) return;
+
+  result.wasDetected = true;
+  cv::Rect boundingBox = cv::boundingRect(largestContour);
+  boundingBox.x += roi.x;
+  boundingBox.y += roi.y;
+
+  result.topLeft = boundingBox.tl();
+  result.topRight = cv::Point(boundingBox.x + boundingBox.width, boundingBox.y);
+  result.bottomLeft = cv::Point(boundingBox.x, boundingBox.y + boundingBox.height);
+  result.bottomRight = boundingBox.br();
+
+  cv::Mat debugFrame = frame.clone();
+  cv::rectangle(debugFrame, boundingBox, cv::Scalar(0, 255, 0), 2);
+  cv::imwrite("etrobocon2025/datafiles/snapshots/debug.JPEG", debugFrame);
 }
