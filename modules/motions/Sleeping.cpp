@@ -10,5 +10,5 @@ Sleeping::Sleeping(Robot& _robot, int _microSec) : Motion(_robot), microSec(_mic
 
 void Sleeping::run()
 {
-  robot.getClockInstance().sleep(microSec);
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }

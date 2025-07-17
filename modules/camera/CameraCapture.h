@@ -69,18 +69,8 @@ class CameraCapture : public ICameraCapture {
    */
   bool getFrames(std::vector<cv::Mat>& frames, int numFrames, int millisecondInterval) override;
 
-  /**
-   * @brief 画像をファイルに保存する
-   * @param frame 保存する画像
-   * @param filepath workspaceディレクトリから見た保存先ディレクトリのパス
-   * @param filename 保存するファイル名（拡張子なし）
-   * @return 保存に成功した場合はtrue、失敗した場合はfalse
-   */
-  bool saveFrame(const cv::Mat& frame, std::string filepath, std::string filename) override;
-
  private:
   cv::VideoCapture cap;
-  std::string imgExtension = ".JPEG";
   int cameraID;
 };
 
