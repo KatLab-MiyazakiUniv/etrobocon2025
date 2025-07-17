@@ -66,7 +66,7 @@ void CameraPidTracking::run()
     robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
 
     // 10ms待機
-    robot.getClockInstance().sleep(10000);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 
   // モータを停止

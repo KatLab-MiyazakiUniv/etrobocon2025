@@ -33,6 +33,13 @@ namespace spikeapi {
     void off() {}
 
     /**
+     * イメージの行列(5x5)で表示する
+     * param image 輝度の行列。２次元配列でも良い
+     * return -
+     */
+    void setImage(uint8_t* image) {}
+
+    /**
      * 1文字あるいは記号を表示する
      * param c
      * return -
