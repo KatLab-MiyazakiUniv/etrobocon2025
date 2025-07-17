@@ -32,6 +32,6 @@ void EtRobocon2025::start()
   calibrator.waitForStart();
 
   Area lineTraceArea = Area::LineTrace;
-  AreaMaster areaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
-  areaMaster.run();
+  AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
+  lineTraceAreaMaster.run();
 }
