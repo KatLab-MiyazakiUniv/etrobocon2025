@@ -53,7 +53,6 @@ void MotionDetector::detect(const cv::Mat& frame, BoundingBoxDetectionResult& re
   // デバッグ用
   cv::imwrite("etrobocon2025/datafiles/snapshots/delta.JPEG", frameDelta);
 
-
   // 差分画像を閾値処理して、動きのあった領域を二値化
   cv::Mat thresh;
   cv::threshold(frameDelta, thresh, threshold, 255, cv::THRESH_BINARY);
