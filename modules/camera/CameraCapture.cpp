@@ -148,26 +148,3 @@ bool CameraCapture::getFrames(vector<cv::Mat>& frames, int numFrames, int millis
   }
   return allSuccess;
 }
-
-bool CameraCapture::saveFrame(const cv::Mat& frame, string filepath, string filename)
-{
-  if(frame.empty()) {
-    cerr << "保存するフレームがありません。" << endl;
-    return false;
-  }
-
-  // ディレクトリが存在しない場合は作成
-  if(!filesystem::exists(filepath)) {
-    if(!filesystem::create_directories(filepath)) {
-      std::cerr << "ディレクトリの作成に失敗しました: " << filepath << std::endl;
-      return false;
-    }
-  }
-
-  string imagePath = filepath + "/" + filename + imgExtension;
-  if(!cv::imwrite(imagePath, frame)) {
-    cerr << "画像の保存に失敗しました: " << imagePath << endl;
-    return false;
-  }
-  return true;
-}

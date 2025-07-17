@@ -59,11 +59,6 @@ class DummyCameraCapture : public ICameraCapture {
     return true;
   }
 
-  bool saveFrame(const cv::Mat& frame, std::string filepath, std::string filename) override
-  {
-    return true;
-  }
-
  private:
   std::queue<bool> frameResults;  // フレーム取得の成功・失敗の順番を保持する
   bool hasCustomFlag = false;  // setFrameResults()で結果リストを設定したかどうかを表すフラグ

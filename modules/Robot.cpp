@@ -66,6 +66,11 @@ spikeapi::Display& Robot::getDisplayInstance()
   return display;
 }
 
+MiniFigDirectionResult& Robot::getMiniFigDirectionResult()
+{
+  return miniFigDirectionResult;  // ミニフィグの向き検出結果を返す
+}
+
 void Robot::setIsLeftEdge(bool isLeft)
 {
   isLeftEdge = isLeft;  // エッジの左右判定を設定
