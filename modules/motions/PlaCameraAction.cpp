@@ -16,14 +16,18 @@ void PlaCameraAction::getBackgroundFrame()
 {
   cv::Mat frame;
   while(1) {
+    // 背景に適しているか判断するフレームの獲得
     for(int counter = 0; counter < 5; counter++) {
       robot.getCameraCaptureInstance().getFrame(frame);
       std::this_thread::sleep_for(std::chrono::milliseconds(33));
     }
 
+    // 動体が検知されるか確認
     cv::Mat compareFrame;
     robot.getCameraCaptureInstance().getFrame(compareFrame);
     std::vector<cv::Point> largestContour = motionDetector.compareTwoFrames(frame, compareFrame);
+
+    // 動体が検知されなかったらbreak
     if(largestContour.empty()) {
       break;
     }
@@ -35,18 +39,11 @@ void PlaCameraAction::getBackgroundFrame()
 
 void PlaCameraAction::run()
 {
-  // 動体検知中に取得したフレームを格納するベクタ
+  // 背景フレームの取得
   getBackgroundFrame();
+
+  // 動体検知中に取得したフレームを格納するベクタの初期化
   capturedFrames.clear();
-
-  // 物体がROIに入ったかどうかを示すフラグ
-  bool objectEntered = false;
-
-  // 動きが検出されなくなったフレーム数をカウント
-  int noMotionCounter = 0;
-
-  // 「物体が退出した」とみなすために必要な連続する未検出フレーム数
-  const int maxNoMotionFrames = 2;
 
   // 動体検出結果を格納する構造体
   BoundingBoxDetectionResult detectionResult;
@@ -69,7 +66,7 @@ void PlaCameraAction::run()
       // フレームを保存
       capturedFrames.push_back(frame.clone());
 
-      // 非検出カウンタをリセット（動きがあるので）
+      // 非検出カウンタをリセット
       noMotionCounter = 0;
     }
     // 動体が検出されなかったが、すでに一度入室していた場合
@@ -77,8 +74,8 @@ void PlaCameraAction::run()
       // 非検出の回数をカウント
       noMotionCounter++;
 
-      // 非検出が連続 maxNoMotionFrames 回を超えたら退出とみなしてループ終了
-      if(noMotionCounter >= maxNoMotionFrames) {
+      // 非検出が連続でMAX_NO_MOTIONを超えたら退出とみなしてループ終了
+      if(noMotionCounter >= MAX_NO_MOTION) {
         break;
       }
 
@@ -94,9 +91,11 @@ void PlaCameraAction::run()
   numberOfFrames = capturedFrames.size();
   std::cout << "Captured frames: " << numberOfFrames << std::endl;
 
+  // 撮影されたフレームの中央のフレームをbestFrameに格納
   halfNumberOfFrames = numberOfFrames / 2;
   cv::Mat bestFrame = capturedFrames.at(halfNumberOfFrames);
 
+  // bestFrameをJPEGで出力
   std::string outputPath = "etrobocon2025/datafiles/snapshots/bestframe.JPEG";
   if(cv::imwrite(outputPath, bestFrame)) {
     std::cout << "Center frame saved  " << std::endl;
