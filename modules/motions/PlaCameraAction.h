@@ -36,12 +36,12 @@ class PlaCameraAction : public Motion {
 
  private:
   MotionDetector motionDetector;
-  std::vector<cv::Mat> capturedFrames;     // 動体検知中に取得したフレームを格納するベクタ
-  size_t numberOfFrames;                   // 取得した総フレーム数
-  size_t halfNumberOfFrames;               // 取得した総フレームの半数
-  bool objectEntered = false;              // 物体がROIに入ったかどうかを示すフラグ
+  std::vector<cv::Mat> capturedFrames;  // 動体検知中に取得したフレームを格納するベクタ
+  size_t numberOfFrames;                // 取得した総フレーム数
+  size_t halfNumberOfFrames;            // 取得した総フレームの半数
+  bool objectEntered = false;           // 物体がROIに入ったかどうかを示すフラグ
   static constexpr int MAX_NO_MOTION = 2;  // 非検知となる検知回数
-  int noMotionCounter = 0;                 // 動きが検出されなくなったフレーム数をカウント
+  int noMotionCounter = 0;  // 動きが検出されなくなったフレーム数をカウント
 };
 
 #endif
