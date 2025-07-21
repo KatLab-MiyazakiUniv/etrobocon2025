@@ -1,6 +1,6 @@
 /**
- * @file   DummyCameraCapture.h
- * @brief  カメラを制御するクラス（ダミー）
+ * @file   DummyPlaCameraCapture.h
+ * @brief  カメラを制御するクラス（PlaCameraAction用ダミー）
  * @author HaruArima08 miyahara046
  */
 
@@ -14,15 +14,17 @@
 class DummyPlaCameraCapture : public ICameraCapture {
  public:
   DummyPlaCameraCapture() = default;
-
-  // ------ ICameraCapture の基本関数の実装 ------
   int findAvailableCameraID(int maxTested = 10) override { return 0; }
   int getCameraID() override { return 0; }
   bool setCameraID(int id) override { return true; }
   bool openCamera() override { return true; }
   void setCapProps(double width, double height) override {}
 
-  // ------ 1枚ずつ取得 ------
+  /**
+   * @brief 1枚のカメラ画像を取得する
+   * @param outFrame 取得した画像を格納するcv::Mat参照
+   * @return 画像取得に成功した場合はtrue、失敗した場合はfalse
+   */
   bool getFrame(cv::Mat& outFrame) override
   {
     if(currentIndex < frames.size()) {
@@ -34,7 +36,13 @@ class DummyPlaCameraCapture : public ICameraCapture {
     }
   }
 
-  // ------ 複数フレームを取得 ------
+  /**
+   * @brief 複数のカメラ画像を取得する
+   * @param outFrame 取得した画像を格納するcv::Mat参照
+   * @param numFrames 取得したフレームの総数
+   * @param millisecondInterval 取得するフレームのインターバル
+   * @return 取得したフレームの総数
+   */
   bool getFrames(std::vector<cv::Mat>& outFrames, int numFrames, int millisecondInterval) override
   {
     outFrames.clear();
@@ -48,7 +56,11 @@ class DummyPlaCameraCapture : public ICameraCapture {
     return outFrames.size() == numFrames;
   }
 
-  // ------ テスト用：ダミーフレームの挿入 ------
+  /**
+   * @brief 単色の静止フレームを複数枚挿入する（初期化用）
+   * @param count 挿入するフレーム枚数
+   * @param color 単色の色（デフォルトは黒）
+   */
   void setDummyFrames(int count, cv::Scalar color = cv::Scalar(0, 0, 0))
   {
     frames.clear();
@@ -57,6 +69,12 @@ class DummyPlaCameraCapture : public ICameraCapture {
       frames.push_back(cv::Mat(480, 640, CV_8UC3, color));
     }
   }
+
+  /**
+   * @brief 動体のあるフレーム列を挿入する（動体検出テスト用）
+   * 最初と最後は静止状態の黒画面
+   * 中央で白い矩形が少しずつ右へ動く（動きのあるフレーム）
+   */
   void setMotionLikeFrames()
   {
     frames.clear();
@@ -87,4 +105,4 @@ class DummyPlaCameraCapture : public ICameraCapture {
   size_t currentIndex = 0;
 };
 
-#endif  // PLA_DUMMY_CAMERA_CAPTURE_H
+#endif  // DUMMY_PLA_CAMERA_CAPTURE_H
