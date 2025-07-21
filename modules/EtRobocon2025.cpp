@@ -13,27 +13,25 @@ void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
 
-  // // 背景画像と動体画像を読み込む
-  // cv::Mat bg = cv::imread("etrobocon2025/datafiles/snapshots/bg1.JPEG", cv::IMREAD_GRAYSCALE);
-  // cv::Mat frame = cv::imread("etrobocon2025/datafiles/snapshots/m1.JPEG");
-
-  // if(bg.empty() || frame.empty()) {
-  //   std::cerr << "Error: 画像の読み込みに失敗しました。" << std::endl;
-  // }
-
-  robot.getCameraCaptureInstance().setCameraID(
-      robot.getCameraCaptureInstance().findAvailableCameraID());
-  robot.getCameraCaptureInstance().openCamera();
+  if(!robot.getCameraCaptureInstance().setCameraID(
+         robot.getCameraCaptureInstance().findAvailableCameraID()))
+    return;
+  if(!robot.getCameraCaptureInstance().openCamera()) return;
 
   cv::Mat frame;
   while(!robot.getCameraCaptureInstance().getFrame(frame)) {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 
-  cv::Rect roi(100, 0, 600, 350);
+  Calibrator calibrator(robot);
+  calibrator.selectAndSetCourse();
+  calibrator.measureAndSetTargetBrightness();
+  bool isLeftCourse = calibrator.getIsLeftCourse();
+  int targetBrightness = calibrator.getTargetBrightness();
+  calibrator.getAngleCheckFrame();
+  calibrator.waitForStart();
 
-  // 動体検知器を初期化
-  PlaCameraAction plaCameraAction(robot, 30.0, 500.0, roi);
-
-  plaCameraAction.run();
+  Area lineTraceArea = Area::LineTrace;
+  AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
+  lineTraceAreaMaster.run();
 }
