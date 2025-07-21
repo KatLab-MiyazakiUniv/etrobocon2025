@@ -1,7 +1,7 @@
 /**
  * @file   MotionDetector.cpp
  * @brief  動体検知用の画像処理クラス
- * @author HaruArima08
+ * @author HaruArima08 miyahara046
  */
 
 #include "MotionDetector.h"

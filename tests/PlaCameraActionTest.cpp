@@ -1,7 +1,7 @@
 /**
  * @file   PlaCameraActionTest.cpp
  * @brief  PlaCameraActionクラスのテスト
- * @author Hara1274 miyahara046
+ * @author miyahara046 HaruArima08
  */
 #include <gtest/gtest.h>
 #include "PlaCameraAction.h"

@@ -1,7 +1,7 @@
 /**
  * @file   PlaCameraAction.cpp
  * @brief  動体検知用動作クラス
- * @author miyahara046
+ * @author miyahara046 HaruArima08
  */
 #include "PlaCameraAction.h"
 #include <thread>
