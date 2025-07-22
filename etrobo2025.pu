@@ -9,7 +9,7 @@ package "etrobocon2025" {
     - {static} robot: Robot
   }
 
-  ' ロボット管理クラス
+  ' ロボットクラス
   class Robot {
     + Robot()
     + Robot(ICameraCapture& cam)
@@ -21,7 +21,8 @@ package "etrobocon2025" {
     + getForceSensorInstance(): spikeapi::ForceSensor&
     + getDisplayInstance(): spikeapi::Display&
     + setIsLeftEdge(bool isLeft): void
-    + getIsLeftEdge(): bool
+    + getIsLeftEdge() const: bool
+    + getMiniFigDirectionResult(): MiniFigDirectionResult&
     - motorController: MotorController
     - defaultCameraCapture: CameraCapture
     - cameraCapture: ICameraCapture&
@@ -30,26 +31,28 @@ package "etrobocon2025" {
     - button: spikeapi::Button
     - forceSensor: spikeapi::ForceSensor
     - display: spikeapi::Display
+    - miniFigDirectionResult: MiniFigDirectionResult
     - isLeftEdge: bool
   }
 
-  ' エリア管理クラス
+  ' エリアマスタークラス
   class AreaMaster {
-    + AreaMaster(Robot& robot, Area area, bool isLeftCourse, int targetBrightness)
+    + AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)
     + run(): void
     - robot: Robot&
     - area: Area
     - isLeftCourse: bool
     - targetBrightness: int
-    - {static} basePath: std::string
-    - {static} areaCommandNames: std::array<std::string, 3>
+    - {static} const basePath: std::string
+    - {static} const areaCommandNames: std::array<std::string, 3>
   }
 
   ' キャリブレータクラス
   class Calibrator {
-    + Calibrator(Robot& robot)
+    + Calibrator(Robot& _robot)
     + selectAndSetCourse(): void
     + measureAndSetTargetBrightness(): void
+    + getAngleCheckFrame(): void
     + waitForStart(): void
     + getIsLeftCourse(): bool
     + getTargetBrightness(): int
@@ -58,7 +61,7 @@ package "etrobocon2025" {
     - targetBrightness: int
   }
 
-  ' パーサークラス
+  ' モーションパーサークラス
   class MotionParser {
     + {static} createMotions(Robot& robot, std::string& commandFilePath, int targetBrightness): std::vector<Motion*>
     - MotionParser()
@@ -84,6 +87,7 @@ package "etrobocon2025" {
     EC
     SL
     SS
+    MCA
     NONE
   }
 
@@ -101,11 +105,13 @@ package "etrobocon2025" {
     + kp: double
     + ki: double
     + kd: double
-    + PidGain(double kp, double ki, double kd)
+    + PidGain(double _kp, double _ki, double _kd)
   }
 
-  ' API層
+  ' モーターコントローラークラス
   class MotorController {
+    + {static} constexpr MOTOR_POWER_MAX: int
+    + {static} constexpr MOTOR_POWER_MIN: int
     + MotorController()
     + setRightMotorPower(int power): void
     + setLeftMotorPower(int power): void
@@ -132,15 +138,13 @@ package "etrobocon2025" {
     - leftWheel: spikeapi::Motor
     - armMotor: spikeapi::Motor
     - limitPowerValue(int inputPower): int
-    + {static} MOTOR_POWER_MAX: int
-    + {static} MOTOR_POWER_MIN: int
   }
 
-  ' 計算系クラス
+  ' PIDクラス
   class Pid {
-    + Pid(double kp, double ki, double kd, double targetValue, double maxIntegral, double minIntegral)
-    + Pid(double kp, double ki, double kd, double targetValue)
-    + setPidGain(double kp, double ki, double kd): void
+    + Pid(double _kp, double _ki, double _kd, double _targetValue, double _maxIntegral, double _minIntegral)
+    + Pid(double _kp, double _ki, double _kd, double _targetValue)
+    + setPidGain(double _kp, double _ki, double _kd): void
     + calculatePid(double currentValue, double delta): double
     - pidGain: PidGain
     - prevDeviation: double
@@ -149,27 +153,31 @@ package "etrobocon2025" {
     - targetValue: double
     - maxIntegral: double
     - minIntegral: double
-    - {static} alpha: double
+    - {static} constexpr alpha: double
   }
 
+  ' 色判定クラス
   class ColorJudge {
+    + ColorJudge()
     + {static} convertStringToColor(const std::string& str): COLOR
     + {static} convertColorToString(const COLOR& color): const char*
     + {static} convertHsvToColor(const spikeapi::ColorSensor::HSV& hsv): COLOR
     - ColorJudge()
   }
 
+  ' 走行距離計算クラス
   class Mileage {
     + {static} calculateWheelMileage(int32_t angle): double
     + {static} calculateMileage(int32_t rightAngle, int32_t leftAngle): double
     - Mileage()
   }
 
+  ' 速度計算クラス
   class SpeedCalculator {
-    + SpeedCalculator(Robot& robot, double targetSpeed)
+    + SpeedCalculator(Robot& _robot, double _targetSpeed)
     + calculateRightMotorPower(): double
     + calculateLeftMotorPower(): double
-    - targetSpeed: double
+    - const targetSpeed: double
     - rightPid: Pid
     - leftPid: Pid
     - rightMotorPower: double
@@ -177,16 +185,17 @@ package "etrobocon2025" {
     - prevRightTime: double
     - prevLeftTime: double
     - robot: Robot&
-    - {static} RIGHT_K_P: double
-    - {static} RIGHT_K_I: double
-    - {static} RIGHT_K_D: double
-    - {static} LEFT_K_P: double
-    - {static} LEFT_K_I: double
-    - {static} LEFT_K_D: double
+    - {static} constexpr RIGHT_K_P: double
+    - {static} constexpr RIGHT_K_I: double
+    - {static} constexpr RIGHT_K_D: double
+    - {static} constexpr LEFT_K_P: double
+    - {static} constexpr LEFT_K_I: double
+    - {static} constexpr LEFT_K_D: double
   }
 
-  ' カメラ系
+  ' カメラキャプチャーインターフェース
   abstract class ICameraCapture {
+    + {abstract} ~ICameraCapture()
     + {abstract} findAvailableCameraID(int maxTested): int
     + {abstract} getCameraID(): int
     + {abstract} setCameraID(int id): bool
@@ -194,9 +203,9 @@ package "etrobocon2025" {
     + {abstract} setCapProps(double width, double height): void
     + {abstract} getFrame(cv::Mat& outFrame): bool
     + {abstract} getFrames(std::vector<cv::Mat>& frames, int numFrames, int millisecondInterval): bool
-    + {abstract} saveFrame(const cv::Mat& frame, std::string filepath, std::string filename): bool
   }
 
+  ' カメラキャプチャークラス
   class CameraCapture {
     + CameraCapture()
     + ~CameraCapture()
@@ -207,9 +216,7 @@ package "etrobocon2025" {
     + setCapProps(double width, double height): void
     + getFrame(cv::Mat& outFrame): bool
     + getFrames(std::vector<cv::Mat>& frames, int numFrames, int millisecondInterval): bool
-    + saveFrame(const cv::Mat& frame, std::string filepath, std::string filename): bool
     - cap: cv::VideoCapture
-    - imgExtension: std::string
     - cameraID: int
   }
 
@@ -223,11 +230,12 @@ package "etrobocon2025" {
   }
 
   abstract class BoundingBoxDetector {
+    + {abstract} ~BoundingBoxDetector()
     + {abstract} detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
   }
 
   class LineBoundingBoxDetector {
-    + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV)
+    + LineBoundingBoxDetector(const cv::Scalar& _lowerHSV, const cv::Scalar& _upperHSV)
     + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi)
     + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi, const cv::Size& resolution)
     + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
@@ -283,15 +291,15 @@ package "etrobocon2025" {
     - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, MiniFigDirectionResult& result): void
   }
 
-  ' Motion基底クラス
+  ' Motionクラス
   abstract class Motion {
-    + Motion(Robot& robot)
+    + Motion(Robot& _robot)
     + {abstract} run(): void
     # robot: Robot&
   }
 
   abstract class LineTrace ABSTRACT_STYLE {
-    + LineTrace(Robot& robot, double targetSpeed, int targetBrightness, const PidGain& pidGain)
+    + LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
     + run(): void
     # {abstract} isMetPreCondition(): bool
     # {abstract} prepare(): void
@@ -302,7 +310,7 @@ package "etrobocon2025" {
   }
 
   abstract class Straight ABSTRACT_STYLE {
-    + Straight(Robot& robot, double speed)
+    + Straight(Robot& _robot, double _speed)
     + run(): void
     # {abstract} isMetPreCondition(): bool
     # {abstract} prepare(): void
@@ -311,10 +319,10 @@ package "etrobocon2025" {
   }
 
   abstract class Rotation ABSTRACT_STYLE {
-    + Rotation(Robot& robot, double speed, bool isClockwise)
+    + Rotation(Robot& _robot, double _speed, bool _isClockwise)
     + run(): void
-    + {abstract} prepare(): void
     + {abstract} isMetPreCondition(): bool
+    + {abstract} prepare(): void
     + {abstract} isMetContinuationCondition(): bool
     # speed: double
     # isClockwise: bool
@@ -322,9 +330,20 @@ package "etrobocon2025" {
     # rightSign: int
   }
 
-  ' Motion具体実装
+  ' 色指定ライントレースクラス
+  class ColorLineTrace {
+    + ColorLineTrace(Robot& _robot, COLOR _targetColor, double _targetSpeed, int _targetBrightness, const PidGain& _gain)
+    # isMetPreCondition(): bool
+    # prepare(): void
+    # isMetContinuationCondition(): bool
+    - {static} constexpr JUDGE_COUNT: int
+    - colorCount: int
+    - targetColor: COLOR
+  }
+
+  ' 距離指定ライントレースクラス
   class DistanceLineTrace {
-    + DistanceLineTrace(Robot& robot, double targetDistance, double targetSpeed, int targetBrightness, const PidGain& pidGain)
+    + DistanceLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
     # isMetPreCondition(): bool
     # prepare(): void
     # isMetContinuationCondition(): bool
@@ -332,18 +351,22 @@ package "etrobocon2025" {
     - initDistance: double
   }
 
-  class ColorLineTrace {
-    + ColorLineTrace(Robot& robot, COLOR targetColor, double targetSpeed, int targetBrightness, const PidGain& gain)
+  ' 色距離指定ライントレースクラス
+  class ColorDistanceLineTrace {
+    + ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor, double _targetDistance, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
     # isMetPreCondition(): bool
     # prepare(): void
     # isMetContinuationCondition(): bool
-    - {static} JUDGE_COUNT: int
+    - {static} constexpr JUDGE_COUNT: int
     - colorCount: int
     - targetColor: COLOR
+    - targetDistance: double
+    - initDistance: double
   }
 
+  ' 距離指定直進クラス
   class DistanceStraight {
-    + DistanceStraight(Robot& robot, double targetDistance, double speed)
+    + DistanceStraight(Robot& _robot, double _targetDistance, double _speed)
     # isMetPreCondition(): bool
     # prepare(): void
     # isMetContinuationCondition(): bool
@@ -351,8 +374,31 @@ package "etrobocon2025" {
     - initialDistance: double
   }
 
+  ' 色指定直進クラス
+  class ColorStraight {
+    + ColorStraight(Robot& _robot, COLOR _targetColor, double _speed)
+    # isMetPreCondition(): bool
+    # prepare(): void
+    # isMetContinuationCondition(): bool
+    - colorCount: int
+    - targetColor: COLOR
+    - {static} constexpr JUDGE_COUNT: int
+  }
+
+  ' 角度指定回頭クラス
+  class AngleRotation {
+    + AngleRotation(Robot& _robot, int _targetAngle, double _speed, bool _isClockwise)
+    # prepare(): void
+    # isMetPreCondition(): bool
+    # isMetContinuationCondition(): bool
+    - targetLeftDistance: double
+    - targetRightDistance: double
+    - targetAngle: int
+  }
+
+  ' カメラPID監視クラス
   abstract class CameraPidTracking ABSTRACT_STYLE {
-    + CameraPidTracking(Robot& robot, double targetSpeed, int targetXCoordinate, const PidGain& pidGain, BoundingBoxDetector& boundingBoxDetector)
+    + CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, BoundingBoxDetector& _boundingBoxDetector)
     + run(): void
     # {abstract} isMetPreCondition(): bool
     # {abstract} prepare(): void
@@ -364,67 +410,37 @@ package "etrobocon2025" {
     # pidGain: PidGain
   }
 
+  ' 距離指定カメラライントレースクラス
   class DistanceCameraLineTrace {
-    + DistanceCameraLineTrace(Robot& robot, double targetDistance, double targetSpeed, int targetXCoordinate, const PidGain& pidGain, std::unique_ptr<BoundingBoxDetector> detector)
+    + DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, std::unique_ptr<BoundingBoxDetector> _detector)
     # isMetPreCondition(): bool
     # prepare(): void
     # isMetContinuationCondition(): bool
-    - {static} JUDGE_COUNT: int
     - targetDistance: double
     - initDistance: double
-    - frameCount: int
     - detector: std::unique_ptr<BoundingBoxDetector>
   }
 
-  class AngleRotation {
-    + AngleRotation(Robot& robot, int targetAngle, double speed, bool isClockwise)
-    # prepare(): void
-    # isMetPreCondition(): bool
-    # isMetContinuationCondition(): bool
-    - targetLeftDistance: double
-    - targetRightDistance: double
-    - targetAngle: int
-  }
-
-  class ColorStraight {
-    + ColorStraight(Robot& robot, COLOR targetColor, double speed)
-    # isMetPreCondition(): bool
-    # prepare(): void
-    # isMetContinuationCondition(): bool
-    - colorCount: int
-    - targetColor: COLOR
-    - {static} JUDGE_COUNT: int
-  }
-
-  class ColorDistanceLineTrace {
-    + ColorDistanceLineTrace(Robot& robot, COLOR targetColor, double targetDistance, double targetSpeed, int targetBrightness, const PidGain& pidGain)
-    # isMetPreCondition(): bool
-    # prepare(): void
-    # isMetContinuationCondition(): bool
-    - {static} JUDGE_COUNT: int
-    - colorCount: int
-    - targetColor: COLOR
-    - targetDistance: double
-    - initDistance: double
-  }
-
+  ' エッジ変更クラス
   class EdgeChange {
-    + EdgeChange(Robot& robot, const bool& isLeftEdge)
+    + EdgeChange(Robot& _robot, bool _isLeftEdge)
     + run(): void
-    - isLeftEdge: const bool&
+    - isLeftEdge: bool
   }
 
+  ' スリープクラス
   class Sleeping {
-    + Sleeping(Robot& robot, int microSec)
+    + Sleeping(Robot& _robot, int _milliSec)
     + run(): void
-    - microSec: int
+    - milliSec: int
   }
 
+  ' スナップショットクラス
   class Snapshot {
-    + Snapshot(Robot& robot, const std::string& fileName)
+    + Snapshot(Robot& _robot, const std::string& _fileName)
     + run(): void
     - fileName: std::string
-    - {static} path: std::string
+    - {static} const path: std::string
   }
 
   ' ユーティリティ
@@ -438,14 +454,46 @@ package "etrobocon2025" {
     + {static} PI: double
     + {static} RAD_TO_DEG: double
     + {static} DEG_TO_RAD: double
-    + {static} TREAD: double
-    + {static} WHEEL_RADIUS: double
-    + {static} RESOLUTION_WIDTH: int
-    + {static} RESOLUTION_HEIGHT: int
-    + {static} MIN_WIDTH: int
-    + {static} MIN_HEIGHT: int
-    + {static} MAX_WIDTH: int
-    + {static} MAX_HEIGHT: int
+    + {static} constexpr TREAD: double
+    + {static} constexpr WHEEL_RADIUS: double
+    + {static} constexpr RESOLUTION_WIDTH: int
+    + {static} constexpr RESOLUTION_HEIGHT: int
+    + {static} constexpr MIN_WIDTH: int
+    + {static} constexpr MIN_HEIGHT: int
+    + {static} constexpr MAX_WIDTH: int
+    + {static} constexpr MAX_HEIGHT: int
+  }
+
+  ' 応用動作クラス
+  abstract class CompositeMotion ABSTRACT_STYLE {
+    + CompositeMotion(Robot& _robot)
+    + {abstract} run(): void
+  }
+
+  ' ミニフィグカメラアクション
+  class MiniFigCameraAction {
+    + MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle, double _targetRotationSpeed, double _backTargetDistance, double _forwardTargetDistance, double _backSpeed, double _forwardSpeed, int _position)
+    + run(): void
+    - isClockwise: bool
+    - preTargetAngle: int
+    - postTargetAngle: int
+    - targetRotationSpeed: double
+    - backTargetDistance: double
+    - forwardTargetDistance: double
+    - backSpeed: double
+    - forwardSpeed: double
+    - position: int
+    - {static} constexpr filePath: const char*
+    - {static} constexpr uploadFileName: const char*
+    - isMetPreCondition(): bool
+    - detectDirection(cv::Mat& frame): void
+  }
+
+  ' 画像保存クラス
+  class FrameSave {
+    + {static} save(cv::Mat& frame, const std::string& filePath, const std::string& fileName): void
+    - FrameSave()
+    - {static} inline imgExtension: std::string
   }
 
 }
@@ -453,7 +501,7 @@ package "etrobocon2025" {
 ' 関係性の定義
 EtRobocon2025 --> Robot : 使用
 Robot *-- MotorController : 組成
-Robot *-- CameraCapture : 組成  
+Robot *-- CameraCapture : 組成
 Robot *-- ICameraCapture : 関連
 
 AreaMaster --> Robot : 使用
@@ -528,5 +576,14 @@ ColorDistanceLineTrace --> COLOR : 使用
 EdgeChange --|> Motion : 継承
 Sleeping --|> Motion : 継承
 Snapshot --|> Motion : 継承
+Snapshot --> FrameSave : 使用
+
+MiniFigCameraAction --|> CompositeMotion : 継承
+CompositeMotion --|> Motion : 継承
+MiniFigCameraAction --> FrameSave : 使用
+MiniFigCameraAction --> MiniFigDirectionDetector : 使用
+MiniFigCameraAction --> AngleRotation : 使用
+MiniFigCameraAction --> DistanceStraight : 使用
+Robot --> MiniFigDirectionResult : 管理
 
 @enduml
