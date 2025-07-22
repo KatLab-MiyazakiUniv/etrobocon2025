@@ -6,10 +6,7 @@
 
 #include "EdgeChange.h"
 
-EdgeChange::EdgeChange(Robot& _robot, const bool& _isLeftEdge)
-  : Motion(_robot), isLeftEdge(_isLeftEdge)
-{
-}
+EdgeChange::EdgeChange(Robot& _robot, bool _isLeftEdge) : Motion(_robot), isLeftEdge(_isLeftEdge) {}
 
 void EdgeChange::run()
 {

@@ -12,17 +12,17 @@ Calibrator::Calibrator(Robot& _robot) : robot(_robot), isLeftCourse(true), targe
 
 void Calibrator::selectAndSetCourse()
 {
-  robot.getDisplayInstance().scrollText("L OR R", 50);
+  robot.getDisplayInstance().showChar('C');  // C:コース
   while(1) {
     // 左ボタンが押されたときRコースがセットされていれば、Lコースをセットする
     if(robot.getButtonInstance().isLeftPressed() && !isLeftCourse) {
       isLeftCourse = true;
       // 画面にLコースが選択されたことを表示
       robot.getDisplayInstance().showChar('L');
-      robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
       // ボタンが離されるまで待機
       while(robot.getButtonInstance().isLeftPressed()) {
-        robot.getClockInstance().sleep(10000);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
       }
     }
     // 左ボタンが押されたときLコースがセットされていれば、Rコースをセットする
@@ -30,10 +30,10 @@ void Calibrator::selectAndSetCourse()
       isLeftCourse = false;
       // 画面にRコースが選択されたことを表示
       robot.getDisplayInstance().showChar('R');
-      robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
       // ボタンが離されるまで待機
       while(robot.getButtonInstance().isLeftPressed()) {
-        robot.getClockInstance().sleep(10000);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
       }
     }
     // 右ボタンが押されたときコース選択を終了
@@ -44,7 +44,7 @@ void Calibrator::selectAndSetCourse()
   const char* course = isLeftCourse ? "Left" : "Right";
   printf("\nWill Run on the %s Course\n", course);
   robot.getDisplayInstance().scrollText("OK", 50);
-  robot.getClockInstance().sleep(2000000);  // 2秒スリープ
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // 1秒スリープ
 }
 
 void Calibrator::measureAndSetTargetBrightness()
@@ -52,7 +52,7 @@ void Calibrator::measureAndSetTargetBrightness()
   int blackBrightness = -1;
   int whiteBrightness = -1;
 
-  robot.getDisplayInstance().scrollText("B", 50);
+  robot.getDisplayInstance().showChar('B');
   // 黒の輝度測定
   // 左ボタンで輝度を取得し、右ボタンで黒の輝度を決定する
   bool isBrightnessMeasuring = false;
@@ -62,7 +62,7 @@ void Calibrator::measureAndSetTargetBrightness()
       isBrightnessMeasuring = true;
       // ボタンが離されるまで待機
       while(robot.getButtonInstance().isLeftPressed()) {
-        robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
       }
     }
     // ループが開始されたら連続的に輝度を取得
@@ -74,18 +74,18 @@ void Calibrator::measureAndSetTargetBrightness()
       if(robot.getButtonInstance().isRightPressed()) {
         // 黒の輝度を確定したことをディスプレイに表示
         robot.getDisplayInstance().scrollText("OK", 50);
-        robot.getClockInstance().sleep(2000000);  // 2秒スリープ
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // 1秒スリープ
         // ボタンが離されるまで待機
         while(robot.getButtonInstance().isRightPressed()) {
-          robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+          std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
         }
         break;
       }
     }
-    robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
   }
 
-  robot.getDisplayInstance().scrollText("W", 50);
+  robot.getDisplayInstance().showChar('W');
   // 白の輝度測定
   // 左ボタンで輝度を取得し、右ボタンで白の輝度を決定する
   isBrightnessMeasuring = false;
@@ -95,7 +95,7 @@ void Calibrator::measureAndSetTargetBrightness()
       isBrightnessMeasuring = true;
       // ボタンが離されるまで待機
       while(robot.getButtonInstance().isLeftPressed()) {
-        robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
       }
     }
     // ループが開始されたら連続的に輝度を取得
@@ -107,23 +107,57 @@ void Calibrator::measureAndSetTargetBrightness()
       if(robot.getButtonInstance().isRightPressed()) {
         // 白の輝度を確定したことをディスプレイに表示
         robot.getDisplayInstance().scrollText("OK", 50);
-        robot.getClockInstance().sleep(2000000);  // 2秒スリープ
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // 1秒スリープ
         // ボタンが離されるまで待機
         while(robot.getButtonInstance().isRightPressed()) {
-          robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+          std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
         }
         break;
       }
     }
-    robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
   }
 
   targetBrightness = (whiteBrightness + blackBrightness) / 2;
   // 目標輝度をディスプレイに表示
   robot.getDisplayInstance().showNumber(targetBrightness);
   cout << "Target Brightness Value is " << targetBrightness << endl;
-  robot.getClockInstance().sleep(1000000);   // 1秒スリープ
-  robot.getDisplayInstance().showChar(' ');  // ディスプレイを消灯
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // 1秒スリープ
+  robot.getDisplayInstance().showChar(' ');                      // ディスプレイを消灯
+}
+
+void Calibrator::getAngleCheckFrame()
+{
+  robot.getDisplayInstance().showChar('F');
+  // 角度調整フレーム取得
+  // 中央ボタンでフレームを取得し、右ボタンで決定する
+  std::string fileName = "angleCheckFrame.jpg";
+  while(1) {
+    // 中央ボタンが押されたらフレーム取得
+    if(robot.getButtonInstance().isCenterPressed()) {
+      // ボタンが離されるまで待機
+      while(robot.getButtonInstance().isCenterPressed()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
+      }
+      Snapshot snapshot(robot, fileName);
+      snapshot.run();
+      robot.getDisplayInstance().showChar('S');
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
+    }
+    // 右ボタンで終了
+    if(robot.getButtonInstance().isRightPressed()) {
+      robot.getDisplayInstance().scrollText("OK", 50);
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // 1秒スリープ
+      // ボタンが離されるまで待機
+      while(robot.getButtonInstance().isRightPressed()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
+      }
+      break;
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
+  }
+  cout << "Complete Check Frame." << endl;
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // 1秒スリープ
 }
 
 void Calibrator::waitForStart()
@@ -131,7 +165,7 @@ void Calibrator::waitForStart()
   printf("On standby.\n");
   // ForceSensorが押されるまで待機
   while(!robot.getForceSensorInstance().isPressed(PRESS_POWER)) {
-    robot.getClockInstance().sleep(10000);  // 10ミリ秒スリープ
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒スリープ
   }
 }
 
