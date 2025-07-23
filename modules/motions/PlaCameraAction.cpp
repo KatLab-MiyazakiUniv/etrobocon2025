@@ -27,6 +27,7 @@ void PlaCameraAction::run()
   BoundingBoxDetectionResult detectionResult;
 
   // 物体の入室から退出までフレームを取得
+  // 入室検出
   while(true) {
     cv::Mat frame;
     robot.getCameraCaptureInstance().getFrame(frame);
@@ -43,8 +44,8 @@ void PlaCameraAction::run()
     }
   }
 
-  int noMotionCounter = 0;
   // 退出検出
+  int noMotionCounter = 0;
   while(true) {
     cv::Mat frame;
     robot.getCameraCaptureInstance().getFrame(frame);

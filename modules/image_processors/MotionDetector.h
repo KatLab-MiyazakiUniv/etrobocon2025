@@ -35,10 +35,10 @@ class MotionDetector : public BoundingBoxDetector {
   void detect(const cv::Mat& frame, BoundingBoxDetectionResult& result) override;
 
   /**
-   * 2枚のフレームを比較して最大輪郭を取得する
+   * 2枚のフレームを比較して差分の最大輪郭を取得する
    * @param firstFrame 最初のフレーム
    * @param secondFrame 比較対象のフレーム
-   * @return 最大輪郭
+   * @return 差分の最大輪郭
    */
   std::vector<cv::Point> compareTwoFrames(const cv::Mat& firstFrame, const cv::Mat& secondFrame);
 
