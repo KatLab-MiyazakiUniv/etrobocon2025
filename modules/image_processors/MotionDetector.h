@@ -24,7 +24,7 @@ class MotionDetector : public BoundingBoxDetector {
    * 背景画像の設定
    * @param background 背景として使用する画像
    */
-  void setBackground(const cv::Mat& background);
+  bool setBackground(const cv::Mat& background);
 
   /**
    * 現在のフレームと背景画像を比較して動体を検出

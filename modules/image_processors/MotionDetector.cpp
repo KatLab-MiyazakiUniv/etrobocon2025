@@ -12,15 +12,16 @@ MotionDetector::MotionDetector(double _threshold, double _minArea, const cv::Rec
 {
 }
 
-void MotionDetector::setBackground(const cv::Mat& background)
+bool MotionDetector::setBackground(const cv::Mat& background)
 {
   if(background.empty()) {
     std::cerr << "Error: Invalid background image. It must be a non-empty, single-channel "
                  "(grayscale) image."
               << std::endl;
-    return;
+    return false;
   }
   bgFrame = background.clone();
+  return true;
 }
 
 std::vector<cv::Point> MotionDetector::compareTwoFrames(const cv::Mat& firstFrame,
