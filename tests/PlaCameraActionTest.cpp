@@ -23,5 +23,5 @@ TEST(PlaCameraActionTest, RunPlaCameraAction)
   plaCameraAction.run();
   std::string output = testing::internal::GetCapturedStdout();
   // 出力内に特定の文字列があるかチェック
-  ASSERT_NE(output.find("Captured frames"), std::string::npos);
+  ASSERT_NE(output.find("Filiming time"), std::string::npos);
 }
