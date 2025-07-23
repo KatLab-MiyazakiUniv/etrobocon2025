@@ -6,7 +6,6 @@
 #include <gtest/gtest.h>
 #include "PlaCameraAction.h"
 #include "DummyPlaCameraCapture.h"
-#include "Robot.h"
 #include <filesystem>
 
 // PlaCameraActionが正常に動作するかテスト
