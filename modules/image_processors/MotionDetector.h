@@ -8,6 +8,7 @@
 #define MOTION_DETECTOR_H
 
 #include "BoundingBoxDetector.h"
+#include "FrameSave.h"
 #include <opencv2/opencv.hpp>
 
 class MotionDetector : public BoundingBoxDetector {
@@ -29,7 +30,7 @@ class MotionDetector : public BoundingBoxDetector {
   /**
    * 現在のフレームと背景画像を比較して動体を検出
    * @param frame 現在のフレーム
-   * @param result 検出結果を格納
+   * @param result 検出結果(バウンディングボックス)を格納する構造体
    */
   void detect(const cv::Mat& frame, BoundingBoxDetectionResult& result) override;
 
