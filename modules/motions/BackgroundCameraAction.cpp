@@ -1,3 +1,9 @@
+/**
+ * @file   BackgroundCameraAction.cpp
+ * @brief  風景撮影動作クラス
+ * @author miyahara046
+ */
+
 #include "BackgroundCameraAction.h"
 
 using namespace std;
