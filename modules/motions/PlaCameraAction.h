@@ -30,6 +30,8 @@ class PlaCameraAction : public Motion {
    */
   void run() override;
 
+  void setUploadName(const std::string& fileName);
+
  private:
   /**
    * @brief 背景画像の取得
@@ -39,7 +41,7 @@ class PlaCameraAction : public Motion {
   MotionDetector motionDetector;
   static constexpr int MAX_NO_MOTION = 2;  // 非検知となる検知回数
   static constexpr const char* filePath = "etrobocon2025/datafiles/plarail/";
-  static constexpr const char* uploadFile = "bestframe.JPEG";
+  std::string uploadFile = "bestframe.JPEG";
 };
 
 #endif

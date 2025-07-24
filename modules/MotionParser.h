@@ -26,7 +26,7 @@
 #include "Sleeping.h"
 #include "Snapshot.h"
 #include "MiniFigCameraAction.h"
-
+#include "BackgroundCameraAction.h"
 enum class COMMAND {
   AR,   // 角度指定回頭
   DS,   // 指定距離直進
@@ -39,6 +39,7 @@ enum class COMMAND {
   SL,   // 自タスクスリープ
   SS,   // カメラ撮影動作
   MCA,  // ミニフィグのカメラ撮影動作
+  BCA,  // 背景のカメラ撮影動作
   NONE
 };
 
