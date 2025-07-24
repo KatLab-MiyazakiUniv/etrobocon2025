@@ -89,6 +89,11 @@ void PlaCameraAction::run()
   FrameSave::save(bestFrame, filePath, uploadFile);
 }
 
+void PlaCameraAction::setUploadName(const std::string& fileName)
+{
+  uploadFile = fileName;
+}
+
 void PlaCameraAction::getBackgroundFrame()
 {
   cv::Mat firstFrame;
