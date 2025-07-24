@@ -1,3 +1,9 @@
+/**
+ * @file   BackgroundCameraAction.h
+ * @brief  風景撮影動作クラス
+ * @author miyahara046
+ */
+
 #ifndef BACKGROUND_CAMERA_ACTION_H
 #define BACKGROUND_CAMERA_ACTION_H
 
