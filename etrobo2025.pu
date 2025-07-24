@@ -202,7 +202,6 @@ package "etrobocon2025" {
     + {abstract} openCamera(): bool
     + {abstract} setCapProps(double width, double height): void
     + {abstract} getFrame(cv::Mat& outFrame): bool
-    + {abstract} getFrames(std::vector<cv::Mat>& frames, int numFrames, int millisecondInterval): bool
   }
 
   ' カメラキャプチャークラス
@@ -215,7 +214,6 @@ package "etrobocon2025" {
     + openCamera(): bool
     + setCapProps(double width, double height): void
     + getFrame(cv::Mat& outFrame): bool
-    + getFrames(std::vector<cv::Mat>& frames, int numFrames, int millisecondInterval): bool
     - cap: cv::VideoCapture
     - cameraID: int
   }
