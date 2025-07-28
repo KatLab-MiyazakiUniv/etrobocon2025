@@ -12,6 +12,8 @@
 #include "Pid.h"
 #include "SpeedCalculator.h"
 #include "Mileage.h"
+#include "AngleRotation.h"
+#include "RecoveryValidator.h"
 #include <algorithm>
 
 class CameraPidTracking : public Motion {
@@ -51,10 +53,25 @@ class CameraPidTracking : public Motion {
 
  protected:
   BoundingBoxDetector& boundingBoxDetector;  // 画像処理クラスの参照
-  BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
-  double targetSpeed;                 // 目標速度
-  int targetXCoordinate;              // 目標X座標
-  PidGain pidGain;                    // PIDゲイン
+  BoundingBoxDetectionResult result;         // バウンディングボックスの座標を格納する構造体
+  double targetSpeed;                        // 目標速度
+  int targetXCoordinate;                     // 目標X座標
+  PidGain pidGain;                           // PIDゲイン
+
+ private:
+  RecoveryValidator recoveryValidator;  // 復帰動作検証クラス
+
+  /**
+   * @brief 検出失敗時の復帰動作を実行する
+   * @return true: 復帰成功, false: 復帰失敗
+   */
+  bool performRecoveryAction();
+
+  /**
+   * @brief 角度回頭による復帰を試行する
+   * @return true: 復帰成功, false: 復帰失敗
+   */
+  bool tryRecoveryRotation();
 };
 
 #endif
