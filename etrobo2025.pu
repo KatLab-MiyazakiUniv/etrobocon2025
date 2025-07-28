@@ -245,6 +245,17 @@ package "etrobocon2025" {
     - validateParameters(): void
   }
 
+  class MotionDetector {
+    + MotionDetector(double _threshold, double _minArea, const cv::Rect& _roi)
+    + setBackground(const cv::Mat& background): bool
+    + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
+    + compareTwoFrames(const cv::Mat& firstFrame, const cv::Mat& secondFrame): std::vector<cv::Point>
+    - threshold: double
+    - minArea: double
+    - roi: cv::Rect
+    - bgFrame: cv::Mat
+  }
+
   enum BackgroundDirection {
     FRONT
     BACK
@@ -487,7 +498,18 @@ package "etrobocon2025" {
     - detectDirection(cv::Mat& frame): void
   }
 
-  ' 画像保存クラス
+  ' プラレール撮影動作クラス
+  class PlaCameraAction {
+    + PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect& _roi)
+    + run(): void
+    - getBackgroundFrame(): void
+    - motionDetector: MotionDetector
+    - {static} constexpr MAX_NO_MOTION: int
+    - {static} constexpr filePath: const char*
+    - {static} constexpr uploadFile: const char*
+  }
+
+  ' ユーティリティクラス
   class FrameSave {
     + {static} save(cv::Mat& frame, const std::string& filePath, const std::string& fileName): void
     - FrameSave()
@@ -527,8 +549,11 @@ SpeedCalculator *-- Pid : 組成
 CameraCapture --|> ICameraCapture : 実装
 
 LineBoundingBoxDetector --|> BoundingBoxDetector : 継承
+MotionDetector --|> BoundingBoxDetector : 継承
 BoundingBoxDetector --> BoundingBoxDetectionResult : 使用
 LineBoundingBoxDetector --> BoundingBoxDetectionResult : 使用
+MotionDetector --> BoundingBoxDetectionResult : 使用
+MotionDetector --> FrameSave : 使用
 
 BackgroundDirectionDetector --> BackgroundDirectionResult : 使用
 BackgroundDirectionDetector --> BackgroundDirection : 使用
@@ -583,5 +608,9 @@ MiniFigCameraAction --> MiniFigDirectionDetector : 使用
 MiniFigCameraAction --> AngleRotation : 使用
 MiniFigCameraAction --> DistanceStraight : 使用
 Robot --> MiniFigDirectionResult : 管理
+
+PlaCameraAction --|> Motion : 継承
+PlaCameraAction --> MotionDetector : 使用
+PlaCameraAction --> FrameSave : 使用
 
 @enduml
