@@ -1,5 +1,4 @@
-@startuml
-!define ABSTRACT_STYLE <<abstract>>
+@startuml etrobocon2025-class-diagram
 
 package "etrobocon2025" {
 
@@ -307,7 +306,7 @@ package "etrobocon2025" {
     # robot: Robot&
   }
 
-  abstract class LineTrace ABSTRACT_STYLE {
+  abstract class LineTrace {
     + LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
     + run(): void
     # {abstract} isMetPreCondition(): bool
@@ -318,7 +317,7 @@ package "etrobocon2025" {
     # pidGain: PidGain
   }
 
-  abstract class Straight ABSTRACT_STYLE {
+  abstract class Straight {
     + Straight(Robot& _robot, double _speed)
     + run(): void
     # {abstract} isMetPreCondition(): bool
@@ -327,7 +326,7 @@ package "etrobocon2025" {
     # targetSpeed: double
   }
 
-  abstract class Rotation ABSTRACT_STYLE {
+  abstract class Rotation {
     + Rotation(Robot& _robot, double _speed, bool _isClockwise)
     + run(): void
     + {abstract} isMetPreCondition(): bool
@@ -406,7 +405,7 @@ package "etrobocon2025" {
   }
 
   ' カメラPID監視クラス
-  abstract class CameraPidTracking ABSTRACT_STYLE {
+  abstract class CameraPidTracking {
     + CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, BoundingBoxDetector& _boundingBoxDetector)
     + run(): void
     # {abstract} isMetPreCondition(): bool
@@ -474,7 +473,7 @@ package "etrobocon2025" {
   }
 
   ' 応用動作クラス
-  abstract class CompositeMotion ABSTRACT_STYLE {
+  abstract class CompositeMotion {
     + CompositeMotion(Robot& _robot)
     + {abstract} run(): void
   }
@@ -509,108 +508,130 @@ package "etrobocon2025" {
     - {static} constexpr uploadFile: const char*
   }
 
-  ' ユーティリティクラス
-  class FrameSave {
-    + {static} save(cv::Mat& frame, const std::string& filePath, const std::string& fileName): void
-    - FrameSave()
-    - {static} inline imgExtension: std::string
+  ' ユーティリティパッケージ
+  package "utils" {
+    class FrameSave {
+      + {static} save(cv::Mat& frame, const std::string& filePath, const std::string& fileName): void
+      - FrameSave()
+      - {static} inline imgExtension: std::string
+    }
   }
 
 }
 
 ' 関係性の定義
-EtRobocon2025 --> Robot : 使用
-Robot *-- MotorController : 組成
-Robot *-- CameraCapture : 組成
-Robot *-- ICameraCapture : 関連
 
-AreaMaster --> Robot : 使用
-AreaMaster --> MotionParser : 使用
-AreaMaster --> Area : 使用
+' 1. 継承関係 (Inheritance)
+LineTrace --|> Motion
+Straight --|> Motion
+Rotation --|> Motion
+CameraPidTracking --|> Motion
+CompositeMotion --|> Motion
 
-Calibrator --> Robot : 使用
+DistanceLineTrace --|> LineTrace
+ColorLineTrace --|> LineTrace
+ColorDistanceLineTrace --|> LineTrace
 
-MotionParser --> Motion : 生成
-MotionParser --> COMMAND : 使用
+DistanceStraight --|> Straight
+ColorStraight --|> Straight
 
-Robot --> spikeapi::ColorSensor : 管理
-Robot --> spikeapi::Clock : 管理
-Robot --> spikeapi::Button : 管理
-Robot --> spikeapi::ForceSensor : 管理
-Robot --> spikeapi::Display : 管理
+AngleRotation --|> Rotation
 
-MotorController *-- spikeapi::Motor : 組成
+DistanceCameraLineTrace --|> CameraPidTracking
 
-Pid *-- PidGain : 組成
+MiniFigCameraAction --|> CompositeMotion
 
-SpeedCalculator --> Robot : 使用
-SpeedCalculator *-- Pid : 組成
+EdgeChange --|> Motion
+Sleeping --|> Motion
+Snapshot --|> Motion
+PlaCameraAction --|> Motion
 
-CameraCapture --|> ICameraCapture : 実装
+LineBoundingBoxDetector --|> BoundingBoxDetector
+MotionDetector --|> BoundingBoxDetector
 
-LineBoundingBoxDetector --|> BoundingBoxDetector : 継承
-MotionDetector --|> BoundingBoxDetector : 継承
-BoundingBoxDetector --> BoundingBoxDetectionResult : 使用
-LineBoundingBoxDetector --> BoundingBoxDetectionResult : 使用
-MotionDetector --> BoundingBoxDetectionResult : 使用
-MotionDetector --> FrameSave : 使用
+' 2. 実現関係 (Realization)
+CameraCapture ..|> ICameraCapture
 
-BackgroundDirectionDetector --> BackgroundDirectionResult : 使用
-BackgroundDirectionDetector --> BackgroundDirection : 使用
+' 3. コンポジション関係 (Composition) - 強い所有関係
+EtRobocon2025 *-- Robot
+Robot *-- MotorController
+Robot *-- CameraCapture
+Robot *-- "spikeapi::ColorSensor"
+Robot *-- "spikeapi::Clock"
+Robot *-- "spikeapi::Button"
+Robot *-- "spikeapi::ForceSensor"
+Robot *-- "spikeapi::Display"
+Robot *-- MiniFigDirectionResult
 
-MiniFigDirectionDetector --> MiniFigDirectionResult : 使用
-MiniFigDirectionDetector --> MiniFigDirection : 使用
+MotorController *-- "spikeapi::Motor"
 
-Motion --> Robot : 使用
-LineTrace --|> Motion : 継承
-Straight --|> Motion : 継承
-Rotation --|> Motion : 継承
+Pid *-- PidGain
 
-LineTrace --> PidGain : 使用
-LineTrace --> ColorJudge : 使用
-LineTrace --> Mileage : 使用
-LineTrace --> SpeedCalculator : 使用
+SpeedCalculator *-- Pid
 
-DistanceLineTrace --|> LineTrace : 継承
-ColorLineTrace --|> LineTrace : 継承
-ColorLineTrace --> COLOR : 使用
+PlaCameraAction *-- MotionDetector
 
-DistanceStraight --|> Straight : 継承
-Straight --> SpeedCalculator : 使用
+' 4. 集約関係 (Aggregation) - 弱い所有関係
+Robot o-- ICameraCapture
+CameraPidTracking o-- BoundingBoxDetector
+DistanceCameraLineTrace o-- BoundingBoxDetector
 
-CameraPidTracking --|> Motion : 継承
-CameraPidTracking --> BoundingBoxDetector : 使用
-CameraPidTracking --> PidGain : 使用
-CameraPidTracking --> BoundingBoxDetectionResult : 使用
+' 5. 関連関係 (Association) - 永続的な関係
+AreaMaster --> Robot
+Calibrator --> Robot
+Motion --> Robot
 
-DistanceCameraLineTrace --|> CameraPidTracking : 継承
-DistanceCameraLineTrace --> BoundingBoxDetector : 使用
+' 6. 依存関係 (Dependency) - 一時的な使用関係
+AreaMaster ..> MotionParser
+AreaMaster ..> Area
 
-AngleRotation --|> Rotation : 継承
-AngleRotation --> Mileage : 使用
-AngleRotation --> SystemInfo : 使用
+MotionParser ..> Motion
+MotionParser ..> COMMAND
+MotionParser ..> ColorLineTrace
+MotionParser ..> DistanceLineTrace
+MotionParser ..> ColorDistanceLineTrace
+MotionParser ..> DistanceStraight
+MotionParser ..> ColorStraight
+MotionParser ..> AngleRotation
+MotionParser ..> DistanceCameraLineTrace
+MotionParser ..> EdgeChange
+MotionParser ..> Sleeping
+MotionParser ..> Snapshot
+MotionParser ..> MiniFigCameraAction
 
-ColorStraight --|> Straight : 継承
-ColorStraight --> COLOR : 使用
+LineTrace ..> PidGain
+LineTrace ..> ColorJudge
+LineTrace ..> Mileage
+LineTrace ..> SpeedCalculator
 
-ColorDistanceLineTrace --|> LineTrace : 継承
-ColorDistanceLineTrace --> COLOR : 使用
+Straight ..> SpeedCalculator
 
-EdgeChange --|> Motion : 継承
-Sleeping --|> Motion : 継承
-Snapshot --|> Motion : 継承
-Snapshot --> FrameSave : 使用
+AngleRotation ..> Mileage
+AngleRotation ..> SystemInfo
 
-MiniFigCameraAction --|> CompositeMotion : 継承
-CompositeMotion --|> Motion : 継承
-MiniFigCameraAction --> FrameSave : 使用
-MiniFigCameraAction --> MiniFigDirectionDetector : 使用
-MiniFigCameraAction --> AngleRotation : 使用
-MiniFigCameraAction --> DistanceStraight : 使用
-Robot --> MiniFigDirectionResult : 管理
+ColorLineTrace ..> COLOR
+ColorStraight ..> COLOR
+ColorDistanceLineTrace ..> COLOR
 
-PlaCameraAction --|> Motion : 継承
-PlaCameraAction --> MotionDetector : 使用
-PlaCameraAction --> FrameSave : 使用
+BoundingBoxDetector ..> BoundingBoxDetectionResult
+LineBoundingBoxDetector ..> BoundingBoxDetectionResult
+MotionDetector ..> BoundingBoxDetectionResult
+CameraPidTracking ..> PidGain
+CameraPidTracking ..> BoundingBoxDetectionResult
+
+BackgroundDirectionDetector ..> BackgroundDirectionResult
+BackgroundDirectionDetector ..> BackgroundDirection
+
+MiniFigDirectionDetector ..> MiniFigDirectionResult
+MiniFigDirectionDetector ..> MiniFigDirection
+
+Snapshot ..> FrameSave
+MiniFigCameraAction ..> FrameSave
+MiniFigCameraAction ..> MiniFigDirectionDetector
+MiniFigCameraAction ..> AngleRotation
+MiniFigCameraAction ..> DistanceStraight
+PlaCameraAction ..> FrameSave
+MotionDetector ..> FrameSave
+
 
 @enduml
