@@ -1,112 +1,6 @@
 @startuml etrobocon2025-class-diagram
 
-package "etrobocon2025" {
-
-  ' メインクラス
-  class EtRobocon2025 {
-    + {static} start(): void
-    - {static} robot: Robot
-  }
-
-  ' ロボットクラス
-  class Robot {
-    + Robot()
-    + Robot(ICameraCapture& cam)
-    + getMotorControllerInstance(): MotorController&
-    + getCameraCaptureInstance(): ICameraCapture&
-    + getColorSensorInstance(): spikeapi::ColorSensor&
-    + getClockInstance(): spikeapi::Clock&
-    + getButtonInstance(): spikeapi::Button&
-    + getForceSensorInstance(): spikeapi::ForceSensor&
-    + getDisplayInstance(): spikeapi::Display&
-    + setIsLeftEdge(bool isLeft): void
-    + getIsLeftEdge() const: bool
-    + getMiniFigDirectionResult(): MiniFigDirectionResult&
-    - motorController: MotorController
-    - defaultCameraCapture: CameraCapture
-    - cameraCapture: ICameraCapture&
-    - colorSensor: spikeapi::ColorSensor
-    - clock: spikeapi::Clock
-    - button: spikeapi::Button
-    - forceSensor: spikeapi::ForceSensor
-    - display: spikeapi::Display
-    - miniFigDirectionResult: MiniFigDirectionResult
-    - isLeftEdge: bool
-  }
-
-  ' エリアマスタークラス
-  class AreaMaster {
-    + AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)
-    + run(): void
-    - robot: Robot&
-    - area: Area
-    - isLeftCourse: bool
-    - targetBrightness: int
-    - {static} const basePath: std::string
-    - {static} const areaCommandNames: std::array<std::string, 3>
-  }
-
-  ' キャリブレータクラス
-  class Calibrator {
-    + Calibrator(Robot& _robot)
-    + selectAndSetCourse(): void
-    + measureAndSetTargetBrightness(): void
-    + getAngleCheckFrame(): void
-    + waitForStart(): void
-    + getIsLeftCourse(): bool
-    + getTargetBrightness(): int
-    - robot: Robot&
-    - isLeftCourse: bool
-    - targetBrightness: int
-  }
-
-  ' モーションパーサークラス
-  class MotionParser {
-    + {static} createMotions(Robot& robot, std::string& commandFilePath, int targetBrightness): std::vector<Motion*>
-    - MotionParser()
-    - {static} convertCommand(const std::string& str): COMMAND
-    - {static} convertBool(const std::string& command, const std::string& stringParameter): bool
-  }
-
-  ' 列挙型・構造体
-  enum Area {
-    LineTrace
-    DoubleLoop
-    SmartCarry
-  }
-
-  enum COMMAND {
-    AR
-    DS
-    CS
-    DL
-    DCL
-    CL
-    CDL
-    EC
-    SL
-    SS
-    MCA
-    NONE
-  }
-
-  enum COLOR {
-    NONE
-    BLACK
-    WHITE
-    BLUE
-    GREEN
-    YELLOW
-    RED
-  }
-
-  struct PidGain {
-    + kp: double
-    + ki: double
-    + kd: double
-    + PidGain(double _kp, double _ki, double _kd)
-  }
-
+package "走行制御システム" {
   ' モーターコントローラークラス
   class MotorController {
     + {static} constexpr MOTOR_POWER_MAX: int
@@ -190,113 +84,6 @@ package "etrobocon2025" {
     - {static} constexpr LEFT_K_P: double
     - {static} constexpr LEFT_K_I: double
     - {static} constexpr LEFT_K_D: double
-  }
-
-  ' カメラキャプチャーインターフェース
-  abstract class ICameraCapture {
-    + {abstract} ~ICameraCapture()
-    + {abstract} findAvailableCameraID(int maxTested): int
-    + {abstract} getCameraID(): int
-    + {abstract} setCameraID(int id): bool
-    + {abstract} openCamera(): bool
-    + {abstract} setCapProps(double width, double height): void
-    + {abstract} getFrame(cv::Mat& outFrame): bool
-  }
-
-  ' カメラキャプチャークラス
-  class CameraCapture {
-    + CameraCapture()
-    + ~CameraCapture()
-    + findAvailableCameraID(int maxTested): int
-    + getCameraID(): int
-    + setCameraID(int id): bool
-    + openCamera(): bool
-    + setCapProps(double width, double height): void
-    + getFrame(cv::Mat& outFrame): bool
-    - cap: cv::VideoCapture
-    - cameraID: int
-  }
-
-  ' 画像処理系
-  struct BoundingBoxDetectionResult {
-    + wasDetected: bool
-    + topLeft: cv::Point
-    + topRight: cv::Point
-    + bottomLeft: cv::Point
-    + bottomRight: cv::Point
-  }
-
-  abstract class BoundingBoxDetector {
-    + {abstract} ~BoundingBoxDetector()
-    + {abstract} detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
-  }
-
-  class LineBoundingBoxDetector {
-    + LineBoundingBoxDetector(const cv::Scalar& _lowerHSV, const cv::Scalar& _upperHSV)
-    + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi)
-    + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi, const cv::Size& resolution)
-    + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
-    - {static} MIN_LINE_CONTOUR_AREA: double
-    - lowerHSV: cv::Scalar
-    - upperHSV: cv::Scalar
-    - roi: cv::Rect
-    - resolution: cv::Size
-    - validateParameters(): void
-  }
-
-  class MotionDetector {
-    + MotionDetector(double _threshold, double _minArea, const cv::Rect& _roi)
-    + setBackground(const cv::Mat& background): bool
-    + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
-    + compareTwoFrames(const cv::Mat& firstFrame, const cv::Mat& secondFrame): std::vector<cv::Point>
-    - threshold: double
-    - minArea: double
-    - roi: cv::Rect
-    - bgFrame: cv::Mat
-  }
-
-  enum BackgroundDirection {
-    FRONT
-    BACK
-    RIGHT
-    LEFT
-  }
-
-  struct BackgroundDirectionResult {
-    + wasDetected: bool
-    + direction: BackgroundDirection
-  }
-
-  class BackgroundDirectionDetector {
-    + BackgroundDirectionDetector(const std::string& modelPath)
-    + detect(const cv::Mat& frame, BackgroundDirectionResult& result): void
-    - net: cv::dnn::Net
-    - modelPath: std::string
-    - outputImagePath: std::string
-    - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
-    - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, BackgroundDirectionResult& result): void
-  }
-
-  enum MiniFigDirection {
-    FRONT
-    RIGHT
-    BACK
-    LEFT
-  }
-
-  struct MiniFigDirectionResult {
-    + wasDetected: bool
-    + direction: MiniFigDirection
-  }
-
-  class MiniFigDirectionDetector {
-    + MiniFigDirectionDetector(const std::string& modelPath)
-    + detect(const cv::Mat& frame, MiniFigDirectionResult& result): void
-    - net: cv::dnn::Net
-    - modelPath: std::string
-    - outputImagePath: std::string
-    - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
-    - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, MiniFigDirectionResult& result): void
   }
 
   ' Motionクラス
@@ -451,10 +238,43 @@ package "etrobocon2025" {
     - {static} const path: std::string
   }
 
-  ' ユーティリティ
-  class StringOperator {
-    + {static} removeEOL(const std::string& str): std::string
-    - StringOperator()
+  ' 列挙型・構造体
+  enum Area {
+    LineTrace
+    DoubleLoop
+    SmartCarry
+  }
+
+  enum COMMAND {
+    AR
+    DS
+    CS
+    DL
+    DCL
+    CL
+    CDL
+    EC
+    SL
+    SS
+    MCA
+    NONE
+  }
+
+  enum COLOR {
+    NONE
+    BLACK
+    WHITE
+    BLUE
+    GREEN
+    YELLOW
+    RED
+  }
+
+  struct PidGain {
+    + kp: double
+    + ki: double
+    + kd: double
+    + PidGain(double _kp, double _ki, double _kd)
   }
 
   ' システム定数
@@ -471,11 +291,136 @@ package "etrobocon2025" {
     + {static} constexpr MAX_WIDTH: int
     + {static} constexpr MAX_HEIGHT: int
   }
+}
 
-  ' 応用動作クラス
-  abstract class CompositeMotion {
-    + CompositeMotion(Robot& _robot)
-    + {abstract} run(): void
+package "カメラ撮影システム" {
+  ' カメラキャプチャーインターフェース
+  abstract class ICameraCapture {
+    + {abstract} ~ICameraCapture()
+    + {abstract} findAvailableCameraID(int maxTested): int
+    + {abstract} getCameraID(): int
+    + {abstract} setCameraID(int id): bool
+    + {abstract} openCamera(): bool
+    + {abstract} setCapProps(double width, double height): void
+    + {abstract} getFrame(cv::Mat& outFrame): bool
+  }
+
+  ' カメラキャプチャークラス
+  class CameraCapture {
+    + CameraCapture()
+    + ~CameraCapture()
+    + findAvailableCameraID(int maxTested): int
+    + getCameraID(): int
+    + setCameraID(int id): bool
+    + openCamera(): bool
+    + setCapProps(double width, double height): void
+    + getFrame(cv::Mat& outFrame): bool
+    - cap: cv::VideoCapture
+    - cameraID: int
+  }
+
+  ' 画像処理系
+  struct BoundingBoxDetectionResult {
+    + wasDetected: bool
+    + topLeft: cv::Point
+    + topRight: cv::Point
+    + bottomLeft: cv::Point
+    + bottomRight: cv::Point
+  }
+
+  abstract class BoundingBoxDetector {
+    + {abstract} ~BoundingBoxDetector()
+    + {abstract} detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
+  }
+
+  class LineBoundingBoxDetector {
+    + LineBoundingBoxDetector(const cv::Scalar& _lowerHSV, const cv::Scalar& _upperHSV)
+    + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi)
+    + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi, const cv::Size& resolution)
+    + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
+    - {static} MIN_LINE_CONTOUR_AREA: double
+    - lowerHSV: cv::Scalar
+    - upperHSV: cv::Scalar
+    - roi: cv::Rect
+    - resolution: cv::Size
+    - validateParameters(): void
+  }
+
+  ' フレーム保存クラス
+  class FrameSave {
+    + {static} save(cv::Mat& frame, const std::string& filePath, const std::string& fileName): void
+    - FrameSave()
+    - {static} inline imgExtension: std::string
+  }
+}
+
+package "配置エリアB撮影システム" {
+  class MotionDetector {
+    + MotionDetector(double _threshold, double _minArea, const cv::Rect& _roi)
+    + setBackground(const cv::Mat& background): bool
+    + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
+    + compareTwoFrames(const cv::Mat& firstFrame, const cv::Mat& secondFrame): std::vector<cv::Point>
+    - threshold: double
+    - minArea: double
+    - roi: cv::Rect
+    - bgFrame: cv::Mat
+  }
+
+  enum BackgroundDirection {
+    FRONT
+    BACK
+    RIGHT
+    LEFT
+  }
+
+  struct BackgroundDirectionResult {
+    + wasDetected: bool
+    + direction: BackgroundDirection
+  }
+
+  class BackgroundDirectionDetector {
+    + BackgroundDirectionDetector(const std::string& modelPath)
+    + detect(const cv::Mat& frame, BackgroundDirectionResult& result): void
+    - net: cv::dnn::Net
+    - modelPath: std::string
+    - outputImagePath: std::string
+    - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
+    - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, BackgroundDirectionResult& result): void
+  }
+
+  ' プラレール撮影動作クラス
+  class PlaCameraAction {
+    + PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect& _roi)
+    + run(): void
+    - getBackgroundFrame(): void
+    - motionDetector: MotionDetector
+    - {static} constexpr MAX_NO_MOTION: int
+    - {static} constexpr filePath: const char*
+    - {static} constexpr uploadFile: const char*
+  }
+}
+
+package "配置エリアA撮影システム" {
+  enum MiniFigDirection {
+    FRONT
+    RIGHT
+    BACK
+    LEFT
+  }
+
+  struct MiniFigDirectionResult {
+    + wasDetected: bool
+    + direction: MiniFigDirection
+  }
+
+  class MiniFigDirectionDetector {
+    + MiniFigDirectionDetector(const std::string& modelPath)
+    + detect(const cv::Mat& frame, MiniFigDirectionResult& result): void
+    - net: cv::dnn::Net
+    - modelPath: std::string
+    - outputImagePath: std::string
+    - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
+    - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, MiniFigDirectionResult& result): void
   }
 
   ' ミニフィグカメラアクション
@@ -497,141 +442,206 @@ package "etrobocon2025" {
     - detectDirection(cv::Mat& frame): void
   }
 
-  ' プラレール撮影動作クラス
-  class PlaCameraAction {
-    + PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect& _roi)
+  ' 応用動作クラス
+  abstract class CompositeMotion {
+    + CompositeMotion(Robot& _robot)
+    + {abstract} run(): void
+  }
+}
+
+package "走行体・無線通信デバイス間通信システム" {
+}
+
+package "画像アップロードシステム" {
+}
+
+package "ロボコンスナップ攻略システム" {
+  ' メインクラス
+  class EtRobocon2025 {
+    + {static} start(): void
+    - {static} robot: Robot
+  }
+
+  ' ロボットクラス
+  class Robot {
+    + Robot()
+    + Robot(ICameraCapture& cam)
+    + getMotorControllerInstance(): MotorController&
+    + getCameraCaptureInstance(): ICameraCapture&
+    + getColorSensorInstance(): spikeapi::ColorSensor&
+    + getClockInstance(): spikeapi::Clock&
+    + getButtonInstance(): spikeapi::Button&
+    + getForceSensorInstance(): spikeapi::ForceSensor&
+    + getDisplayInstance(): spikeapi::Display&
+    + setIsLeftEdge(bool isLeft): void
+    + getIsLeftEdge() const: bool
+    + getMiniFigDirectionResult(): MiniFigDirectionResult&
+    - motorController: MotorController
+    - defaultCameraCapture: CameraCapture
+    - cameraCapture: ICameraCapture&
+    - colorSensor: spikeapi::ColorSensor
+    - clock: spikeapi::Clock
+    - button: spikeapi::Button
+    - forceSensor: spikeapi::ForceSensor
+    - display: spikeapi::Display
+    - miniFigDirectionResult: MiniFigDirectionResult
+    - isLeftEdge: bool
+  }
+
+  ' エリアマスタークラス
+  class AreaMaster {
+    + AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)
     + run(): void
-    - getBackgroundFrame(): void
-    - motionDetector: MotionDetector
-    - {static} constexpr MAX_NO_MOTION: int
-    - {static} constexpr filePath: const char*
-    - {static} constexpr uploadFile: const char*
+    - robot: Robot&
+    - area: Area
+    - isLeftCourse: bool
+    - targetBrightness: int
+    - {static} const basePath: std::string
+    - {static} const areaCommandNames: std::array<std::string, 3>
   }
 
-  ' ユーティリティパッケージ
-  package "utils" {
-    class FrameSave {
-      + {static} save(cv::Mat& frame, const std::string& filePath, const std::string& fileName): void
-      - FrameSave()
-      - {static} inline imgExtension: std::string
-    }
+  ' キャリブレータクラス
+  class Calibrator {
+    + Calibrator(Robot& _robot)
+    + selectAndSetCourse(): void
+    + measureAndSetTargetBrightness(): void
+    + getAngleCheckFrame(): void
+    + waitForStart(): void
+    + getIsLeftCourse(): bool
+    + getTargetBrightness(): int
+    - robot: Robot&
+    - isLeftCourse: bool
+    - targetBrightness: int
   }
 
+  ' モーションパーサークラス
+  class MotionParser {
+    + {static} createMotions(Robot& robot, std::string& commandFilePath, int targetBrightness): std::vector<Motion*>
+    - MotionParser()
+    - {static} convertCommand(const std::string& str): COMMAND
+    - {static} convertBool(const std::string& command, const std::string& stringParameter): bool
+  }
+
+  ' ユーティリティクラス
+  class StringOperator {
+    + {static} removeEOL(const std::string& str): std::string
+    - StringOperator()
+  }
 }
 
 ' 関係性の定義
 
 ' 1. 継承関係 (Inheritance)
-LineTrace --|> Motion
-Straight --|> Motion
-Rotation --|> Motion
-CameraPidTracking --|> Motion
-CompositeMotion --|> Motion
+LineTrace --|> Motion : 継承
+Straight --|> Motion : 継承
+Rotation --|> Motion : 継承
+CameraPidTracking --|> Motion : 継承
+CompositeMotion --|> Motion : 継承
 
-DistanceLineTrace --|> LineTrace
-ColorLineTrace --|> LineTrace
-ColorDistanceLineTrace --|> LineTrace
+DistanceLineTrace --|> LineTrace : 継承
+ColorLineTrace --|> LineTrace : 継承
+ColorDistanceLineTrace --|> LineTrace : 継承
 
-DistanceStraight --|> Straight
-ColorStraight --|> Straight
+DistanceStraight --|> Straight : 継承
+ColorStraight --|> Straight : 継承
 
-AngleRotation --|> Rotation
+AngleRotation --|> Rotation : 継承
 
-DistanceCameraLineTrace --|> CameraPidTracking
+DistanceCameraLineTrace --|> CameraPidTracking : 継承
 
-MiniFigCameraAction --|> CompositeMotion
+MiniFigCameraAction --|> CompositeMotion : 継承
 
-EdgeChange --|> Motion
-Sleeping --|> Motion
-Snapshot --|> Motion
-PlaCameraAction --|> Motion
+EdgeChange --|> Motion : 継承
+Sleeping --|> Motion : 継承
+Snapshot --|> Motion : 継承
+PlaCameraAction --|> Motion : 継承
 
-LineBoundingBoxDetector --|> BoundingBoxDetector
-MotionDetector --|> BoundingBoxDetector
+LineBoundingBoxDetector --|> BoundingBoxDetector : 継承
+MotionDetector --|> BoundingBoxDetector : 継承
 
 ' 2. 実現関係 (Realization)
-CameraCapture ..|> ICameraCapture
+CameraCapture ..|> ICameraCapture : 実現
 
 ' 3. コンポジション関係 (Composition) - 強い所有関係
-EtRobocon2025 *-- Robot
-Robot *-- MotorController
-Robot *-- CameraCapture
-Robot *-- "spikeapi::ColorSensor"
-Robot *-- "spikeapi::Clock"
-Robot *-- "spikeapi::Button"
-Robot *-- "spikeapi::ForceSensor"
-Robot *-- "spikeapi::Display"
-Robot *-- MiniFigDirectionResult
+EtRobocon2025 *-- Robot : コンポジション
+Robot *-- MotorController : コンポジション
+Robot *-- CameraCapture : コンポジション
+Robot *-- "spikeapi::ColorSensor" : コンポジション
+Robot *-- "spikeapi::Clock" : コンポジション
+Robot *-- "spikeapi::Button" : コンポジション
+Robot *-- "spikeapi::ForceSensor" : コンポジション
+Robot *-- "spikeapi::Display" : コンポジション
+Robot *-- MiniFigDirectionResult : コンポジション
 
-MotorController *-- "spikeapi::Motor"
+MotorController *-- "spikeapi::Motor" : コンポジション
 
-Pid *-- PidGain
+Pid *-- PidGain : コンポジション
 
-SpeedCalculator *-- Pid
+SpeedCalculator *-- Pid : コンポジション
 
-PlaCameraAction *-- MotionDetector
+PlaCameraAction *-- MotionDetector : コンポジション
 
 ' 4. 集約関係 (Aggregation) - 弱い所有関係
-Robot o-- ICameraCapture
-CameraPidTracking o-- BoundingBoxDetector
-DistanceCameraLineTrace o-- BoundingBoxDetector
+Robot o-- ICameraCapture : 集約
+CameraPidTracking o-- BoundingBoxDetector : 集約
+DistanceCameraLineTrace o-- BoundingBoxDetector : 集約
 
 ' 5. 関連関係 (Association) - 永続的な関係
-AreaMaster --> Robot
-Calibrator --> Robot
-Motion --> Robot
+AreaMaster --> Robot : 関連
+Calibrator --> Robot : 関連
+Motion --> Robot : 関連
 
 ' 6. 依存関係 (Dependency) - 一時的な使用関係
-AreaMaster ..> MotionParser
-AreaMaster ..> Area
+AreaMaster ..> MotionParser : 依存
+AreaMaster ..> Area : 依存
 
-MotionParser ..> Motion
-MotionParser ..> COMMAND
-MotionParser ..> ColorLineTrace
-MotionParser ..> DistanceLineTrace
-MotionParser ..> ColorDistanceLineTrace
-MotionParser ..> DistanceStraight
-MotionParser ..> ColorStraight
-MotionParser ..> AngleRotation
-MotionParser ..> DistanceCameraLineTrace
-MotionParser ..> EdgeChange
-MotionParser ..> Sleeping
-MotionParser ..> Snapshot
-MotionParser ..> MiniFigCameraAction
+MotionParser ..> Motion : 依存
+MotionParser ..> COMMAND : 依存
+MotionParser ..> ColorLineTrace : 依存
+MotionParser ..> DistanceLineTrace : 依存
+MotionParser ..> ColorDistanceLineTrace : 依存
+MotionParser ..> DistanceStraight : 依存
+MotionParser ..> ColorStraight : 依存
+MotionParser ..> AngleRotation : 依存
+MotionParser ..> DistanceCameraLineTrace : 依存
+MotionParser ..> EdgeChange : 依存
+MotionParser ..> Sleeping : 依存
+MotionParser ..> Snapshot : 依存
+MotionParser ..> MiniFigCameraAction : 依存
 
-LineTrace ..> PidGain
-LineTrace ..> ColorJudge
-LineTrace ..> Mileage
-LineTrace ..> SpeedCalculator
+LineTrace ..> PidGain : 依存
+LineTrace ..> ColorJudge : 依存
+LineTrace ..> Mileage : 依存
+LineTrace ..> SpeedCalculator : 依存
 
-Straight ..> SpeedCalculator
+Straight ..> SpeedCalculator : 依存
 
-AngleRotation ..> Mileage
-AngleRotation ..> SystemInfo
+AngleRotation ..> Mileage : 依存
+AngleRotation ..> SystemInfo : 依存
 
-ColorLineTrace ..> COLOR
-ColorStraight ..> COLOR
-ColorDistanceLineTrace ..> COLOR
+ColorLineTrace ..> COLOR : 依存
+ColorStraight ..> COLOR : 依存
+ColorDistanceLineTrace ..> COLOR : 依存
 
-BoundingBoxDetector ..> BoundingBoxDetectionResult
-LineBoundingBoxDetector ..> BoundingBoxDetectionResult
-MotionDetector ..> BoundingBoxDetectionResult
-CameraPidTracking ..> PidGain
-CameraPidTracking ..> BoundingBoxDetectionResult
+BoundingBoxDetector ..> BoundingBoxDetectionResult : 依存
+LineBoundingBoxDetector ..> BoundingBoxDetectionResult : 依存
+MotionDetector ..> BoundingBoxDetectionResult : 依存
+CameraPidTracking ..> PidGain : 依存
+CameraPidTracking ..> BoundingBoxDetectionResult : 依存
 
-BackgroundDirectionDetector ..> BackgroundDirectionResult
-BackgroundDirectionDetector ..> BackgroundDirection
+BackgroundDirectionDetector ..> BackgroundDirectionResult : 依存
+BackgroundDirectionDetector ..> BackgroundDirection : 依存
 
-MiniFigDirectionDetector ..> MiniFigDirectionResult
-MiniFigDirectionDetector ..> MiniFigDirection
+MiniFigDirectionDetector ..> MiniFigDirectionResult : 依存
+MiniFigDirectionDetector ..> MiniFigDirection : 依存
 
-Snapshot ..> FrameSave
-MiniFigCameraAction ..> FrameSave
-MiniFigCameraAction ..> MiniFigDirectionDetector
-MiniFigCameraAction ..> AngleRotation
-MiniFigCameraAction ..> DistanceStraight
-PlaCameraAction ..> FrameSave
-MotionDetector ..> FrameSave
+Snapshot ..> FrameSave : 依存
+MiniFigCameraAction ..> FrameSave : 依存
+MiniFigCameraAction ..> MiniFigDirectionDetector : 依存
+MiniFigCameraAction ..> AngleRotation : 依存
+MiniFigCameraAction ..> DistanceStraight : 依存
+PlaCameraAction ..> FrameSave : 依存
+MotionDetector ..> FrameSave : 依存
 
 
 @enduml
