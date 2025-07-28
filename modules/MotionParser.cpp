@@ -188,6 +188,23 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // CRA: カメラ復帰動作
+      // [1]:int 目標X座標[px] (オプション、デフォルト400)
+      case COMMAND::CRA: {
+        int targetX = 400;  // デフォルト値
+        if(params.size() > 1) {
+          targetX = stoi(params[1]);
+        }
+
+        cv::Scalar lowerHSV = cv::Scalar(0, 0, 0);
+        cv::Scalar upperHSV = cv::Scalar(179, 255, 30);
+        auto detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV);
+
+        CameraRecoveryAction* cra = new CameraRecoveryAction(robot, *detector, targetX);
+        motionList.push_back(cra);
+        break;
+      }
+
       // 未定義コマンド
       default: {
         cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
@@ -216,7 +233,8 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "EC", COMMAND::EC },    // エッジ切り替え
     { "SL", COMMAND::SL },    // スリープ
     { "SS", COMMAND::SS },    // カメラ撮影動作
-    { "MCA", COMMAND::MCA }   // ミニフィグのカメラ撮影動作
+    { "MCA", COMMAND::MCA },  // ミニフィグのカメラ撮影動作
+    { "CRA", COMMAND::CRA }   // カメラ復帰動作
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す

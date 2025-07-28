@@ -12,10 +12,7 @@
 #include "Pid.h"
 #include "SpeedCalculator.h"
 #include "Mileage.h"
-#include "AngleRotation.h"
-#include "RecoveryValidator.h"
 #include <algorithm>
-#include <array>
 
 class CameraPidTracking : public Motion {
  public:
@@ -60,29 +57,8 @@ class CameraPidTracking : public Motion {
   PidGain pidGain;                    // PIDゲイン
 
  private:
-  RecoveryValidator recoveryValidator;                                // 復帰動作検証クラス
-  static constexpr std::array<int, 3> RECOVERY_ANGLES = { 3, 6, 9 };  // 復帰回頭角度設定
-  static constexpr int RECOVERY_SPEED = 100;                          // 回頭スピード
-
-  /**
-   * @brief 検出失敗時の復帰動作
-   * @return true: 復帰成功, false: 復帰失敗
-   */
-  bool performRecoveryAction();
-
-  /**
-   * @brief 左右に段階的に角度を広げながら線を探す復帰処理
-   * @return true: 検出成功, false: 検出失敗
-   */
-  bool tryRecoveryRotation();
-
-  /**
-   * @brief 指定した方向・角度に回頭して線の検出を試行
-   * @param angle 角度
-   * @param isClockwise 回頭方向（true: 右回り, false: 左回り）
-   * @return true: 検出成功, false: 検出失敗
-   */
-  bool tryRotationDirection(int angle, bool isClockwise);
+  static constexpr int MAX_DETECTION_FAILURES = 3;  // 最大検出失敗回数
+  int detectionFailureCount = 0;                     // 連続検出失敗回数
 };
 
 #endif

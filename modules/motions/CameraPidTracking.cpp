@@ -5,7 +5,6 @@
  */
 
 #include "CameraPidTracking.h"
-#include <vector>
 
 CameraPidTracking::CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
                                      const PidGain& _pidGain,
@@ -14,8 +13,7 @@ CameraPidTracking::CameraPidTracking(Robot& _robot, double _targetSpeed, int _ta
     targetSpeed(_targetSpeed),
     targetXCoordinate(_targetXCoordinate),
     pidGain(_pidGain),
-    boundingBoxDetector(_boundingBoxDetector),
-    recoveryValidator(80.0)
+    boundingBoxDetector(_boundingBoxDetector)
 {
 }
 
@@ -45,14 +43,17 @@ void CameraPidTracking::run()
     // 画像処理を実行
     boundingBoxDetector.detect(frame, result);
 
-    // 検出失敗時は復帰動作を実行
+    // 検出失敗時の処理
     if(!result.wasDetected) {
-      if(performRecoveryAction()) {
-        continue;  // 復帰成功で通常処理続行
-      } else {
-        break;  // 復帰失敗で停止
+      detectionFailureCount++;
+      if(detectionFailureCount >= MAX_DETECTION_FAILURES) {
+        break;  // 連続失敗で停止
       }
+      continue;  // 次のフレームを試行
     }
+
+    // 検出成功時は失敗カウントをリセット
+    detectionFailureCount = 0;
 
     // バウンディングボックスの中心X座標を計算
     double currentX = (result.topLeft.x + result.bottomRight.x) / 2.0;
@@ -74,67 +75,4 @@ void CameraPidTracking::run()
 
   // モータを停止
   robot.getMotorControllerInstance().stopWheelsMotor();
-}
-
-bool CameraPidTracking::performRecoveryAction()
-{
-  // 復帰動作前の基準位置を保存
-  recoveryValidator.savePreRecoveryPosition(targetXCoordinate);
-
-  // 角度回頭による復帰を試行
-  bool recoverySuccess = tryRecoveryRotation();
-
-  // 復帰完了時は検証データをクリア
-  if(recoverySuccess) {
-    recoveryValidator.clear();
-  }
-
-  return recoverySuccess;
-}
-
-bool CameraPidTracking::tryRecoveryRotation()
-{
-  std::vector<int> rotationAngles(RECOVERY_ANGLES.begin(), RECOVERY_ANGLES.end());
-
-  for(int angle : rotationAngles) {
-    // 左方向で復帰試行
-    if(tryRotationDirection(angle, false)) {
-      return true;
-    }
-
-    // 右方向で復帰試行（左からの2倍角度で対称性を保つ）
-    if(tryRotationDirection(angle * 2, true)) {
-      return true;
-    }
-
-    // 中央位置に戻る（次の角度試行のため）
-    AngleRotation centerReturn(robot, angle, RECOVERY_SPEED, false);
-    centerReturn.run();
-  }
-
-  return false;  // 全ての試行で復帰失敗
-}
-
-bool CameraPidTracking::tryRotationDirection(int angle, bool isClockwise)
-{
-  // 指定方向に回頭
-  AngleRotation rotation(robot, angle, RECOVERY_SPEED, isClockwise);
-  rotation.run();
-
-  // 短時間待機後に検出試行
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-  cv::Mat frame;
-  robot.getCameraCaptureInstance().getFrame(frame);
-  boundingBoxDetector.detect(frame, result);
-
-  if(result.wasDetected) {
-    // 位置変化チェック
-    double currentX = (result.topLeft.x + result.bottomRight.x) / 2.0;
-    if(recoveryValidator.isPositionChangeValid(currentX)) {
-      return true;  // 復帰成功
-    }
-  }
-
-  return false;  // この方向では復帰失敗
 }
