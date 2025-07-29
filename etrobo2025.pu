@@ -127,41 +127,43 @@ package "走行体情報管理システム" {
       - isLeftEdge: bool
     }
   }
+
+  package "SPIKE API ラッパー" {
+    ' モーターコントローラークラス
+    class MotorController {
+      + {static} constexpr MOTOR_POWER_MAX: int
+      + {static} constexpr MOTOR_POWER_MIN: int
+      + MotorController()
+      + setRightMotorPower(int power): void
+      + setLeftMotorPower(int power): void
+      + resetRightMotorPower(): void
+      + resetLeftMotorPower(): void
+      + resetWheelsMotorPower(): void
+      + setRightMotorSpeed(double speed): void
+      + setLeftMotorSpeed(double speed): void
+      + stopWheelsMotor(): void
+      + brakeWheelsMotor(): void
+      + setArmMotorPower(int power): void
+      + resetArmMotorPower(): void
+      + stopArmMotor(): void
+      + holdArmMotor(): void
+      + getRightMotorCount(): int32_t
+      + getLeftMotorCount(): int32_t
+      + getArmMotorCount(): int32_t
+      + getRightMotorPower(): int
+      + getLeftMotorPower(): int
+      + getArmMotorPower(): int
+      + getRightMotorSpeed(): double
+      + getLeftMotorSpeed(): double
+      - rightWheel: spikeapi::Motor
+      - leftWheel: spikeapi::Motor
+      - armMotor: spikeapi::Motor
+      - limitPowerValue(int inputPower): int
+    }
+  }
 }
 
 package "走行制御システム" {
-  ' モーターコントローラークラス
-  class MotorController {
-    + {static} constexpr MOTOR_POWER_MAX: int
-    + {static} constexpr MOTOR_POWER_MIN: int
-    + MotorController()
-    + setRightMotorPower(int power): void
-    + setLeftMotorPower(int power): void
-    + resetRightMotorPower(): void
-    + resetLeftMotorPower(): void
-    + resetWheelsMotorPower(): void
-    + setRightMotorSpeed(double speed): void
-    + setLeftMotorSpeed(double speed): void
-    + stopWheelsMotor(): void
-    + brakeWheelsMotor(): void
-    + setArmMotorPower(int power): void
-    + resetArmMotorPower(): void
-    + stopArmMotor(): void
-    + holdArmMotor(): void
-    + getRightMotorCount(): int32_t
-    + getLeftMotorCount(): int32_t
-    + getArmMotorCount(): int32_t
-    + getRightMotorPower(): int
-    + getLeftMotorPower(): int
-    + getArmMotorPower(): int
-    + getRightMotorSpeed(): double
-    + getLeftMotorSpeed(): double
-    - rightWheel: spikeapi::Motor
-    - leftWheel: spikeapi::Motor
-    - armMotor: spikeapi::Motor
-    - limitPowerValue(int inputPower): int
-  }
-
   ' PIDクラス
   class Pid {
     + Pid(double _kp, double _ki, double _kd, double _targetValue, double _maxIntegral, double _minIntegral)
