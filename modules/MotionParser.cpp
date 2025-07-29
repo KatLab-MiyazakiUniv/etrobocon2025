@@ -283,6 +283,18 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
     }
   }
 
+  // カメラ復帰動作(CRA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  if(command == "CRA") {
+    if(param == "clockwise") {
+      return true;
+    } else if(param == "anticlockwise") {
+      return false;
+    } else {
+      cout << "'clockwise' か 'anticlockwise'を入力してください" << endl;
+      return true;
+    }
+  }
+
   // ここまでに条件を満たしていなかった場合は、デフォルト値としてtrueを返す
   cout << "convertBool関数の処理の対象外です: '" << command << endl;
   return true;
