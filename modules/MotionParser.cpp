@@ -189,18 +189,26 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       }
 
       // CRA: カメラ復帰動作
-      // [1]:int 目標X座標[px] (オプション、デフォルト400)
+      // [1]:int 回頭角度[deg], [2]:string 回頭の方向(clockwise or anticlockwise),
+      // [3-8]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV)
       case COMMAND::CRA: {
-        int targetX = 400;  // デフォルト値
-        if(params.size() > 1) {
-          targetX = stoi(params[1]);
+        if(params.size() < 3) {
+          break;
         }
 
-        cv::Scalar lowerHSV = cv::Scalar(0, 0, 0);
-        cv::Scalar upperHSV = cv::Scalar(179, 255, 30);
-        auto detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV);
+        int angle = stoi(params[1]);
+        bool clockwise = convertBool(params[0], params[2]);
 
-        CameraRecoveryAction* cra = new CameraRecoveryAction(robot, *detector, targetX);
+        cv::Scalar lowerHSV = cv::Scalar(0, 0, 0);  // 黒線デフォルト
+        cv::Scalar upperHSV = cv::Scalar(179, 255, 30);
+
+        if(params.size() >= 9) {  // HSV値6個が指定されている場合
+          lowerHSV = cv::Scalar(stoi(params[3]), stoi(params[4]), stoi(params[5]));
+          upperHSV = cv::Scalar(stoi(params[6]), stoi(params[7]), stoi(params[8]));
+        }
+
+        CameraRecoveryAction* cra
+            = new CameraRecoveryAction(robot, angle, clockwise, lowerHSV, upperHSV);
         motionList.push_back(cra);
         break;
       }

@@ -9,19 +9,22 @@
 
 #include "Motion.h"
 #include "BoundingBoxDetector.h"
+#include "LineBoundingBoxDetector.h"
 #include "AngleRotation.h"
-#include <array>
+#include <memory>
 
 class CameraRecoveryAction : public Motion {
  public:
   /**
    * コンストラクタ
    * @param _robot ロボットインスタンス
-   * @param _boundingBoxDetector 画像処理クラスの参照
-   * @param _targetXCoordinate 目標X座標（復帰判定用）
+   * @param _angle 回頭角度
+   * @param _isClockwise 回頭方向（true: 右回り, false: 左回り）
+   * @param _lowerHSV HSV下限値
+   * @param _upperHSV HSV上限値
    */
-  CameraRecoveryAction(Robot& _robot, BoundingBoxDetector& _boundingBoxDetector,
-                       int _targetXCoordinate);
+  CameraRecoveryAction(Robot& _robot, int _angle, bool _isClockwise, cv::Scalar _lowerHSV,
+                       cv::Scalar _upperHSV);
 
   /**
    * @brief カメラフレーム復帰動作を実行する
@@ -35,35 +38,12 @@ class CameraRecoveryAction : public Motion {
   bool isRecoverySuccessful() const;
 
  private:
-  BoundingBoxDetector& boundingBoxDetector;  // 画像処理クラスの参照
-  BoundingBoxDetectionResult result;         // 検出結果
-  int targetXCoordinate = 400;               // 目標X座標
-  bool recoverySuccess = false;              // 復帰成功フラグ
-
-  static constexpr std::array<int, 3> RECOVERY_ANGLES = { 5, 10, 15 };  // 復帰回頭角度設定
-  static constexpr int RECOVERY_SPEED = 50;                             // 回頭スピード
-  static constexpr double MAX_POSITION_DEVIATION = 100.0;               // 最大位置偏差
-
-  /**
-   * @brief 左右対称の段階的回頭による復帰処理
-   * @return true: 検出成功, false: 検出失敗
-   */
-  bool rotationRecovery();
-
-  /**
-   * @brief 指定した方向・角度に回頭して線の検出を試行
-   * @param angle 角度
-   * @param isClockwise 回頭方向（true: 右回り, false: 左回り）
-   * @return true: 検出成功, false: 検出失敗
-   */
-  bool tryRotationDirection(int angle, bool isClockwise);
-
-  /**
-   * @brief 検出された位置が妥当かチェック
-   * @param detectedX 検出されたX座標
-   * @return true: 正常, false: 異常
-   */
-  bool isDetectedPositionValid(double detectedX) const;
+  std::unique_ptr<BoundingBoxDetector> boundingBoxDetector;  // 画像処理クラス
+  BoundingBoxDetectionResult result;                         // 検出結果
+  int recoveryAngle;                                         // 復帰回頭角度
+  bool isClockwise;                                          // 回頭方向
+  bool recoverySuccess = false;                              // 復帰成功フラグ
+  static constexpr int RECOVERY_SPEED = 100;                 // 回頭スピード
 };
 
 #endif

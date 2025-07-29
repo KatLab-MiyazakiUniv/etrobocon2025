@@ -51,9 +51,6 @@ void CameraPidTracking::run()
       continue;  // 次のフレームを試行
     }
 
-    // 検出成功時は失敗カウントをリセット
-    detectionFailureCount = 0;
-
     // バウンディングボックスの中心X座標を計算
     double currentX = (result.topLeft.x + result.bottomRight.x) / 2.0;
 
