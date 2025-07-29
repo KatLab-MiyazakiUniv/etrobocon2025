@@ -40,6 +40,15 @@ class BackgroundCameraAction : public CompositeMotion {
   void run();
 
  private:
+  bool isClockwise = false;          // 回頭方向
+  int preTargetAngle = 90;           // カメラを風景に向けるための回頭角度
+  int postTargetAngle = 90;          // 黒線復帰のための回頭角度
+  double targetRotationSpeed = 200;  // 目標回頭速度
+  double threshold = 30.0;           // 風景検出のしきい値
+  double minArea = 400.0;            // 最小面積
+  const cv::Rect& roi;               // ROI領域
+  int position = 0;                  // 撮影位置（0:正面, 1:左, 2:右, 3:後ろ）
+
   /**
    * @brief 前提条件を満たしているかチェックする
    * @return 前提条件を満たしている場合はtrue、そうでない場合はfalse
@@ -50,16 +59,6 @@ class BackgroundCameraAction : public CompositeMotion {
    * @param frame 入力画像フレーム
    */
   void detectDirection(cv::Mat& frame);
-
-  bool isClockwise = false;          // 回頭方向
-  int preTargetAngle = 90;           // カメラを風景に向けるための回頭角度
-  int postTargetAngle = 90;          // 黒線復帰のための回頭角度
-  double targetRotationSpeed = 200;  // 目標回頭速度
-  double threshold = 30.0;           // 風景検出のしきい値
-  double minArea = 400.0;            // 最小面積
-  const cv::Rect& roi;               // ROI領域
-  BackgroundDirectionDetector detector;
-  int position = 0;  // 撮影位置（0:正面, 1:左, 2:右, 3:後ろ）
 };
 
 #endif

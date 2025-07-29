@@ -12,7 +12,7 @@
 //   // テスト用の画像を読み込めるかのテスト
 //   TEST(BackgroundDirectionDetectorTest, DetectsBackgroundDirectionFromImage)
 //   {
-//     BackgroundDirectionDetector detector("../../BackgroundDetector.onnx");
+//     BackgroundDirectionDetector detector("../../datafiles/models/BackgroundDetector.onnx");
 
 //     // 入力画像を読み込み
 //     cv::Mat img = cv::imread("../../tests/test_images/Background_Back_image.JPEG");
@@ -22,6 +22,6 @@
 //     detector.detect(img, result);
 
 //     ASSERT_TRUE(result.wasDetected);
-//     EXPECT_EQ(result.direction, BackgroundDirection ::BACK);
+//     EXPECT_EQ(result.direction, BackgroundDirection ::FRONT);
 //   }
 // }  // namespace etrobocon2025_test
