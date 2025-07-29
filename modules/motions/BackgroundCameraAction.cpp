@@ -39,6 +39,7 @@ bool BackgroundCameraAction::isMetPreCondition()
 // 判定動作を行う関数
 void BackgroundCameraAction::detectDirection(cv::Mat& frame)
 {
+  BackgroundDirectionDetector detector;
   // 風景の向きを判定
   detector.detect(frame, robot.getBackgroundDirectionResult());
 
@@ -105,10 +106,14 @@ void BackgroundCameraAction::run()
     // 一回目検出falseなら、残り、3回の撮影は確定する。
     // 一回目の撮影で風景が検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
     std::cout << "風景向き判定用写真の撮影" << std::endl;
-    plaAction.setUploadName("Fig_" + to_string(position) + ".JPEG");
+    plaAction.setUploadName("Fig_" + to_string(position));
     plaAction.run();
   }
+
+  // 動作安定のためのスリープ
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+  // 黒線復帰のための回頭をする
   AngleRotation postRotation(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
   postRotation.run();
 }
