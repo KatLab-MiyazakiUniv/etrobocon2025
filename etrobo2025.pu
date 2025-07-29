@@ -1,5 +1,134 @@
 @startuml etrobocon2025-class-diagram
 
+package "ロボコンスナップ攻略システム" {
+  ' コマンドの列挙型
+  enum COMMAND {
+    AR
+    DS
+    CS
+    DL
+    DCL
+    CL
+    CDL
+    EC
+    SL
+    SS
+    MCA
+    NONE
+  }
+
+  ' 攻略エリアの列挙型
+  enum Area {
+    LineTrace
+    DoubleLoop
+    SmartCarry
+  }
+
+  ' メインクラス
+  class EtRobocon2025 {
+    + {static} start(): void
+    - {static} robot: Robot
+  }
+
+  ' エリアマスタークラス
+  class AreaMaster {
+    + AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)
+    + run(): void
+    - robot: Robot&
+    - area: Area
+    - isLeftCourse: bool
+    - targetBrightness: int
+    - {static} const basePath: std::string
+    - {static} const areaCommandNames: std::array<std::string, 3>
+  }
+
+  ' キャリブレータクラス
+  class Calibrator {
+    + Calibrator(Robot& _robot)
+    + selectAndSetCourse(): void
+    + measureAndSetTargetBrightness(): void
+    + getAngleCheckFrame(): void
+    + waitForStart(): void
+    + getIsLeftCourse(): bool
+    + getTargetBrightness(): int
+    - robot: Robot&
+    - isLeftCourse: bool
+    - targetBrightness: int
+  }
+
+  ' モーションパーサークラス
+  class MotionParser {
+    + {static} createMotions(Robot& robot, std::string& commandFilePath, int targetBrightness): std::vector<Motion*>
+    - MotionParser()
+    - {static} convertCommand(const std::string& str): COMMAND
+    - {static} convertBool(const std::string& command, const std::string& stringParameter): bool
+  }
+
+  ' ユーティリティクラス
+  class StringOperator {
+    + {static} removeEOL(const std::string& str): std::string
+    - StringOperator()
+  }
+}
+
+package "走行体情報管理システム" {
+  package "走行体情報中継部" {
+    ' ミニフィグ方向判定結果
+    struct MiniFigDirectionResult {
+      + wasDetected: bool
+      + direction: MiniFigDirection
+    }
+
+    ' ミニフィグ方向の列挙型
+    enum MiniFigDirection {
+      FRONT
+      RIGHT
+      BACK
+      LEFT
+    }
+
+    ' 背景方向判定結果
+    struct BackgroundDirectionResult {
+      + wasDetected: bool
+      + direction: BackgroundDirection
+    }
+
+    ' 背景方向の列挙型
+    enum BackgroundDirection {
+      FRONT
+      BACK
+      RIGHT
+      LEFT
+    }
+
+    ' ロボットクラス
+    class Robot {
+      + Robot()
+      + Robot(ICameraCapture& cam)
+      + getMotorControllerInstance(): MotorController&
+      + getCameraCaptureInstance(): ICameraCapture&
+      + getColorSensorInstance(): spikeapi::ColorSensor&
+      + getClockInstance(): spikeapi::Clock&
+      + getButtonInstance(): spikeapi::Button&
+      + getForceSensorInstance(): spikeapi::ForceSensor&
+      + getDisplayInstance(): spikeapi::Display&
+      + setIsLeftEdge(bool isLeft): void
+      + getIsLeftEdge() const: bool
+      + getMiniFigDirectionResult(): MiniFigDirectionResult&
+      - motorController: MotorController
+      - defaultCameraCapture: CameraCapture
+      - cameraCapture: ICameraCapture&
+      - colorSensor: spikeapi::ColorSensor
+      - clock: spikeapi::Clock
+      - button: spikeapi::Button
+      - forceSensor: spikeapi::ForceSensor
+      - display: spikeapi::Display
+      - miniFigDirectionResult: MiniFigDirectionResult
+      - isLeftEdge: bool
+    }
+  }
+}
+
 package "走行制御システム" {
   ' モーターコントローラークラス
   class MotorController {
@@ -380,18 +509,6 @@ package "配置エリアB撮影システム" {
     - bgFrame: cv::Mat
   }
 
-  enum BackgroundDirection {
-    FRONT
-    BACK
-    RIGHT
-    LEFT
-  }
-
-  struct BackgroundDirectionResult {
-    + wasDetected: bool
-    + direction: BackgroundDirection
-  }
-
   class BackgroundDirectionDetector {
     + BackgroundDirectionDetector(const std::string& modelPath)
     + detect(const cv::Mat& frame, BackgroundDirectionResult& result): void
@@ -404,18 +521,6 @@ package "配置エリアB撮影システム" {
 }
 
 package "配置エリアA撮影システム" {
-  enum MiniFigDirection {
-    FRONT
-    RIGHT
-    BACK
-    LEFT
-  }
-
-  struct MiniFigDirectionResult {
-    + wasDetected: bool
-    + direction: MiniFigDirection
-  }
-
   class MiniFigDirectionDetector {
     + MiniFigDirectionDetector(const std::string& modelPath)
     + detect(const cv::Mat& frame, MiniFigDirectionResult& result): void
@@ -433,103 +538,7 @@ package "走行体・無線通信デバイス間通信システム" {
 package "画像アップロードシステム" {
 }
 
-package "ロボコンスナップ攻略システム" {
 
-  ' コマンドの列挙型
-  enum COMMAND {
-    AR
-    DS
-    CS
-    DL
-    DCL
-    CL
-    CDL
-    EC
-    SL
-    SS
-    MCA
-    NONE
-  }
-
-  ' 攻略エリアの列挙型
-  enum Area {
-    LineTrace
-    DoubleLoop
-    SmartCarry
-  }
-
-  ' メインクラス
-  class EtRobocon2025 {
-    + {static} start(): void
-    - {static} robot: Robot
-  }
-
-  ' ロボットクラス
-  class Robot {
-    + Robot()
-    + Robot(ICameraCapture& cam)
-    + getMotorControllerInstance(): MotorController&
-    + getCameraCaptureInstance(): ICameraCapture&
-    + getColorSensorInstance(): spikeapi::ColorSensor&
-    + getClockInstance(): spikeapi::Clock&
-    + getButtonInstance(): spikeapi::Button&
-    + getForceSensorInstance(): spikeapi::ForceSensor&
-    + getDisplayInstance(): spikeapi::Display&
-    + setIsLeftEdge(bool isLeft): void
-    + getIsLeftEdge() const: bool
-    + getMiniFigDirectionResult(): MiniFigDirectionResult&
-    - motorController: MotorController
-    - defaultCameraCapture: CameraCapture
-    - cameraCapture: ICameraCapture&
-    - colorSensor: spikeapi::ColorSensor
-    - clock: spikeapi::Clock
-    - button: spikeapi::Button
-    - forceSensor: spikeapi::ForceSensor
-    - display: spikeapi::Display
-    - miniFigDirectionResult: MiniFigDirectionResult
-    - isLeftEdge: bool
-  }
-
-  ' エリアマスタークラス
-  class AreaMaster {
-    + AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)
-    + run(): void
-    - robot: Robot&
-    - area: Area
-    - isLeftCourse: bool
-    - targetBrightness: int
-    - {static} const basePath: std::string
-    - {static} const areaCommandNames: std::array<std::string, 3>
-  }
-
-  ' キャリブレータクラス
-  class Calibrator {
-    + Calibrator(Robot& _robot)
-    + selectAndSetCourse(): void
-    + measureAndSetTargetBrightness(): void
-    + getAngleCheckFrame(): void
-    + waitForStart(): void
-    + getIsLeftCourse(): bool
-    + getTargetBrightness(): int
-    - robot: Robot&
-    - isLeftCourse: bool
-    - targetBrightness: int
-  }
-
-  ' モーションパーサークラス
-  class MotionParser {
-    + {static} createMotions(Robot& robot, std::string& commandFilePath, int targetBrightness): std::vector<Motion*>
-    - MotionParser()
-    - {static} convertCommand(const std::string& str): COMMAND
-    - {static} convertBool(const std::string& command, const std::string& stringParameter): bool
-  }
-
-  ' ユーティリティクラス
-  class StringOperator {
-    + {static} removeEOL(const std::string& str): std::string
-    - StringOperator()
-  }
-}
 
 ' 関係性の定義
 
@@ -573,6 +582,7 @@ Robot *-- "spikeapi::Clock" : コンポジション
 Robot *-- "spikeapi::Button" : コンポジション
 Robot *-- "spikeapi::ForceSensor" : コンポジション
 Robot *-- "spikeapi::Display" : コンポジション
+Robot *-- BackgroundDirectionResult : コンポジション
 Robot *-- MiniFigDirectionResult : コンポジション
 
 MotorController *-- "spikeapi::Motor" : コンポジション
