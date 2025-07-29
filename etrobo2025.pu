@@ -1,12 +1,21 @@
 @startuml etrobocon2025-class-diagram
 !pragma useVerticalIf on
+
+' レイアウト調整
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam minClassWidth 100
 skinparam maxMessageSize 150
 skinparam maxBoxSize 150
-skinparam svgMaxWidth 8000
-skinparam svgMaxHeight 4000
+skinparam svgMaxWidth 10000
+skinparam svgMaxHeight 6000
 skinparam defaultFontSize 10
 skinparam classFontSize 9
 skinparam packageFontSize 10
+
+' 配置指示
+!define LAYOUT_TOP_TO_BOTTOM_DIRECTION top to bottom direction
 
 package "ロボコンスナップ攻略システム" {
   package "走行計画部" {
@@ -127,6 +136,7 @@ package "走行体情報管理システム" {
     }
 
     ' ロボットクラス
+    ' backgroundDirectionResult は実装予定の変数と関係を記述している
     class Robot {
       + Robot()
       + Robot(ICameraCapture& cam)
@@ -149,6 +159,7 @@ package "走行体情報管理システム" {
       - forceSensor: spikeapi::ForceSensor
       - display: spikeapi::Display
       - miniFigDirectionResult: MiniFigDirectionResult
+      - backgroundDirectionResult: BackgroundDirectionResult
       - isLeftEdge: bool
     }
   }
@@ -541,6 +552,11 @@ package "配置エリアB撮影システム" {
       - {static} constexpr filePath: const char*
       - {static} constexpr uploadFile: const char*
     }
+
+    ' 風景カメラアクション
+    ' 実装予定のクラスを記述
+    class BackgroundCameraAction {
+    }
   }
 
   package "動体検出部" {
@@ -572,16 +588,25 @@ package "配置エリアB撮影システム" {
 }
 
 
-
 package "走行体・無線通信デバイス間通信システム" {
+  ' 走行体から無線通信デバイスへの画像アップロードクラス
+  ' 実装予定のクラスを記述
+  class ImageUploader {
+  }
 }
 
 package "画像アップロードシステム" {
+  ' 別リポジトリの etrobocon2025-comm-device-system を参照
+  ' 無線通信デバイスから競技システムへの画像アップロードクラス
+  class OfficialInterface {
+    + uploadSnap (std::string imagePath): bool
+  }
 }
 
 
 
 ' 関係性の定義
+
 
 ' 1. 継承関係 (Inheritance)
 LineTrace --|> Motion : 継承
