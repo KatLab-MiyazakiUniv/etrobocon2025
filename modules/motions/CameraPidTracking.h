@@ -55,10 +55,6 @@ class CameraPidTracking : public Motion {
   double targetSpeed;                        // 目標速度
   int targetXCoordinate;                     // 目標X座標
   PidGain pidGain;                           // PIDゲイン
-
- private:
-  static constexpr int MAX_DETECTION_FAILURES = 10;  // 最大検出失敗回数
-  int detectionFailureCount = 0;                     // 連続検出失敗回数
 };
 
 #endif
