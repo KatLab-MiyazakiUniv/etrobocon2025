@@ -45,10 +45,6 @@ void CameraPidTracking::run()
 
     // 検出失敗時の処理
     if(!result.wasDetected) {
-      detectionFailureCount++;
-      if(detectionFailureCount >= MAX_DETECTION_FAILURES) {
-        break;  // 連続失敗で停止
-      }
       continue;  // 次のフレームを試行
     }
 

@@ -72,7 +72,10 @@ bool CameraRecoveryAction::tryRotationDirection(int angle, bool isClockwise)
   std::this_thread::sleep_for(std::chrono::milliseconds(150));
 
   cv::Mat frame;
-  robot.getCameraCaptureInstance().getFrame(frame);
+  for(int i = 0; i < 5; ++i) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(33));
+    robot.getCameraCaptureInstance().getFrame(frame);
+  }
   boundingBoxDetector.detect(frame, result);
 
   if(result.wasDetected) {

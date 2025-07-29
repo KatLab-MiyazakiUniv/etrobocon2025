@@ -41,7 +41,7 @@ class CameraRecoveryAction : public Motion {
   bool recoverySuccess = false;              // 復帰成功フラグ
 
   static constexpr std::array<int, 3> RECOVERY_ANGLES = { 5, 10, 15 };  // 復帰回頭角度設定
-  static constexpr int RECOVERY_SPEED = 100;                            // 回頭スピード
+  static constexpr int RECOVERY_SPEED = 50;                             // 回頭スピード
   static constexpr double MAX_POSITION_DEVIATION = 100.0;               // 最大位置偏差
 
   /**
