@@ -109,6 +109,21 @@ package "走行体情報管理システム" {
       LEFT
     }
 
+    ' システム定数
+    class SystemInfo <<constants>> {
+      + {static} PI: double
+      + {static} RAD_TO_DEG: double
+      + {static} DEG_TO_RAD: double
+      + {static} constexpr TREAD: double
+      + {static} constexpr WHEEL_RADIUS: double
+      + {static} constexpr RESOLUTION_WIDTH: int
+      + {static} constexpr RESOLUTION_HEIGHT: int
+      + {static} constexpr MIN_WIDTH: int
+      + {static} constexpr MIN_HEIGHT: int
+      + {static} constexpr MAX_WIDTH: int
+      + {static} constexpr MAX_HEIGHT: int
+    }
+
     ' ロボットクラス
     class Robot {
       + Robot()
@@ -172,57 +187,220 @@ package "走行体情報管理システム" {
 }
 
 package "走行制御システム" {
-  ' PIDクラス
-  class Pid {
-    + Pid(double _kp, double _ki, double _kd, double _targetValue, double _maxIntegral, double _minIntegral)
-    + Pid(double _kp, double _ki, double _kd, double _targetValue)
-    + setPidGain(double _kp, double _ki, double _kd): void
-    + calculatePid(double currentValue, double delta): double
-    - pidGain: PidGain
-    - prevDeviation: double
-    - integral: double
-    - filteredDerivative: double
-    - targetValue: double
-    - maxIntegral: double
-    - minIntegral: double
-    - {static} constexpr alpha: double
+  package "計算部" {
+    ' PIDゲイン
+    struct PidGain {
+      + kp: double
+      + ki: double
+      + kd: double
+      + PidGain(double _kp, double _ki, double _kd)
+    }
+
+    ' 色の列挙型
+    enum COLOR {
+      NONE
+      BLACK
+      WHITE
+      BLUE
+      GREEN
+      YELLOW
+      RED
+    }
+
+    ' PID制御クラス
+    class Pid {
+      + Pid(double _kp, double _ki, double _kd, double _targetValue, double _maxIntegral, double _minIntegral)
+      + Pid(double _kp, double _ki, double _kd, double _targetValue)
+      + setPidGain(double _kp, double _ki, double _kd): void
+      + calculatePid(double currentValue, double delta): double
+      - pidGain: PidGain
+      - prevDeviation: double
+      - integral: double
+      - filteredDerivative: double
+      - targetValue: double
+      - maxIntegral: double
+      - minIntegral: double
+      - {static} constexpr alpha: double
+    }
+
+    ' 色識別クラス
+    class ColorJudge {
+      + ColorJudge()
+      + {static} convertStringToColor(const std::string& str): COLOR
+      + {static} convertColorToString(const COLOR& color): const char*
+      + {static} convertHsvToColor(const spikeapi::ColorSensor::HSV& hsv): COLOR
+      - ColorJudge()
+    }
+
+    ' 走行距離計算クラス
+    class Mileage {
+      + {static} calculateWheelMileage(int32_t angle): double
+      + {static} calculateMileage(int32_t rightAngle, int32_t leftAngle): double
+      - Mileage()
+    }
+
+    ' 速度計算クラス
+    class SpeedCalculator {
+      + SpeedCalculator(Robot& _robot, double _targetSpeed)
+      + calculateRightMotorPower(): double
+      + calculateLeftMotorPower(): double
+      - const targetSpeed: double
+      - rightPid: Pid
+      - leftPid: Pid
+      - rightMotorPower: double
+      - leftMotorPower: double
+      - prevRightTime: double
+      - prevLeftTime: double
+      - robot: Robot&
+      - {static} constexpr RIGHT_K_P: double
+      - {static} constexpr RIGHT_K_I: double
+      - {static} constexpr RIGHT_K_D: double
+      - {static} constexpr LEFT_K_P: double
+      - {static} constexpr LEFT_K_I: double
+      - {static} constexpr LEFT_K_D: double
+    }
   }
 
-  ' 色判定クラス
-  class ColorJudge {
-    + ColorJudge()
-    + {static} convertStringToColor(const std::string& str): COLOR
-    + {static} convertColorToString(const COLOR& color): const char*
-    + {static} convertHsvToColor(const spikeapi::ColorSensor::HSV& hsv): COLOR
-    - ColorJudge()
-  }
+  package "基本動作部" {
+    ' ライントレースクラス
+    abstract class LineTrace {
+      + LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
+      + run(): void
+      # {abstract} isMetPreCondition(): bool
+      # {abstract} prepare(): void
+      # {abstract} isMetContinuationCondition(): bool
+      # targetSpeed: double
+      # targetBrightness: int
+      # pidGain: PidGain
+    }
 
-  ' 走行距離計算クラス
-  class Mileage {
-    + {static} calculateWheelMileage(int32_t angle): double
-    + {static} calculateMileage(int32_t rightAngle, int32_t leftAngle): double
-    - Mileage()
-  }
+    ' 直進クラス
+    abstract class Straight {
+      + Straight(Robot& _robot, double _speed)
+      + run(): void
+      # {abstract} isMetPreCondition(): bool
+      # {abstract} prepare(): void
+      # {abstract} isMetContinuationCondition(): bool
+      # targetSpeed: double
+    }
 
-  ' 速度計算クラス
-  class SpeedCalculator {
-    + SpeedCalculator(Robot& _robot, double _targetSpeed)
-    + calculateRightMotorPower(): double
-    + calculateLeftMotorPower(): double
-    - const targetSpeed: double
-    - rightPid: Pid
-    - leftPid: Pid
-    - rightMotorPower: double
-    - leftMotorPower: double
-    - prevRightTime: double
-    - prevLeftTime: double
-    - robot: Robot&
-    - {static} constexpr RIGHT_K_P: double
-    - {static} constexpr RIGHT_K_I: double
-    - {static} constexpr RIGHT_K_D: double
-    - {static} constexpr LEFT_K_P: double
-    - {static} constexpr LEFT_K_I: double
-    - {static} constexpr LEFT_K_D: double
+    ' 回頭クラス
+    abstract class Rotation {
+      + Rotation(Robot& _robot, double _speed, bool _isClockwise)
+      + run(): void
+      + {abstract} isMetPreCondition(): bool
+      + {abstract} prepare(): void
+      + {abstract} isMetContinuationCondition(): bool
+      # speed: double
+      # isClockwise: bool
+      # leftSign: int
+      # rightSign: int
+    }
+
+    ' 色指定ライントレースクラス
+    class ColorLineTrace {
+      + ColorLineTrace(Robot& _robot, COLOR _targetColor, double _targetSpeed, int _targetBrightness, const PidGain& _gain)
+      # isMetPreCondition(): bool
+      # prepare(): void
+      # isMetContinuationCondition(): bool
+      - {static} constexpr JUDGE_COUNT: int
+      - colorCount: int
+      - targetColor: COLOR
+    }
+
+    ' 距離指定ライントレースクラス
+    class DistanceLineTrace {
+      + DistanceLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
+      # isMetPreCondition(): bool
+      # prepare(): void
+      # isMetContinuationCondition(): bool
+      - targetDistance: double
+      - initDistance: double
+    }
+
+    ' 色距離指定ライントレースクラス
+    class ColorDistanceLineTrace {
+      + ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor, double _targetDistance, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
+      # isMetPreCondition(): bool
+      # prepare(): void
+      # isMetContinuationCondition(): bool
+      - {static} constexpr JUDGE_COUNT: int
+      - colorCount: int
+      - targetColor: COLOR
+      - targetDistance: double
+      - initDistance: double
+    }
+
+    ' 距離指定直進クラス
+    class DistanceStraight {
+      + DistanceStraight(Robot& _robot, double _targetDistance, double _speed)
+      # isMetPreCondition(): bool
+      # prepare(): void
+      # isMetContinuationCondition(): bool
+      - targetDistance: double
+      - initialDistance: double
+    }
+
+    ' 色指定直進クラス
+    class ColorStraight {
+      + ColorStraight(Robot& _robot, COLOR _targetColor, double _speed)
+      # isMetPreCondition(): bool
+      # prepare(): void
+      # isMetContinuationCondition(): bool
+      - colorCount: int
+      - targetColor: COLOR
+      - {static} constexpr JUDGE_COUNT: int
+    }
+
+    ' 角度指定回頭クラス
+    class AngleRotation {
+      + AngleRotation(Robot& _robot, int _targetAngle, double _speed, bool _isClockwise)
+      # prepare(): void
+      # isMetPreCondition(): bool
+      # isMetContinuationCondition(): bool
+      - targetLeftDistance: double
+      - targetRightDistance: double
+      - targetAngle: int
+    }
+
+    ' カメラPID監視クラス
+    abstract class CameraPidTracking {
+      + CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, BoundingBoxDetector& _boundingBoxDetector)
+      + run(): void
+      # {abstract} isMetPreCondition(): bool
+      # {abstract} prepare(): void
+      # {abstract} isMetContinuationCondition(): bool
+      # boundingBoxDetector: BoundingBoxDetector&
+      # result: BoundingBoxDetectionResult
+      # targetSpeed: double
+      # targetXCoordinate: int
+      # pidGain: PidGain
+    }
+
+    ' 距離指定カメラライントレースクラス
+    class DistanceCameraLineTrace {
+      + DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, std::unique_ptr<BoundingBoxDetector> _detector)
+      # isMetPreCondition(): bool
+      # prepare(): void
+      # isMetContinuationCondition(): bool
+      - targetDistance: double
+      - initDistance: double
+      - detector: std::unique_ptr<BoundingBoxDetector>
+    }
+
+    ' エッジ変更クラス
+    class EdgeChange {
+      + EdgeChange(Robot& _robot, bool _isLeftEdge)
+      + run(): void
+      - isLeftEdge: bool
+    }
+
+    ' スリープクラス
+    class Sleeping {
+      + Sleeping(Robot& _robot, int _milliSec)
+      + run(): void
+      - milliSec: int
+    }
   }
 
   ' Motionクラス
@@ -232,179 +410,10 @@ package "走行制御システム" {
     # robot: Robot&
   }
 
-  abstract class LineTrace {
-    + LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
-    + run(): void
-    # {abstract} isMetPreCondition(): bool
-    # {abstract} prepare(): void
-    # {abstract} isMetContinuationCondition(): bool
-    # targetSpeed: double
-    # targetBrightness: int
-    # pidGain: PidGain
-  }
-
-  abstract class Straight {
-    + Straight(Robot& _robot, double _speed)
-    + run(): void
-    # {abstract} isMetPreCondition(): bool
-    # {abstract} prepare(): void
-    # {abstract} isMetContinuationCondition(): bool
-    # targetSpeed: double
-  }
-
-  abstract class Rotation {
-    + Rotation(Robot& _robot, double _speed, bool _isClockwise)
-    + run(): void
-    + {abstract} isMetPreCondition(): bool
-    + {abstract} prepare(): void
-    + {abstract} isMetContinuationCondition(): bool
-    # speed: double
-    # isClockwise: bool
-    # leftSign: int
-    # rightSign: int
-  }
-
-  ' 色指定ライントレースクラス
-  class ColorLineTrace {
-    + ColorLineTrace(Robot& _robot, COLOR _targetColor, double _targetSpeed, int _targetBrightness, const PidGain& _gain)
-    # isMetPreCondition(): bool
-    # prepare(): void
-    # isMetContinuationCondition(): bool
-    - {static} constexpr JUDGE_COUNT: int
-    - colorCount: int
-    - targetColor: COLOR
-  }
-
-  ' 距離指定ライントレースクラス
-  class DistanceLineTrace {
-    + DistanceLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
-    # isMetPreCondition(): bool
-    # prepare(): void
-    # isMetContinuationCondition(): bool
-    - targetDistance: double
-    - initDistance: double
-  }
-
-  ' 色距離指定ライントレースクラス
-  class ColorDistanceLineTrace {
-    + ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor, double _targetDistance, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
-    # isMetPreCondition(): bool
-    # prepare(): void
-    # isMetContinuationCondition(): bool
-    - {static} constexpr JUDGE_COUNT: int
-    - colorCount: int
-    - targetColor: COLOR
-    - targetDistance: double
-    - initDistance: double
-  }
-
-  ' 距離指定直進クラス
-  class DistanceStraight {
-    + DistanceStraight(Robot& _robot, double _targetDistance, double _speed)
-    # isMetPreCondition(): bool
-    # prepare(): void
-    # isMetContinuationCondition(): bool
-    - targetDistance: double
-    - initialDistance: double
-  }
-
-  ' 色指定直進クラス
-  class ColorStraight {
-    + ColorStraight(Robot& _robot, COLOR _targetColor, double _speed)
-    # isMetPreCondition(): bool
-    # prepare(): void
-    # isMetContinuationCondition(): bool
-    - colorCount: int
-    - targetColor: COLOR
-    - {static} constexpr JUDGE_COUNT: int
-  }
-
-  ' 角度指定回頭クラス
-  class AngleRotation {
-    + AngleRotation(Robot& _robot, int _targetAngle, double _speed, bool _isClockwise)
-    # prepare(): void
-    # isMetPreCondition(): bool
-    # isMetContinuationCondition(): bool
-    - targetLeftDistance: double
-    - targetRightDistance: double
-    - targetAngle: int
-  }
-
-  ' カメラPID監視クラス
-  abstract class CameraPidTracking {
-    + CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, BoundingBoxDetector& _boundingBoxDetector)
-    + run(): void
-    # {abstract} isMetPreCondition(): bool
-    # {abstract} prepare(): void
-    # {abstract} isMetContinuationCondition(): bool
-    # boundingBoxDetector: BoundingBoxDetector&
-    # result: BoundingBoxDetectionResult
-    # targetSpeed: double
-    # targetXCoordinate: int
-    # pidGain: PidGain
-  }
-
-  ' 距離指定カメラライントレースクラス
-  class DistanceCameraLineTrace {
-    + DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, std::unique_ptr<BoundingBoxDetector> _detector)
-    # isMetPreCondition(): bool
-    # prepare(): void
-    # isMetContinuationCondition(): bool
-    - targetDistance: double
-    - initDistance: double
-    - detector: std::unique_ptr<BoundingBoxDetector>
-  }
-
-  ' エッジ変更クラス
-  class EdgeChange {
-    + EdgeChange(Robot& _robot, bool _isLeftEdge)
-    + run(): void
-    - isLeftEdge: bool
-  }
-
-  ' スリープクラス
-  class Sleeping {
-    + Sleeping(Robot& _robot, int _milliSec)
-    + run(): void
-    - milliSec: int
-  }
-
-  enum COLOR {
-    NONE
-    BLACK
-    WHITE
-    BLUE
-    GREEN
-    YELLOW
-    RED
-  }
-
-  struct PidGain {
-    + kp: double
-    + ki: double
-    + kd: double
-    + PidGain(double _kp, double _ki, double _kd)
-  }
-
   ' 応用動作クラス
   abstract class CompositeMotion {
     + CompositeMotion(Robot& _robot)
     + {abstract} run(): void
-  }
-
-  ' システム定数
-  class SystemInfo <<constants>> {
-    + {static} PI: double
-    + {static} RAD_TO_DEG: double
-    + {static} DEG_TO_RAD: double
-    + {static} constexpr TREAD: double
-    + {static} constexpr WHEEL_RADIUS: double
-    + {static} constexpr RESOLUTION_WIDTH: int
-    + {static} constexpr RESOLUTION_HEIGHT: int
-    + {static} constexpr MIN_WIDTH: int
-    + {static} constexpr MIN_HEIGHT: int
-    + {static} constexpr MAX_WIDTH: int
-    + {static} constexpr MAX_HEIGHT: int
   }
 }
 
@@ -618,6 +627,8 @@ SpeedCalculator *-- Pid : コンポジション
 
 PlaCameraAction *-- MotionDetector : コンポジション
 
+ColorJudge *-- COLOR : コンポジション
+
 ' 4. 集約関係 (Aggregation) - 弱い所有関係
 Robot o-- ICameraCapture : 集約
 CameraPidTracking o-- BoundingBoxDetector : 集約
@@ -658,7 +669,10 @@ AngleRotation ..> SystemInfo : 依存
 
 ColorLineTrace ..> COLOR : 依存
 ColorStraight ..> COLOR : 依存
+ColorStraight ..> ColorJudge : 依存
 ColorDistanceLineTrace ..> COLOR : 依存
+
+EdgeChange ..> Robot : 依存
 
 BoundingBoxDetector ..> BoundingBoxDetectionResult : 依存
 LineBoundingBoxDetector ..> BoundingBoxDetectionResult : 依存
