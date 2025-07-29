@@ -649,6 +649,10 @@ BackgroundDirectionDetector ..> BackgroundDirection : 依存
 MiniFigDirectionDetector ..> MiniFigDirectionResult : 依存
 MiniFigDirectionDetector ..> MiniFigDirection : 依存
 
+' 構造体と列挙型の関係
+MiniFigDirectionResult ..> MiniFigDirection : 依存
+BackgroundDirectionResult ..> BackgroundDirection : 依存
+
 Snapshot ..> FrameSave : 依存
 MiniFigCameraAction ..> FrameSave : 依存
 MiniFigCameraAction ..> MiniFigDirectionDetector : 依存
