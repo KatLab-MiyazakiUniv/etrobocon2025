@@ -230,36 +230,6 @@ package "走行制御システム" {
     - milliSec: int
   }
 
-  ' スナップショットクラス
-  class Snapshot {
-    + Snapshot(Robot& _robot, const std::string& _fileName)
-    + run(): void
-    - fileName: std::string
-    - {static} const path: std::string
-  }
-
-  ' 列挙型・構造体
-  enum Area {
-    LineTrace
-    DoubleLoop
-    SmartCarry
-  }
-
-  enum COMMAND {
-    AR
-    DS
-    CS
-    DL
-    DCL
-    CL
-    CDL
-    EC
-    SL
-    SS
-    MCA
-    NONE
-  }
-
   enum COLOR {
     NONE
     BLACK
@@ -275,6 +245,42 @@ package "走行制御システム" {
     + ki: double
     + kd: double
     + PidGain(double _kp, double _ki, double _kd)
+  }
+
+  ' 応用動作クラス
+  abstract class CompositeMotion {
+    + CompositeMotion(Robot& _robot)
+    + {abstract} run(): void
+  }
+
+  ' ミニフィグカメラアクション
+  class MiniFigCameraAction {
+    + MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle, double _targetRotationSpeed, double _backTargetDistance, double _forwardTargetDistance, double _backSpeed, double _forwardSpeed, int _position)
+    + run(): void
+    - isClockwise: bool
+    - preTargetAngle: int
+    - postTargetAngle: int
+    - targetRotationSpeed: double
+    - backTargetDistance: double
+    - forwardTargetDistance: double
+    - backSpeed: double
+    - forwardSpeed: double
+    - position: int
+    - {static} constexpr filePath: const char*
+    - {static} constexpr uploadFileName: const char*
+    - isMetPreCondition(): bool
+    - detectDirection(cv::Mat& frame): void
+  }
+
+  ' プラレール撮影動作クラス
+  class PlaCameraAction {
+    + PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect& _roi)
+    + run(): void
+    - getBackgroundFrame(): void
+    - motionDetector: MotionDetector
+    - {static} constexpr MAX_NO_MOTION: int
+    - {static} constexpr filePath: const char*
+    - {static} constexpr uploadFile: const char*
   }
 
   ' システム定数
@@ -317,6 +323,14 @@ package "カメラ撮影システム" {
     + getFrame(cv::Mat& outFrame): bool
     - cap: cv::VideoCapture
     - cameraID: int
+  }
+
+  ' スナップショットクラス
+  class Snapshot {
+    + Snapshot(Robot& _robot, const std::string& _fileName)
+    + run(): void
+    - fileName: std::string
+    - {static} const path: std::string
   }
 
   ' 画像処理系
@@ -387,17 +401,6 @@ package "配置エリアB撮影システム" {
     - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
     - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, BackgroundDirectionResult& result): void
   }
-
-  ' プラレール撮影動作クラス
-  class PlaCameraAction {
-    + PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect& _roi)
-    + run(): void
-    - getBackgroundFrame(): void
-    - motionDetector: MotionDetector
-    - {static} constexpr MAX_NO_MOTION: int
-    - {static} constexpr filePath: const char*
-    - {static} constexpr uploadFile: const char*
-  }
 }
 
 package "配置エリアA撮影システム" {
@@ -422,31 +425,6 @@ package "配置エリアA撮影システム" {
     - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
     - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, MiniFigDirectionResult& result): void
   }
-
-  ' ミニフィグカメラアクション
-  class MiniFigCameraAction {
-    + MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle, double _targetRotationSpeed, double _backTargetDistance, double _forwardTargetDistance, double _backSpeed, double _forwardSpeed, int _position)
-    + run(): void
-    - isClockwise: bool
-    - preTargetAngle: int
-    - postTargetAngle: int
-    - targetRotationSpeed: double
-    - backTargetDistance: double
-    - forwardTargetDistance: double
-    - backSpeed: double
-    - forwardSpeed: double
-    - position: int
-    - {static} constexpr filePath: const char*
-    - {static} constexpr uploadFileName: const char*
-    - isMetPreCondition(): bool
-    - detectDirection(cv::Mat& frame): void
-  }
-
-  ' 応用動作クラス
-  abstract class CompositeMotion {
-    + CompositeMotion(Robot& _robot)
-    + {abstract} run(): void
-  }
 }
 
 package "走行体・無線通信デバイス間通信システム" {
@@ -456,6 +434,30 @@ package "画像アップロードシステム" {
 }
 
 package "ロボコンスナップ攻略システム" {
+
+  ' コマンドの列挙型
+  enum COMMAND {
+    AR
+    DS
+    CS
+    DL
+    DCL
+    CL
+    CDL
+    EC
+    SL
+    SS
+    MCA
+    NONE
+  }
+
+  ' 攻略エリアの列挙型
+  enum Area {
+    LineTrace
+    DoubleLoop
+    SmartCarry
+  }
+
   ' メインクラス
   class EtRobocon2025 {
     + {static} start(): void
