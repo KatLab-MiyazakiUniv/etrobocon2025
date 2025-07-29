@@ -157,7 +157,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // SS: カメラ撮影動作
       // [1]:string ファイル名(デフォルトではsnapshot.JPEG)
       case COMMAND::SS: {
-        auto ss;
+        Snapshot* ss;
         if(params.size() == 2) {
           ss = new Snapshot(robot, params[1]);
         } else {
