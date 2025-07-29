@@ -9,73 +9,75 @@ skinparam classFontSize 9
 skinparam packageFontSize 10
 
 package "ロボコンスナップ攻略システム" {
-  ' コマンドの列挙型
-  enum COMMAND {
-    AR
-    DS
-    CS
-    DL
-    DCL
-    CL
-    CDL
-    EC
-    SL
-    SS
-    MCA
-    NONE
-  }
+  package "走行計画部" {
+    ' コマンドの列挙型
+    enum COMMAND {
+      AR
+      DS
+      CS
+      DL
+      DCL
+      CL
+      CDL
+      EC
+      SL
+      SS
+      MCA
+      NONE
+    }
 
-  ' 攻略エリアの列挙型
-  enum Area {
-    LineTrace
-    DoubleLoop
-    SmartCarry
-  }
+    ' 攻略エリアの列挙型
+    enum Area {
+      LineTrace
+      DoubleLoop
+      SmartCarry
+    }
 
-  ' メインクラス
-  class EtRobocon2025 {
-    + {static} start(): void
-    - {static} robot: Robot
-  }
+    ' メインクラス
+    class EtRobocon2025 {
+      + {static} start(): void
+      - {static} robot: Robot
+    }
 
-  ' エリアマスタークラス
-  class AreaMaster {
-    + AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)
-    + run(): void
-    - robot: Robot&
-    - area: Area
-    - isLeftCourse: bool
-    - targetBrightness: int
-    - {static} const basePath: std::string
-    - {static} const areaCommandNames: std::array<std::string, 3>
-  }
+    ' エリアマスタークラス
+    class AreaMaster {
+      + AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)
+      + run(): void
+      - robot: Robot&
+      - area: Area
+      - isLeftCourse: bool
+      - targetBrightness: int
+      - {static} const basePath: std::string
+      - {static} const areaCommandNames: std::array<std::string, 3>
+    }
 
-  ' キャリブレータクラス
-  class Calibrator {
-    + Calibrator(Robot& _robot)
-    + selectAndSetCourse(): void
-    + measureAndSetTargetBrightness(): void
-    + getAngleCheckFrame(): void
-    + waitForStart(): void
-    + getIsLeftCourse(): bool
-    + getTargetBrightness(): int
-    - robot: Robot&
-    - isLeftCourse: bool
-    - targetBrightness: int
-  }
+    ' キャリブレータクラス
+    class Calibrator {
+      + Calibrator(Robot& _robot)
+      + selectAndSetCourse(): void
+      + measureAndSetTargetBrightness(): void
+      + getAngleCheckFrame(): void
+      + waitForStart(): void
+      + getIsLeftCourse(): bool
+      + getTargetBrightness(): int
+      - robot: Robot&
+      - isLeftCourse: bool
+      - targetBrightness: int
+    }
 
-  ' モーションパーサークラス
-  class MotionParser {
-    + {static} createMotions(Robot& robot, std::string& commandFilePath, int targetBrightness): std::vector<Motion*>
-    - MotionParser()
-    - {static} convertCommand(const std::string& str): COMMAND
-    - {static} convertBool(const std::string& command, const std::string& stringParameter): bool
-  }
+    ' モーションパーサークラス
+    class MotionParser {
+      + {static} createMotions(Robot& robot, std::string& commandFilePath, int targetBrightness): std::vector<Motion*>
+      - MotionParser()
+      - {static} convertCommand(const std::string& str): COMMAND
+      - {static} convertBool(const std::string& command, const std::string& stringParameter): bool
+    }
 
-  ' ユーティリティクラス
-  class StringOperator {
-    + {static} removeEOL(const std::string& str): std::string
-    - StringOperator()
+    ' ユーティリティクラス
+    class StringOperator {
+      + {static} removeEOL(const std::string& str): std::string
+      - StringOperator()
+    }
   }
 }
 
@@ -656,6 +658,7 @@ MotionParser ..> EdgeChange : 依存
 MotionParser ..> Sleeping : 依存
 MotionParser ..> Snapshot : 依存
 MotionParser ..> MiniFigCameraAction : 依存
+MotionParser ..> StringOperator : 依存
 
 LineTrace ..> PidGain : 依存
 LineTrace ..> ColorJudge : 依存
@@ -667,12 +670,20 @@ Straight ..> SpeedCalculator : 依存
 AngleRotation ..> Mileage : 依存
 AngleRotation ..> SystemInfo : 依存
 
+Mileage ..> SystemInfo : 依存
+MotorController ..> SystemInfo : 依存
+SpeedCalculator ..> SystemInfo : 依存
+LineBoundingBoxDetector ..> SystemInfo : 依存
+PlaCameraAction ..> SystemInfo : 依存
+MiniFigCameraAction ..> SystemInfo : 依存
+
 ColorLineTrace ..> COLOR : 依存
 ColorStraight ..> COLOR : 依存
 ColorStraight ..> ColorJudge : 依存
 ColorDistanceLineTrace ..> COLOR : 依存
 
-EdgeChange ..> Robot : 依存
+' Robot -> Motion -> EdgeChange と関係があるので、Robot - EdgeChange 間の直接的な依存関係はいったん書かないことに
+' EdgeChange ..> Robot : 依存
 
 BoundingBoxDetector ..> BoundingBoxDetectionResult : 依存
 LineBoundingBoxDetector ..> BoundingBoxDetectionResult : 依存
