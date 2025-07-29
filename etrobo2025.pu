@@ -1,4 +1,12 @@
 @startuml etrobocon2025-class-diagram
+!pragma useVerticalIf on
+skinparam maxMessageSize 150
+skinparam maxBoxSize 150
+skinparam svgMaxWidth 8000
+skinparam svgMaxHeight 4000
+skinparam defaultFontSize 10
+skinparam classFontSize 9
+skinparam packageFontSize 10
 
 package "ロボコンスナップ攻略システム" {
   ' コマンドの列挙型
@@ -384,36 +392,6 @@ package "走行制御システム" {
     + {abstract} run(): void
   }
 
-  ' ミニフィグカメラアクション
-  class MiniFigCameraAction {
-    + MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle, double _targetRotationSpeed, double _backTargetDistance, double _forwardTargetDistance, double _backSpeed, double _forwardSpeed, int _position)
-    + run(): void
-    - isClockwise: bool
-    - preTargetAngle: int
-    - postTargetAngle: int
-    - targetRotationSpeed: double
-    - backTargetDistance: double
-    - forwardTargetDistance: double
-    - backSpeed: double
-    - forwardSpeed: double
-    - position: int
-    - {static} constexpr filePath: const char*
-    - {static} constexpr uploadFileName: const char*
-    - isMetPreCondition(): bool
-    - detectDirection(cv::Mat& frame): void
-  }
-
-  ' プラレール撮影動作クラス
-  class PlaCameraAction {
-    + PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect& _roi)
-    + run(): void
-    - getBackgroundFrame(): void
-    - motionDetector: MotionDetector
-    - {static} constexpr MAX_NO_MOTION: int
-    - {static} constexpr filePath: const char*
-    - {static} constexpr uploadFile: const char*
-  }
-
   ' システム定数
   class SystemInfo <<constants>> {
     + {static} PI: double
@@ -499,40 +477,85 @@ package "カメラ撮影システム" {
   }
 }
 
-package "配置エリアB撮影システム" {
-  class MotionDetector {
-    + MotionDetector(double _threshold, double _minArea, const cv::Rect& _roi)
-    + setBackground(const cv::Mat& background): bool
-    + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
-    + compareTwoFrames(const cv::Mat& firstFrame, const cv::Mat& secondFrame): std::vector<cv::Point>
-    - threshold: double
-    - minArea: double
-    - roi: cv::Rect
-    - bgFrame: cv::Mat
-  }
-
-  class BackgroundDirectionDetector {
-    + BackgroundDirectionDetector(const std::string& modelPath)
-    + detect(const cv::Mat& frame, BackgroundDirectionResult& result): void
-    - net: cv::dnn::Net
-    - modelPath: std::string
-    - outputImagePath: std::string
-    - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
-    - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, BackgroundDirectionResult& result): void
-  }
-}
-
 package "配置エリアA撮影システム" {
-  class MiniFigDirectionDetector {
-    + MiniFigDirectionDetector(const std::string& modelPath)
-    + detect(const cv::Mat& frame, MiniFigDirectionResult& result): void
-    - net: cv::dnn::Net
-    - modelPath: std::string
-    - outputImagePath: std::string
-    - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
-    - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, MiniFigDirectionResult& result): void
+  package "配置エリアA攻略部" {
+    ' ミニフィグカメラアクション
+    class MiniFigCameraAction {
+      + MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle, double _targetRotationSpeed, double _backTargetDistance, double _forwardTargetDistance, double _backSpeed, double _forwardSpeed, int _position)
+      + run(): void
+      - isClockwise: bool
+      - preTargetAngle: int
+      - postTargetAngle: int
+      - targetRotationSpeed: double
+      - backTargetDistance: double
+      - forwardTargetDistance: double
+      - backSpeed: double
+      - forwardSpeed: double
+      - position: int
+      - {static} constexpr filePath: const char*
+      - {static} constexpr uploadFileName: const char*
+      - isMetPreCondition(): bool
+      - detectDirection(cv::Mat& frame): void
+    }
+  }
+
+  package "ミニフィグ向き判定部" {
+    ' ミニフィグ向き判定クラス
+    class MiniFigDirectionDetector {
+      + MiniFigDirectionDetector(const std::string& modelPath)
+      + detect(const cv::Mat& frame, MiniFigDirectionResult& result): void
+      - net: cv::dnn::Net
+      - modelPath: std::string
+      - outputImagePath: std::string
+      - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
+      - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, MiniFigDirectionResult& result): void
+    }
   }
 }
+
+package "配置エリアB撮影システム" {
+  package "配置エリアB攻略部" {
+    ' プラレールカメラアクション
+    class PlaCameraAction {
+      + PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect& _roi)
+      + run(): void
+      - getBackgroundFrame(): void
+      - motionDetector: MotionDetector
+      - {static} constexpr MAX_NO_MOTION: int
+      - {static} constexpr filePath: const char*
+      - {static} constexpr uploadFile: const char*
+    }
+  }
+
+  package "動体検出部" {
+    ' 動体検出クラス
+    class MotionDetector {
+      + MotionDetector(double _threshold, double _minArea, const cv::Rect& _roi)
+      + setBackground(const cv::Mat& background): bool
+      + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
+      + compareTwoFrames(const cv::Mat& firstFrame, const cv::Mat& secondFrame): std::vector<cv::Point>
+      - threshold: double
+      - minArea: double
+      - roi: cv::Rect
+      - bgFrame: cv::Mat
+    }
+  }
+
+  package "風景向き判定部" {
+    ' 風景向き判定クラス
+    class BackgroundDirectionDetector {
+      + BackgroundDirectionDetector(const std::string& modelPath)
+      + detect(const cv::Mat& frame, BackgroundDirectionResult& result): void
+      - net: cv::dnn::Net
+      - modelPath: std::string
+      - outputImagePath: std::string
+      - preprocess(const cv::Mat& frame, float scale, int padX, int padY): cv::Mat
+      - postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX, int padY, BackgroundDirectionResult& result): void
+    }
+  }
+}
+
+
 
 package "走行体・無線通信デバイス間通信システム" {
 }
