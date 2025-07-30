@@ -6,8 +6,9 @@
 
 #include "ColorStraight.h"
 
-ColorStraight::ColorStraight(Robot& _robot, COLOR _targetColor, double _targetSpeed)
-  : Straight(_robot, _targetSpeed), targetColor(_targetColor)
+ColorStraight::ColorStraight(Robot& _robot, COLOR _targetColor, double _targetSpeed,double _rightKp, double _rightKi, double _rightKd, double _leftKp, double _leftKi,
+                       double _leftKd)
+  : Straight(_robot, _targetSpeed,rightKp,rightKi,rightKd,leftKp,leftKi,leftKd), targetColor(_targetColor)
 {
 }
 

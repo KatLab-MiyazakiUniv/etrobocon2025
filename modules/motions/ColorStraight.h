@@ -18,7 +18,8 @@ class ColorStraight : public Straight {
    * @param _targetColor 目標色
    * @param _speed       目標速度[mm/s]
    */
-  ColorStraight(Robot& _robot, COLOR _targetColor, double _speed);
+  ColorStraight(Robot& _robot, COLOR _targetColor, double _speed,double _rightKp, double _rightKi, double _rightKd, double _leftKp, double _leftKi,
+                       double _leftKd);
 
  protected:
   /**

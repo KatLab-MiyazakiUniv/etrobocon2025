@@ -18,7 +18,8 @@ class DistanceStraight : public Straight {
    * @param _targetDistance 目標距離 [mm]
    * @param _speed   目標速度[mm/s]
    */
-  DistanceStraight(Robot& _robot, double _targetDistance, double _speed);
+  DistanceStraight(Robot& _robot, double _targetDistance, double _speed,double _rightKp, double _rightKi, double _rightKd, double _leftKp, double _leftKi,
+                       double _leftKd);
 
  protected:
   /**

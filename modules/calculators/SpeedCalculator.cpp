@@ -8,8 +8,8 @@
 SpeedCalculator::SpeedCalculator(Robot& _robot, double _targetSpeed)
   : robot(_robot),
     targetSpeed(_targetSpeed),
-    rightPid(RIGHT_K_P, RIGHT_K_I, RIGHT_K_D, _targetSpeed),
-    leftPid(LEFT_K_P, LEFT_K_I, LEFT_K_D, _targetSpeed)
+    rightPid(K_P, K_I, K_D, _targetSpeed),
+    leftPid(K_P, K_I, K_D, _targetSpeed)
 {
   double currentTime = robot.getClockInstance().now() / 1000000.0;
   prevRightTime = currentTime;
@@ -20,6 +20,8 @@ double SpeedCalculator::calculateRightMotorPower()
 {
   rightMotorPower
       = robot.getMotorControllerInstance().getRightMotorPower();  // rightMotorPowerの初期化
+
+      std:: cout << rightMotorPower << std::endl;
   // 走行時間を算出
   double currentRightTime = robot.getClockInstance().now() / 1000000.0;  // 現在の時間を取得(秒単位)
   double diffRightTime = currentRightTime - prevRightTime;
@@ -29,7 +31,8 @@ double SpeedCalculator::calculateRightMotorPower()
   rightMotorPower += rightPid.calculatePid(currentRightSpeed, diffRightTime);
   // メンバを更新
   prevRightTime = currentRightTime;
-
+  
+  std::cout<<"power=" << rightMotorPower<<std::endl;
   return rightMotorPower;
 }
 

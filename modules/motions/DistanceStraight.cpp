@@ -6,8 +6,9 @@
 
 #include "DistanceStraight.h"
 
-DistanceStraight::DistanceStraight(Robot& _robot, double _targetDistance, double _targetSpeed)
-  : Straight(_robot, _targetSpeed), targetDistance(_targetDistance)
+DistanceStraight::DistanceStraight(Robot& _robot, double _targetDistance, double _targetSpeed,double _rightKp, double _rightKi, double _rightKd, double _leftKp, double _leftKi,
+                       double _leftKd)
+  : Straight(_robot, _targetSpeed,_rightKp,_rightKi,_rightKd,_leftKp,_leftKi,_leftKd), targetDistance(_targetDistance)
 {
 }
 

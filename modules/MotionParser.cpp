@@ -66,7 +66,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [1]:string 色, [2]:double 速度[mm/s]
       case COMMAND::CS: {
         ColorStraight* cs = new ColorStraight(robot, ColorJudge::convertStringToColor(params[1]),
-                                              stod(params[2]));
+                                              stod(params[2]), stod(params[3]), stod(params[4]),
+            stod(params[5]), stod(params[6]), stod(params[7]), stod(params[8]));
         motionList.push_back(cs);
         break;
       }
@@ -180,15 +181,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [7]:double 撮影後の前進速度の絶対値[mm/s],
         // [8]:string 回頭の方向(clockwise or anticlockwise),
         // [9]:int 撮影位置(0が初期位置)
-      case COMMAND::MCA: {
-        MiniFigCameraAction* mca = new MiniFigCameraAction(
-            robot, convertBool(params[0], params[8]), stoi(params[1]), stoi(params[2]),
-            stod(params[3]), stod(params[4]), stod(params[5]), stod(params[6]), stod(params[7]),
-            stoi(params[9]));
-        motionList.push_back(mca);
+      // case COMMAND::MCA: {
+      //   MiniFigCameraAction* mca = new MiniFigCameraAction(
+      //       robot, convertBool(params[0], params[8]), stoi(params[1]), stoi(params[2]),
+      //       stod(params[3]), stod(params[4]), stod(params[5]), stod(params[6]), stod(params[7]),
+      //       stoi(params[9]));
+      //   motionList.push_back(mca);
 
-        break;
-      }
+      //   break;
+      // }
 
       // 未定義コマンド
       default: {
@@ -217,8 +218,8 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "CDL", COMMAND::CDL },  // 色距離指定ライントレース
     { "EC", COMMAND::EC },    // エッジ切り替え
     { "SL", COMMAND::SL },    // スリープ
-    { "SS", COMMAND::SS },    // カメラ撮影動作
-    { "MCA", COMMAND::MCA }   // ミニフィグのカメラ撮影動作
+    { "SS", COMMAND::SS }//,    // カメラ撮影動作
+    // { "MCA", COMMAND::MCA }   // ミニフィグのカメラ撮影動作
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
@@ -236,7 +237,7 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   string param = StringOperator::removeEOL(stringParameter);
 
   // 回転動作(AR,MCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-  if(command == "AR" || command == "MCA") {
+  if(command == "AR" /*|| command == "MCA"*/) {
     if(param == "clockwise") {
       return true;
     } else if(param == "anticlockwise") {

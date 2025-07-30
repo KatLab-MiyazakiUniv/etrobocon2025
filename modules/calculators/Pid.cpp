@@ -5,6 +5,7 @@
  */
 
 #include "Pid.h"
+#include <iostream>
 
 PidGain::PidGain(double _kp, double _ki, double _kd)
   // pidゲインが負の値にならないようにする
@@ -41,6 +42,7 @@ double Pid::calculatePid(double currentValue, double delta)
 
   // 現在の目標値との偏差を求める
   double currentDeviation = targetValue - currentValue;
+
   // 積分の処理を行う
   integral += (currentDeviation + prevDeviation) * delta / 2.0;
   // 累積する積分値の大きさ制限
@@ -60,6 +62,8 @@ double Pid::calculatePid(double currentValue, double delta)
 
   // 前回の偏差を更新する
   prevDeviation = currentDeviation;
+
+  std::cout << "kp="<<pidGain.kp<<std::endl;
 
   // P制御の計算を行う
   double p = pidGain.kp * currentDeviation;
