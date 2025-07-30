@@ -38,20 +38,20 @@ class BackgroundPlaCameraAction : public CompositeMotion {
   /**
    * @brief 撮影動作を実行する
    */
-  void run();
+  void run() override;
 
  private:
-  bool isClockwise = false;          // 回頭方向
-  int preTargetAngle = 90;           // カメラを風景に向けるための回頭角度
-  int postTargetAngle = 90;          // 黒線復帰のための回頭角度
-  double targetRotationSpeed = 200;  // 目標回頭速度
-  double threshold = 30.0;           // 風景検出のしきい値
-  double minArea = 400.0;            // 最小面積
-  int roiX = 100;                    // ROIの左上X座標
-  int roiY = 0;                      // ROIの左上Y座標
-  int roiWidth = 600;                // ROIの幅
-  int roiHeight = 300;               // ROIの高さ
-  int position = 0;                  // 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
+  bool isClockwise = false;            // 回頭方向
+  int preTargetAngle = 90;             // カメラを風景に向けるための回頭角度
+  int postTargetAngle = 90;            // 黒線復帰のための回頭角度
+  double targetRotationSpeed = 200.0;  // 目標回頭速度
+  double threshold = 30.0;             // 風景検出のしきい値
+  double minArea = 400.0;              // 最小面積
+  int roiX = 100;                      // ROIの左上X座標
+  int roiY = 0;                        // ROIの左上Y座標
+  int roiWidth = 600;                  // ROIの幅
+  int roiHeight = 300;                 // ROIの高さ
+  int position = 0;                    // 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
 
   /**
    * @brief 前提条件を満たしているかチェックする
