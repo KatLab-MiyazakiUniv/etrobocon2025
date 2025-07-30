@@ -15,8 +15,7 @@ TEST(PlaCameraActionTest, RunPlaCameraAction)
   dummyPlaCameraCapture.setMotionLikeFrames();
 
   Robot robot(dummyPlaCameraCapture);
-  cv::Rect roi(100, 100, 200, 200);
-  PlaCameraAction plaCameraAction(robot, 30.0, 1000.0, roi);
+  PlaCameraAction plaCameraAction(robot, 30.0, 1000.0, 100, 100, 200, 200);
 
   testing::internal::CaptureStdout();
   plaCameraAction.run();
