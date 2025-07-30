@@ -25,7 +25,7 @@ namespace etrobocon2025_test {
     bool isClockwise = false;
     int preTargetAngle = 90;
     int postTargetAngle = 90;
-    double targetRotationSpeed = 200;
+    double targetRotationSpeed = 200.0;
     int position = 1;
 
     PlaCameraAction plaCameraAction(robot, 30.0, 1000.0, 0, 0, 800, 600);
@@ -52,7 +52,7 @@ namespace etrobocon2025_test {
     bool isClockwise = false;
     int preTargetAngle = 90;
     int postTargetAngle = 90;
-    double targetRotationSpeed = 200;
+    double targetRotationSpeed = 200.0;
     int position = 2;
 
     BackgroundCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
@@ -76,7 +76,7 @@ namespace etrobocon2025_test {
   //     bool isClockwise = false;
   //     int preTargetAngle = 90;
   //     int postTargetAngle = 90;
-  //     double targetRotationSpeed = 200;
+  //     double targetRotationSpeed = 200.0;
   //     int position = 0;
 
   //     BackgroundCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
