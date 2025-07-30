@@ -87,7 +87,7 @@ void PlaCameraAction::run()
   cv::Mat bestFrame = capturedFrames.at(indexOfFrames);
 
   // bestFrameをJPEGで出力
-  FrameSave::save(bestFrame, filePath, uploadFile);
+  FrameSave::save(bestFrame, filePath, imageSaveName);
 }
 
 void PlaCameraAction::setImageSaveName(const std::string& fileName)

@@ -28,7 +28,7 @@ class BackgroundPlaCameraAction : public CompositeMotion {
    * @param _threshold 風景検出のしきい値
    * @param _minArea 最小面積
    * @param _roi ROI領域
-   * @param _position 撮影位置（0:正面, 1:左, 2:右, 3:後ろ）
+   * @param _position 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
    */
   BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
                             int _postTargetAngle, double _targetRotationSpeed, double _threshold,

@@ -1,10 +1,10 @@
 /**
- * @file BackgroundCameraActionTest.cpp
+ * @file BackgroundPlaCameraActionTest.cpp
  * @brief 風景撮影動作クラスのテスト
  * @author miayahara046
  */
 
-#include "BackgroundCameraAction.h"
+#include "BackgroundPlaCameraAction.h"
 #include <gtest/gtest.h>
 #include <iostream>
 #include "DummyCameraCapture.h"
@@ -14,7 +14,7 @@ using namespace std;
 
 namespace etrobocon2025_test {
   // 事前条件判定がfalseで撮影動作を行わない場合のテスト
-  TEST(BackgroundCameraActionTest, NoCameraAction)
+  TEST(BackgroundPlaCameraActionTest, NoCameraAction)
   {
     DummyPlaCameraCapture dummyPlaCameraCapture;
     dummyPlaCameraCapture.setMotionLikeFrames();
@@ -30,8 +30,8 @@ namespace etrobocon2025_test {
 
     PlaCameraAction plaCameraAction(robot, 30.0, 1000.0, 0, 0, 800, 600);
 
-    BackgroundCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
-                                  targetRotationSpeed, 30.0, 500.0, 0, 0, 800, 600, position);
+    BackgroundPlaCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
+                                     targetRotationSpeed, 30.0, 500.0, 0, 0, 800, 600, position);
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     action.run();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
@@ -41,7 +41,7 @@ namespace etrobocon2025_test {
   }
 
   // 2回目の撮影で風景の正面の画像を取得する場合のテスト
-  TEST(BackgroundCameraActionTest, PositionIsNotZeroCameraAction)
+  TEST(BackgroundPlaCameraActionTest, PositionIsNotZeroCameraAction)
   {
     DummyPlaCameraCapture dummyPlaCameraCapture;
     dummyPlaCameraCapture.setMotionLikeFrames();
@@ -55,8 +55,8 @@ namespace etrobocon2025_test {
     double targetRotationSpeed = 200.0;
     int position = 2;
 
-    BackgroundCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
-                                  targetRotationSpeed, 30.0, 500.0, 0, 0, 800, 600, position);
+    BackgroundPlaCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
+                                     targetRotationSpeed, 30.0, 500.0, 0, 0, 800, 600, position);
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     action.run();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
@@ -66,7 +66,7 @@ namespace etrobocon2025_test {
   }
 
   //   // position = 0(1回目の撮影)の場合のテスト
-  //   TEST(BackgroundCameraActionTest, PositionIsZeroCameraAction)
+  //   TEST(BackgroundPlaCameraActionTest, PositionIsZeroCameraAction)
   //   {
   //       DummyPlaCameraCapture dummyPlaCameraCapture;
   //      dummyPlaCameraCapture.setMotionLikeFrames();
@@ -79,7 +79,7 @@ namespace etrobocon2025_test {
   //     double targetRotationSpeed = 200.0;
   //     int position = 0;
 
-  //     BackgroundCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
+  //     BackgroundPlaCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
   //                                   targetRotationSpeed, 30.0, 500.0, 0, 0, 800, 600, position);
   //     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
   //     action.run();

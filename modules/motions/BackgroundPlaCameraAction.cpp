@@ -70,7 +70,7 @@ void BackgroundPlaCameraAction::detectDirection(cv::Mat& frame)
   }
 }
 
-void BackgroundCameraAction::run()
+void BackgroundPlaCameraAction::run()
 {
   if(!isMetPreCondition()) return;
 
