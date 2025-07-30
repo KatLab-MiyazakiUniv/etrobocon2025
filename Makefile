@@ -1,7 +1,7 @@
 MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-# サーバー設定
-SERVER_URL = http://localhost
+# サーバーのIPアドレス(例:miuazaki-univのIP)
+SERVER_IP = 133.54.27.180
 
 # 使い方
 help:
@@ -134,7 +134,10 @@ else
     }
 endif
 
+format-check:
+	find ./tests ./modules -type f -name "*.cpp" -o -name "*.h" | xargs clang-format --dry-run --Werror *.h *.cpp
+
 ## 無線通信デバイスとの通信関連 ##
 # サーバーの画像をアップロードする
 upload-image:
-	curl -X POST -F "file=@$(FILE_PATH)" $(SERVER_URL):8000/images
+	curl -X POST -F "file=@$(FILE_PATH)" http://$(SERVER_IP):8000/images

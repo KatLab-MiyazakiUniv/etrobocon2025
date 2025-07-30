@@ -8,7 +8,7 @@
 
 ImageUploader::ImageUploader() {}
 
-bool ImageUploader::uploadImage(const std::string& imagePath, int retries)
+bool ImageUploader::uploadImage(const std::string& imagePath, int maxAttempts)
 {
   // Makefile存在チェック
   std::ifstream makefile("Makefile");
@@ -30,14 +30,15 @@ bool ImageUploader::uploadImage(const std::string& imagePath, int retries)
     return false;
   }
 
-  // 無効な試行回数のチェック
-  if(retries <= 0) {
-    std::cerr << "Error: Invalid retry count: " << retries << std::endl;
+  // 無効な最大試行回数のチェック
+  if(maxAttempts <= 0) {
+    std::cerr << "Error: Invalid retry count: " << maxAttempts << std::endl;
     return false;
   }
 
+  // 試行回数(attempts)が最大試行回数(maxAttempts)を超えるまで送信を試みる
   int attempts = 0;
-  while(attempts < retries) {
+  while(attempts < maxAttempts) {
     std::string command = "make upload-image FILE_PATH=" + imagePath;
 
     int result = std::system(command.c_str());
@@ -47,6 +48,6 @@ bool ImageUploader::uploadImage(const std::string& imagePath, int retries)
     attempts++;
   }
 
-  std::cerr << "Upload failed after " << retries << " attempts" << std::endl;
+  std::cerr << "Upload failed after " << maxAttempts << " attempts" << std::endl;
   return false;
 }

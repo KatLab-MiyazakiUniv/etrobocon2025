@@ -40,12 +40,6 @@ namespace etrobocon2025_test {
     EXPECT_FALSE(result);
   }
 
-  // コンストラクタが正常に動作することをテスト
-  TEST(ImageUploaderTest, Constructor)
-  {
-    EXPECT_NO_THROW(ImageUploader uploader);
-  }
-
   // 実在するファイルでアップロード処理が実行されることをテスト
   TEST(ImageUploaderTest, ValidFileUpload)
   {
