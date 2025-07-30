@@ -90,9 +90,9 @@ void PlaCameraAction::run()
   FrameSave::save(bestFrame, filePath, uploadFile);
 }
 
-void PlaCameraAction::setUploadName(const std::string& fileName)
+void PlaCameraAction::setImageSaveName(const std::string& fileName)
 {
-  uploadFile = fileName;
+  setImageSaveName = fileName;
 }
 
 void PlaCameraAction::getBackgroundFrame()

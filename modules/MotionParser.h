@@ -26,7 +26,7 @@
 #include "Sleeping.h"
 #include "Snapshot.h"
 #include "MiniFigCameraAction.h"
-#include "BackgroundCameraAction.h"
+#include "BackgroundPlaCameraAction.h"
 enum class COMMAND {
   AR,   // 角度指定回頭
   DS,   // 指定距離直進

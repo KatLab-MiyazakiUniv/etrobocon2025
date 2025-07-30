@@ -187,23 +187,26 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-        // BCA: 背景のカメラ撮影動作
+        // BCA: 風景・プラレールのカメラ撮影動作
         // [1]:bool isClockwise（"clockwise"/"anticlockwise"）
         // [2]:int preTargetAngle
         // [3]:int postTargetAngle
         // [4]:double 回頭速度
-        // [5]:double threshold（動体判定用）
-        // [6]:double minArea（最小面積）
-        // [7-10]: int ROI（x, y, width, height）
+        // [5]:double threshold（動体検出用）
+        // [6]:double minArea（動体矩形とみなす最小面積）
+        // [7]:int ROIの左上X座標
+        // [8]:int ROIの左上Y座標
+        // [9]:int ROIの幅
+        // [10]:int ROIの高さ
         // [11]:int position（0=初期位置）
 
       case COMMAND::BCA: {
         bool isClockwise = convertBool("BCA", params[1]);
 
-        auto bca = new BackgroundCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
-                                              stod(params[4]), stod(params[5]), stod(params[6]),
-                                              stoi(params[7]), stoi(params[8]), stoi(params[9]),
-                                              stoi(params[10]), stoi(params[11]));
+        auto bca = new BackgroundPlaCameraAction(
+            robot, isClockwise, stoi(params[2]), stoi(params[3]), stod(params[4]), stod(params[5]),
+            stod(params[6]), stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]),
+            stoi(params[11]));
 
         motionList.push_back(bca);
         break;
@@ -238,7 +241,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "SL", COMMAND::SL },    // スリープ
     { "SS", COMMAND::SS },    // カメラ撮影動作
     { "MCA", COMMAND::MCA },  // ミニフィグのカメラ撮影動作
-    { "BCA", COMMAND::BCA }   // 背景のカメラ撮影動作
+    { "BCA", COMMAND::BCA }   // 風景・プラレールのカメラ撮影動作
 
   };
 
@@ -256,7 +259,7 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   // 末尾の改行を削除
   string param = StringOperator::removeEOL(stringParameter);
 
-  // 回転動作(AR,MCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  // 回転動作(AR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
   if(command == "AR" || command == "MCA" || command == "BCA") {
     if(param == "clockwise") {
       return true;

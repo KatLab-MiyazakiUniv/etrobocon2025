@@ -1,18 +1,18 @@
 /**
- * @file   BackgroundCameraAction.cpp
- * @brief  風景撮影動作クラス
+ * @file   BackgroundPlaCameraAction.cpp
+ * @brief  風景・プラレール撮影動作クラス
  * @author miyahara046
  */
 
-#include "BackgroundCameraAction.h"
+#include "BackgroundPlaCameraAction.h"
 
 using namespace std;
 
-BackgroundCameraAction::BackgroundCameraAction(Robot& _robot, bool _isClockwise,
-                                               int _preTargetAngle, int _postTargetAngle,
-                                               double _targetRotationSpeed, double _threshold,
-                                               double _minArea, int _roiX, int _roiY, int _roiWidth,
-                                               int _roiHeight, int _position)
+BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise,
+                                                     int _preTargetAngle, int _postTargetAngle,
+                                                     double _targetRotationSpeed, double _threshold,
+                                                     double _minArea, int _roiX, int _roiY,
+                                                     int _roiWidth, int _roiHeight, int _position)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
@@ -28,7 +28,7 @@ BackgroundCameraAction::BackgroundCameraAction(Robot& _robot, bool _isClockwise,
 {
 }
 
-bool BackgroundCameraAction::isMetPreCondition()
+bool BackgroundPlaCameraAction::isMetPreCondition()
 {
   if(position != 0 && robot.getBackgroundDirectionResult().wasDetected
      && robot.getBackgroundDirectionResult().direction
@@ -41,7 +41,7 @@ bool BackgroundCameraAction::isMetPreCondition()
 }
 
 // 判定動作を行う関数
-void BackgroundCameraAction::detectDirection(cv::Mat& frame)
+void BackgroundPlaCameraAction::detectDirection(cv::Mat& frame)
 {
   BackgroundDirectionDetector detector;
   // 風景の向きを判定
@@ -90,11 +90,14 @@ void BackgroundCameraAction::run()
     robot.getCameraCaptureInstance().getFrame(frame);
     std::this_thread::sleep_for(std::chrono::milliseconds(33));
   }
+
+  // もし初回で正面であればPlaCameraActionを実行、他の方向なら２回目でPlaCameraActionを実行、判定できなければ３回PlaCameraActionを実行
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は一回目(初期位置での)の撮影でしか行わない
     std::cout << "判定動作実施" << std::endl;
     detectDirection(frame);
     std::cout << "判定動作終了" << std::endl;
+    // もし判定結果が正面であればアップロード用のプラレール画像を取得する
 
     if(robot.getBackgroundDirectionResult().wasDetected
        && robot.getBackgroundDirectionResult().direction == BackgroundDirection::FRONT) {
@@ -103,14 +106,14 @@ void BackgroundCameraAction::run()
     }
 
   } else if(robot.getBackgroundDirectionResult().wasDetected) {
-    // 一回目の撮影で風景が検出されていて、向きがFRONTじゃなければ、二回目の撮影での風景の向きは確実にFRONTになる。
+    // 一回目の撮影で風景が検出されていて、向きがFRONTでなければ、二回目の撮影での風景の向きは確実にFRONTになる。
     std::cout << "正面での撮影" << std::endl;
     plaAction.run();
   } else {
     // 一回目検出falseなら、残り、3回の撮影は確定する。
     // 一回目の撮影で風景が検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
     std::cout << "風景向き判定用写真の撮影" << std::endl;
-    plaAction.setUploadName("Fig_" + to_string(position));
+    plaAction.setImageSaveName("Fig_" + to_string(position));
     plaAction.run();
   }
 
