@@ -50,7 +50,7 @@ class PlaCameraAction : public Motion {
   cv::Rect roi;                            // 動体検知のROI
   static constexpr int MAX_NO_MOTION = 2;  // 非検知となる検知回数
   static constexpr const char* filePath = "etrobocon2025/datafiles/plarail/";
-  std::string setImageSaveName = "bestframe";
+  std::string imageSaveName = "bestframe";
 };
 
 #endif

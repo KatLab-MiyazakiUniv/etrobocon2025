@@ -92,7 +92,7 @@ void PlaCameraAction::run()
 
 void PlaCameraAction::setImageSaveName(const std::string& fileName)
 {
-  setImageSaveName = fileName;
+  imageSaveName = fileName;
 }
 
 void PlaCameraAction::getBackgroundFrame()
