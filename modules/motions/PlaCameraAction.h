@@ -21,9 +21,13 @@ class PlaCameraAction : public Motion {
    * @param _robot ロボット本体への参照
    * @param _threshold 差分二値化の閾値
    * @param _minArea 動体とみなす最小面積
-   * @param _roi 検出対象領域
+   * @param _roiX 動体検知のROIの左上X座標
+   * @param _roiY 動体検知のROIの左上Y座標
+   * @param _roiWidth 動体検知のROIの幅
+   * @param _roiHeight 動体検知のROIの高さ
    */
-  PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect& _roi);
+  PlaCameraAction(Robot& _robot, double _threshold, double _minArea, int _roiX, int _roiY,
+                  int _roiWidth, int _roiHeight);
 
   /**
    * @brief プラレール撮影動作を実行
@@ -39,9 +43,10 @@ class PlaCameraAction : public Motion {
   void getBackgroundFrame();
 
   MotionDetector motionDetector;
+  cv::Rect roi;                            // 動体検知のROI
   static constexpr int MAX_NO_MOTION = 2;  // 非検知となる検知回数
   static constexpr const char* filePath = "etrobocon2025/datafiles/plarail/";
-  std::string uploadFile = "bestframe.JPEG";
+  std::string uploadFile = "bestframe";
 };
 
 #endif

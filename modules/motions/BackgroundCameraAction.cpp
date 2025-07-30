@@ -11,7 +11,8 @@ using namespace std;
 BackgroundCameraAction::BackgroundCameraAction(Robot& _robot, bool _isClockwise,
                                                int _preTargetAngle, int _postTargetAngle,
                                                double _targetRotationSpeed, double _threshold,
-                                               double _minArea, const cv::Rect& _roi, int _position)
+                                               double _minArea, int _roiX, int _roiY, int _roiWidth,
+                                               int _roiHeight, int _position)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
@@ -19,7 +20,10 @@ BackgroundCameraAction::BackgroundCameraAction(Robot& _robot, bool _isClockwise,
     targetRotationSpeed(_targetRotationSpeed),
     threshold(_threshold),
     minArea(_minArea),
-    roi(_roi),
+    roiX(_roiX),
+    roiY(_roiY),
+    roiWidth(_roiWidth),
+    roiHeight(_roiHeight),
     position(_position)
 {
 }
@@ -77,7 +81,7 @@ void BackgroundCameraAction::run()
   // 動作安定のためのスリープ
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-  PlaCameraAction plaAction(robot, threshold, minArea, roi);
+  PlaCameraAction plaAction(robot, threshold, minArea, roiX, roiY, roiWidth, roiHeight);
 
   cv::Mat frame;
 

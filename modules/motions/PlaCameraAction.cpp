@@ -6,9 +6,10 @@
 #include "PlaCameraAction.h"
 #include <thread>
 
-PlaCameraAction::PlaCameraAction(Robot& _robot, double _threshold, double _minArea,
-                                 const cv::Rect& _roi)
-  : Motion(_robot), motionDetector(_threshold, _minArea, _roi)
+PlaCameraAction::PlaCameraAction(Robot& _robot, double _threshold, double _minArea, int _roiX,
+                                 int _roiY, int _roiWidth, int _roiHeight)
+  : Motion(_robot),
+    motionDetector(_threshold, _minArea, cv::Rect(_roiX, _roiY, _roiWidth, _roiHeight))
 {
 }
 
@@ -99,7 +100,7 @@ void PlaCameraAction::getBackgroundFrame()
   cv::Mat firstFrame;
   while(1) {
     // 背景に適しているか判断するフレームの獲得
-    // 最初にフレームを取得できない問題解決のため５回目のframeを採用する
+    // 最初にフレームを取得できない問題解決のため5回目のframeを採用する
     for(int i = 0; i < 5; i++) {
       robot.getCameraCaptureInstance().getFrame(firstFrame);
       std::this_thread::sleep_for(std::chrono::milliseconds(33));
