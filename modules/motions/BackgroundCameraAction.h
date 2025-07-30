@@ -32,7 +32,8 @@ class BackgroundCameraAction : public CompositeMotion {
    */
   BackgroundCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
                          int _postTargetAngle, double _targetRotationSpeed, double _threshold,
-                         double _minArea, const cv::Rect& _roi, int _position);
+                         double _minArea, int _roiX, int _roiY, int _roiWidth, int _roiHeight,
+                         int _position);
 
   /**
    * @brief 撮影動作を実行する
@@ -46,7 +47,10 @@ class BackgroundCameraAction : public CompositeMotion {
   double targetRotationSpeed = 200;  // 目標回頭速度
   double threshold = 30.0;           // 風景検出のしきい値
   double minArea = 400.0;            // 最小面積
-  const cv::Rect& roi;               // ROI領域
+  int roiX = 100;                    // ROIの左上X座標
+  int roiY = 0;                      // ROIの左上Y座標
+  int roiWidth = 600;                // ROIの幅
+  int roiHeight = 300;               // ROIの高さ
   int position = 0;                  // 撮影位置（0:正面, 1:左, 2:右, 3:後ろ）
 
   /**

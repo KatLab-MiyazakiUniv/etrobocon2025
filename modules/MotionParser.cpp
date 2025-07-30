@@ -198,13 +198,12 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [11]:int position（0=初期位置）
 
       case COMMAND::BCA: {
-        cv::Rect roi
-            = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
         bool isClockwise = convertBool("BCA", params[1]);
 
         auto bca = new BackgroundCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
                                               stod(params[4]), stod(params[5]), stod(params[6]),
-                                              roi, stoi(params[11]));
+                                              stoi(params[7]), stoi(params[8]), stoi(params[9]),
+                                              stoi(params[10]), stoi(params[11]));
 
         motionList.push_back(bca);
         break;
