@@ -6,7 +6,17 @@
 
 #include "Straight.h"
 
-Straight::Straight(Robot& _robot, double _targetSpeed) : Motion(_robot), targetSpeed(_targetSpeed)
+Straight::Straight(Robot& _robot, double _targetSpeed, double _rightKp, double _rightKi,
+                   double _rightKd, double _leftKp, double _leftKi, double _leftKd)
+  : Motion(_robot),
+    targetSpeed(_targetSpeed),
+    rightKp(_rightKp),
+    rightKi(_rightKi),
+    rightKd(_rightKd),
+    leftKp(_leftKp),
+    leftKi(_leftKi),
+    leftKd(_leftKd),
+    speedCalculator(_robot, _targetSpeed)
 {
 }
 
@@ -21,6 +31,7 @@ void Straight::run()
   prepare();
 
   SpeedCalculator speedCalculator(robot, targetSpeed);
+  speedCalculator.setSpeedPidGain(rightKp, rightKi, rightKd, leftKp, leftKi, leftKd);
 
   // 継続条件を満たしている間繰り返す
   while(isMetContinuationCondition()) {
@@ -31,6 +42,11 @@ void Straight::run()
     // モーターにPower値をセット
     robot.getMotorControllerInstance().setRightMotorPower(currentRightPower);
     robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower);
+
+    double right = robot.getMotorControllerInstance().getRightMotorSpeed();
+    double left = robot.getMotorControllerInstance().getLeftMotorSpeed();
+
+    std::cout << left << "  |  " << right << std::endl;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10000マイクロ秒(10ミリ秒)待機
   }

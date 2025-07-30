@@ -32,6 +32,31 @@ class SpeedCalculator {
    */
   double calculateLeftMotorPower();
 
+  /**
+   * @brief 右タイヤのPIDゲインを設定する
+   * @param rightKp 比例ゲイン
+   * @param rightKi 積分ゲイン
+   * @param rightKd 微分ゲイン
+   */
+  void setRightSpeedPidGain(double rightKp, double rightKi, double rightKd);
+
+  /**
+   * @brief 左タイヤのPIDゲインを設定する
+   * @param leftKp 比例ゲイン
+   * @param leftKi 積分ゲイン
+   * @param leftKd 微分ゲイン
+   */
+  void setLeftSpeedPidGain(double leftKp, double leftKi, double leftKd);
+
+  /**
+   * @brief 両方タイヤのPIDゲインを設定する
+   * @param kp 比例ゲイン
+   * @param ki 積分ゲイン
+   * @param kd 微分ゲイン
+   */
+  void setSpeedPidGain(double rightKp, double rightKi, double rightKd, double leftKp, double leftKi,
+                       double leftKd);
+
  private:
   const double targetSpeed;
   Pid rightPid;
@@ -41,12 +66,9 @@ class SpeedCalculator {
   double prevRightTime;
   double prevLeftTime;
   Robot& robot;
-  // PIDゲイン
-  static constexpr double RIGHT_K_P = 0.00535;
-  static constexpr double RIGHT_K_I = 0.00115;
-  static constexpr double RIGHT_K_D = 0.000;
-  static constexpr double LEFT_K_P = 0.00578;
-  static constexpr double LEFT_K_I = 0.0008535;
-  static constexpr double LEFT_K_D = 0.000;
+  // PIDゲインのデフォルト値
+  static constexpr double K_P = 0.005;
+  static constexpr double K_I = 0.0002;
+  static constexpr double K_D = 0.000;
 };
 #endif

@@ -17,7 +17,8 @@ class Straight : public Motion {
    * @param _robot ロボット本体への参照
    * @param _speed 目標速度[mm/s]
    */
-  Straight(Robot& _robot, double _speed);
+  Straight(Robot& _robot, double _speed, double _rightKp, double _rightKi, double _rightKd,
+           double _leftKp, double _leftKi, double _leftKd);
 
   /**
    * @brief 直進する
@@ -42,6 +43,13 @@ class Straight : public Motion {
 
  protected:
   double targetSpeed;  // 目標速度[mm/s]
+  double rightKp;
+  double rightKi;
+  double rightKd;
+  double leftKp;
+  double leftKi;
+  double leftKd;
+  SpeedCalculator speedCalculator;
 };
 
 #endif

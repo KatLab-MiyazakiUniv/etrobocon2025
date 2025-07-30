@@ -49,3 +49,20 @@ double SpeedCalculator::calculateLeftMotorPower()
 
   return leftMotorPower;
 }
+
+void SpeedCalculator::setRightSpeedPidGain(double rightKp, double rightKi, double rightKd)
+{
+  rightPid.setPidGain(rightKp, rightKi, rightKd);
+}
+
+void SpeedCalculator::setLeftSpeedPidGain(double leftKp, double leftKi, double leftKd)
+{
+  leftPid.setPidGain(leftKp, leftKi, leftKd);
+}
+
+void SpeedCalculator::setSpeedPidGain(double rightKp, double rightKi, double rightKd, double leftKp,
+                                      double leftKi, double leftKd)
+{
+  setRightSpeedPidGain(rightKp, rightKi, rightKd);
+  setLeftSpeedPidGain(leftKp, leftKi, leftKd);
+}
