@@ -97,15 +97,20 @@ void BackgroundPlaCameraAction::run()
     this_thread::sleep_for(chrono::milliseconds(33));
   }
 
-  // もし初回で正面であればPlaCameraActionを実行、他の方向なら２回目でPlaCameraActionを実行、判定できなければ３回PlaCameraActionを実行
+  // もし初回で正面であればPlaCameraActionを実行、他の方向なら２回目でPlaCameraActionを実行、判定できなければ4回PlaCameraActionを実行
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は1回目(初期位置で)の撮影でしか行わない
     detectDirection(frame);
-    // もし判定結果が正面であればアップロード用のプラレール画像を取得する
 
+    // もし判定結果が正面であればアップロード用のプラレール画像を取得する
     if(robot.getBackgroundDirectionResult().wasDetected
        && robot.getBackgroundDirectionResult().direction == BackgroundDirection::FRONT) {
       // FRONT方向の画像を保存
+      plaCameraAction.run();
+    } else if(!robot.getBackgroundDirectionResult().wasDetected) {
+      // 検出結果が未検出の場合は、PlaCameraActionを実行
+      cout << "風景向き判定用写真の撮影" << endl;
+      plaCameraAction.setImageSaveName("bestframe_" + to_string(position));
       plaCameraAction.run();
     }
 
@@ -117,7 +122,7 @@ void BackgroundPlaCameraAction::run()
     // 一回目検出falseなら、残り、3回の撮影は確定する。
     // 一回目の撮影で風景が検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
     cout << "風景向き判定用写真の撮影" << endl;
-    plaCameraAction.setImageSaveName("Fig_" + to_string(position));
+    plaCameraAction.setImageSaveName("bestframe_" + to_string(position));
     plaCameraAction.run();
   }
 
