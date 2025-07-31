@@ -50,7 +50,8 @@ bool ImageUploader::uploadImage(const std::string& imagePath, int maxAttempts)
       }
       attempts++;
     } catch(const std::exception& e) {
-      std::cerr << "Exception during upload attempt " << (attempts + 1) << ": " << e.what() << std::endl;
+      std::cerr << "Exception during upload attempt " << (attempts + 1) << ": " << e.what()
+                << std::endl;
       attempts++;
     }
   }
