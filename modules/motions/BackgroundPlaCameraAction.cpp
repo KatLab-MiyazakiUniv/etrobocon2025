@@ -69,7 +69,6 @@ void BackgroundPlaCameraAction::detectDirection(cv::Mat& frame)
     case BackgroundDirection::RIGHT:
       cout << "風景の向き: RIGHT" << endl;
       break;
-
     default:
       std::cout << "風景の向き: 不明" << std::endl;
       break;

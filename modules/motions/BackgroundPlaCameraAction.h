@@ -58,6 +58,7 @@ class BackgroundPlaCameraAction : public CompositeMotion {
    * @return 前提条件を満たしている場合はtrue、そうでない場合はfalse
    */
   bool isMetPreCondition();
+
   /**
    * @brief 風景の向きを判定する
    * @param frame 入力画像フレーム

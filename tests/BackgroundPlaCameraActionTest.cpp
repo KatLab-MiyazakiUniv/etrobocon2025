@@ -65,7 +65,7 @@ namespace etrobocon2025_test {
     EXPECT_TRUE(actual);
   }
 
-  //   // position = 0(1回目の撮影)の場合のテスト
+  //   // position = 0(1回目の撮影)の場合のテスト(モデルがないためコメントアウト)
   //   TEST(BackgroundPlaCameraActionTest, PositionIsZeroCameraAction)
   //   {
   //       DummyPlaCameraCapture dummyPlaCameraCapture;
