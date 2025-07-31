@@ -1,7 +1,7 @@
 MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 # サーバーのIPアドレス(例:miuazaki-univのIP)
-SERVER_IP = 133.54.27.180
+SERVER_IP = 192.168.11.18
 
 # 使い方
 help:
@@ -53,7 +53,7 @@ test-exec:
 		mkdir -p etrobocon2025/datafiles/commands && \
 		mkdir -p etrobocon2025/datafiles/processed_images && \
 		cp ../../datafiles/commands/*.csv etrobocon2025/datafiles/commands && \
-		cp ../../Makefile . && \
+		cp ../../Makefile etrobocon2025/ && \
 		./etrobocon2025_test && \
 		rm -rf etrobocon2025 && \
 		rm -f Makefile; \

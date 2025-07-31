@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 class ImageUploader {
  public:

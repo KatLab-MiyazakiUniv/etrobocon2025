@@ -23,6 +23,9 @@ bool ImageUploader::uploadImage(const std::string& imagePath, int maxAttempts)
     return false;
   }
 
+  // パスを絶対パスに変換
+  std::string absolutePath = std::filesystem::absolute(imagePath).string();
+
   // 無効な最大試行回数のチェック
   if(maxAttempts <= 0) {
     std::cerr << "Error: Invalid retry count: " << maxAttempts << std::endl;
@@ -32,7 +35,7 @@ bool ImageUploader::uploadImage(const std::string& imagePath, int maxAttempts)
   // 試行回数(attempts)が最大試行回数(maxAttempts)を超えるまで送信を試みる
   int attempts = 0;
   while(attempts < maxAttempts) {
-    std::string command = "make -C etrobocon2025 upload-image FILE_PATH=" + imagePath;
+    std::string command = "make -C etrobocon2025 upload-image FILE_PATH=" + absolutePath;
 
     int result = std::system(command.c_str());
     if(result == 0) {
