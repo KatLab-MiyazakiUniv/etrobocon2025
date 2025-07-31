@@ -1,0 +1,80 @@
+@startuml 配置エリアB攻略シーケンス図
+
+title 配置エリアB攻略シーケンス図\n(DoubleLoopエリア内プラレール撮影システム)
+
+actor "競技開始" as Start
+participant "EtRobocon2025" as Main
+participant "AreaMaster" as AM
+participant "MotionParser" as MP
+participant "PlaCameraAction" as PCA
+participant "MiniFigCameraAction" as MCA
+participant "MotionDetector" as MD
+participant "BackgroundDirectionDetector" as BDD
+participant "Robot" as Robot
+participant "CameraCapture" as Camera
+participant "MotorController" as Motor
+participant "FrameSave" as FS
+participant "ImageUploader" as IU
+
+== システム初期化 ==
+Start -> Main: システム開始
+Main -> Robot: ロボット初期化
+Robot -> Camera: カメラ初期化
+Robot -> Motor: モーター初期化
+
+== DoubleLoopエリア進入 ==
+Main -> AM: run(DoubleLoop)
+AM -> AM: コマンドファイル読込\n(DoubleLoopLeft/Right.csv)
+AM -> MP: createMotions(コマンドファイル)
+MP --> AM: Motionオブジェクト群
+
+== DoubleLoopエリア動作実行 ==
+note over AM: DoubleLoopエリア内で複数のMotionを順次実行\n・ライントレース動作\n・配置エリアA攻略 (MiniFigCameraAction)\n・配置エリアB攻略 (PlaCameraAction)\n・その他の走行動作
+
+== 配置エリアA攻略 (ミニフィグ撮影) ==
+AM -> MCA: run()
+activate MCA
+note over MCA: ミニフィグ撮影シーケンス\n・位置調整\n・方向検出\n・撮影・アップロード
+MCA -> Robot: 撮影位置へ移動・調整
+MCA -> Camera: getFrame()
+MCA -> FS: save(フレーム, "minifig.JPEG")
+MCA -> IU: upload("minifig.JPEG")
+deactivate MCA
+
+== 配置エリアB攻略 (プラレール撮影) ==
+AM -> PCA: run()
+activate PCA
+
+PCA -> PCA: getBackgroundFrame()
+PCA -> Camera: getFrame()
+Camera --> PCA: 背景フレーム
+PCA -> MD: setBackground(背景フレーム)
+
+loop 動体検出ループ (MAX_NO_MOTION回まで)
+    PCA -> Camera: getFrame()
+    Camera --> PCA: 現在フレーム
+    PCA -> MD: detect(現在フレーム)
+    MD -> MD: compareTwoFrames()
+    MD --> PCA: 検出結果
+    
+    alt 動体検出あり
+        PCA -> PCA: break (検出成功)
+    else 動体検出なし
+        PCA -> PCA: continue (再試行)
+    end
+end
+
+PCA -> Camera: getFrame()
+Camera --> PCA: 撮影フレーム
+PCA -> FS: save(撮影フレーム, "bestframe.JPEG")
+PCA -> IU: upload("bestframe.JPEG")
+deactivate PCA
+
+note over AM: 風景撮影 (BackgroundCameraAction) は実装予定\n現在はDoubleLoopエリア内の他の動作で代替
+
+== DoubleLoopエリア完了・次エリアへ移動 ==
+note over AM: DoubleLoopエリア内の全Motion完了
+AM -> Robot: 次エリア(SmartCarry)へ移動
+Robot -> Motor: ライントレース動作で移動
+
+@enduml

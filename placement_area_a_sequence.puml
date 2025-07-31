@@ -1,0 +1,125 @@
+@startuml 配置エリアA攻略シーケンス図
+
+title 配置エリアA攻略シーケンス図\n(DoubleLoopエリア内ミニフィグ撮影システム)
+
+actor "競技開始" as Start
+participant "EtRobocon2025" as Main
+participant "AreaMaster" as AM
+participant "MotionParser" as MP
+participant "MiniFigCameraAction" as MCA
+participant "MiniFigDirectionDetector" as MDD
+participant "Robot" as Robot
+participant "CameraCapture" as Camera
+participant "MotorController" as Motor
+participant "AngleRotation" as AR
+participant "DistanceStraight" as DS
+participant "FrameSave" as FS
+participant "ImageUploader" as IU
+
+== システム初期化 ==
+Start -> Main: システム開始
+Main -> Robot: ロボット初期化
+Robot -> Camera: カメラ初期化
+Robot -> Motor: モーター初期化
+
+== DoubleLoopエリア進入 ==
+Main -> AM: run(DoubleLoop)
+AM -> AM: コマンドファイル読込\n(DoubleLoopLeft/Right.csv)
+AM -> MP: createMotions(コマンドファイル)
+MP --> AM: Motionオブジェクト群\n(MiniFigCameraAction含む)
+
+== 配置エリアA攻略 (ミニフィグ撮影) ==
+
+loop 4回の撮影位置 (position = 0, 1, 2, 3)
+    AM -> MCA: run()
+    activate MCA
+    
+    MCA -> MCA: isMetPreCondition()
+    note right: position != 0 かつ\n前回検出済み かつ\n方向が一致しない場合はスキップ
+    
+    alt 事前条件を満たす
+        
+        == 撮影準備 ==
+        MCA -> AR: new AngleRotation(preTargetAngle, isClockwise)
+        MCA -> AR: run()
+        AR -> Motor: setLeftMotorPower/setRightMotorPower
+        note right: ミニフィグに向けて回頭
+        
+        MCA -> MCA: sleep(10ms) [動作安定待ち]
+        
+        MCA -> DS: new DistanceStraight(-backSpeed, backTargetDistance)
+        MCA -> DS: run()
+        DS -> Motor: setLeftMotorPower/setRightMotorPower
+        note right: 撮影距離まで後退
+        
+        == 撮影・方向判定 ==
+        loop 5回フレーム取得
+            MCA -> Camera: getFrame()
+            Camera --> MCA: フレーム
+        end
+        
+        alt position == 0 (初回撮影位置)
+            MCA -> MCA: detectDirection(frame)
+            MCA -> MDD: detect(frame)
+            MDD -> MDD: preprocess(前処理)
+            MDD -> MDD: postprocess(CNN推論)
+            MDD --> Robot: MiniFigDirectionResult更新
+            
+            MCA -> Robot: getMiniFigDirectionResult()
+            Robot --> MCA: 検出結果
+            
+            alt 検出成功 && 方向 == FRONT
+                MCA -> FS: save(frame, "upload_front_fig")
+                note right: 正面画像として保存
+            end
+            
+        else position != 0 かつ 前回検出成功
+            note over MCA: 2回目以降は確実にFRONT方向
+            MCA -> FS: save(frame, "upload_front_fig")
+            
+        else 前回検出失敗
+            note over MCA: 全位置で撮影が必要
+            MCA -> FS: save(frame, "Fig_" + position)
+            note right: 位置別に画像保存
+        end
+        
+        == 撮影後移動 ==
+        MCA -> MCA: sleep(10ms) [動作安定待ち]
+        MCA -> Motor: setLeftMotorPower(0)/setRightMotorPower(0)
+        
+        MCA -> DS: new DistanceStraight(forwardSpeed, forwardTargetDistance)
+        MCA -> DS: run()
+        DS -> Motor: setLeftMotorPower/setRightMotorPower
+        note right: 元の位置まで前進
+        
+        MCA -> MCA: sleep(10ms) [動作安定待ち]
+        MCA -> Motor: setLeftMotorPower(0)/setRightMotorPower(0)
+        MCA -> MCA: sleep(10ms) [動作安定待ち]
+        
+        == 黒線復帰 ==
+        MCA -> AR: new AngleRotation(postTargetAngle, !isClockwise)
+        MCA -> AR: run()
+        AR -> Motor: setLeftMotorPower/setRightMotorPower
+        note right: 元の方向へ回頭復帰
+        
+    else 事前条件を満たさない
+        note over MCA: 撮影動作をスキップ
+    end
+    
+    deactivate MCA
+    
+    alt 正面画像取得完了 または 全4位置撮影完了
+        note over AM: 配置エリアA攻略完了
+    else
+        note over AM: 次の撮影位置へ移動
+    end
+end
+
+== 画像アップロード ==
+MCA -> IU: upload("upload_front_fig")
+note right: 最適な画像をアップロード
+
+== DoubleLoopエリア継続 ==
+note over AM: 配置エリアB攻略や\n他のMotionを継続実行
+
+@enduml
