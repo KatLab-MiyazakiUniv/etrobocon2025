@@ -41,13 +41,18 @@ bool ImageUploader::uploadImage(const std::string& imagePath, int maxAttempts)
   // 試行回数(attempts)が最大試行回数(maxAttempts)を超えるまで送信を試みる
   int attempts = 0;
   while(attempts < maxAttempts) {
-    std::string command = "make -C etrobocon2025 upload-image FILE_PATH=" + absolutePath;
+    try {
+      std::string command = "make -C etrobocon2025 upload-image FILE_PATH=" + absolutePath;
 
-    int result = std::system(command.c_str());
-    if(result == 0) {
-      return true;
+      int result = std::system(command.c_str());
+      if(result == 0) {
+        return true;
+      }
+      attempts++;
+    } catch(const std::exception& e) {
+      std::cerr << "Exception during upload attempt " << (attempts + 1) << ": " << e.what() << std::endl;
+      attempts++;
     }
-    attempts++;
   }
 
   std::cerr << "Upload failed after " << maxAttempts << " attempts" << std::endl;

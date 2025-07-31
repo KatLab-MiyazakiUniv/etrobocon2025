@@ -1,6 +1,6 @@
 MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-# サーバーのIPアドレス(例:miuazaki-univのIP)
+# サーバーのIPアドレス
 SERVER_IP = 192.168.11.18
 
 # 使い方

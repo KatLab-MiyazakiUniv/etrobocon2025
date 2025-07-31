@@ -40,7 +40,11 @@ namespace etrobocon2025_test {
   TEST(ImageUploaderTest, ValidFileUpload)
   {
     std::string validPath = "../../tests/test_images/test_data";
+    bool result = ImageUploader::uploadImage(validPath, 1);
+
     // サーバーの状態に関係なく例外が発生しないことを確認
     EXPECT_NO_THROW(ImageUploader::uploadImage(validPath, 1));
+    // サーバーがないとmakeコマンドがエラーを返すのでタイムアウト
+    // EXPECT_TRUE(result);
   }
 }  // namespace etrobocon2025_test
