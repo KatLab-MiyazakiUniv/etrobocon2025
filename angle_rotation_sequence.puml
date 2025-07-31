@@ -1,0 +1,107 @@
+@startuml 角度指定回頭シーケンス図
+
+title 角度指定回頭動作フロー\n(AngleRotation)
+
+participant "AreaMaster/\nMotionParser" as AM
+participant "AngleRotation" as AR
+participant "Robot" as Robot
+participant "MotorController" as MC
+participant "Clock" as Clock
+participant "Mileage" as Mileage
+participant "SystemInfo" as SI
+
+== 初期化 ==
+AM -> AR: new AngleRotation(robot, targetAngle, speed, isClockwise)
+activate AR
+note right of AR: targetAngle: 目標回転角度(deg) 0~360\nspeed: 指定速度(mm/秒)\nisClockwise: 回頭方向\n(true:時計回り, false:反時計回り)
+
+AR -> AR: 回転方向サイン計算
+note right of AR: 時計回り: leftSign=-1, rightSign=1\n反時計回り: leftSign=1, rightSign=-1
+
+== 実行開始 ==
+AM -> AR: run()
+
+== 準備処理 ==
+AR -> AR: prepare()
+AR -> Robot: getMotorControllerInstance()
+Robot --> AR: MotorController&
+
+AR -> MC: getLeftMotorCount()
+MC --> AR: leftMotorCount
+AR -> MC: getRightMotorCount()
+MC --> AR: rightMotorCount
+
+AR -> Mileage: calculateWheelMileage(leftMotorCount)
+Mileage --> AR: initLeftMileage
+AR -> Mileage: calculateWheelMileage(rightMotorCount)
+Mileage --> AR: initRightMileage
+
+== 目標距離計算 ==
+AR -> SI: PI, TREAD定数取得
+note right of AR: targetDistance = π × TREAD × targetAngle / 360
+
+AR -> AR: targetLeftDistance = initLeftMileage + targetDistance × leftSign
+AR -> AR: targetRightDistance = initRightMileage + targetDistance × rightSign
+
+note right of AR: 各車輪の目標走行距離を\n回転方向に応じて設定
+
+== 事前条件判定 ==
+AR -> AR: isMetPreCondition()
+
+alt 事前条件を満たさない
+    note right of AR: speed <= 0 または\ntargetAngle <= 0 または targetAngle >= 360
+    AR -> AR: return (処理終了)
+else 事前条件を満たす
+
+    == 回頭開始 ==
+    AR -> Robot: getClockInstance()
+    Robot --> AR: Clock&
+    
+    AR -> MC: setLeftMotorSpeed(speed × leftSign)
+    AR -> MC: setRightMotorSpeed(speed × rightSign)
+    note right of AR: 左右モーターを速度制御で駆動\n回転方向により正負を決定
+
+    == 回頭制御ループ ==
+    loop 継続条件を満たす間
+        
+        == 継続条件判定 ==
+        AR -> AR: isMetContinuationCondition()
+        AR -> Robot: getMotorControllerInstance()
+        Robot --> AR: MotorController&
+        
+        AR -> MC: getLeftMotorCount()
+        MC --> AR: currentLeftCount
+        AR -> MC: getRightMotorCount()
+        MC --> AR: currentRightCount
+        
+        AR -> Mileage: calculateWheelMileage(currentLeftCount)
+        Mileage --> AR: currentLeftMileage
+        AR -> Mileage: calculateWheelMileage(currentRightCount)
+        Mileage --> AR: currentRightMileage
+        
+        == 残り距離計算 ==
+        AR -> AR: diffLeftDistance = (targetLeftDistance - currentLeftMileage) × leftSign
+        AR -> AR: diffRightDistance = (targetRightDistance - currentRightMileage) × rightSign
+        
+        note right of AR: 目標距離との差分を計算\n両輪とも残り距離 <= 0 なら終了
+        
+        alt 目標角度に到達
+            note over AR: diffLeftDistance <= 0 &&\ndiffRightDistance <= 0\nでループ終了
+        else 継続条件を満たす
+            note over AR: 回転継続\n(モーター駆動中)
+        end
+    end
+
+    == 停止処理 ==
+    AR -> Robot: getMotorControllerInstance()
+    Robot --> AR: MotorController&
+    AR -> MC: stopWheelsMotor()
+    note right: モーター停止
+end
+
+deactivate AR
+
+== 処理完了 ==
+note over AM: 角度指定回頭完了\n次のMotionへ
+
+@enduml

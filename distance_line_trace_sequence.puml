@@ -1,0 +1,121 @@
+@startuml 距離指定ライントレースシーケンス図
+
+title 距離指定ライントレース動作フロー\n(DistanceLineTrace)
+
+participant "AreaMaster/\nMotionParser" as AM
+participant "DistanceLineTrace" as DLT
+participant "Robot" as Robot
+participant "MotorController" as MC
+participant "ColorSensor" as CS
+participant "Pid" as PID
+participant "SpeedCalculator" as SC
+participant "Mileage" as Mileage
+
+== 初期化 ==
+AM -> DLT: new DistanceLineTrace(robot, targetDistance, targetSpeed, targetBrightness, pidGain)
+activate DLT
+note right of DLT: targetDistance: 目標距離\ntargetSpeed: 目標速度\ntargetBrightness: 目標輝度\npidGain: PIDゲイン
+
+== 実行開始 ==
+AM -> DLT: run()
+
+DLT -> PID: new Pid(pidGain.kp, pidGain.ki, pidGain.kd, targetBrightness)
+activate PID
+
+== 事前条件判定 ==
+DLT -> DLT: isMetPreCondition()
+note right of DLT: targetSpeed > 0 かつ\ntargetDistance > 0 をチェック
+
+alt 事前条件を満たさない
+    DLT -> DLT: return (処理終了)
+    note right: targetSpeed == 0 または\ntargetDistance <= 0 の場合
+else 事前条件を満たす
+
+    == 準備処理 ==
+    DLT -> DLT: prepare()
+    DLT -> Robot: getMotorControllerInstance()
+    Robot --> DLT: MotorController&
+    DLT -> MC: getRightMotorCount()
+    MC --> DLT: rightCount
+    DLT -> MC: getLeftMotorCount()
+    MC --> DLT: leftCount
+    DLT -> Mileage: calculateMileage(rightCount, leftCount)
+    Mileage --> DLT: initDistance
+    note right of DLT: 初期走行距離を記録
+
+    == エッジ判定 ==
+    DLT -> Robot: getIsLeftEdge()
+    Robot --> DLT: isLeftEdge
+    note right of DLT: エッジサイン計算\n(左エッジ: -1, 右エッジ: 1)
+
+    == 速度制御準備 ==
+    DLT -> SC: new SpeedCalculator(robot, targetSpeed)
+    activate SC
+
+    == ライントレース制御ループ ==
+    loop 継続条件を満たす間
+        
+        == 継続条件判定 ==
+        DLT -> DLT: isMetContinuationCondition()
+        DLT -> Robot: getMotorControllerInstance()
+        Robot --> DLT: MotorController&
+        DLT -> MC: getRightMotorCount()
+        MC --> DLT: currentRightCount
+        DLT -> MC: getLeftMotorCount()
+        MC --> DLT: currentLeftCount
+        DLT -> Mileage: calculateMileage(currentRightCount, currentLeftCount)
+        Mileage --> DLT: currentDistance
+        
+        note right of DLT: 走行距離チェック:\nabs(currentDistance - initDistance) >= targetDistance\nなら false を返して終了
+        
+        alt 目標距離に到達
+            note over DLT: ループ終了
+        else 継続条件を満たす
+            
+            == 基本速度計算 ==
+            DLT -> SC: calculateRightMotorPower()
+            SC --> DLT: baseRightPower
+            DLT -> SC: calculateLeftMotorPower()
+            SC --> DLT: baseLeftPower
+            
+            == PID制御計算 ==
+            DLT -> Robot: getColorSensorInstance()
+            Robot --> DLT: ColorSensor&
+            DLT -> CS: getReflection()
+            CS --> DLT: reflection
+            DLT -> PID: calculatePid(reflection)
+            PID --> DLT: turningValue
+            
+            note right of DLT: turningPower = turningValue * edgeSign
+            
+            == モーター出力計算 ==
+            note right of DLT: 前進時: max(basePower ± turningPower, 0)\n後進時: min(basePower ± turningPower, 0)
+            
+            DLT -> DLT: rightPower = baseRightPower - turningPower
+            DLT -> DLT: leftPower = baseLeftPower + turningPower
+            
+            == モーター制御 ==
+            DLT -> MC: setRightMotorPower(rightPower)
+            DLT -> MC: setLeftMotorPower(leftPower)
+            
+            == 待機 ==
+            DLT -> DLT: sleep(10ms)
+            note right: 10ms周期での制御
+        end
+    end
+
+    == 停止処理 ==
+    DLT -> Robot: getMotorControllerInstance()
+    Robot --> DLT: MotorController&
+    DLT -> MC: brakeWheelsMotor()
+    note right: ブレーキでモーター停止
+end
+
+deactivate SC
+deactivate PID
+deactivate DLT
+
+== 処理完了 ==
+note over AM: 距離指定ライントレース完了\n次のMotionへ
+
+@enduml
