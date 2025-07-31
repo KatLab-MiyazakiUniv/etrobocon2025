@@ -27,13 +27,12 @@ class BackgroundPlaCameraAction : public CompositeMotion {
    * @param _targetRotationSpeed 目標回頭速度
    * @param _threshold 風景検出のしきい値
    * @param _minArea 最小面積
-   * @param _roi ROI領域
+   * @param _roi 動体検出用の注目領域
    * @param _position 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
    */
   BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
                             int _postTargetAngle, double _targetRotationSpeed, double _threshold,
-                            double _minArea, int _roiX, int _roiY, int _roiWidth, int _roiHeight,
-                            int _position);
+                            double _minArea, const cv::Rect roi, int _position);
 
   /**
    * @brief 撮影動作を実行する
@@ -47,11 +46,8 @@ class BackgroundPlaCameraAction : public CompositeMotion {
   double targetRotationSpeed = 200.0;  // 目標回頭速度
   double threshold = 30.0;             // 風景検出のしきい値
   double minArea = 400.0;              // 最小面積
-  int roiX = 100;                      // ROIの左上X座標
-  int roiY = 0;                        // ROIの左上Y座標
-  int roiWidth = 600;                  // ROIの幅
-  int roiHeight = 300;                 // ROIの高さ
   int position = 0;                    // 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
+  cv::Rect roi;                        // 動体検出用の注目領域
 
   /**
    * @brief 前提条件を満たしているかチェックする

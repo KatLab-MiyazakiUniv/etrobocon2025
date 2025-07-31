@@ -6,10 +6,9 @@
 #include "PlaCameraAction.h"
 #include <thread>
 
-PlaCameraAction::PlaCameraAction(Robot& _robot, double _threshold, double _minArea, int _roiX,
-                                 int _roiY, int _roiWidth, int _roiHeight)
-  : Motion(_robot),
-    motionDetector(_threshold, _minArea, cv::Rect(_roiX, _roiY, _roiWidth, _roiHeight))
+PlaCameraAction::PlaCameraAction(Robot& _robot, double _threshold, double _minArea,
+                                 const cv::Rect _roi)
+  : Motion(_robot), motionDetector(_threshold, _minArea, _roi)
 {
 }
 

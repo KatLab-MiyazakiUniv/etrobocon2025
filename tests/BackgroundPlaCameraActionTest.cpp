@@ -27,11 +27,12 @@ namespace etrobocon2025_test {
     int postTargetAngle = 90;
     double targetRotationSpeed = 200.0;
     int position = 1;
+    cv::Rect roi(0, 0, 800, 600);  // ROI領域を設定
 
-    PlaCameraAction plaCameraAction(robot, 30.0, 1000.0, 0, 0, 800, 600);
+    PlaCameraAction plaCameraAction(robot, 30.0, 1000.0, roi);
 
     BackgroundPlaCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
-                                     targetRotationSpeed, 30.0, 500.0, 0, 0, 800, 600, position);
+                                     targetRotationSpeed, 30.0, 500.0, roi, position);
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     action.run();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
@@ -54,9 +55,10 @@ namespace etrobocon2025_test {
     int postTargetAngle = 90;
     double targetRotationSpeed = 200.0;
     int position = 2;
+    cv::Rect roi(0, 0, 800, 600);  // ROI領域を設定
 
     BackgroundPlaCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
-                                     targetRotationSpeed, 30.0, 500.0, 0, 0, 800, 600, position);
+                                     targetRotationSpeed, 30.0, 500.0, roi, position);
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     action.run();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
@@ -78,9 +80,10 @@ namespace etrobocon2025_test {
   //     int postTargetAngle = 90;
   //     double targetRotationSpeed = 200.0;
   //     int position = 0;
+  //     cv::Rect roi(0, 0, 800, 600);  // ROI領域を設定
 
   //     BackgroundPlaCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
-  //                                   targetRotationSpeed, 30.0, 500.0, 0, 0, 800, 600, position);
+  //                                   targetRotationSpeed, 30.0, 500.0, roi, position);
   //     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
   //     action.run();
   //     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
