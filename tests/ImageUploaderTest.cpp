@@ -39,7 +39,7 @@ namespace etrobocon2025_test {
   // 実在するファイルでアップロード処理が実行されることをテスト
   TEST(ImageUploaderTest, ValidFileUpload)
   {
-    std::string validPath = "../../tests/test_images/test_data.JPEG";
+    std::string validPath = "../../tests/test_images/test_data";
     // サーバーの状態に関係なく例外が発生しないことを確認
     EXPECT_NO_THROW(ImageUploader::uploadImage(validPath, 1));
   }
