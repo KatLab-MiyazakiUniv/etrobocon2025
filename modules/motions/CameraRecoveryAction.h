@@ -9,7 +9,6 @@
 
 #include "Motion.h"
 #include "BoundingBoxDetector.h"
-#include "LineBoundingBoxDetector.h"
 #include "AngleRotation.h"
 
 class CameraRecoveryAction : public Motion {
@@ -17,13 +16,13 @@ class CameraRecoveryAction : public Motion {
   /**
    * コンストラクタ
    * @param _robot ロボットインスタンス
-   * @param _angle 回頭角度
+   * @param _angle 回頭角度 (dig) 0~360
+   * @param _speed 回頭速度（mm/秒）
    * @param _isClockwise 回頭方向（true: 右回り, false: 左回り）
-   * @param _lowerHSV ライントレース対象の色の下限HSV値
-   * @param _upperHSV ライントレース対象の色の上限HSV値
+   * @param _boundingBoxDetector 画像処理クラスのポインタ
    */
-  CameraRecoveryAction(Robot& _robot, int _angle, bool _isClockwise, cv::Scalar _lowerHSV,
-                       cv::Scalar _upperHSV);
+  CameraRecoveryAction(Robot& _robot, int _angle, double _speed, bool _isClockwise,
+                       std::unique_ptr<BoundingBoxDetector> _boundingBoxDetector);
 
   /**
    * @brief カメラフレーム復帰動作を実行する
@@ -37,12 +36,13 @@ class CameraRecoveryAction : public Motion {
   bool isRecoverySuccessful() const;
 
  private:
-  std::unique_ptr<BoundingBoxDetector> boundingBoxDetector;  // 画像処理クラス
+  std::unique_ptr<BoundingBoxDetector> boundingBoxDetector;  // 画像処理クラスのポインタ
   BoundingBoxDetectionResult result;                         // 検出結果
   int recoveryAngle;                                         // 復帰回頭角度
+  double speed;                                              // 回頭スピード
   bool isClockwise;                                          // 回頭方向
+  static constexpr int FRAME_NUMBER = 5;                     // フレーム取得回数
   bool recoverySuccess = false;                              // 復帰成功フラグ
-  static constexpr int RECOVERY_SPEED = 100;                 // 回頭スピード
 };
 
 #endif

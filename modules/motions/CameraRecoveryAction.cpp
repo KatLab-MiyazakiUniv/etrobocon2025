@@ -6,51 +6,49 @@
 
 #include "CameraRecoveryAction.h"
 
-CameraRecoveryAction::CameraRecoveryAction(Robot& _robot, int _angle, bool _isClockwise,
-                                           cv::Scalar _lowerHSV, cv::Scalar _upperHSV)
-  : Motion(_robot), recoveryAngle(_angle), isClockwise(_isClockwise)
+CameraRecoveryAction::CameraRecoveryAction(
+    Robot& _robot, int _angle, double _speed, bool _isClockwise,
+    std::unique_ptr<BoundingBoxDetector> _boundingBoxDetector)
+  : Motion(_robot),
+    recoveryAngle(_angle),
+    speed(_speed),
+    isClockwise(_isClockwise),
+    boundingBoxDetector(std::move(_boundingBoxDetector))
 {
-  boundingBoxDetector = std::make_unique<LineBoundingBoxDetector>(_lowerHSV, _upperHSV);
 }
 
 void CameraRecoveryAction::run()
 {
-  // 初期検出を試行
   cv::Mat frame;
+  // 初期検出確認
   if(!robot.getCameraCaptureInstance().getFrame(frame) || frame.empty()) {
     recoverySuccess = false;
     return;  // フレーム取得失敗
   }
 
+  // 複数フレームでの検出確認
+  for(int i = 0; i < FRAME_NUMBER; i++) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(33));  // フレーム間の待機(33ミリ秒)
+    robot.getCameraCaptureInstance().getFrame(frame);
+  }
+
   boundingBoxDetector->detect(frame, result);
 
+  // 既に検出できた場合、復帰動作を行わない
   if(result.wasDetected) {
     recoverySuccess = true;
-    return;  // 既に検出できている場合は何もしない
+    return;
   }
-
-  // 指定された角度・方向で回頭
-  AngleRotation rotation(robot, recoveryAngle, RECOVERY_SPEED, isClockwise);
+  // 指定された角度・スピード・方向で回頭復帰
+  AngleRotation rotation(robot, recoveryAngle, speed, isClockwise);
   rotation.run();
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒待機
 
-  // 短時間待機後に検出試行
-  std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-  // 複数フレームでの安定検出
-  for(int i = 0; i < 5; ++i) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(33));
-    if(!robot.getCameraCaptureInstance().getFrame(frame) || frame.empty()) {
-      recoverySuccess = false;
-      return;  // フレーム取得失敗
-    }
-  }
   boundingBoxDetector->detect(frame, result);
-
   if(result.wasDetected) {
     recoverySuccess = true;
     return;  // 検出成功
   }
-
   recoverySuccess = false;  // 復帰失敗
 }
 
