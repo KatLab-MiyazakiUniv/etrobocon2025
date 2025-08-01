@@ -11,7 +11,6 @@
 #include "BoundingBoxDetector.h"
 #include "LineBoundingBoxDetector.h"
 #include "AngleRotation.h"
-#include <memory>
 
 class CameraRecoveryAction : public Motion {
  public:
@@ -20,8 +19,8 @@ class CameraRecoveryAction : public Motion {
    * @param _robot ロボットインスタンス
    * @param _angle 回頭角度
    * @param _isClockwise 回頭方向（true: 右回り, false: 左回り）
-   * @param _lowerHSV HSV下限値
-   * @param _upperHSV HSV上限値
+   * @param _lowerHSV ライントレース対象の色の下限HSV値
+   * @param _upperHSV ライントレース対象の色の上限HSV値
    */
   CameraRecoveryAction(Robot& _robot, int _angle, bool _isClockwise, cv::Scalar _lowerHSV,
                        cv::Scalar _upperHSV);

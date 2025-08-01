@@ -5,9 +5,6 @@
  */
 
 #include "CameraRecoveryAction.h"
-#include <cmath>
-#include <chrono>
-#include <thread>
 
 CameraRecoveryAction::CameraRecoveryAction(Robot& _robot, int _angle, bool _isClockwise,
                                            cv::Scalar _lowerHSV, cv::Scalar _upperHSV)
@@ -20,7 +17,11 @@ void CameraRecoveryAction::run()
 {
   // 初期検出を試行
   cv::Mat frame;
-  robot.getCameraCaptureInstance().getFrame(frame);
+  if(!robot.getCameraCaptureInstance().getFrame(frame) || frame.empty()) {
+    recoverySuccess = false;
+    return;  // フレーム取得失敗
+  }
+
   boundingBoxDetector->detect(frame, result);
 
   if(result.wasDetected) {
@@ -33,12 +34,15 @@ void CameraRecoveryAction::run()
   rotation.run();
 
   // 短時間待機後に検出試行
-  std::this_thread::sleep_for(std::chrono::milliseconds(200));
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
   // 複数フレームでの安定検出
   for(int i = 0; i < 5; ++i) {
     std::this_thread::sleep_for(std::chrono::milliseconds(33));
-    robot.getCameraCaptureInstance().getFrame(frame);
+    if(!robot.getCameraCaptureInstance().getFrame(frame) || frame.empty()) {
+      recoverySuccess = false;
+      return;  // フレーム取得失敗
+    }
   }
   boundingBoxDetector->detect(frame, result);
 
