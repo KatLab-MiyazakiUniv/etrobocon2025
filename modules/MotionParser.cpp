@@ -189,30 +189,43 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       }
 
       // CRA: カメラ復帰動作
-      // [1]:int 回頭角度[deg], [2]:string 回頭の方向(clockwise or anticlockwise),
-      // [3-8]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV)
+      // [1]:int 回頭角度[deg], [2]:double 回頭スピード[mm/s], [3]:string 回頭の方向(clockwise or
+      // anticlockwise), [4-9]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [10-13]int
+      // ROI座標[px]
+      // ([10]左上隅のx座標, [11]左上隅のy座標, [12]幅, [13]高さ), [14-15]int 解像度[px] ([14]幅,
+      // [15]高さ)
+      // 補足：ROI（Region of Interest: ライントレース用の画像内注目領域（四角形））
       case COMMAND::CRA: {
-        if(params.size() < 3) {
-          break;
+        cv::Scalar lowerHSV, upperHSV;
+        cv::Rect roi;
+        cv::Size resolution;
+        std::unique_ptr<BoundingBoxDetector> boundingBoxDetector;
+
+        lowerHSV = cv::Scalar(stoi(params[4]), stoi(params[5]), stoi(params[6]));
+        upperHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+
+        // パラメータ配列のサイズによってコンストラクタを切り替え
+        if(params.size() > 15) {
+          // ROI + 解像度
+          roi = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
+          resolution = cv::Size(stoi(params[14]), stoi(params[15]));
+          boundingBoxDetector
+              = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi, resolution);
+        } else if(params.size() > 13) {
+          // ROIのみ
+          roi = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
+          boundingBoxDetector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi);
+        } else {
+          // HSVのみ
+          boundingBoxDetector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV);
         }
 
-        int angle = stoi(params[1]);
-        bool clockwise = convertBool(params[0], params[2]);
-
-        cv::Scalar lowerHSV = cv::Scalar(0, 0, 0);  // 黒線デフォルト
-        cv::Scalar upperHSV = cv::Scalar(179, 255, 30);
-
-        if(params.size() >= 9) {  // HSV値6個が指定されている場合
-          lowerHSV = cv::Scalar(stoi(params[3]), stoi(params[4]), stoi(params[5]));
-          upperHSV = cv::Scalar(stoi(params[6]), stoi(params[7]), stoi(params[8]));
-        }
-
-        CameraRecoveryAction* cra
-            = new CameraRecoveryAction(robot, angle, clockwise, lowerHSV, upperHSV);
+        auto cra = new CameraRecoveryAction(robot, stoi(params[1]), stod(params[2]),
+                                            convertBool(params[0], params[3]),
+                                            std::move(boundingBoxDetector));
         motionList.push_back(cra);
         break;
       }
-
       // 未定義コマンド
       default: {
         cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
@@ -259,8 +272,8 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   // 末尾の改行を削除
   string param = StringOperator::removeEOL(stringParameter);
 
-  // 回転動作(AR,MCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-  if(command == "AR" || command == "MCA") {
+  // 回転動作(AR,MCA,CRA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  if(command == "AR" || command == "MCA" || command == "CRA") {
     if(param == "clockwise") {
       return true;
     } else if(param == "anticlockwise") {
@@ -279,18 +292,6 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
       return false;
     } else {
       cout << "'left' か 'right'を入力してください" << endl;
-      return true;
-    }
-  }
-
-  // カメラ復帰動作(CRA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-  if(command == "CRA") {
-    if(param == "clockwise") {
-      return true;
-    } else if(param == "anticlockwise") {
-      return false;
-    } else {
-      cout << "'clockwise' か 'anticlockwise'を入力してください" << endl;
       return true;
     }
   }
