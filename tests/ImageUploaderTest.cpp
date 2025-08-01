@@ -44,7 +44,7 @@ namespace etrobocon2025_test {
 
     // サーバーの状態に関係なく例外が発生しないことを確認
     EXPECT_NO_THROW(ImageUploader::uploadImage(validPath, 1));
-    // サーバーがないとmakeコマンドがエラーを返すのでタイムアウト
+    // サーバーがないとmakeコマンドがエラーを返すのでコメントアウト
     // EXPECT_TRUE(result);
   }
 }  // namespace etrobocon2025_test
