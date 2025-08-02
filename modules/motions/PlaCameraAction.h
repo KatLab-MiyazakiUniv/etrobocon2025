@@ -21,10 +21,7 @@ class PlaCameraAction : public Motion {
    * @param _robot ロボット本体への参照
    * @param _threshold 差分二値化の閾値
    * @param _minArea 動体とみなす最小面積
-   * @param _roiX 動体検知のROIの左上X座標
-   * @param _roiY 動体検知のROIの左上Y座標
-   * @param _roiWidth 動体検知のROIの幅
-   * @param _roiHeight 動体検知のROIの高さ
+   * @param _roi 動体検出用の注目領域
    */
   PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect _roi);
 

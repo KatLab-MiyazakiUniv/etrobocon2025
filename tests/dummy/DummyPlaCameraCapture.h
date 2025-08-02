@@ -30,15 +30,13 @@ class DummyPlaCameraCapture : public ICameraCapture {
     if(currentIndex < frames.size()) {
       outFrame = frames[currentIndex++];
       return true;
-    } else {
+    } else if(!frames.empty()) {
       // フレームが枯渇した場合は最後のフレーム（静止状態）を繰り返し返す
-      if(!frames.empty()) {
-        outFrame = frames.back();
-        return true;
-      } else {
-        outFrame = cv::Mat();  // 取得失敗（空画像）
-        return false;
-      }
+      outFrame = frames.back();
+      return true;
+    } else {
+      outFrame = cv::Mat();  // 取得失敗（空画像）
+      return false;
     }
   }
 
