@@ -7,7 +7,7 @@
 #include <thread>
 
 PlaCameraAction::PlaCameraAction(Robot& _robot, double _threshold, double _minArea,
-                                 const cv::Rect& _roi)
+                                 const cv::Rect _roi)
   : Motion(_robot), motionDetector(_threshold, _minArea, _roi)
 {
 }
@@ -86,7 +86,12 @@ void PlaCameraAction::run()
   cv::Mat bestFrame = capturedFrames.at(indexOfFrames);
 
   // bestFrameをJPEGで出力
-  FrameSave::save(bestFrame, filePath, uploadFile);
+  FrameSave::save(bestFrame, filePath, imageSaveName);
+}
+
+void PlaCameraAction::setImageSaveName(const std::string& fileName)
+{
+  imageSaveName = fileName;
 }
 
 void PlaCameraAction::getBackgroundFrame()
@@ -94,7 +99,7 @@ void PlaCameraAction::getBackgroundFrame()
   cv::Mat firstFrame;
   while(1) {
     // 背景に適しているか判断するフレームの獲得
-    // 最初にフレームを取得できない問題解決のため５回目のframeを採用する
+    // 最初にフレームを取得できない問題解決のため5回目のframeを採用する
     for(int i = 0; i < 5; i++) {
       robot.getCameraCaptureInstance().getFrame(firstFrame);
       std::this_thread::sleep_for(std::chrono::milliseconds(33));
