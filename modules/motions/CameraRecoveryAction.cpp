@@ -9,7 +9,7 @@
 CameraRecoveryAction::CameraRecoveryAction(
     Robot& _robot, int _angle, double _speed, bool _isClockwise,
     std::unique_ptr<BoundingBoxDetector> _boundingBoxDetector)
-  : Motion(_robot),
+  : CompositeMotion(_robot),
     recoveryAngle(_angle),
     speed(_speed),
     isClockwise(_isClockwise),
@@ -22,11 +22,11 @@ void CameraRecoveryAction::run()
   cv::Mat frame;
   // 初期検出確認
   if(!robot.getCameraCaptureInstance().getFrame(frame) || frame.empty()) {
-    recoverySuccess = false;
-    return;  // フレーム取得失敗
+    std::cout << "フレーム取得失敗もしくはフレームが空のため終了\n" << std::endl;
+    return;
   }
 
-  // 複数フレームでの検出確認
+  // 複数フレームから現在の写真を1枚取得する
   for(int i = 0; i < FRAME_NUMBER; i++) {
     std::this_thread::sleep_for(std::chrono::milliseconds(33));  // フレーム間の待機(33ミリ秒)
     robot.getCameraCaptureInstance().getFrame(frame);
@@ -36,7 +36,7 @@ void CameraRecoveryAction::run()
 
   // 既に検出できた場合、復帰動作を行わない
   if(result.wasDetected) {
-    recoverySuccess = true;
+    std::cout << "復帰動作は行わない\n" << std::endl;
     return;
   }
   // 指定された角度・スピード・方向で回頭復帰
@@ -46,13 +46,8 @@ void CameraRecoveryAction::run()
 
   boundingBoxDetector->detect(frame, result);
   if(result.wasDetected) {
-    recoverySuccess = true;
+    std::cout << "復帰動作完了\n" << std::endl;
     return;  // 検出成功
   }
-  recoverySuccess = false;  // 復帰失敗
-}
-
-bool CameraRecoveryAction::isRecoverySuccessful() const
-{
-  return recoverySuccess;
+  std::cout << "復帰動作失敗\n" << std::endl;
 }
