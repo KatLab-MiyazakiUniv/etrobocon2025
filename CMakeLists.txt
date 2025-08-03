@@ -56,6 +56,7 @@ file(GLOB_RECURSE PROJECT_SOURCES
   "${PROJECT_MODULE_DIR}/image_processors/*.cpp"
   "${PROJECT_MODULE_DIR}/utils/*.cpp"
   "${PROJECT_TEST_DIR}/helpers/*.cpp"
+  "${PROJECT_TEST_DIR}/dummy/utils/*.cpp"
 )
 
 # utils/CommandExecutor.cpp を除外
