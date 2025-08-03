@@ -1,7 +1,7 @@
 /**
  * @file   ImageUploaderTest.cpp
  * @brief  ImageUploaderクラスをテストする
- * @author Hara1274
+ * @author Hara1274 takuchi17
  */
 
 #include "ImageUploader.h"
@@ -40,28 +40,29 @@ namespace etrobocon2025_test {
   }
 
   // 実在するファイルでアップロード処理が実行されることをテスト
-  TEST(ImageUploaderTest, ValidFileUpload)
+  TEST(ImageUploaderTest, ValidFileUploadReturnsTrue)
   {
-    // DummyCameraCaptureを使って実際の画像を作成
+    // 画像保存の準備
     DummyCameraCapture camera;
     cv::Mat frame;
     camera.getFrame(frame);
 
-    // FrameSaveを使って画像を保存
     std::string filePath = "../../tests/test_images/";
     std::string fileName = "test_data";
+
     FrameSave::save(frame, filePath, fileName);
 
     std::string validPath = filePath + fileName;
-    bool result;
-    // サーバーの状態に関係なく例外が発生しないことを確認
-    EXPECT_NO_THROW({ result = ImageUploader::uploadImage(validPath, 1); });
 
-    // テストファイルを削除
-    std::string filePathWithExtension = filePath + fileName + ".JPEG";
+    // CommandExecutor::exec は dummy で常に0を返すので
+    // uploadImageは成功するはず
+    bool result = ImageUploader::uploadImage(validPath, 1);
+
+    // テスト用画像ファイルを削除
+    std::string filePathWithExtension = validPath + ".JPEG";
     std::remove(filePathWithExtension.c_str());
 
-    // サーバーがないとmakeコマンドがエラーを返すのでコメントアウト
-    // EXPECT_TRUE(result);
+    // 実際に true を返すかをチェック
+    EXPECT_TRUE(result);
   }
 }  // namespace etrobocon2025_test

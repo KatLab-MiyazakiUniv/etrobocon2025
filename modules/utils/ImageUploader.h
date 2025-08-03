@@ -7,6 +7,7 @@
 #ifndef IMAGE_UPLOADER_H_
 #define IMAGE_UPLOADER_H_
 
+#include "CommandExecutor.h"
 #include <string>
 #include <cstdlib>
 #include <iostream>
