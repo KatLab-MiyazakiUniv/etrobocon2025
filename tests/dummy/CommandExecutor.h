@@ -4,8 +4,8 @@
  * @author takuchi17
  */
 
-#ifndef DUMMY_COMMAND_EXECUTOR_H
-#define DUMMY_COMMAND_EXECUTOR_H
+#ifndef COMMAND_EXECUTOR_H
+#define COMMAND_EXECUTOR_H
 
 #include <string>
 #include <iostream>
