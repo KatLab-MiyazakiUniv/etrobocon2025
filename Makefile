@@ -1,5 +1,8 @@
 MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
+# サーバーのIPアドレス
+SERVER_IP = 192.168.11.16
+
 # 使い方
 help:
 	@echo ビルドする
@@ -22,6 +25,8 @@ help:
 	@echo " $$ make smart-clean"
 	@echo 必要があればbuildディレクトリを削除し, テストをビルドして実行する
 	@echo " $$ make test"
+	@echo 画像をサーバーにアップロードする
+	@echo " $$ make upload-image"
 
 ## 実行関連 ##
 build:
@@ -48,8 +53,10 @@ test-exec:
 		mkdir -p etrobocon2025/datafiles/commands && \
 		mkdir -p etrobocon2025/datafiles/processed_images && \
 		cp ../../datafiles/commands/*.csv etrobocon2025/datafiles/commands && \
+		cp ../../Makefile etrobocon2025/ && \
 		./etrobocon2025_test && \
-		rm -rf etrobocon2025; \
+		rm -rf etrobocon2025 && \
+		rm -f Makefile; \
 	fi
 
 # テストをビルドして実行する
@@ -129,3 +136,8 @@ endif
 
 format-check:
 	find ./tests ./modules -type f -name "*.cpp" -o -name "*.h" | xargs clang-format --dry-run --Werror *.h *.cpp
+
+## 無線通信デバイスとの通信関連 ##
+# サーバーの画像をアップロードする
+upload-image:
+	curl -X POST -F "file=@$(FILE_PATH)" http://$(SERVER_IP):8000/images

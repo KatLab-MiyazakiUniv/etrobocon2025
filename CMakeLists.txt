@@ -56,8 +56,11 @@ file(GLOB_RECURSE PROJECT_SOURCES
   "${PROJECT_MODULE_DIR}/image_processors/*.cpp"
   "${PROJECT_MODULE_DIR}/utils/*.cpp"
   "${PROJECT_TEST_DIR}/helpers/*.cpp"
+  "${PROJECT_TEST_DIR}/dummy/utils/*.cpp"
 )
 
+# 本番用のCommandExecutor.cpp を除外
+list(FILTER PROJECT_SOURCES EXCLUDE REGEX ".*/modules/utils/CommandExecutor\\.cpp$")
 
 # プロジェクトのライブラリターゲットを作成
 add_library(${PROJECT_NAME}_impl STATIC ${PROJECT_SOURCES})
