@@ -6,22 +6,45 @@
 
 #include "MiniFigDirectionDetector.h"
 
-MiniFigDirectionDetector::MiniFigDirectionDetector(const std::string& modelPath)
-  : modelPath(modelPath)
+cv::dnn::Net MiniFigDirectionDetector::net;
+bool MiniFigDirectionDetector::isInitialized = false;
+
+void MiniFigDirectionDetector::initializeModel(const std::string& modelPath)
 {
-  // ネットワークの読み込み
-  net = cv::dnn::readNetFromONNX(modelPath);  // モデルのパスを設定する
+  if(isInitialized) return;
+
+  // モデルの読み込み
+  net = cv::dnn::readNetFromONNX(modelPath);
   if(net.empty()) {
     std::cerr << "モデルの読み込みに失敗しました！" << std::endl;
+    return;
   } else {
     std::cout << "モデルが正常に読み込まれました。" << std::endl;
   }
   net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);  // OpenCVバックエンドを使用
   net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);       // CPUをターゲットに設定
+
+  isInitialized = true;
 }
+
+MiniFigDirectionDetector::MiniFigDirectionDetector() {}
 
 void MiniFigDirectionDetector::detect(const cv::Mat& frame, MiniFigDirectionResult& result)
 {
+  // モデルが正しく読み込まれているかチェック
+  if(net.empty()) {
+    std::cerr << "モデルの読み込まれていません" << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
+  // 入力画像が空かどうかチェック
+  if(frame.empty()) {
+    std::cerr << "フレームが存在しません" << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
   // 前処理パラメータを計算
   const float scale = std::min(MODEL_INPUT_SIZE / static_cast<float>(frame.cols),
                                MODEL_INPUT_SIZE / static_cast<float>(frame.rows));

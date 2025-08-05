@@ -29,8 +29,7 @@ struct MiniFigDirectionResult {
 class MiniFigDirectionDetector {
  public:
   // コンストラクタ
-  MiniFigDirectionDetector(const std::string& modelPath
-                           = "etrobocon2025/datafiles/models/yolo_optimized.onnx");
+  MiniFigDirectionDetector();
 
   /**
    * @brief         入力画像からミニフィグの向きを判定し、結果を result に格納する
@@ -39,9 +38,16 @@ class MiniFigDirectionDetector {
    */
   void detect(const cv::Mat& frame, MiniFigDirectionResult& result);
 
+  /**
+   * @brief             モデルの読み込みを行う
+   * @param modelPath   モデルパス
+   */
+  static void initializeModel(const std::string& modelPath
+                              = "etrobocon2025/datafiles/models/yolo_optimized.onnx");
+
  private:
-  cv::dnn::Net net;             // DNNモデルを格納する変数
-  const std::string modelPath;  // モデルのパス
+  static cv::dnn::Net net;    // DNNモデルを格納する変数
+  static bool isInitialized;  // モデルの読み込みを行ったかどうかの状態を表す静的変数
   const std::string outputImagePath
       = "etrobocon2025/datafiles/processed_images/"
         "fig_detected_result.jpg";  // バウンディングボックス付きの画像のパス

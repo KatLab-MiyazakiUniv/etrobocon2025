@@ -6,6 +6,7 @@
 
 #include "EtRobocon2025.h"
 #include "AreaMaster.h"
+#include "MiniFigDirectionDetector.h"
 
 Robot EtRobocon2025::robot;  // Robotインスタンス
 
@@ -22,6 +23,9 @@ void EtRobocon2025::start()
   while(!robot.getCameraCaptureInstance().getFrame(frame)) {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
+
+  // 推論用モデルの読み込み
+  MiniFigDirectionDetector::initializeModel();
 
   Calibrator calibrator(robot);
   calibrator.selectAndSetCourse();
