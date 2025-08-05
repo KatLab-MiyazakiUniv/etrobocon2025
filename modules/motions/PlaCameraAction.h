@@ -13,6 +13,7 @@
 #include "FrameSave.h"
 #include <vector>
 #include <memory>
+#include "ImageUploader.h"
 
 class PlaCameraAction : public Motion {
  public:
