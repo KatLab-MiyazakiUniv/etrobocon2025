@@ -33,7 +33,7 @@ void MiniFigDirectionDetector::detect(const cv::Mat& frame, MiniFigDirectionResu
 {
   // モデルが正しく読み込まれているかチェック
   if(net.empty()) {
-    std::cerr << "モデルの読み込まれていません" << std::endl;
+    std::cerr << "モデルが読み込まれていません" << std::endl;
     result.wasDetected = false;
     return;
   }
@@ -99,24 +99,29 @@ void MiniFigDirectionDetector::postprocess(const std::vector<cv::Mat>& outputs,
     if(output.dims != 3 || output.size[1] != 25200) continue;
 
     int numBoxes = output.size[1];    // 検出候補の総数
-    int attributes = output.size[2];  // ボックスが属性の数　（座標やスコアなど）
+    int attributes = output.size[2];  // ボックスの属性の数　（座標やスコアなど）
 
     const float* data = reinterpret_cast<float*>(output.data);  // 出力の実体をdataに格納する
 
     // 検出候補の数だけループを回す
     for(int i = 0; i < numBoxes; ++i) {
+      // 処理中の候補の先頭のデータ位置を計算
       int idx = i * attributes;
 
-      // 処理中の候補の先頭のデータ位置を計算
+      // 5番目にあるボックスの信頼度（confidence）スコアを取得。頼度が閾値未満なら次の候補へ
       float conf = data[idx + 4];
       if(conf < confThreshold) continue;
 
-      // 5番目にあるボックスの信頼度（confidence）スコアを取得。頼度が閾値未満なら次の候補へ
-      float* classScores = const_cast<float*>(&data[idx + 5]);
-      cv::Mat scores(1, attributes - 5, CV_32FC1, classScores);
-      cv::Point classIdPoint;
-      double maxScore;
-      cv::minMaxLoc(scores, nullptr, &maxScore, nullptr, &classIdPoint);
+      // 最大クラススコアを算出
+      float maxScore = -1.0f;
+      int bestClass = -1;
+      for(int j = 0; j < attributes - 5; j++) {
+        float score = data[idx + 5 + j];
+        if(score > maxScore) {
+          maxScore = score;
+          bestClass = j;
+        }
+      }
 
       // 最大クラススコアも閾値を超えているかチェック
       if(maxScore > confThreshold) {
@@ -141,8 +146,8 @@ void MiniFigDirectionDetector::postprocess(const std::vector<cv::Mat>& outputs,
         height = std::min(height, frame.rows - top);
 
         boxes.emplace_back(left, top, width, height);
-        confidences.push_back(static_cast<float>(maxScore));
-        classIds.push_back(classIdPoint.x);
+        confidences.push_back(maxScore);
+        classIds.push_back(bestClass);
       }
     }
   }
