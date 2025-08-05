@@ -10,7 +10,9 @@ AngleRotation::AngleRotation(Robot& _robot, int _targetAngle, double _speed, boo
   : Rotation(_robot, _speed, _isClockwise),
     targetAngle(_targetAngle),
     targetLeftDistance(0.0),
-    targetRightDistance(0.0)
+    targetRightDistance(0.0),
+    accumulatedAngle(0.0),
+    lastTime(std::chrono::steady_clock::now())
 {
 }
 
@@ -50,6 +52,22 @@ bool AngleRotation::isMetPreCondition()
 bool AngleRotation::isMetContinuationCondition()
 {
   MotorController& motorController = robot.getMotorControllerInstance();
+
+  // 現在の時間と前回の時間から経過秒数を取得
+  std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+  std::chrono::duration<double> dt = std::chrono::duration_cast<std::chrono::duration<double>>(now - lastTime);
+  lastTime = now;
+
+  // IMUから角速度取得
+  spikeapi::IMU::AngularVelocity angVel;
+  robot.getIMUInstance().getAngularVelocity(angVel);
+
+  // z軸角速度（deg/s）× 経過時間（s）で角度積分
+  accumulatedAngle += std::abs(angVel.z * dt.count());
+
+  // デバッグ出力（必要なら）
+  std::cout << "[AngleRotation] accumulatedAngle = " << accumulatedAngle << std::endl;
+
   // 残りの回転に必要な走行距離を算出
   double diffLeftDistance
       = (targetLeftDistance - Mileage::calculateWheelMileage(motorController.getLeftMotorCount()))
