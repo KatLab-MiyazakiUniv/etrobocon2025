@@ -46,8 +46,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // AR: 角度指定回頭
       // [1]:int 角度[deg], [2]:double 速度[mm/s], [3]:string 方向(clockwise or anticlockwise)
       case COMMAND::AR: {
-        AngleRotation* ar = new AngleRotation(robot, stoi(params[1]), stod(params[2]),
-                                              convertBool(params[0], params[3]));
+        auto ar = new AngleRotation(robot, stoi(params[1]), stod(params[2]),
+                                    convertBool(params[0], params[3]));
         motionList.push_back(ar);
         break;
       }
@@ -55,7 +55,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // DS: 指定距離直進
       // [1]:double 距離[mm], [2]:double 速度[mm/s]
       case COMMAND::DS: {
-        DistanceStraight* ds = new DistanceStraight(robot, stod(params[1]), stod(params[2]));
+        auto ds = new DistanceStraight(robot, stod(params[1]), stod(params[2]));
         motionList.push_back(ds);
         break;
       }
@@ -63,8 +63,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // CS: 指定色直進
       // [1]:string 色, [2]:double 速度[mm/s]
       case COMMAND::CS: {
-        ColorStraight* cs = new ColorStraight(robot, ColorJudge::convertStringToColor(params[1]),
-                                              stod(params[2]));
+        auto cs = new ColorStraight(robot, ColorJudge::convertStringToColor(params[1]),
+                                    stod(params[2]));
         motionList.push_back(cs);
         break;
       }
@@ -72,9 +72,9 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // DL: 指定距離ライントレース
       // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
       case COMMAND::DL: {
-        DistanceLineTrace* dl = new DistanceLineTrace(
-            robot, stod(params[1]), stod(params[2]), targetBrightness + stoi(params[3]),
-            PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
+        auto dl = new DistanceLineTrace(robot, stod(params[1]), stod(params[2]),
+                                        targetBrightness + stoi(params[3]),
+                                        PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
         motionList.push_back(dl);
         break;
       }
@@ -119,10 +119,9 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // CL: 指定色ライントレース
       // [1]:string 色, [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
       case COMMAND::CL: {
-        ColorLineTrace* cl
-            = new ColorLineTrace(robot, ColorJudge::convertStringToColor(params[1]),
-                                 stod(params[2]), targetBrightness + stoi(params[3]),
-                                 PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
+        auto cl = new ColorLineTrace(robot, ColorJudge::convertStringToColor(params[1]),
+                                     stod(params[2]), targetBrightness + stoi(params[3]),
+                                     PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
         motionList.push_back(cl);
         break;
       }
@@ -131,7 +130,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [1]:string 色, [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int 輝度補正,
       // [5-7]:double PIDゲイン
       case COMMAND::CDL: {
-        ColorDistanceLineTrace* cdl = new ColorDistanceLineTrace(
+        auto cdl = new ColorDistanceLineTrace(
             robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
             targetBrightness + stoi(params[4]),
             PidGain(stod(params[5]), stod(params[6]), stod(params[7])));
@@ -142,7 +141,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // EC: エッジ切り替え
       // [1]:string 切り替え後エッジ (left or right)
       case COMMAND::EC: {
-        EdgeChange* ec = new EdgeChange(robot, convertBool(params[0], params[1]));
+        auto ec = new EdgeChange(robot, convertBool(params[0], params[1]));
         motionList.push_back(ec);
         break;
       }
@@ -150,7 +149,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // SL: 自タスクスリープ
       // [1]:double 時間(マイクロ秒)[μs]
       case COMMAND::SL: {
-        Sleeping* sl = new Sleeping(robot, stod(params[1]));
+        auto sl = new Sleeping(robot, stod(params[1]));
         motionList.push_back(sl);
         break;
       }
@@ -179,12 +178,39 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [8]:string 回頭の方向(clockwise or anticlockwise),
         // [9]:int 撮影位置(0が初期位置)
       case COMMAND::MCA: {
-        MiniFigCameraAction* mca = new MiniFigCameraAction(
-            robot, convertBool(params[0], params[8]), stoi(params[1]), stoi(params[2]),
-            stod(params[3]), stod(params[4]), stod(params[5]), stod(params[6]), stod(params[7]),
-            stoi(params[9]));
+        auto mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]),
+                                           stoi(params[1]), stoi(params[2]), stod(params[3]),
+                                           stod(params[4]), stod(params[5]), stod(params[6]),
+                                           stod(params[7]), stoi(params[9]));
         motionList.push_back(mca);
 
+        break;
+      }
+
+        // BCA: 風景・プラレールのカメラ撮影動作
+        // [1]:bool isClockwise（"clockwise"/"anticlockwise"）
+        // [2]:int preTargetAngle
+        // [3]:int postTargetAngle
+        // [4]:double 回頭速度
+        // [5]:double threshold（動体検出用）
+        // [6]:double minArea（動体矩形とみなす最小面積）
+        // [7]:int ROIの左上X座標
+        // [8]:int ROIの左上Y座標
+        // [9]:int ROIの幅
+        // [10]:int ROIの高さ
+        // [11]:int position（0=初期位置）
+
+      case COMMAND::BCA: {
+        cv::Rect roi;
+
+        bool isClockwise = convertBool("BCA", params[1]);
+        roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
+
+        auto bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]),
+                                                 stoi(params[3]), stod(params[4]), stod(params[5]),
+                                                 stod(params[6]), roi, stoi(params[11]));
+
+        motionList.push_back(bca);
         break;
       }
 
@@ -226,6 +252,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         motionList.push_back(cra);
         break;
       }
+
       // 未定義コマンド
       default: {
         cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
@@ -255,6 +282,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "SL", COMMAND::SL },    // スリープ
     { "SS", COMMAND::SS },    // カメラ撮影動作
     { "MCA", COMMAND::MCA },  // ミニフィグのカメラ撮影動作
+    { "BCA", COMMAND::BCA },  // 風景・プラレールのカメラ撮影動作
     { "CRA", COMMAND::CRA }   // カメラ復帰動作
   };
 
@@ -272,8 +300,8 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   // 末尾の改行を削除
   string param = StringOperator::removeEOL(stringParameter);
 
-  // 回転動作(AR,MCA,CRA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-  if(command == "AR" || command == "MCA" || command == "CRA") {
+  // 回転動作(AR,MCA,BCA,CRA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  if(command == "AR" || command == "MCA" || command == "BCA" || command == "CRA") {
     if(param == "clockwise") {
       return true;
     } else if(param == "anticlockwise") {
