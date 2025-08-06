@@ -117,10 +117,12 @@ void MiniFigCameraAction::run()
     cout << "ミニフィグ向き判定用写真の撮影" << endl;
     string positionImageName = "Fig_" + to_string(position);
     FrameSave::save(frame, filePath, positionImageName);
-    // 非同期で画像をアップロード
-    thread([this, positionImageName] {
-      ImageUploader::uploadImage(filePath, positionImageName, 3);
-    }).detach();
+    // 最後のポジションの撮影時のみ非同期で画像をアップロード
+    if(position == 3) {
+      thread([this, positionImageName] {
+        ImageUploader::uploadImage(filePath, positionImageName, 3);
+      }).detach();
+    }
   }
 
   // 動作安定のためのスリープ

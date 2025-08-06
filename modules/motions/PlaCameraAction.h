@@ -13,7 +13,6 @@
 #include "FrameSave.h"
 #include <vector>
 #include <memory>
-#include "ImageUploader.h"
 
 class PlaCameraAction : public Motion {
  public:
@@ -36,6 +35,13 @@ class PlaCameraAction : public Motion {
    * @param fileName 画像ファイル名
    */
   void setImageSaveName(const std::string& fileName);
+
+  /**
+   * @brief ファイルパスを取得する
+   * @return ファイルパス
+   */
+  const char* getFilePath() const;
+
 
  private:
   /**

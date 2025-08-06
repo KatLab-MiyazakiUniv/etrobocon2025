@@ -87,14 +87,18 @@ void PlaCameraAction::run()
 
   // bestFrameをJPEGで出力
   FrameSave::save(bestFrame, filePath, imageSaveName);
-  // 非同期で画像をアップロード
-  std::thread([this] { ImageUploader::uploadImage(filePath, imageSaveName, 3); }).detach();
 }
 
 void PlaCameraAction::setImageSaveName(const std::string& fileName)
 {
   imageSaveName = fileName;
 }
+
+const char* PlaCameraAction::getFilePath() const
+{
+  return filePath;
+}
+
 
 void PlaCameraAction::getBackgroundFrame()
 {
