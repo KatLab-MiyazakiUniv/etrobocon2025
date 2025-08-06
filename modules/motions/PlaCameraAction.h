@@ -42,7 +42,6 @@ class PlaCameraAction : public Motion {
    */
   const char* getFilePath() const;
 
-
  private:
   /**
    * @brief 背景画像の取得
