@@ -14,28 +14,35 @@ namespace etrobocon2025_test {
   // 空文字列のファイルパスで失敗することをテスト
   TEST(ImageUploaderTest, EmptyFilePathShouldFail)
   {
-    bool result = ImageUploader::uploadImage("", 1);
+    bool result = ImageUploader::uploadImage("", "test.jpg", 1);
+    EXPECT_FALSE(result);
+  }
+
+  // 空文字列のファイル名で失敗することをテスト
+  TEST(ImageUploaderTest, EmptyFileNameShouldFail)
+  {
+    bool result = ImageUploader::uploadImage("../../tests/test_images", "", 1);
     EXPECT_FALSE(result);
   }
 
   // ゼロ回試行で失敗することをテスト
   TEST(ImageUploaderTest, ZeroRetriesShouldFail)
   {
-    bool result = ImageUploader::uploadImage("test.jpg", 0);
+    bool result = ImageUploader::uploadImage("../../tests/test_images", "test.jpg", 0);
     EXPECT_FALSE(result);
   }
 
   // 負の試行回数で失敗することをテスト
   TEST(ImageUploaderTest, NegativeRetriesShouldFail)
   {
-    bool result = ImageUploader::uploadImage("test.jpg", -1);
+    bool result = ImageUploader::uploadImage("../../tests/test_images", "test.jpg", -1);
     EXPECT_FALSE(result);
   }
 
   // 存在しないファイルで失敗することをテスト
   TEST(ImageUploaderTest, NonExistentFileShouldFail)
   {
-    bool result = ImageUploader::uploadImage("nonexistent_file.jpg", 1);
+    bool result = ImageUploader::uploadImage("../../tests/test_images", "nonexistent_file.jpg", 1);
     EXPECT_FALSE(result);
   }
 
@@ -52,14 +59,12 @@ namespace etrobocon2025_test {
 
     FrameSave::save(frame, filePath, fileName);
 
-    std::string validPath = filePath + fileName;
-
     // CommandExecutor::exec は dummy で常に0を返すので
     // uploadImageは成功するはず
-    bool result = ImageUploader::uploadImage(validPath, 1);
+    bool result = ImageUploader::uploadImage(filePath, fileName, 1);
 
     // テスト用画像ファイルを削除
-    std::string filePathWithExtension = validPath + ".JPEG";
+    std::string filePathWithExtension = filePath + fileName + ".JPEG";
     std::remove(filePathWithExtension.c_str());
 
     // 実際に true を返すかをチェック

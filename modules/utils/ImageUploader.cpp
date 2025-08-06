@@ -8,29 +8,39 @@
 
 ImageUploader::ImageUploader() {}
 
-bool ImageUploader::uploadImage(const std::string& imagePath, int maxAttempts)
+bool ImageUploader::uploadImage(const std::string& filePath, const std::string& uploadFileName,
+                                int maxAttempts)
 {
-  // 拡張子がない場合は.JPEGを追加
-  std::string processedImagePath = imagePath;
-  if(!imagePath.empty() && std::filesystem::path(imagePath).extension().empty()) {
-    processedImagePath += ".JPEG";
-  }
-
   // 空のファイルパスのチェック
-  if(processedImagePath.empty()) {
-    std::cerr << "Error: Empty image path provided" << std::endl;
+  if(filePath.empty()) {
+    std::cerr << "Error: Empty file path provided" << std::endl;
     return false;
   }
 
+  // 空のファイル名のチェック
+  if(uploadFileName.empty()) {
+    std::cerr << "Error: Empty upload file name provided" << std::endl;
+    return false;
+  }
+
+  // 拡張子がない場合は.JPEGを追加
+  std::string processedFileName = uploadFileName;
+  if(!uploadFileName.empty() && std::filesystem::path(uploadFileName).extension().empty()) {
+    processedFileName += ".JPEG";
+  }
+
+  // フルパスを作成
+  std::string fullImagePath = filePath + "/" + processedFileName;
+
   // ファイル存在チェック
-  std::ifstream file(processedImagePath);
+  std::ifstream file(fullImagePath);
   if(!file.good()) {
-    std::cerr << "Error: File does not exist: " << processedImagePath << std::endl;
+    std::cerr << "Error: File does not exist: " << fullImagePath << std::endl;
     return false;
   }
 
   // パスを絶対パスに変換
-  std::string absolutePath = std::filesystem::absolute(processedImagePath).string();
+  std::string absolutePath = std::filesystem::absolute(fullImagePath).string();
 
   // 無効な最大試行回数のチェック
   if(maxAttempts <= 0) {

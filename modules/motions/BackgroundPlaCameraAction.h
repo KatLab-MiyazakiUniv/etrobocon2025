@@ -12,6 +12,7 @@
 #include "AngleRotation.h"
 #include "Robot.h"
 #include "FrameSave.h"
+#include "ImageUploader.h"
 #include <thread>
 #include <iostream>
 #include "CompositeMotion.h"
