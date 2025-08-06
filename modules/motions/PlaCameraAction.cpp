@@ -99,7 +99,6 @@ const char* PlaCameraAction::getFilePath() const
   return filePath;
 }
 
-
 void PlaCameraAction::getBackgroundFrame()
 {
   cv::Mat firstFrame;
