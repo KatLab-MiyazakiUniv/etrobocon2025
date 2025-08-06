@@ -34,7 +34,7 @@ namespace etrobocon2025_test {
     action.run();                                            // 復帰動作を実行
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
     // find("str")はstrが見つからない場合string::nposを返す
-    bool actual = output.find("フレーム取得失敗もしくはフレームが空のため終了\n") != string::npos;
+    bool actual = output.find("フレーム取得失敗のため終了\n") != string::npos;
     EXPECT_TRUE(actual);
   }
 
@@ -60,8 +60,8 @@ namespace etrobocon2025_test {
     EXPECT_TRUE(actual);
   }
 
-  // 復帰動作を行い、検出に成功した場合のテスト
-  TEST(CameraRecoveryActionTest, DetectionFailureThenSuccess)
+  // バウンディングボックスの検出に1回目で失敗、復帰動作を行い、再検出で成功した場合のテスト
+  TEST(CameraRecoveryActionTest, DetectionSuccess)
   {
     int angle = 20;
     double speed = 100.0;
@@ -105,8 +105,8 @@ namespace etrobocon2025_test {
     EXPECT_TRUE(real);
   }
 
-  // 復帰動作を行い、検出に失敗した場合のテスト
-  TEST(CameraRecoveryActionTest, DetectionFailureAfterRecovery)
+  // バウンディングボックスの検出に1回目で失敗、復帰動作を行い、再検出でも失敗した場合のテスト
+  TEST(CameraRecoveryActionTest, DetectionFailure)
   {
     int angle = 90;
     double speed = 300.0;
