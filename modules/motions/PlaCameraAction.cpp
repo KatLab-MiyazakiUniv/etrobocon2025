@@ -99,6 +99,11 @@ const char* PlaCameraAction::getFilePath() const
   return filePath;
 }
 
+const std::string& PlaCameraAction::getImageSaveName() const
+{
+  return imageSaveName;
+}
+
 void PlaCameraAction::getBackgroundFrame()
 {
   cv::Mat firstFrame;

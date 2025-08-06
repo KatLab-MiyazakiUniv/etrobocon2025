@@ -104,8 +104,9 @@ void BackgroundPlaCameraAction::run()
       // FRONT方向の画像を保存
       plaCameraAction.run();
       // 非同期で画像をアップロード
-      thread([this, &plaCameraAction] {
-        ImageUploader::uploadImage(plaCameraAction.getFilePath(), "bestframe", 3);
+      thread([filePath = std::string(plaCameraAction.getFilePath()),
+              fileName = plaCameraAction.getImageSaveName()] {
+        ImageUploader::uploadImage(filePath, fileName, 3);
       }).detach();
     } else if(!robot.getBackgroundDirectionResult().wasDetected) {
       // 検出結果が未検出の場合は、PlaCameraActionを実行
@@ -119,8 +120,9 @@ void BackgroundPlaCameraAction::run()
     cout << "正面での撮影" << endl;
     plaCameraAction.run();
     // 非同期で画像をアップロード
-    thread([this, &plaCameraAction] {
-      ImageUploader::uploadImage(plaCameraAction.getFilePath(), "bestframe", 3);
+    thread([filePath = std::string(plaCameraAction.getFilePath()),
+            fileName = plaCameraAction.getImageSaveName()] {
+      ImageUploader::uploadImage(filePath, fileName, 3);
     }).detach();
   } else {
     // 一回目検出falseなら、残り、3回の撮影は確定する。
@@ -131,8 +133,9 @@ void BackgroundPlaCameraAction::run()
     plaCameraAction.run();
     // 最後のポジションの撮影時のみ非同期で画像をアップロード
     if(position == 3) {
-      thread([this, positionImageName, &plaCameraAction] {
-        ImageUploader::uploadImage(plaCameraAction.getFilePath(), positionImageName, 3);
+      thread([filePath = std::string(plaCameraAction.getFilePath()),
+              fileName = plaCameraAction.getImageSaveName()] {
+        ImageUploader::uploadImage(filePath, fileName, 3);
       }).detach();
     }
   }

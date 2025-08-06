@@ -42,6 +42,12 @@ class PlaCameraAction : public Motion {
    */
   const char* getFilePath() const;
 
+  /**
+   * @brief 画像ファイル名を取得する
+   * @return 画像ファイル名
+   */
+  const std::string& getImageSaveName() const;
+
  private:
   /**
    * @brief 背景画像の取得
