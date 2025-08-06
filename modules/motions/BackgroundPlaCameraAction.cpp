@@ -104,8 +104,9 @@ void BackgroundPlaCameraAction::run()
       // FRONT方向の画像を保存
       plaCameraAction.run();
       // 非同期で画像をアップロード
-      thread([this, &plaCameraAction] {
-        ImageUploader::uploadImage(plaCameraAction.getFilePath(), "bestframe", 3);
+      thread([filePath = std::string(plaCameraAction.getFilePath()),
+              fileName = plaCameraAction.getImageSaveName()] {
+        ImageUploader::uploadImage(filePath, fileName, 3);
       }).detach();
     } else if(!robot.getBackgroundDirectionResult().wasDetected) {
       // 検出結果が未検出の場合は、PlaCameraActionを実行
@@ -119,20 +120,21 @@ void BackgroundPlaCameraAction::run()
     cout << "正面での撮影" << endl;
     plaCameraAction.run();
     // 非同期で画像をアップロード
-    thread([this, &plaCameraAction] {
-      ImageUploader::uploadImage(plaCameraAction.getFilePath(), "bestframe", 3);
+    thread([filePath = std::string(plaCameraAction.getFilePath()),
+            fileName = plaCameraAction.getImageSaveName()] {
+      ImageUploader::uploadImage(filePath, fileName, 3);
     }).detach();
   } else {
     // 一回目検出falseなら、残り、3回の撮影は確定する。
     // 一回目の撮影で風景が検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
     cout << "風景向き判定用写真の撮影" << endl;
-    string positionImageName = "bestframe_" + to_string(position);
-    plaCameraAction.setImageSaveName(positionImageName);
+    plaCameraAction.setImageSaveName("bestframe_" + to_string(position));
     plaCameraAction.run();
     // 最後のポジションの撮影時のみ非同期で画像をアップロード
     if(position == 3) {
-      thread([this, positionImageName, &plaCameraAction] {
-        ImageUploader::uploadImage(plaCameraAction.getFilePath(), positionImageName, 3);
+      thread([filePath = std::string(plaCameraAction.getFilePath()),
+              fileName = plaCameraAction.getImageSaveName()] {
+        ImageUploader::uploadImage(filePath, fileName, 3);
       }).detach();
     }
   }
