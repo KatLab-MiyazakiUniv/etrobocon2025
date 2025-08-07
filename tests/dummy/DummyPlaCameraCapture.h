@@ -30,6 +30,10 @@ class DummyPlaCameraCapture : public ICameraCapture {
     if(currentIndex < frames.size()) {
       outFrame = frames[currentIndex++];
       return true;
+    } else if(!frames.empty()) {
+      // フレームが枯渇した場合は最後のフレーム（静止状態）を繰り返し返す
+      outFrame = frames.back();
+      return true;
     } else {
       outFrame = cv::Mat();  // 取得失敗（空画像）
       return false;
@@ -80,12 +84,12 @@ class DummyPlaCameraCapture : public ICameraCapture {
     frames.clear();
     currentIndex = 0;
 
-    // [0～6] 静止状態（真っ黒）
-    for(int i = 0; i < 7; ++i) {
+    // [0～15] 静止状態（真っ黒）- getBackgroundFrame()が確実に背景を見つけられるよう増加
+    for(int i = 0; i < 16; ++i) {
       frames.push_back(cv::Mat(480, 640, CV_8UC3, cv::Scalar(0, 0, 0)));
     }
 
-    // [7～11] 動きがある状態（白い矩形が少しずつ右へ動く）
+    // [16～20] 動きがある状態（白い矩形が少しずつ右へ動く）
     for(int i = 0; i < 5; ++i) {
       cv::Mat frame = cv::Mat(480, 640, CV_8UC3, cv::Scalar(0, 0, 0));
       int x = 100 + i * 10;
@@ -94,8 +98,8 @@ class DummyPlaCameraCapture : public ICameraCapture {
       frames.push_back(frame);
     }
 
-    // [12～14] 再び静止（真っ黒）
-    for(int i = 0; i < 3; ++i) {
+    // [21～30] 再び静止（真っ黒）- 退出検出用
+    for(int i = 0; i < 10; ++i) {
       frames.push_back(cv::Mat(480, 640, CV_8UC3, cv::Scalar(0, 0, 0)));
     }
   }

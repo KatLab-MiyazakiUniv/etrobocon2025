@@ -19,7 +19,7 @@
 #define NMS_THRESHOLD 0.5f         // 検出ボックス同士の重なりを判断する閾値
 
 // 風景の向きを表す列挙体
-enum class BackgroundDirection { FRONT, BACK, RIGHT, LEFT };
+enum class BackgroundDirection { FRONT, RIGHT, BACK, LEFT };
 
 // 結果格納用の構造体
 struct BackgroundDirectionResult {
@@ -33,7 +33,7 @@ class BackgroundDirectionDetector {
    * コンストラクタ
    */
   BackgroundDirectionDetector(const std::string& _modelPath
-                              = "etrobocon2025/BackgroundDetector.onnx");
+                              = "etrobocon2025/datafiles/models/BackgroundDetector.onnx");
 
   /**
    * @brief         入力画像から風景の向きを判定し、結果を result に格納する
