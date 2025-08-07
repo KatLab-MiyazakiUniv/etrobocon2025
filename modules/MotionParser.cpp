@@ -116,6 +116,43 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // CDCL: 色距離指定カメラライントレース
+      // [1]:string 色, [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int X座標[px],
+      // [5-7]:double PIDゲイン, [8-10]int lowerHSV, [11-13]int upperHSV, [14-17]int ROI座標[px]
+      // ([14]左上隅のx座標, [15]左上隅のy座標, [16]幅, [17]高さ), [18-19]int 解像度[px] ([18]幅,
+      // [19]高さ) 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      case COMMAND::CDCL: {
+        cv::Scalar lowerHSV, upperHSV;
+        cv::Rect roi;
+        cv::Size resolution;
+        std::unique_ptr<BoundingBoxDetector> detector;
+
+        lowerHSV = cv::Scalar(stoi(params[8]), stoi(params[9]), stoi(params[10]));
+        upperHSV = cv::Scalar(stoi(params[11]), stoi(params[12]), stoi(params[13]));
+
+        // パラメータ配列のサイズによってコンストラクタを切り替え
+        if(params.size() > 19) {
+          // ROI + 解像度
+          roi = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
+          resolution = cv::Size(stoi(params[18]), stoi(params[19]));
+          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi, resolution);
+        } else if(params.size() > 17) {
+          // ROIのみ
+          roi = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
+          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi);
+        } else {
+          // HSVのみ
+          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV);
+        }
+
+        auto cdcl = new ColorDistanceCameraLineTrace(
+            robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
+            stoi(params[4]), PidGain(stod(params[5]), stod(params[6]), stod(params[7])),
+            std::move(detector));
+        motionList.push_back(cdcl);
+        break;
+      }
+
       // CL: 指定色ライントレース
       // [1]:string 色, [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
       case COMMAND::CL: {
