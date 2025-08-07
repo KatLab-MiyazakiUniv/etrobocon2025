@@ -29,6 +29,7 @@ void Rotation::run()
 
   while(isMetContinuationCondition()) {
     // 回頭継続条件が満たされるまで待機（モーターが走行中）
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 
   // モーターを停止

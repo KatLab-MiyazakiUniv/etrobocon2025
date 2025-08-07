@@ -8,6 +8,8 @@
 #define ROTATION_H
 
 #include "Motion.h"
+#include <thread>
+#include <chrono>
 
 class Rotation : public Motion {
  public:
