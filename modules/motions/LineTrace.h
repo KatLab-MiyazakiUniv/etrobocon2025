@@ -13,7 +13,6 @@
 #include "ColorJudge.h"
 #include "Pid.h"
 #include "SpeedCalculator.h"
-#include "ColorJudge.h"
 #include <algorithm>  // max, min を使用するために追加
 
 class LineTrace : public Motion {
