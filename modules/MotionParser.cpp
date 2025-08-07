@@ -72,10 +72,20 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // DL: 指定距離ライントレース
       // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
       case COMMAND::DL: {
-        auto dl = new DistanceLineTrace(robot, stod(params[1]), stod(params[2]),
-                                        targetBrightness + stoi(params[3]),
-                                        PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
-        motionList.push_back(dl);
+        DistanceLineTrace* dl;
+        if(params.size() > 6) {
+          // パラメータが多い場合は、alpha値を指定してコンストラクタを呼び出す
+          dl = new DistanceLineTrace(
+              robot, stod(params[1]), stod(params[2]), targetBrightness + stoi(params[3]),
+              PidGain(stod(params[4]), stod(params[5]), stod(params[6])), stod(params[7]));
+          motionList.push_back(dl);
+        } else {
+          // パラメータが少ない場合は、デフォルトのalpha値を使用
+          dl = new DistanceLineTrace(robot, stod(params[1]), stod(params[2]),
+                                     targetBrightness + stoi(params[3]),
+                                     PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
+          motionList.push_back(dl);
+        }
         break;
       }
 
@@ -119,10 +129,21 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // CL: 指定色ライントレース
       // [1]:string 色, [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
       case COMMAND::CL: {
-        auto cl = new ColorLineTrace(robot, ColorJudge::convertStringToColor(params[1]),
-                                     stod(params[2]), targetBrightness + stoi(params[3]),
-                                     PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
-        motionList.push_back(cl);
+        ColorLineTrace* cl;
+        if(params.size() > 6) {
+          // パラメータが多い場合は、alpha値を指定してコンストラクタを呼び出す
+          cl = new ColorLineTrace(robot, ColorJudge::convertStringToColor(params[1]),
+                                  stod(params[2]), targetBrightness + stoi(params[3]),
+                                  PidGain(stod(params[4]), stod(params[5]), stod(params[6])),
+                                  stod(params[7]));
+          motionList.push_back(cl);
+        } else {
+          // パラメータが少ない場合は、デフォルトのalpha値を使用
+          cl = new ColorLineTrace(robot, ColorJudge::convertStringToColor(params[1]),
+                                  stod(params[2]), targetBrightness + stoi(params[3]),
+                                  PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
+          motionList.push_back(cl);
+        }
         break;
       }
 
@@ -130,11 +151,21 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [1]:string 色, [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int 輝度補正,
       // [5-7]:double PIDゲイン
       case COMMAND::CDL: {
-        auto cdl = new ColorDistanceLineTrace(
-            robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
-            targetBrightness + stoi(params[4]),
-            PidGain(stod(params[5]), stod(params[6]), stod(params[7])));
-        motionList.push_back(cdl);
+        ColorDistanceLineTrace* cdl;
+        if(params.size() > 7) {
+          // パラメータが多い場合は、alpha値を指定してコンストラクタを呼び出す
+          cdl = new ColorDistanceLineTrace(
+              robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
+              targetBrightness + stoi(params[4]),
+              PidGain(stod(params[5]), stod(params[6]), stod(params[7])), stod(params[8]));
+          motionList.push_back(cdl);
+        } else {
+          cdl = new ColorDistanceLineTrace(
+              robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
+              targetBrightness + stoi(params[4]),
+              PidGain(stod(params[5]), stod(params[6]), stod(params[7])));
+          motionList.push_back(cdl);
+        }
         break;
       }
 

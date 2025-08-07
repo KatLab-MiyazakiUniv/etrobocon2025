@@ -71,3 +71,13 @@ double Pid::calculatePid(double currentValue, double delta)
   // 操作量 = P制御 + I制御 + D制御
   return (p + i + d);
 }
+
+void Pid::setLowPassFilterAlpha(double _alpha)
+{
+  // ローパスフィルタの係数は0.0~1.0の範囲で設定
+  if(_alpha < 0.0 || _alpha > 1.0) {
+    alpha = 0.8;
+  } else {
+    alpha = _alpha;
+  }
+}

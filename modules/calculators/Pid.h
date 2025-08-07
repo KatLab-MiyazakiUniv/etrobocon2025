@@ -59,15 +59,21 @@ class Pid {
    */
   double calculatePid(double currentValue, double delta = 0.01);
 
+  /**
+   * @brief ローパスフィルタの係数を設定する
+   * @param _alpha ローパスフィルタの係数(0.0~1.0)
+   */
+  void setLowPassFilterAlpha(double _alpha);
+
  private:
   PidGain pidGain;
-  double prevDeviation = 0.0;           // 前回の偏差
-  double integral = 0.0;                // 偏差の累積
-  double filteredDerivative = 0.0;      // フィルタされた微分項を保持する変数
-  double targetValue;                   // 目標値
-  double maxIntegral = 100.0;           // 累積積分値の最大値
-  double minIntegral = -100.0;          // 累積積分値の最小値
-  static constexpr double alpha = 0.8;  // ローパスフィルタの係数
+  double prevDeviation = 0.0;       // 前回の偏差
+  double integral = 0.0;            // 偏差の累積
+  double filteredDerivative = 0.0;  // フィルタされた微分項を保持する変数
+  double targetValue;               // 目標値
+  double maxIntegral = 100.0;       // 累積積分値の最大値
+  double minIntegral = -100.0;      // 累積積分値の最小値
+  double alpha = 0.8;               // ローパスフィルタの係数
 };
 
 #endif  // PID_H

@@ -25,8 +25,8 @@ class LineTrace : public Motion {
    * @param _targetBrightness 目標輝度 0~
    * @param _pidGain PIDゲイン
    */
-  LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain);
-
+  LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain,
+            double _alpha);
   /**
    * @brief ライントレースする
    */
@@ -53,6 +53,7 @@ class LineTrace : public Motion {
   virtual bool isMetContinuationCondition() = 0;
 
  protected:
+  double alpha;          // ローパスフィルタのα値
   double targetSpeed;    // 目標速度 0~
   int targetBrightness;  // 目標輝度 0~
   PidGain pidGain;       // PIDゲイン

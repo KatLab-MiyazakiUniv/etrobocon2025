@@ -7,10 +7,17 @@
 #include "ColorLineTrace.h"
 
 ColorLineTrace::ColorLineTrace(Robot& _robot, COLOR _targetColor, double _targetSpeed,
-                               int _targetBrightness, const PidGain& _pidGain)
-  : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain),
+                               int _targetBrightness, const PidGain& _pidGain, double _alpha)
+  : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain, _alpha),
     targetColor(_targetColor),
     colorCount(0)
+{
+}
+
+ColorLineTrace::ColorLineTrace(Robot& _robot, COLOR _targetColor, double _targetSpeed,
+                               int _targetBrightness, const PidGain& _pidGain)
+  : ColorLineTrace(_robot, _targetColor, _targetSpeed, _targetBrightness, _pidGain,
+                   0.8)  // デフォルトのalpha値を0.8に設定
 {
 }
 

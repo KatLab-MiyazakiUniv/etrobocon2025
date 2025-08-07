@@ -19,6 +19,16 @@ class ColorLineTrace : public LineTrace {
    * @param _gain PIDゲイン
    */
   ColorLineTrace(Robot& _robot, COLOR _targetColor, double _targetSpeed, int _targetBrightness,
+                 const PidGain& _gain, double _alpha);
+
+  /**
+   * コンストラクタ
+   * @param _targetColor 指定色
+   * @param _targetSpeed 目標速度
+   * @param _targetBrightness 目標輝度 0~
+   * @param _gain PIDゲイン
+   */
+  ColorLineTrace(Robot& _robot, COLOR _targetColor, double _targetSpeed, int _targetBrightness,
                  const PidGain& _gain);
 
   /**

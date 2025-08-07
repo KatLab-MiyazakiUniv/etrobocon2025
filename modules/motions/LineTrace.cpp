@@ -7,17 +7,21 @@
 #include "LineTrace.h"
 
 LineTrace::LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness,
-                     const PidGain& _pidGain)
+                     const PidGain& _pidGain, double _alpha)
+
   : Motion(_robot),
     targetSpeed(_targetSpeed),
     targetBrightness(_targetBrightness),
-    pidGain(_pidGain)
+    pidGain(_pidGain),
+    alpha(_alpha)
 {
 }
 
 void LineTrace::run()
 {
   Pid pid(pidGain.kp, pidGain.ki, pidGain.kd, targetBrightness);
+
+  pid.setLowPassFilterAlpha(alpha);
 
   // 事前条件を判定する
   if(!isMetPreCondition()) {

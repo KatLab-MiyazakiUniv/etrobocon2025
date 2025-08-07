@@ -8,11 +8,19 @@
 
 ColorDistanceLineTrace::ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor,
                                                double _targetDistance, double _targetSpeed,
-                                               int _targetBrightness, const PidGain& _pidGain)
-  : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain),
+                                               int _targetBrightness, const PidGain& _pidGain,
+                                               double _alpha)
+  : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain, _alpha),
     targetColor(_targetColor),
     targetDistance(_targetDistance),
     colorCount(0)
+{
+}
+ColorDistanceLineTrace::ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor,
+                                               double _targetDistance, double _targetSpeed,
+                                               int _targetBrightness, const PidGain& _pidGain)
+  : ColorDistanceLineTrace(_robot, _targetColor, _targetDistance, _targetSpeed, _targetBrightness,
+                           _pidGain, 0.8)  // デフォルトのalpha値を0.8に設定
 {
 }
 

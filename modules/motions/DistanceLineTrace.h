@@ -19,6 +19,16 @@ class DistanceLineTrace : public LineTrace {
    * @param _pidGain PIDゲイン
    */
   DistanceLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
+                    int _targetBrightness, const PidGain& _pidGain, double _alpha);
+
+  /**
+   * コンストラクタ
+   * @param _targetDistance 目標距離 0~
+   * @param _targetSpeed 目標速度 0~
+   * @param _targetBrightness 目標輝度 0~
+   * @param _pidGain PIDゲイン
+   */
+  DistanceLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
                     int _targetBrightness, const PidGain& _pidGain);
 
   /**

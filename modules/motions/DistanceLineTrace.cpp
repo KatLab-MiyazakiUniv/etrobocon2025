@@ -7,11 +7,17 @@
 #include "DistanceLineTrace.h"
 
 DistanceLineTrace::DistanceLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
-                                     int _targetBrightness, const PidGain& _pidGain)
-  : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain), targetDistance(_targetDistance)
+                                     int _targetBrightness, const PidGain& _pidGain, double _alpha)
+  : LineTrace(_robot, _targetSpeed, _targetBrightness, _pidGain, _alpha),
+    targetDistance(_targetDistance)
 {
 }
-
+DistanceLineTrace::DistanceLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
+                                     int _targetBrightness, const PidGain& _pidGain)
+  : DistanceLineTrace(_robot, _targetDistance, _targetSpeed, _targetBrightness, _pidGain,
+                      0.8)  // デフォルトのalpha値を0.8に設定
+{
+}
 // 距離ライントレースの事前条件
 bool DistanceLineTrace::isMetPreCondition()
 {
