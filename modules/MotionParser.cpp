@@ -269,18 +269,19 @@ COMMAND MotionParser::convertCommand(const string& str)
 {
   // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
   static const unordered_map<string, COMMAND> commandMap = {
-    { "AR", COMMAND::AR },    // 角度指定回頭
-    { "DS", COMMAND::DS },    // 指定距離直進
-    { "CS", COMMAND::CS },    // 指定色直進
-    { "DL", COMMAND::DL },    // 指定距離ライントレース
-    { "DCL", COMMAND::DCL },  // 指定距離カメラライントレース
-    { "CL", COMMAND::CL },    // 指定色ライントレース
-    { "CDL", COMMAND::CDL },  // 色距離指定ライントレース
-    { "EC", COMMAND::EC },    // エッジ切り替え
-    { "SL", COMMAND::SL },    // スリープ
-    { "SS", COMMAND::SS },    // カメラ撮影動作
-    { "MCA", COMMAND::MCA },  // ミニフィグのカメラ撮影動作
-    { "BCA", COMMAND::BCA }   // 風景・プラレールのカメラ撮影動作
+    { "AR", COMMAND::AR },      // 角度指定回頭
+    { "DS", COMMAND::DS },      // 指定距離直進
+    { "CS", COMMAND::CS },      // 指定色直進
+    { "DL", COMMAND::DL },      // 指定距離ライントレース
+    { "DCL", COMMAND::DCL },    // 指定距離カメラライントレース
+    { "CDCL", COMMAND::CDCL },  // 色距離指定カメラライントレース
+    { "CL", COMMAND::CL },      // 指定色ライントレース
+    { "CDL", COMMAND::CDL },    // 色距離指定ライントレース
+    { "EC", COMMAND::EC },      // エッジ切り替え
+    { "SL", COMMAND::SL },      // スリープ
+    { "SS", COMMAND::SS },      // カメラ撮影動作
+    { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
+    { "BCA", COMMAND::BCA }     // 風景・プラレールのカメラ撮影動作
 
   };
 
