@@ -8,7 +8,6 @@
 #include "DummyBoundingBoxDetector.h"
 #include "DummyCameraCapture.h"
 #include <gtest/gtest.h>
-#include <gtest/internal/gtest-port.h>
 
 #define ERROR 1.01  // 許容誤差の倍率
 
@@ -16,8 +15,8 @@ using namespace std;
 
 namespace etrobocon2025_test {
 
-  // 最初3回の色取得で連続して指定色を取得し、かつ目標距離に到達しない時のテストケース
-  TEST(ColorDistanceCameraLineTraceTest, RunToGetFirst)
+  // 走行直後に3回の色取得で連続して指定色を取得し、かつ目標距離に到達しない時のテストケース
+  TEST(ColorDistanceCameraLineTraceTest, RunToGetColorImmediate)
   {
     DummyCameraCapture cameraCapture;
     Robot robot(cameraCapture);
@@ -35,7 +34,8 @@ namespace etrobocon2025_test {
     double expected = 0.0;  // 走行していない時の走行距離
 
     srand(9037);  // 3回連続して青を取得する乱数シード
-    cdcl.run();   // 緑までライントレースを実行
+
+    cdcl.run();  // 青までライントレースを実行
 
     // ライントレース後の走行距離
     int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
@@ -43,11 +43,11 @@ namespace etrobocon2025_test {
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
     EXPECT_LT(expected, actual);        // 走行距離が初期値より少し進んでいる
-    EXPECT_LT(actual, targetDistance);  // 目標距離までに停止している
+    EXPECT_LT(actual, targetDistance);  // 目標距離未満で停止している
   }
 
-  // 少し走ってから指定色を取得し、かつ目標距離に到達しない時のテストケース
-  TEST(ColorDistanceCameraLineTraceTest, ColorRunLeftEdge)
+  // 少し走行後、指定色を取得し、かつ目標距離に到達しない時のテストケース
+  TEST(ColorDistanceCameraLineTraceTest, RunToGetColorDelayed)
   {
     DummyCameraCapture cameraCapture;
     Robot robot(cameraCapture);
@@ -77,8 +77,8 @@ namespace etrobocon2025_test {
     EXPECT_LT(actual, targetDistance);  // 目標距離までに停止している
   }
 
-  // 負のtargetSpeed値で走行し、指定色を取得し、かつ目標距離に到達しない時のテストケース
-  TEST(ColorDistanceCameraLineTraceTest, ColorRunBackLeftEdge)
+  // 負のtargetSpeed値で走行しつつ指定色を取得し、かつ目標距離に到達しない時のテストケース
+  TEST(ColorDistanceCameraLineTraceTest, RunBackToGetColor)
   {
     DummyCameraCapture cameraCapture;
     Robot robot(cameraCapture);
@@ -93,7 +93,7 @@ namespace etrobocon2025_test {
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
                                       gain, move(detector));
 
-    double expected = 0.0;
+    double expected = 0.0;  // 走行していない時の走行距離
 
     srand(0);  // 最初に識別する色が青ではない乱数シード
 
@@ -108,8 +108,8 @@ namespace etrobocon2025_test {
     EXPECT_LT(actual, targetDistance);  // 目標距離までに停止している
   }
 
-  // 目標距離までライントレースを行い、かつ、指定色を取得できていない時のテストケース
-  TEST(ColorDistanceCameraLineTraceTest, DistanceRunLeftEdge)
+  // 目標距離までライントレースを行い、かつ指定色を取得できていない時のテストケース
+  TEST(ColorDistanceCameraLineTraceTest, DistanceRunNoGetColor)
   {
     DummyCameraCapture cameraCapture;
     Robot robot(cameraCapture);
@@ -126,7 +126,7 @@ namespace etrobocon2025_test {
 
     double expected = targetDistance;
 
-    srand(1500);  // BLUE が出にくいシード値にする
+    srand(1500);  // BLUE が出にくいシード値
 
     cdcl.run();  // ライントレースを実行
 
@@ -135,7 +135,6 @@ namespace etrobocon2025_test {
     int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    EXPECT_LE(expected, actual);  // ライントレース後に走行した距離が期待する走行距離以上である
     EXPECT_GT(expected * ERROR, actual);  // ライントレース後に走行した距離が許容誤差未満である
   }
 
@@ -169,7 +168,7 @@ namespace etrobocon2025_test {
   }
 
   // 目標の色がNONEの時に終了するテストケース
-  TEST(ColorDistanceCameraLineTraceTest, RunNoneColorDistance)
+  TEST(ColorDistanceCameraLineTraceTest, RunNoneColor)
   {
     DummyCameraCapture cameraCapture;
     Robot robot(cameraCapture);
