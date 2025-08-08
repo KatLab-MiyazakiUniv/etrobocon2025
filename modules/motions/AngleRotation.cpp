@@ -59,7 +59,7 @@ bool AngleRotation::isMetContinuationCondition()
   lastTime = now;
 
   // // IMUから角速度取得
-  // IMU::AngularVelocity angVel;
+  // MYIMU::AngularVelocity angVel;
   // robot.getIMUInstance().getAngularVelocity(angVel);
 
   // // z軸角速度（deg/s）× 経過時間（s）で角度積分

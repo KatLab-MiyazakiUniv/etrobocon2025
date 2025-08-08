@@ -25,7 +25,7 @@ Rotation::Rotation(Robot& _robot, double _speed, bool _isClockwise)
 void Rotation::run()
 {
   MotorController& motorController = robot.getMotorControllerInstance();
-  IMU& imu = robot.getIMUInstance();
+  MYIMU& imu = robot.getIMUInstance();
 
   prepare();
 

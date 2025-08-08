@@ -10,7 +10,7 @@
 #include "Rotation.h"
 #include "Mileage.h"
 #include "SystemInfo.h"
-#include "IMU.h"
+#include "MYIMU.h"
 
 class AngleRotation : public Rotation {
  public:

@@ -88,7 +88,7 @@ bool Robot::getIsLeftEdge() const
   return isLeftEdge;
 }
 
-IMU& Robot::getIMUInstance()
+MYIMU& Robot::getIMUInstance()
 {
   return imu;
 }
