@@ -14,46 +14,45 @@ Rotation::Rotation(Robot& _robot, bool _isClockwise, int _targetAngle, const Pid
 
 void Rotation::run()
 {
-    MotorController& motorController = robot.getMotorControllerInstance();
-    spikeapi::IMU& imu = robot.getIMUInstance();
+  // 事前条件を判定
+  if (!isMetPreCondition()) {
+    return;
+  }
 
-    prepare();
+  prepare();
 
-    if(!isMetPreCondition()) {
-        std::cerr << "Rotation::run(): pre-condition not met. Abort." << std::endl;
-        return;
-    }
+  // 目標角速度 90deg/s をラジアンに変換
+  const double targetAngularVelocityRad = 720.0 * DEG_TO_RAD;
 
-    // 目標角速度 [deg/s]、回転方向に応じて符号をつける
-    double targetAngularVelocity = 30.0 * rightSign;
+  // トレッド幅の半分 (mm)
+  const double halfTread = TREAD / 2.0;
 
-    // PID制御器（角速度に対して制御）
-    Pid pidAngularVelocity(pidGain.kp, pidGain.ki, pidGain.kd, targetAngularVelocity);
+  // 車体中心の線速度 (mm/s)
+  const double targetLinearVelocity = targetAngularVelocityRad * halfTread;
 
-    while(true) {
-        // IMUから角速度Z軸（回転方向）を取得
-        spikeapi::IMU::AngularVelocity angVel;
-        imu.getAngularVelocity(angVel);
-        double currentAngularVelocity = angVel.z;
-        // デバッグ出力
-        std::cout << "Current Angular Velocity: " << currentAngularVelocity << " deg/s" << std::endl;
+  // SpeedCalculator は正の速度のみ受け取る想定なので絶対値で渡す
+  SpeedCalculator speedCalculator(robot, std::fabs(targetLinearVelocity));
 
-        // PIDで制御量計算（現在角速度に対するモーター出力の目標調整）
-        double controlOutput = pidAngularVelocity.calculatePid(currentAngularVelocity);
+  while (isMetContinuationCondition()) {
+    // 左右のベースパワーを取得
+    double baseRightPower = speedCalculator.calculateRightMotorPower();
+    double baseLeftPower = speedCalculator.calculateLeftMotorPower();
 
-        // 左右モーターに出力、回転方向に合わせて反転を入れる
-        motorController.setLeftMotorPower(controlOutput * leftSign);
-        motorController.setRightMotorPower(controlOutput * rightSign);
+    // 回転方向に合わせて符号をつける
+    double turningSign = (leftSign > 0) ? 1.0 : -1.0;
 
-        // 角度の経過を判定（時間か角度の誤差で終了判定する）
-        if(!isMetContinuationCondition()) {
-            break;
-        }
+    // 左右に回転パワー差を付ける（旋回分）
+    double rightPower = baseRightPower * (-turningSign);
+    double leftPower = baseLeftPower * turningSign;
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+    // モーターにセット
+    robot.getMotorControllerInstance().setRightMotorPower(rightPower);
+    robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
 
-    std::cout << "Rotation completed. Stopping motors." << std::endl;
-    motorController.brakeWheelsMotor();
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  }
+
+  robot.getMotorControllerInstance().brakeWheelsMotor();
 }
+
 
