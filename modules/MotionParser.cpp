@@ -214,6 +214,28 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      case COMMAND::IMUR: {
+        // IMURコマンドのパラメータ：
+        // [1]: bool isClockwise ("clockwise"/"anticlockwise")
+        // [2]: float targetAngle [deg]
+        // [3]: double kp
+        // [4]: double ki
+        // [5]: double kd
+
+        if(params.size() < 6) {
+          std::cerr << "IMURコマンドのパラメータ不足" << std::endl;
+          break;
+        }
+
+        bool isClockwise = convertBool(params[0], params[1]);
+        float targetAngle = std::stof(params[2]);
+        PidGain pidGain(std::stod(params[3]), std::stod(params[4]), std::stod(params[5]));
+
+        auto imuRotation = new IMURotation(robot, isClockwise, targetAngle, pidGain);
+        motionList.push_back(imuRotation);
+        break;
+      }
+
       // 未定義コマンド
       default: {
         cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
@@ -244,7 +266,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "SS", COMMAND::SS },    // カメラ撮影動作
     { "MCA", COMMAND::MCA },  // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA }   // 風景・プラレールのカメラ撮影動作
-
+    { "IMUR", COMMAND::IMUR },
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
@@ -262,7 +284,7 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   string param = StringOperator::removeEOL(stringParameter);
 
   // 回転動作(AR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-  if(command == "AR" || command == "MCA" || command == "BCA") {
+  if(command == "AR" || command == "MCA" || command == "BCA" || command == "MCA") {
     if(param == "clockwise") {
       return true;
     } else if(param == "anticlockwise") {

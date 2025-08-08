@@ -41,6 +41,7 @@ enum class COMMAND {
   SS,   // カメラ撮影動作
   MCA,  // ミニフィグのカメラ撮影動作
   BCA,  // 背景のカメラ撮影動作
+  IMUR,
   NONE
 };
 
