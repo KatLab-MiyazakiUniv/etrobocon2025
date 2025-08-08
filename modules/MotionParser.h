@@ -15,7 +15,6 @@
 #include "StringOperator.h"
 #include "Motion.h"
 #include "AngleRotation.h"
-#include "IMURotation.h"
 #include "DistanceStraight.h"
 #include "DistanceCameraLineTrace.h"
 #include "LineBoundingBoxDetector.h"
@@ -42,7 +41,6 @@ enum class COMMAND {
   SS,   // カメラ撮影動作
   MCA,  // ミニフィグのカメラ撮影動作
   BCA,  // 背景のカメラ撮影動作
-  IMUR,
   NONE
 };
 

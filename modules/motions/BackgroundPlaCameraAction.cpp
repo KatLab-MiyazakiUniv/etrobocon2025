@@ -77,8 +77,8 @@ void BackgroundPlaCameraAction::run()
   if(!isMetPreCondition()) return;
 
   // 撮影のため回頭
-  AngleRotation preRotation(robot, preTargetAngle, targetRotationSpeed, isClockwise);
-  preRotation.run();
+  // AngleRotation preRotation(robot, preTargetAngle, targetRotationSpeed, isClockwise);
+  // preRotation.run();
 
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));
@@ -144,6 +144,6 @@ void BackgroundPlaCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  AngleRotation postRotation(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
-  postRotation.run();
+  // AngleRotation postRotation(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
+  // postRotation.run();
 }

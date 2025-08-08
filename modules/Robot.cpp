@@ -14,8 +14,7 @@ Robot::Robot()
     clock(),
     button(),
     forceSensor(EPort::PORT_D),
-    display(),
-    imu()
+    display()
 {
 }
 
@@ -28,8 +27,7 @@ Robot::Robot(ICameraCapture& cam)
     clock(),
     button(),
     forceSensor(EPort::PORT_D),
-    display(),
-    imu()
+    display()
 {
 }
 
@@ -68,6 +66,12 @@ spikeapi::Display& Robot::getDisplayInstance()
   return display;
 }
 
+spikeapi::IMU& Robot::getIMUInstance()
+{
+  return imu;  // IMUのインスタンスを返す
+}
+
+
 MiniFigDirectionResult& Robot::getMiniFigDirectionResult()
 {
   return miniFigDirectionResult;  // ミニフィグの向き検出結果を返す
@@ -86,9 +90,4 @@ void Robot::setIsLeftEdge(bool isLeft)
 bool Robot::getIsLeftEdge() const
 {
   return isLeftEdge;
-}
-
-MYIMU& Robot::getIMUInstance()
-{
-  return imu;
 }

@@ -75,8 +75,8 @@ void MiniFigCameraAction::run()
   }
 
   // 撮影のための回頭をする
-  AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
-  preAR.run();
+  // AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
+  // preAR.run();
 
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));
@@ -148,6 +148,6 @@ void MiniFigCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
-  postAR.run();
+  // AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
+  // postAR.run();
 }

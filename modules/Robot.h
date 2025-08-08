@@ -15,7 +15,7 @@
 #include "Button.h"
 #include "ForceSensor.h"
 #include "Display.h"
-#include "MYIMU.h"
+#include "IMU.h"
 #include "MiniFigDirectionDetector.h"
 #include "BackgroundDirectionDetector.h"
 
@@ -73,6 +73,12 @@ class Robot {
   spikeapi::Display& getDisplayInstance();
 
   /**
+   * @brief IMUのインスタンスの参照を返す
+   * @return imu(IMUのインスタンス)の参照
+   */
+  spikeapi::IMU& getIMUInstance();
+
+  /**
    * @brief ミニフィグの向き検出結果を取得する
    * @return ミニフィグの向き検出結果の参照
    */
@@ -83,12 +89,6 @@ class Robot {
    * @return 風景の向き検出結果の参照
    */
   BackgroundDirectionResult& getBackgroundDirectionResult();
-
-  /**
-   * @brief IMUのインスタンスの参照を返す
-   * @return メンバ変数imu(IMUのインスタンス)の参照
-   */
-  MYIMU& getIMUInstance();
 
   /**
    * @brief エッジの左右判定を設定する
@@ -110,8 +110,8 @@ class Robot {
   spikeapi::Clock clock;                          // Clockインスタンス
   spikeapi::Button button;                        // Buttonインスタンス
   spikeapi::ForceSensor forceSensor;              // ForceSensorインスタンス
-  spikeapi::Display display;                      // Displayインスタンス
-  MYIMU imu;                              // Displayインスタンス
+  spikeapi::Display display;       // Displayインスタンス
+  spikeapi::IMU imu;               // IMUインスタンス
   MiniFigDirectionResult miniFigDirectionResult;  // ミニフィグの向き検出結果
   BackgroundDirectionResult backgroundDirectionResult;  // 風景の向き検出結果
   // formatチェックをパスするためのコメント

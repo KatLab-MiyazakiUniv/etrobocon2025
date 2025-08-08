@@ -6,40 +6,29 @@
 
 #include "AngleRotation.h"
 
-AngleRotation::AngleRotation(Robot& _robot, int _targetAngle, double _speed, bool _isClockwise)
-  : Rotation(_robot, _speed, _isClockwise),
-    targetAngle(_targetAngle),
-    targetLeftDistance(0.0),
-    targetRightDistance(0.0),
-    accumulatedAngle(0.0),
+AngleRotation::AngleRotation(Robot& _robot, int _targetAngle, bool _isClockwise, const PidGain& _pidGain)
+  : Rotation(_robot, _isClockwise, _targetAngle, _pidGain),
     lastTime(std::chrono::steady_clock::now())
 {
 }
 
 void AngleRotation::prepare()
 {
+  // 角速度制御にするので距離は使わないが、必要なら初期値取得はしておく
   MotorController& motorController = robot.getMotorControllerInstance();
 
-  // 現在の走行距離を取得
-  double initLeftMileage = Mileage::calculateWheelMileage(motorController.getLeftMotorCount());
-  double initRightMileage = Mileage::calculateWheelMileage(motorController.getRightMotorCount());
+  // IMUの角速度で回すので距離目標は不要
+  // 角度から回転にかかる時間を算出
+  targetAngularVelocity = 30.0 * (leftSign); // 30 deg/sで回る（回転方向反映）
 
-  // 回頭距離 = π × TREAD(両輪間距離[mm]) × (角度 / 360) により各車輪の目標距離を算出
-  double targetDistance = PI * TREAD * targetAngle / 360.0;
+  double targetAngleRad = targetAngle * M_PI / 180.0;
+  rotationTime = std::fabs(targetAngleRad / (targetAngularVelocity * M_PI / 180.0));
 
-  // 目標走行距離を方向に応じて設定
-  targetLeftDistance = initLeftMileage + targetDistance * leftSign;
-  targetRightDistance = initRightMileage + targetDistance * rightSign;
+  startTime = std::chrono::steady_clock::now();
 }
 
 bool AngleRotation::isMetPreCondition()
 {
-  // スピードが0以下なら終了
-  if(speed <= 0.0) {
-    std::cerr << "speed=" << speed << " は無効な値です" << std::endl;
-    return false;
-  }
-
   // 角度が0以下または360以上なら終了
   if(targetAngle <= 0 || targetAngle >= 360) {
     std::cerr << "targetAngle=" << targetAngle << " は範囲外です。" << std::endl;
@@ -51,33 +40,33 @@ bool AngleRotation::isMetPreCondition()
 
 bool AngleRotation::isMetContinuationCondition()
 {
-  MotorController& motorController = robot.getMotorControllerInstance();
+    MotorController& motorController = robot.getMotorControllerInstance();
 
-  // 現在の時間と前回の時間から経過秒数を取得
-  std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-  std::chrono::duration<double> dt = std::chrono::duration_cast<std::chrono::duration<double>>(now - lastTime);
-  lastTime = now;
+    // 許容誤差 [mm]（必要に応じて調整）
+    constexpr double DISTANCE_TOLERANCE = 1.0; 
 
-  // // IMUから角速度取得
-  // MYIMU::AngularVelocity angVel;
-  // robot.getIMUInstance().getAngularVelocity(angVel);
+    double currentLeftMileage  = Mileage::calculateWheelMileage(motorController.getLeftMotorCount());
+    double currentRightMileage = Mileage::calculateWheelMileage(motorController.getRightMotorCount());
 
-  // // z軸角速度（deg/s）× 経過時間（s）で角度積分
-  // accumulatedAngle += std::abs(angVel.z * dt.count());
+    double diffLeftDistance = (targetLeftDistance - currentLeftMileage) * leftSign;
+    double diffRightDistance = (targetRightDistance - currentRightMileage) * rightSign;
 
-  // // デバッグ出力（必要なら）
-  // std::cout << "[AngleRotation] accumulatedAngle = " << accumulatedAngle << std::endl;
+    // 走った距離を計算（現在距離 - 初期距離）
+    double traveledDistanceLeft = currentLeftMileage - initLeftMileage;
+    double traveledDistanceRight = currentRightMileage - initRightMileage;
 
-  // 残りの回転に必要な走行距離を算出
-  double diffLeftDistance
-      = (targetLeftDistance - Mileage::calculateWheelMileage(motorController.getLeftMotorCount()))
-        * leftSign;
-  double diffRightDistance
-      = (targetRightDistance - Mileage::calculateWheelMileage(motorController.getRightMotorCount()))
-        * rightSign;
-  // 目標距離に到達した場合
-  if(diffLeftDistance <= 0.0 && diffRightDistance <= 0.0) {
-    return false;
-  }
-  return true;
+    // 左右の距離差から回転距離を計算
+    double traveledDistance = (traveledDistanceLeft - traveledDistanceRight) / 2.0;
+    double currentAngle = traveledDistance / (PI * TREAD) * 360.0;
+
+    double angleError = targetAngle - currentAngle;
+
+    std::cout << "Current Angle: " << currentAngle << " deg, "
+              << "Angle Error: " << angleError << " deg" << std::endl;
+
+    if(std::fabs(diffLeftDistance) <= DISTANCE_TOLERANCE &&
+       std::fabs(diffRightDistance) <= DISTANCE_TOLERANCE) {
+        return false;
+    }
+    return true;
 }

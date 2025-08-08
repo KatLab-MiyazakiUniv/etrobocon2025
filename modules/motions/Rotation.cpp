@@ -1,55 +1,59 @@
 #include "Rotation.h"
-#include <cmath>
 #include <iostream>
 #include <thread>
 #include <chrono>
 
-Rotation::Rotation(Robot& _robot, bool _isClockwise, float _targetAngle, const PidGain& _pidGain)
+Rotation::Rotation(Robot& _robot, bool _isClockwise, int _targetAngle, const PidGain& _pidGain)
   : Motion(_robot),
-    robot(_robot),
     leftSign(_isClockwise ? 1 : -1),
     rightSign(_isClockwise ? -1 : 1),
     targetAngle(_targetAngle),
     pidGain(_pidGain)
 {
 }
-Rotation::Rotation(Robot& _robot, double _speed, bool _isClockwise)
-  : Motion(_robot),
-    robot(_robot),
-    leftSign(_isClockwise ? 1 : -1),
-    rightSign(_isClockwise ? -1 : 1),
-    speed(_speed)
-{
-}
 
 void Rotation::run()
 {
-  MotorController& motorController = robot.getMotorControllerInstance();
-  MYIMU& imu = robot.getIMUInstance();
+    MotorController& motorController = robot.getMotorControllerInstance();
+    spikeapi::IMU& imu = robot.getIMUInstance();
 
-  prepare();
+    prepare();
 
-  if(!isMetPreCondition()) {
-    std::cerr << "Rotation::run(): pre-condition not met. Abort." << std::endl;
-    return;
-  }
+    if(!isMetPreCondition()) {
+        std::cerr << "Rotation::run(): pre-condition not met. Abort." << std::endl;
+        return;
+    }
 
-  float initialHeading = imu.getHeading();
-  goalHeading = initialHeading + leftSign * targetAngle;
+    // 目標角速度 [deg/s]、回転方向に応じて符号をつける
+    double targetAngularVelocity = 30.0 * rightSign;
 
-  Pid pid(pidGain.kp, pidGain.ki, pidGain.kd, goalHeading);
+    // PID制御器（角速度に対して制御）
+    Pid pidAngularVelocity(pidGain.kp, pidGain.ki, pidGain.kd, targetAngularVelocity);
 
-  while(isMetContinuationCondition()) {
-    currentHeading = imu.getHeading();
+    while(true) {
+        // IMUから角速度Z軸（回転方向）を取得
+        spikeapi::IMU::AngularVelocity angVel;
+        imu.getAngularVelocity(angVel);
+        double currentAngularVelocity = angVel.z;
+        // デバッグ出力
+        std::cout << "Current Angular Velocity: " << currentAngularVelocity << " deg/s" << std::endl;
 
-    double correction = pid.calculatePid(currentHeading);
+        // PIDで制御量計算（現在角速度に対するモーター出力の目標調整）
+        double controlOutput = pidAngularVelocity.calculatePid(currentAngularVelocity);
 
-    motorController.setLeftMotorPower(leftSign * correction);
-    motorController.setRightMotorPower(rightSign * correction);
+        // 左右モーターに出力、回転方向に合わせて反転を入れる
+        motorController.setLeftMotorPower(controlOutput * leftSign);
+        motorController.setRightMotorPower(controlOutput * rightSign);
 
-    // 10ms待機
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-  }
+        // 角度の経過を判定（時間か角度の誤差で終了判定する）
+        if(!isMetContinuationCondition()) {
+            break;
+        }
 
-  motorController.brakeWheelsMotor();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    std::cout << "Rotation completed. Stopping motors." << std::endl;
+    motorController.brakeWheelsMotor();
 }
+

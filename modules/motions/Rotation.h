@@ -10,11 +10,12 @@
 #include "Motion.h"
 #include "Pid.h"
 #include "Robot.h"
+#include "Mileage.h"
+#include "SpeedCalculator.h"
 
 class Rotation : public Motion {
  public:
-  Rotation(Robot& _robot, bool _isClockwise, float _targetAngle, const PidGain& _pidGain);
-  Rotation(Robot& _robot, double _speed, bool _isClockwise);
+  Rotation(Robot& _robot, bool _isClockwise, int _targetAngle, const PidGain& _pidGain);
   virtual ~Rotation() = default;
 
   void run() override;
@@ -23,15 +24,14 @@ class Rotation : public Motion {
   virtual void prepare() = 0;
   virtual bool isMetPreCondition() = 0;
   virtual bool isMetContinuationCondition() = 0;
-  double speed;
 
-  Robot& robot;
+  double targetLeftDistance = 0.0;                       // 左モーターの目標移動距離
+  double targetRightDistance = 0.0;                      // 右モーターの目標移動距離
+  int targetAngle = 0.0;     
+
   int leftSign;
   int rightSign;
-  float targetAngle;
-  PidGain pidGain = {0.0f, 0.0f, 0.0f}; // PIDゲインの初期化
-  float goalHeading = 0.0f;
-  float currentHeading = 0.0f;
+  PidGain pidGain = {0.0, 0.0, 0.0}; // PIDゲインの初期化
 };
 
 #endif

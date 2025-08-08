@@ -10,7 +10,6 @@
 #include "Rotation.h"
 #include "Mileage.h"
 #include "SystemInfo.h"
-#include "MYIMU.h"
 
 class AngleRotation : public Rotation {
  public:
@@ -18,10 +17,10 @@ class AngleRotation : public Rotation {
    * コンストラクタ
    * @param _robot       ロボット制御クラスへの参照
    * @param _targetAngle 目標回転角度(deg) 0~360
-   * @param _speed       指定する速度（mm/秒）
    * @param _isClockwise 回頭方向 true:時計回り, false:反時計回り
+   * @param _pidGain     PIDゲイン
    */
-  AngleRotation(Robot& _robot, int _targetAngle, double _speed, bool _isClockwise);
+  AngleRotation(Robot& _robot, int _targetAngle, bool _isClockwise, const PidGain& _pidGain);
   /**
    * @brief 回頭する
    * @note run() メソッドは Rotation クラスの実装をそのまま使用する
@@ -46,11 +45,13 @@ class AngleRotation : public Rotation {
   bool isMetContinuationCondition() override;
 
  private:
-  double targetLeftDistance;                       // 左モーターの目標移動距離
-  double targetRightDistance;                      // 右モーターの目標移動距離
-  int targetAngle;     
   double accumulatedAngle = 0.0;                   // 積算角度[deg]
   std::chrono::steady_clock::time_point lastTime;  // 角速度積分の基準時刻（前回の取得時刻）
+  double initLeftMileage = 0.0;
+  double initRightMileage = 0.0;
+  std::chrono::steady_clock::time_point startTime;
+  double rotationTime;  // 回転にかける秒数
+  double targetAngularVelocity; // 目標角速度 deg/s
 };
 
 #endif
