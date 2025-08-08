@@ -21,7 +21,8 @@ void CameraRecoveryAction::run()
 {
   cv::Mat frame;
   // 初期検出確認
-  std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒待機
+  std::this_thread::sleep_for(
+      std::chrono::milliseconds(33));  // フレームを確実に取得するためのスリープ
   if(!robot.getCameraCaptureInstance().getFrame(frame)) {
     std::cout << "フレーム取得失敗のため終了\n" << std::endl;
     return;
