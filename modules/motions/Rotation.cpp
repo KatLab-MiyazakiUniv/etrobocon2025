@@ -31,7 +31,7 @@ void Rotation::run()
   const double targetLinearVelocity = targetAngularVelocityRad * halfTread;
 
   // SpeedCalculator は正の速度のみ受け取る想定なので絶対値で渡す
-  spikeapi::MotorController& motorController = robot.getMotorControllerInstance();
+  MotorController& motorController = robot.getMotorControllerInstance();
   motorController.setRightMotorSpeed(targetLinearVelocity * rightSign);
   motorController.setLeftMotorSpeed(targetLinearVelocity * leftSign);
 
