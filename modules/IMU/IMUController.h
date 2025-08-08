@@ -53,14 +53,30 @@ class IMUController {
 
  private:
   /**
-   * @brief 角度計算ループ処理
+   * @brief 角度計算ループ処理（標準版）
    */
   void angleCalculationLoop();
+  
+  /**
+   * @brief 角度計算ループ処理（測定タイミング中心化版）
+   */
+  void angleCalculationLoopCentered();
+  
+  /**
+   * @brief 角度計算ループ処理（台形積分版）
+   */
+  void angleCalculationLoopTrapezoidal();
+  
+  /**
+   * @brief 角度計算ループ処理（台形積分+測定タイミング中心化版）
+   */
+  void angleCalculationLoopOptimal();
   spikeapi::IMU imu;      // IMUインスタンス
   float offsetX = 0.0f;  // X軸角速度オフセット値(deg/s)
   float offsetY = 0.0f;  // Y軸角速度オフセット値(deg/s)
   float offsetZ = 0.0f;  // Z軸角速度オフセット値(deg/s)
   float currentAngle = 0.0f;  // 計測結果用の現在角度(deg)
+  double previousAngularVelocity = 0.0;  // 台形積分用：前回の角速度
   
   // 測定制御用メンバ変数
   std::thread angleCalculationThread;

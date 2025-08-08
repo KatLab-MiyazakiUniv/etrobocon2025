@@ -28,7 +28,7 @@ void Rotation::run()
   std::cout << robot.getIMUControllerInstance().getAngle() << std::endl;
   robot.getIMUControllerInstance().resetAngle();
   std::cout << robot.getIMUControllerInstance().getAngle() << std::endl;
-  robot.getIMUControllerInstance().startMeasurement();
+  robot.getIMUControllerInstance().startAngleCalculation();
 
   // 回転速度（mm/秒）で指定しモーターを制御
   motorController.setLeftMotorSpeed(speed * leftSign);
@@ -40,7 +40,7 @@ void Rotation::run()
   // モーターを停止
   motorController.stopWheelsMotor();
 
-  robot.getIMUControllerInstance().stopMeasurement();
+  robot.getIMUControllerInstance().stopAngleCalculation();
   // 最終角度を取得してIMU測定停止
   float finalAngle = robot.getIMUControllerInstance().getAngle();
   std::cout << "回頭後の角度: " << finalAngle << " deg" << std::endl;
