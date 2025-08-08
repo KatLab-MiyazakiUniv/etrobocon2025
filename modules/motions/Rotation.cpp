@@ -5,6 +5,7 @@
  */
 
 #include "Rotation.h"
+#include <iostream>
 
 Rotation::Rotation(Robot& _robot, double _speed, bool _isClockwise)
   : Motion(_robot),
@@ -23,6 +24,9 @@ void Rotation::run()
   prepare();
   if(!isMetPreCondition()) return;
 
+  // IMU測定開始
+  robot.getIMUControllerInstance().startMeasurement();
+
   // 回転速度（mm/秒）で指定しモーターを制御
   motorController.setLeftMotorSpeed(speed * leftSign);
   motorController.setRightMotorSpeed(speed * rightSign);
@@ -30,6 +34,11 @@ void Rotation::run()
   while(isMetContinuationCondition()) {
     // 回頭継続条件が満たされるまで待機（モーターが走行中）
   }
+
+  // 最終角度を取得してIMU測定停止
+  float finalAngle = robot.getIMUControllerInstance().getAngle();
+  robot.getIMUControllerInstance().stopMeasurement();
+  std::cout << "回頭後の角度: " << finalAngle << " deg" << std::endl;
 
   // モーターを停止
   motorController.stopWheelsMotor();

@@ -1,0 +1,67 @@
+/**
+ * @file   IMUController.h
+ * @brief  IMU制御クラス
+ * @author Hara1274
+ */
+
+#ifndef IMUCONTROLLER_H
+#define IMUCONTROLLER_H
+
+#include "IMU.h"
+#include <chrono>
+#include <thread>
+#include <iostream>
+
+class IMUController {
+ public:
+  /**
+   * @brief コンストラクタ
+   */
+  IMUController();
+
+  /**
+   * @brief オフセットを計算して設定する
+   */
+  void calculateOffset();
+
+  /**
+   * @brief 角度測定を開始する
+   */
+  void startMeasurement();
+
+  /**
+   * @brief 角度測定を終了する
+   */
+  void stopMeasurement();
+
+  /**
+   * @brief 計測結果の角度を取得する
+   * @return 角度(deg)
+   */
+  float getAngle() const;
+
+  /**
+   * @brief 計測結果用の角度の値をリセットする
+   */
+  void resetAngle();
+
+  /**
+   * @brief 角速度を取得する
+   * @param angv 角速度格納用配列[3] (X, Y, Z軸)
+   */
+  void getAngularVelocity(float angv[3]);
+
+ private:
+  spikeapi::IMU imu;      // IMUインスタンス
+  float offsetX = 0.0f;  // X軸角速度オフセット値(deg/s)
+  float offsetY = 0.0f;  // Y軸角速度オフセット値(deg/s)
+  float offsetZ = 0.0f;  // Z軸角速度オフセット値(deg/s)
+  float currentAngle = 0.0f;  // 計測結果用の現在角度(deg)
+  
+  // 測定制御用メンバ変数
+  std::thread measurementThread;
+  bool isMeasuring = false;
+  std::chrono::high_resolution_clock::time_point lastUpdateTime;
+};
+
+#endif

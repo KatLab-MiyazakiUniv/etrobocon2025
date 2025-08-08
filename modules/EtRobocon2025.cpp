@@ -26,6 +26,9 @@ void EtRobocon2025::start()
   Calibrator calibrator(robot);
   calibrator.selectAndSetCourse();
   calibrator.measureAndSetTargetBrightness();
+
+  robot.getIMUControllerInstance().calculateOffset();
+
   bool isLeftCourse = calibrator.getIsLeftCourse();
   int targetBrightness = calibrator.getTargetBrightness();
   calibrator.getAngleCheckFrame();

@@ -42,6 +42,7 @@ set(INCLUDE_DIRS
   ${PROJECT_MODULE_DIR}/image_processors
   ${PROJECT_MODULE_DIR}/API
   ${PROJECT_MODULE_DIR}/utils
+  ${PROJECT_MODULE_DIR}/IMU
   ${PROJECT_TEST_DIR}
   ${PROJECT_TEST_DIR}/dummy
   ${PROJECT_TEST_DIR}/helpers
@@ -55,6 +56,7 @@ file(GLOB_RECURSE PROJECT_SOURCES
   "${PROJECT_MODULE_DIR}/motions/*.cpp"
   "${PROJECT_MODULE_DIR}/image_processors/*.cpp"
   "${PROJECT_MODULE_DIR}/utils/*.cpp"
+  "${PROJECT_MODULE_DIR}/IMU/*.cpp"
   "${PROJECT_TEST_DIR}/helpers/*.cpp"
   "${PROJECT_TEST_DIR}/dummy/utils/*.cpp"
 )
