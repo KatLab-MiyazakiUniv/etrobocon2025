@@ -58,15 +58,15 @@ bool AngleRotation::isMetContinuationCondition()
   std::chrono::duration<double> dt = std::chrono::duration_cast<std::chrono::duration<double>>(now - lastTime);
   lastTime = now;
 
-  // IMUから角速度取得
-  spikeapi::IMU::AngularVelocity angVel;
-  robot.getIMUInstance().getAngularVelocity(angVel);
+  // // IMUから角速度取得
+  // IMU::AngularVelocity angVel;
+  // robot.getIMUInstance().getAngularVelocity(angVel);
 
-  // z軸角速度（deg/s）× 経過時間（s）で角度積分
-  accumulatedAngle += std::abs(angVel.z * dt.count());
+  // // z軸角速度（deg/s）× 経過時間（s）で角度積分
+  // accumulatedAngle += std::abs(angVel.z * dt.count());
 
-  // デバッグ出力（必要なら）
-  std::cout << "[AngleRotation] accumulatedAngle = " << accumulatedAngle << std::endl;
+  // // デバッグ出力（必要なら）
+  // std::cout << "[AngleRotation] accumulatedAngle = " << accumulatedAngle << std::endl;
 
   // 残りの回転に必要な走行距離を算出
   double diffLeftDistance

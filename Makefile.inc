@@ -21,7 +21,9 @@ APPL_DIRS += \
 	$(mkfile_path)modules/image_processors\
 	$(mkfile_path)modules/camera\
 	$(mkfile_path)modules/utils\
-	$(mkfile_path)../../common/library/libcpp-spike/src
+	$(mkfile_path)../../common/library/libcpp-spike/src/Button.cpp \
+	$(mkfile_path)../../common/library/libcpp-spike/src/Clock.cpp \
+	$(mkfile_path)../../common/library/libcpp-spike/src/Light.cpp
 
 INCLUDES += \
 	-I$(mkfile_path)modules\
@@ -33,6 +35,8 @@ INCLUDES += \
 	-I$(mkfile_path)modules/camera \
 	-I$(mkfile_path)modules/utils \
 	-I$(mkfile_path)../../common/library/libcpp-spike/include \
+	-I$(mkfile_path)../../../libraspike-art/drivers/include \
+	-I$(mkfile_path)../../../libraspike-art/include \
 	-I/usr/include/opencv4
 
 APPL_LIBS += $(shell pkg-config --libs opencv4)

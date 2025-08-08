@@ -265,7 +265,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "SL", COMMAND::SL },    // スリープ
     { "SS", COMMAND::SS },    // カメラ撮影動作
     { "MCA", COMMAND::MCA },  // ミニフィグのカメラ撮影動作
-    { "BCA", COMMAND::BCA }   // 風景・プラレールのカメラ撮影動作
+    { "BCA", COMMAND::BCA },   // 風景・プラレールのカメラ撮影動作
     { "IMUR", COMMAND::IMUR },
   };
 
@@ -284,7 +284,7 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   string param = StringOperator::removeEOL(stringParameter);
 
   // 回転動作(AR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-  if(command == "AR" || command == "MCA" || command == "BCA" || command == "MCA") {
+  if(command == "AR" || command == "IMUR" || command == "BCA" || command == "MCA") {
     if(param == "clockwise") {
       return true;
     } else if(param == "anticlockwise") {

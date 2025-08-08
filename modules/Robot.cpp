@@ -88,7 +88,7 @@ bool Robot::getIsLeftEdge() const
   return isLeftEdge;
 }
 
-spikeapi::IMU& Robot::getIMUInstance()
+IMU& Robot::getIMUInstance()
 {
   return imu;
 }

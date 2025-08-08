@@ -13,6 +13,14 @@ Rotation::Rotation(Robot& _robot, bool _isClockwise, float _targetAngle, const P
     pidGain(_pidGain)
 {
 }
+Rotation::Rotation(Robot& _robot, double _speed, bool _isClockwise)
+  : Motion(_robot),
+    robot(_robot),
+    leftSign(_isClockwise ? 1 : -1),
+    rightSign(_isClockwise ? -1 : 1),
+    speed(_speed)
+{
+}
 
 void Rotation::run()
 {

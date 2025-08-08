@@ -88,7 +88,7 @@ class Robot {
    * @brief IMUのインスタンスの参照を返す
    * @return メンバ変数imu(IMUのインスタンス)の参照
    */
-  spikeapi::IMU& getIMUInstance();
+  IMU& getIMUInstance();
 
   /**
    * @brief エッジの左右判定を設定する
@@ -111,7 +111,7 @@ class Robot {
   spikeapi::Button button;                        // Buttonインスタンス
   spikeapi::ForceSensor forceSensor;              // ForceSensorインスタンス
   spikeapi::Display display;                      // Displayインスタンス
-  spikeapi::IMU imu;                              // Displayインスタンス
+  IMU imu;                              // Displayインスタンス
   MiniFigDirectionResult miniFigDirectionResult;  // ミニフィグの向き検出結果
   BackgroundDirectionResult backgroundDirectionResult;  // 風景の向き検出結果
   // formatチェックをパスするためのコメント

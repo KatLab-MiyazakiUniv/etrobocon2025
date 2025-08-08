@@ -48,7 +48,7 @@ class AngleRotation : public Rotation {
  private:
   double targetLeftDistance;                       // 左モーターの目標移動距離
   double targetRightDistance;                      // 右モーターの目標移動距離
-  int targetAngle;                                 // 目標回転角度(deg) 0~360
+  int targetAngle;     
   double accumulatedAngle = 0.0;                   // 積算角度[deg]
   std::chrono::steady_clock::time_point lastTime;  // 角速度積分の基準時刻（前回の取得時刻）
 };
