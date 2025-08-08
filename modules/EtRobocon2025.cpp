@@ -12,6 +12,7 @@ Robot EtRobocon2025::robot;  // Robotインスタンス
 void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
+  robot.getIMUControllerInstance().calculateOffset();
 
   if(!robot.getCameraCaptureInstance().setCameraID(
          robot.getCameraCaptureInstance().findAvailableCameraID()))
@@ -24,17 +25,18 @@ void EtRobocon2025::start()
   }
 
   Calibrator calibrator(robot);
-  calibrator.selectAndSetCourse();
-  calibrator.measureAndSetTargetBrightness();
+  // calibrator.selectAndSetCourse();
+  // calibrator.measureAndSetTargetBrightness();
 
-  robot.getIMUControllerInstance().calculateOffset();
+  // bool isLeftCourse = calibrator.getIsLeftCourse();
+  // int targetBrightness = calibrator.getTargetBrightness();
+  // calibrator.getAngleCheckFrame();
+  // calibrator.waitForStart();
+  
+  Area area = Area::LineTrace;
+  bool isLeftCourse = true;
+  int targetBrightness = 45;
 
-  bool isLeftCourse = calibrator.getIsLeftCourse();
-  int targetBrightness = calibrator.getTargetBrightness();
-  calibrator.getAngleCheckFrame();
-  calibrator.waitForStart();
-
-  Area lineTraceArea = Area::LineTrace;
-  AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
+  AreaMaster lineTraceAreaMaster(robot, area, isLeftCourse, targetBrightness);
   lineTraceAreaMaster.run();
 }
