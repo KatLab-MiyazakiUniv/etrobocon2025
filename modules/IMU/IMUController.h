@@ -25,14 +25,14 @@ class IMUController {
   void calculateOffset();
 
   /**
-   * @brief 角度測定を開始する
+   * @brief 角度計算を開始する
    */
-  void startMeasurement();
+  void startAngleCalculation();
 
   /**
-   * @brief 角度測定を終了する
+   * @brief 角度計算を終了する
    */
-  void stopMeasurement();
+  void stopAngleCalculation();
 
   /**
    * @brief 計測結果の角度を取得する
@@ -52,6 +52,10 @@ class IMUController {
   void getAngularVelocity(float angv[3]);
 
  private:
+  /**
+   * @brief 角度計算ループ処理
+   */
+  void angleCalculationLoop();
   spikeapi::IMU imu;      // IMUインスタンス
   float offsetX = 0.0f;  // X軸角速度オフセット値(deg/s)
   float offsetY = 0.0f;  // Y軸角速度オフセット値(deg/s)
@@ -59,8 +63,8 @@ class IMUController {
   float currentAngle = 0.0f;  // 計測結果用の現在角度(deg)
   
   // 測定制御用メンバ変数
-  std::thread measurementThread;
-  bool isMeasuring = false;
+  std::thread angleCalculationThread;
+  bool isCalculating = false;
   std::chrono::high_resolution_clock::time_point lastUpdateTime;
 };
 

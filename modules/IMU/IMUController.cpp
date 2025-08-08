@@ -9,14 +9,15 @@
 #include <thread>
 #include <iostream>
 
-IMUController::IMUController() 
-  : imu(), offsetX(0.0f), offsetY(0.0f), offsetZ(0.0f), currentAngle(0.0f), isMeasuring(false) {}
+IMUController::IMUController()
+  : imu(), offsetX(0.0f), offsetY(0.0f), offsetZ(0.0f), currentAngle(0.0f), isCalculating(false)
+{
+}
 
 void IMUController::calculateOffset()
 {
-  float angv[3];  // IMU角速度 格納用配列
+  float angv[3];  // 角速度を格納のするための配列
 
-  // ユーザーに静止状態での実行を促すメッセージ
   std::cout << "IMUオフセット計算を開始します。ロボットを静止状態に保ってください..." << std::endl;
 
   // オフセット値を初期化
@@ -24,7 +25,7 @@ void IMUController::calculateOffset()
   offsetY = 0.0f;
   offsetZ = 0.0f;
 
-  // オフセット同定 (1秒間で1000回測定して平均取る)
+  // オフセットの計算((1秒間で1000回測定して平均取る)
   for(int i = 0; i < 1000; i++) {
     getAngularVelocity(angv);  // 角速度取得
     offsetX += angv[0];
@@ -33,10 +34,9 @@ void IMUController::calculateOffset()
     std::this_thread::sleep_for(std::chrono::milliseconds(1));  // 1ms待機
   }
 
-  // 平均値を計算してオフセットとして設定
-  offsetX /= 1000.0f;
-  offsetY /= 1000.0f;
-  offsetZ /= 1000.0f;
+  offsetX = offsetX / 1000.0f;
+  offsetY = offsetY / 1000.0f;
+  offsetZ = offsetZ / 1000.0f;
 
   std::cout << "IMUオフセット計算が完了しました。" << std::endl;
 }
@@ -60,42 +60,54 @@ void IMUController::resetAngle()
   currentAngle = 0.0f;
 }
 
-void IMUController::startMeasurement()
+void IMUController::startAngleCalculation()
 {
-  if (isMeasuring) return;
-  
-  std::cout << "角度測定を開始します..." << std::endl;
-  isMeasuring = true;
+  // 既に計算中の場合は二重実行を防止
+  if(isCalculating) return;
+  isCalculating = true;
+
+  // 現在時刻を記録
   lastUpdateTime = std::chrono::high_resolution_clock::now();
-  
-  measurementThread = std::thread([this]() {
-    while (isMeasuring) {
-      auto currentTime = std::chrono::high_resolution_clock::now();
-      auto deltaTime = std::chrono::duration<double>(currentTime - lastUpdateTime).count();
-      
-      // 角速度を取得
-      float angv[3];
-      getAngularVelocity(angv);
-      
-      // Z軸角速度をオフセット補正して角度に積分
-      currentAngle += (angv[2] - offsetZ) * deltaTime;
-      
-      lastUpdateTime = currentTime;
-      
-      // 1ms間隔で更新
-      std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
-  });
+
+  // 角度計算専用スレッドを開始
+  angleCalculationThread = std::thread([this]() { angleCalculationLoop(); });
 }
 
-void IMUController::stopMeasurement()
+void IMUController::stopAngleCalculation()
 {
-  if (!isMeasuring) return;
-  
-  std::cout << "角度測定を終了します..." << std::endl;
-  isMeasuring = false;
-  
-  if (measurementThread.joinable()) {
-    measurementThread.join();
+  if(!isCalculating) return;
+  isCalculating = false;
+
+  if(angleCalculationThread.joinable()) {
+    angleCalculationThread.join();
+  }
+}
+
+void IMUController::angleCalculationLoop()
+{
+  // 必要な変数をループ外で宣言
+  float angv[3];
+  const auto sleepDuration = std::chrono::milliseconds(1);
+  auto currentTime = std::chrono::high_resolution_clock::now();
+  double deltaTime, correctedAngularVelocity;
+
+  // 1ms間隔で角速度積分による角度計算を実行
+  while(isCalculating) {
+    // 前回からの経過時間を算出
+    currentTime = std::chrono::high_resolution_clock::now();
+    deltaTime = std::chrono::duration<double>(currentTime - lastUpdateTime).count();
+
+    // IMUからZ軸角速度を取得しオフセット補正
+    getAngularVelocity(angv);
+    correctedAngularVelocity = angv[2] - offsetZ;
+
+    // 角速度×時間で角度を更新
+    currentAngle += correctedAngularVelocity * deltaTime;
+
+    // 次回計算用に現在時刻を保存
+    lastUpdateTime = currentTime;
+
+    // 1ms間隔を維持
+    std::this_thread::sleep_for(sleepDuration);
   }
 }
