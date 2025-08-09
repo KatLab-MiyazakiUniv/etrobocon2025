@@ -76,7 +76,7 @@ void IMUController::startAngleCalculation()
   lastUpdateTime = std::chrono::high_resolution_clock::now();
 
   // 角度更新用の専用スレッドを開始
-  angleCalculationThread = std::thread([this]() { angleCalculationLoopOptimal(); });
+  angleCalculationThread = std::thread([this]() { angleCalculationLoop(); });
 }
 
 void IMUController::stopAngleCalculation()
