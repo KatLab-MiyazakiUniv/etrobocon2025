@@ -1,7 +1,7 @@
 /**
  * @file   ColorDistanceCameraLineTraceTest.cpp
  * @brief  ColorDistanceCameraLineTraceクラスのテスト
- * @author HaruArima08
+ * @author HaruArima08 nishijima515
  */
 
 #include "ColorDistanceCameraLineTrace.h"
