@@ -17,7 +17,7 @@ ColorDistanceCameraLineTrace::ColorDistanceCameraLineTrace(
 {
 }
 
-// 色指定距離カメラライントレースの事前条件
+// 色距離指定カメラライントレースの事前条件
 bool ColorDistanceCameraLineTrace::isMetPreCondition()
 {
   // 目標の色がNoneのとき終了する
