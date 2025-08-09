@@ -15,7 +15,7 @@ void AngleRotation::prepare()
 {
   // モーター走行距離ではなくIMUの角度を基準に設定
   float initialAngle = robot.getIMUControllerInstance().getAngle();
-  targetAbsoluteAngle = normalizeAngle(initialAngle + (isClockwise ? -targetAngle : targetAngle));
+  targetAbsoluteAngle = initialAngle + (isClockwise ? -targetAngle : targetAngle);
 }
 
 bool AngleRotation::isMetPreCondition()
