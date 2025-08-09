@@ -82,7 +82,7 @@ class IMUController {
    */
   void getCorrectedAngularVelocityWithoutOffset(float angv[3]);
 
-  std::mutex imuMutex;  // IMUデータのスレッドセーフなアクセス用ミューテックス
+  mutable std::mutex imuMutex;  // IMUデータのスレッドセーフなアクセス用ミューテックス
 
   spikeapi::IMU imu;                     // IMUインスタンス
   float offsetX = 0.0f;                  // X軸角速度オフセット値(deg/s)

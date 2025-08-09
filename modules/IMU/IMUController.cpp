@@ -6,6 +6,7 @@
 
 #include "IMUController.h"
 #include <chrono>
+#include <cmath>
 #include <thread>
 #include <iostream>
 
