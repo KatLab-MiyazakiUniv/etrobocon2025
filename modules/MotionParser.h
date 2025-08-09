@@ -27,20 +27,22 @@
 #include "Snapshot.h"
 #include "MiniFigCameraAction.h"
 #include "BackgroundPlaCameraAction.h"
+#include "ColorDistanceCameraLineTrace.h"
 
 enum class COMMAND {
-  AR,   // 角度指定回頭
-  DS,   // 指定距離直進
-  CS,   // 指定色直進
-  DL,   // 指定距離ライントレース
-  DCL,  // 指定距離カメラライントレース
-  CL,   // 指定色ライントレース
-  CDL,  // 色距離指定ライントレース
-  EC,   // エッジ切り替え
-  SL,   // 自タスクスリープ
-  SS,   // カメラ撮影動作
-  MCA,  // ミニフィグのカメラ撮影動作
-  BCA,  // 背景のカメラ撮影動作
+  AR,    // 角度指定回頭
+  DS,    // 指定距離直進
+  CS,    // 指定色直進
+  DL,    // 指定距離ライントレース
+  DCL,   // 指定距離カメラライントレース
+  CDCL,  // 色距離指定カメラライントレース
+  CL,    // 指定色ライントレース
+  CDL,   // 色距離指定ライントレース
+  EC,    // エッジ切り替え
+  SL,    // 自タスクスリープ
+  SS,    // カメラ撮影動作
+  MCA,   // ミニフィグのカメラ撮影動作
+  BCA,   // 背景のカメラ撮影動作
   NONE
 };
 
