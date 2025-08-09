@@ -51,10 +51,6 @@ class IMUController {
    */
   void getAngularVelocity(float angv[3]);
 
-  /**
-   * @brief 時間積分の計算方法を比較検証する
-   */
-  void debugTimeIntegration();
 
  private:
   /**
