@@ -45,9 +45,8 @@ class AngleRotation : public Rotation {
   bool isMetContinuationCondition() override;
 
  private:
-  double targetLeftDistance;   // 左モーターの目標移動距離
-  double targetRightDistance;  // 右モーターの目標移動距離
-  int targetAngle;             // 目標回転角度(deg) 0~360
+  int targetAngle;            // 目標回転角度(deg) 0~360
+  float targetAbsoluteAngle;  // 目標角度の絶対値
 };
 
 #endif

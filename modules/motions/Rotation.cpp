@@ -19,16 +19,9 @@ Rotation::Rotation(Robot& _robot, double _speed, bool _isClockwise)
 void Rotation::run()
 {
   MotorController& motorController = robot.getMotorControllerInstance();
-  spikeapi::Clock& clock = robot.getClockInstance();
 
   prepare();
   if(!isMetPreCondition()) return;
-
-  // IMU測定開始
-  std::cout << robot.getIMUControllerInstance().getAngle() << std::endl;
-  robot.getIMUControllerInstance().resetAngle();
-  std::cout << robot.getIMUControllerInstance().getAngle() << std::endl;
-  robot.getIMUControllerInstance().startAngleCalculation();
 
   // 回転速度（mm/秒）で指定しモーターを制御
   motorController.setLeftMotorSpeed(speed * leftSign);
@@ -44,5 +37,4 @@ void Rotation::run()
   // 最終角度を取得してIMU測定停止
   float finalAngle = robot.getIMUControllerInstance().getAngle();
   std::cout << "回頭後の角度: " << finalAngle << " deg" << std::endl;
-
 }

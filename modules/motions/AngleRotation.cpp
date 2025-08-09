@@ -16,18 +16,9 @@ AngleRotation::AngleRotation(Robot& _robot, int _targetAngle, double _speed, boo
 
 void AngleRotation::prepare()
 {
-  MotorController& motorController = robot.getMotorControllerInstance();
-
-  // 現在の走行距離を取得
-  double initLeftMileage = Mileage::calculateWheelMileage(motorController.getLeftMotorCount());
-  double initRightMileage = Mileage::calculateWheelMileage(motorController.getRightMotorCount());
-
-  // 回頭距離 = π × TREAD(両輪間距離[mm]) × (角度 / 360) により各車輪の目標距離を算出
-  double targetDistance = PI * TREAD * targetAngle / 360.0;
-
-  // 目標走行距離を方向に応じて設定
-  targetLeftDistance = initLeftMileage + targetDistance * leftSign;
-  targetRightDistance = initRightMileage + targetDistance * rightSign;
+  // モーター走行距離ではなくIMUの角度を基準に設定
+  float initialAngle = robot.getIMUControllerInstance().getAngle();
+  targetAbsoluteAngle = normalizeAngle(initialAngle + (isClockwise ? -targetAngle : targetAngle));
 }
 
 bool AngleRotation::isMetPreCondition()
@@ -49,17 +40,17 @@ bool AngleRotation::isMetPreCondition()
 
 bool AngleRotation::isMetContinuationCondition()
 {
-  MotorController& motorController = robot.getMotorControllerInstance();
-  // 残りの回転に必要な走行距離を算出
-  double diffLeftDistance
-      = (targetLeftDistance - Mileage::calculateWheelMileage(motorController.getLeftMotorCount()))
-        * leftSign;
-  double diffRightDistance
-      = (targetRightDistance - Mileage::calculateWheelMileage(motorController.getRightMotorCount()))
-        * rightSign;
-  // 目標距離に到達した場合
-  if(diffLeftDistance <= 0.0 && diffRightDistance <= 0.0) {
-    return false;
+  double currentAngle = robot.getIMUControllerInstance().getAngle();
+
+  // 目標角度に達したか判定
+  if(isClockwise) {
+    // 時計回りは角度が減る（例: 350→340）
+    // currentAngleがtargetAbsoluteAngle以下になったら終了
+    if(currentAngle <= targetAbsoluteAngle) return false;
+  } else {
+    // 反時計回りは角度が増える（例: 10→20）
+    // currentAngleがtargetAbsoluteAngle以上になったら終了
+    if(currentAngle >= targetAbsoluteAngle) return false;
   }
   return true;
 }
