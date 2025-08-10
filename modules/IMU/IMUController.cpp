@@ -128,32 +128,4 @@ void IMUController::angleCalculationLoop()
   }
 }
 
-void IMUController::continuousAngleOutput()
-{
-  std::cout << "=== 手動テスト開始：角度の継続出力（30秒間） ===" << std::endl;
-  std::cout << "走行体を手で回転させてください..." << std::endl;
-  
-  resetAngle();
-  startAngleCalculation();
-  
-  auto startTime = std::chrono::high_resolution_clock::now();
-  auto lastPrintTime = startTime;
-  
-  // 30秒間継続
-  while(std::chrono::high_resolution_clock::now() - startTime < std::chrono::seconds(30)) {
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    
-    // 0.1秒ごとに角度を取得して出力
-    if(currentTime - lastPrintTime >= std::chrono::milliseconds(100)) {
-      float currentAngle = getAngle();
-      std::cout << "現在角度: " << currentAngle << " deg" << std::endl;
-      lastPrintTime = currentTime;
-    }
-    
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-  }
-  
-  stopAngleCalculation();
-  std::cout << "=== 手動テスト終了 ===" << std::endl;
-}
 

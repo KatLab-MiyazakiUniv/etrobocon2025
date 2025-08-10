@@ -52,10 +52,6 @@ class IMUController {
    */
   void getAngularVelocity(float angv[3]);
 
-  /**
-   * @brief 手動テスト用：角度を継続的に出力する
-   */
-  void continuousAngleOutput();
 
 
  private:

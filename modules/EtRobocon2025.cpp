@@ -13,8 +13,21 @@ void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
   robot.getIMUControllerInstance().calculateOffset();
-    // IMU手動テスト実行
-  robot.getIMUControllerInstance().continuousAngleOutput();
+
+  // IMU手動テスト実行
+  std::cout << "=== 手動テスト開始） ===" << std::endl;
+  robot.getIMUControllerInstance().resetAngle();
+  robot.getIMUControllerInstance().startAngleCalculation();
+
+  while(true) {
+    float currentAngle = robot.getIMUControllerInstance().getAngle();
+    std::cout << "現在角度: " << currentAngle << " deg" << std::endl;
+    if(abs(currentAngle) >= 360.0f) break;
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
+
+  robot.getIMUControllerInstance().stopAngleCalculation();
+  std::cout << "=== 手動テスト終了 ===" << std::endl;
 
   if(!robot.getCameraCaptureInstance().setCameraID(
          robot.getCameraCaptureInstance().findAvailableCameraID()))
@@ -34,7 +47,7 @@ void EtRobocon2025::start()
   // int targetBrightness = calibrator.getTargetBrightness();
   // calibrator.getAngleCheckFrame();
   // calibrator.waitForStart();
-  
+
   Area area = Area::LineTrace;
   bool isLeftCourse = true;
   int targetBrightness = 45;
