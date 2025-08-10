@@ -5,6 +5,7 @@ datafiles/processed_images
 datafiles/models
 datafiles/figures
 tests/test_images
+third_party
 
 # yoloモデル
 *.onnx

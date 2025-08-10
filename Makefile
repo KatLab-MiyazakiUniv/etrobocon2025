@@ -1,4 +1,6 @@
 MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+ONNXRUNTIME_DIR := $(MAKEFILE_PATH)third_party/onnxruntime
+export ONNXRUNTIME_DIR
 
 # サーバーのIPアドレス
 SERVER_IP = 192.168.11.16
