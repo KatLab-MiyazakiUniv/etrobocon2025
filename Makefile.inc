@@ -33,9 +33,12 @@ INCLUDES += \
 	-I$(mkfile_path)modules/camera \
 	-I$(mkfile_path)modules/utils \
 	-I$(mkfile_path)../../common/library/libcpp-spike/include \
-	-I/usr/include/opencv4
+	-I/usr/include/opencv4 \
+	-I$(mkfile_path)third_party/onnxruntime/include
 
-APPL_LIBS += $(shell pkg-config --libs opencv4)
+APPL_LIBS += \
+	$(shell pkg-config --libs opencv4) \
+	$(mkfile_path)third_party/onnxruntime/lib
 
 CXXFLAGS += -std=c++11 -pthread
 LDFLAGS += -pthread
