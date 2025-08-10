@@ -98,9 +98,6 @@ void IMUController::angleCalculationLoop()
   auto currentTime = std::chrono::high_resolution_clock::now();
   double deltaTime, currentAngularVelocity;
   
-  // 計算方法比較用の開始時間記録
-  auto startTime = std::chrono::high_resolution_clock::now();
-  float initialAngle = currentAngle;
 
   // 1ms間隔で角速度積分による角度計算を実行（台形積分+測定タイミング中心化版）
   while(isCalculating) {
@@ -129,15 +126,6 @@ void IMUController::angleCalculationLoop()
     // 1ms間隔を維持
     std::this_thread::sleep_for(sleepDuration);
   }
-  
-  // ループ終了時に計算結果をログ出力
-  auto endTime = std::chrono::high_resolution_clock::now();
-  double totalTime = std::chrono::duration<double>(endTime - startTime).count();
-  float angleChange = currentAngle - initialAngle;
-  
-  std::cout << "=== 角度計算結果 ===" << std::endl;
-  std::cout << "実行時間: " << totalTime << " 秒" << std::endl;
-  std::cout << "台形積分による角度変化: " << angleChange << " deg" << std::endl;
 }
 
 
