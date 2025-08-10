@@ -64,7 +64,7 @@ class IMUController {
   float offsetZ = 0.0f;                  // Z軸角速度オフセット値(deg/s)
   float currentAngle = 0.0f;             // 計測結果用の現在角度(deg)
   double previousAngularVelocity = 0.0;  // 台形積分用：前回の角速度
-  float tempAngularVelocity[3];           // 角速度取得用一時バッファ
+  float tempAngularVelocity[3];          // 角速度取得用一時バッファ
   bool isCalculating = false;
   static constexpr double TILT_ANGLE_RAD = 45.0 * M_PI / 180.0;
   static constexpr double COS_TILT_ANGLE = cos(TILT_ANGLE_RAD);

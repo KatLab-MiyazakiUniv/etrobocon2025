@@ -6,7 +6,7 @@ extern "C" {
 
 /* タスク優先度 */
 #define MAIN_PRIORITY (TMIN_APP_TPRI + 1) /* メインタスク */
-#define IMU_PRIORITY  (TMIN_APP_TPRI)     /* IMUタスク */
+#define IMU_PRIORITY (TMIN_APP_TPRI)      /* IMUタスク */
 
 #ifndef STACK_SIZE
 #define STACK_SIZE (4096)

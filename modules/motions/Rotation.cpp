@@ -44,5 +44,4 @@ void Rotation::run()
   // 最終角度を取得してIMU測定停止
   float finalAngle = robot.getIMUControllerInstance().getAngle();
   std::cout << "回頭後の角度: " << finalAngle << " deg" << std::endl;
-
 }

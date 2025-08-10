@@ -20,11 +20,11 @@ void main_task(intptr_t unused)
 void imu_handler(intptr_t unused)
 {
   static IMUController* imu = nullptr;
-  
-  if (!imu) {
+
+  if(!imu) {
     imu = &EtRobocon2025::getRobot().getIMUControllerInstance();
     return;
   }
-  
+
   imu->updateAngleFromHandler();
 }

@@ -32,7 +32,7 @@ void EtRobocon2025::start()
   // int targetBrightness = calibrator.getTargetBrightness();
   // calibrator.getAngleCheckFrame();
   // calibrator.waitForStart();
-  
+
   Area area = Area::LineTrace;
   bool isLeftCourse = true;
   int targetBrightness = 45;
