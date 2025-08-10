@@ -47,6 +47,11 @@ class IMURotation : public Rotation {
    */
   void setMotorControl() override;
 
+  /**
+   * @brief 継続中にモーターを動的制御する
+   */
+  void updateMotorControl() override;
+
  private:
   int targetAngle;             // 目標回転角度(deg) 0~360
   double power;                // モーターパワー値(-100~100)

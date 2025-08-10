@@ -27,13 +27,16 @@ bool IMURotation::isMetPreCondition()
 bool IMURotation::isMetContinuationCondition()
 {
   // 現在角度を取得
-  float currentAngle = abs(robot.getIMUControllerInstance().getAngle());
+  float currentAngle = robot.getIMUControllerInstance().getAngle();
   
-  // 目標角度に到達したら停止
-  if(currentAngle >= targetAngle) {
-    return false;
+  // IMUは時計回りをマイナス、反時計回りをプラスで出力
+  if(isClockwise) {
+    // 時計回り: currentAngle <= -targetAngle で停止
+    return currentAngle > -targetAngle;
+  } else {
+    // 反時計回り: currentAngle >= targetAngle で停止
+    return currentAngle < targetAngle;
   }
-  return true;
 }
 
 void IMURotation::setMotorControl()
@@ -42,4 +45,9 @@ void IMURotation::setMotorControl()
   // setPowerを使用
   motorController.setLeftMotorPower(power * leftSign);
   motorController.setRightMotorPower(power * rightSign);
+}
+
+void IMURotation::updateMotorControl()
+{
+  // PID制御等を実装する場合はここに追加
 }
