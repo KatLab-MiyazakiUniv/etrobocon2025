@@ -8,9 +8,10 @@
 #define IMUCONTROLLER_H
 
 #include "IMU.h"
+#include <iostream>
+#include <cmath>
 #include <chrono>
 #include <thread>
-#include <iostream>
 
 class IMUController {
  public:
@@ -56,19 +57,17 @@ class IMUController {
    */
   void updateAngleFromHandler();
 
-
  private:
-  spikeapi::IMU imu;      // IMUインスタンス
-  float offsetX = 0.0f;  // X軸角速度オフセット値(deg/s)
-  float offsetY = 0.0f;  // Y軸角速度オフセット値(deg/s)
-  float offsetZ = 0.0f;  // Z軸角速度オフセット値(deg/s)
-  float currentAngle = 0.0f;  // 計測結果用の現在角度(deg)
+  spikeapi::IMU imu;                     // IMUインスタンス
+  float offsetX = 0.0f;                  // X軸角速度オフセット値(deg/s)
+  float offsetY = 0.0f;                  // Y軸角速度オフセット値(deg/s)
+  float offsetZ = 0.0f;                  // Z軸角速度オフセット値(deg/s)
+  float currentAngle = 0.0f;             // 計測結果用の現在角度(deg)
   double previousAngularVelocity = 0.0;  // 台形積分用：前回の角速度
-  
-  // 測定制御用メンバ変数
-  std::thread angleCalculationThread;
+  float tempAngularVelocity[3];           // 角速度取得用一時バッファ
   bool isCalculating = false;
-  std::chrono::high_resolution_clock::time_point lastUpdateTime;
+  static constexpr double INV_COS_TILT_ANGLE = 1.0 / cos(45.0 * M_PI / 180.0);
+  static constexpr double HALF_DELTA_TIME = 0.0005;
 };
 
 #endif

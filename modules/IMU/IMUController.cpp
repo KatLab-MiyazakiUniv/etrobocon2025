@@ -5,9 +5,6 @@
  */
 
 #include "IMUController.h"
-#include <chrono>
-#include <thread>
-#include <iostream>
 
 IMUController::IMUController()
   : imu(),
@@ -45,7 +42,8 @@ void IMUController::calculateOffset()
   offsetZ = offsetZ / 1000.0f;
 
   std::cout << "IMUオフセット計算が完了しました。" << std::endl;
-  std::cout << "オフセット値 - X: " << offsetX << ", Y: " << offsetY << ", Z: " << offsetZ << " deg/s" << std::endl;
+  std::cout << "オフセット値 - X: " << offsetX << ", Y: " << offsetY << ", Z: " << offsetZ
+            << " deg/s" << std::endl;
 }
 
 void IMUController::getAngularVelocity(float angv[3])
@@ -83,15 +81,11 @@ void IMUController::stopAngleCalculation()
 void IMUController::updateAngleFromHandler()
 {
   if(!isCalculating) return;
-  
-  float angv[3];
-  getAngularVelocity(angv);
-  double currentAngularVelocity = angv[2] - offsetZ;
-  double deltaTime = 0.001;
-  
-  currentAngle += (currentAngularVelocity + previousAngularVelocity) / 2.0 * deltaTime;
-  previousAngularVelocity = currentAngularVelocity;
+
+  getAngularVelocity(tempAngularVelocity);
+
+  double correctedAngularVelocity = (tempAngularVelocity[2] - offsetZ) * INV_COS_TILT_ANGLE;
+
+  currentAngle += (correctedAngularVelocity + previousAngularVelocity) * HALF_DELTA_TIME;
+  previousAngularVelocity = correctedAngularVelocity;
 }
-
-
-
