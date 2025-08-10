@@ -133,41 +133,27 @@ void IMUController::continuousAngleOutput()
   std::cout << "=== 手動テスト開始：角度の継続出力（30秒間） ===" << std::endl;
   std::cout << "走行体を手で回転させてください..." << std::endl;
   
-  float angv[3];
-  float currentTestAngle = 0.0f;
-  double previousAngularVelocity = 0.0;
-  auto lastUpdateTime = std::chrono::high_resolution_clock::now();
-  auto startTime = lastUpdateTime;
+  resetAngle();
+  startAngleCalculation();
+  
+  auto startTime = std::chrono::high_resolution_clock::now();
+  auto lastPrintTime = startTime;
   
   // 30秒間継続
   while(std::chrono::high_resolution_clock::now() - startTime < std::chrono::seconds(30)) {
-    auto measurementStartTime = std::chrono::high_resolution_clock::now();
+    auto currentTime = std::chrono::high_resolution_clock::now();
     
-    // IMUから角速度を取得し、53度傾きとオフセットを補正
-    getAngularVelocity(angv);
-    double currentAngularVelocity = (angv[2] - offsetZ) * COS_TILT_ANGLE
-                                  - (angv[0] - offsetX) * SIN_TILT_ANGLE;
-    
-    auto measurementEndTime = std::chrono::high_resolution_clock::now();
-    auto currentTime = measurementStartTime + (measurementEndTime - measurementStartTime) / 2;
-    double deltaTime = std::chrono::duration<double>(currentTime - lastUpdateTime).count();
-    
-    // 台形積分で角度更新
-    currentTestAngle += (currentAngularVelocity + previousAngularVelocity) / 2.0 * deltaTime;
-    
-    // 0.1秒ごとに出力
-    static auto lastPrintTime = startTime;
+    // 0.1秒ごとに角度を取得して出力
     if(currentTime - lastPrintTime >= std::chrono::milliseconds(100)) {
-      std::cout << "現在角度: " << currentTestAngle << " deg (角速度: " << currentAngularVelocity << " deg/s)" << std::endl;
+      float currentAngle = getAngle();
+      std::cout << "現在角度: " << currentAngle << " deg" << std::endl;
       lastPrintTime = currentTime;
     }
-    
-    previousAngularVelocity = currentAngularVelocity;
-    lastUpdateTime = currentTime;
     
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
   
+  stopAngleCalculation();
   std::cout << "=== 手動テスト終了 ===" << std::endl;
 }
 
