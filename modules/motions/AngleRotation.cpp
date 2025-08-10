@@ -15,7 +15,7 @@ void AngleRotation::prepare()
 {
   // モーター走行距離ではなくIMUの角度を基準に設定
   float initialAngle = robot.getIMUControllerInstance().getAngle();
-  targetAbsoluteAngle = initialAngle + (isClockwise ? -targetAngle : targetAngle);
+  targetAbsoluteAngle = initialAngle + (isClockwise ? targetAngle : -targetAngle);
 }
 
 bool AngleRotation::isMetPreCondition()
@@ -44,18 +44,18 @@ bool AngleRotation::isMetContinuationCondition()
             << "°, Direction: " << (isClockwise ? "CW" : "CCW") << std::endl;
 
   // 目標角度に達したか判定
-  if(isClockwise) {
-    // 時計回りは角度が減る（例: 350→340）
+  if(!isClockwise) {
+    // 半時計回りは角度が減る（例: 350→340）
     // currentAngleがtargetAbsoluteAngle以下になったら終了
     if(currentAngle <= targetAbsoluteAngle) {
-      std::cout << "回転完了: 時計回りで目標角度に到達" << std::endl;
+      std::cout << "回転完了: 半時計回りで目標角度に到達" << std::endl;
       return false;
     }
   } else {
-    // 反時計回りは角度が増える（例: 10→20）
+    // 時計回りは角度が増える（例: 10→20）
     // currentAngleがtargetAbsoluteAngle以上になったら終了
     if(currentAngle >= targetAbsoluteAngle) {
-      std::cout << "回転完了: 反時計回りで目標角度に到達" << std::endl;
+      std::cout << "回転完了: 時計回りで目標角度に到達" << std::endl;
       return false;
     }
   }
