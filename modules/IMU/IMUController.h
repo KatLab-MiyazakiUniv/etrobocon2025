@@ -66,7 +66,9 @@ class IMUController {
   double previousAngularVelocity = 0.0;  // 台形積分用：前回の角速度
   float tempAngularVelocity[3];           // 角速度取得用一時バッファ
   bool isCalculating = false;
-  static constexpr double INV_COS_TILT_ANGLE = 1.0 / cos(45.0 * M_PI / 180.0);
+  static constexpr double TILT_ANGLE_RAD = 45.0 * M_PI / 180.0;
+  static constexpr double COS_TILT_ANGLE = cos(TILT_ANGLE_RAD);
+  static constexpr double SIN_TILT_ANGLE = sin(TILT_ANGLE_RAD);
   static constexpr double HALF_DELTA_TIME = 0.0005;
 };
 

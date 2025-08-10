@@ -84,7 +84,8 @@ void IMUController::updateAngleFromHandler()
 
   getAngularVelocity(tempAngularVelocity);
 
-  double correctedAngularVelocity = (tempAngularVelocity[2] - offsetZ) * INV_COS_TILT_ANGLE;
+  double correctedAngularVelocity = (tempAngularVelocity[2] - offsetZ) * COS_TILT_ANGLE 
+                                  - (tempAngularVelocity[0] - offsetX) * SIN_TILT_ANGLE;
 
   currentAngle += (correctedAngularVelocity + previousAngularVelocity) * HALF_DELTA_TIME;
   previousAngularVelocity = correctedAngularVelocity;
