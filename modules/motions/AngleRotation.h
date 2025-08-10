@@ -44,6 +44,11 @@ class AngleRotation : public Rotation {
    */
   bool isMetContinuationCondition() override;
 
+  /**
+   * @brief モーター制御方式を設定する
+   */
+  void setMotorControl() override;
+
  private:
   double targetLeftDistance;   // 左モーターの目標移動距離
   double targetRightDistance;  // 右モーターの目標移動距離

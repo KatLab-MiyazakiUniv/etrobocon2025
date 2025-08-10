@@ -44,6 +44,12 @@ class Rotation : public Motion {
    */
   virtual bool isMetContinuationCondition() = 0;
 
+  /**
+   * @brief モーター制御方式を設定する
+   * @note オーバーライド必須
+   */
+  virtual void setMotorControl() = 0;
+
  protected:
   double speed;      // 指定する速度（mm/秒）
   bool isClockwise;  // 回頭方向 true:時計回り, false:反時計回り

@@ -63,3 +63,10 @@ bool AngleRotation::isMetContinuationCondition()
   }
   return true;
 }
+
+void AngleRotation::setMotorControl()
+{
+  MotorController& motorController = robot.getMotorControllerInstance();
+  motorController.setLeftMotorSpeed(speed * leftSign);
+  motorController.setRightMotorSpeed(speed * rightSign);
+}
