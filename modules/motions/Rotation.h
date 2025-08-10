@@ -50,6 +50,12 @@ class Rotation : public Motion {
    */
   virtual void setMotorControl() = 0;
 
+  /**
+   * @brief 継続中にモーターを動的制御する
+   * @note オーバーライド必須
+   */
+  virtual void updateMotorControl() {}
+
  protected:
   double speed;      // 指定する速度（mm/秒）
   bool isClockwise;  // 回頭方向 true:時計回り, false:反時計回り

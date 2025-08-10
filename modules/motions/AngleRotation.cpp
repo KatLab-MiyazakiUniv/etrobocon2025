@@ -70,3 +70,8 @@ void AngleRotation::setMotorControl()
   motorController.setLeftMotorSpeed(speed * leftSign);
   motorController.setRightMotorSpeed(speed * rightSign);
 }
+
+void AngleRotation::updateMotorControl()
+{
+  // 固定制御のため何もしない
+}

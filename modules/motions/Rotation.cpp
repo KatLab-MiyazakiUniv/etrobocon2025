@@ -23,11 +23,12 @@ void Rotation::run()
   prepare();
   if(!isMetPreCondition()) return;
 
-  // モーター制御方式を子クラスで設定
+  // モーター制御方式を設定
   setMotorControl();
 
   while(isMetContinuationCondition()) {
-    // 回頭継続条件が満たされるまで待機（モーターが走行中）
+    // 動的モーター制御
+    updateMotorControl();
   }
 
   // モーターを停止
