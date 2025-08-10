@@ -1,7 +1,7 @@
 /**
  * @file   BackgroundDirectionDetector.cpp
  * @brief  風景の向きを判定する画像処理クラス
- * @author Hara1274
+ * @author Hara1274 takahashitom
  */
 
 #include "BackgroundDirectionDetector.h"
@@ -11,18 +11,27 @@ using namespace dnn;
 using namespace std;
 
 BackgroundDirectionDetector::BackgroundDirectionDetector(const string& _modelPath)
-  : modelPath(_modelPath)
+  : env(ORT_LOGGING_LEVEL_WARNING, "BackgroundDirectionDetector"),
+    session(nullptr),
+    modelPath(_modelPath)
 {
-  net = readNetFromONNX(modelPath);              // モデルのパスを設定する
-  net.setPreferableBackend(DNN_BACKEND_OPENCV);  // OpenCVバックエンドを使用
-  net.setPreferableTarget(DNN_TARGET_CPU);       // CPUをターゲットに設定
+  // セッション設定
+  Ort::SessionOptions sessionOptions;
+  sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
+
+  // モデル読み込み
+  session = Ort::Session(env, modelPath.c_str(), sessionOptions);
+
+  // 入出力名を取得
+  inputNames = session.GetInputNames();
+  outputNames = session.GetOutputNames();
 }
 
 void BackgroundDirectionDetector::detect(const Mat& frame, BackgroundDirectionResult& result)
 {
   // モデルが正しく読み込まれているかチェック
-  if(net.empty()) {
-    cerr << "モデルの読み込みに失敗しました！" << endl;
+  if(session == nullptr) {
+    cerr << "モデルが読みこまれていません" << endl;
     result.wasDetected = false;
     return;
   }
@@ -43,14 +52,10 @@ void BackgroundDirectionDetector::detect(const Mat& frame, BackgroundDirectionRe
   // 前処理で入力画像を640x640にリサイズ＆パディングする
   Mat inputBlob = preprocess(frame, scale, padX, padY);
 
-  // ネットワークに入力をセット
-  net.setInput(inputBlob);
+  // 推論
+  auto outputs = infer(inputBlob);
 
-  // 推論を実行し、出力を受け取る
-  vector<Mat> outputs;
-  net.forward(outputs, net.getUnconnectedOutLayersNames());
-
-  // 後処理で検出結果を生成する
+  // 後処理
   postprocess(outputs, frame, scale, padX, padY, result);
 }
 
@@ -65,70 +70,117 @@ Mat BackgroundDirectionDetector::preprocess(const Mat& frame, float scale, int p
   resize(frame, output(Rect(padX, padY, newWidth, newHeight)), Size(newWidth, newHeight));
 
   // YOLO用に画像を正規化・RGB変換
+  // RGB 変換
+  cvtColor(output, output, COLOR_BGR2RGB);
+
+  // float化＆正規化
+  output.convertTo(output, CV_32F, 1.0 / 255.0);
+
+  // CHW 化（[H,W,C] → [C,H,W]）
+  std::vector<Mat> chw;
+  split(output, chw);  // 3つのチャンネルに分割
   Mat blob;
-  blobFromImage(output, blob, 1.0 / 255.0, Size(), Scalar(), true, false);
+  vconcat(chw, blob);  // 縦方向に結合して [3,H,W] の形にする
 
   return blob;
 }
 
-void BackgroundDirectionDetector::postprocess(const vector<Mat>& outputs, const Mat& frame,
-                                              float scale, int padX, int padY,
+std::vector<std::vector<float>> BackgroundDirectionDetector::infer(const cv::Mat& inputImage)
+{
+  size_t inputTensorSize = MODEL_INPUT_SIZE * MODEL_INPUT_SIZE * 3;
+  std::vector<float> inputTensorValues(inputTensorSize);
+  std::memcpy(inputTensorValues.data(), inputImage.data, inputTensorSize * sizeof(float));
+
+  std::array<int64_t, 4> inputShape = { 1, 3, MODEL_INPUT_SIZE, MODEL_INPUT_SIZE };
+
+  Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
+
+  Ort::Value inputTensor = Ort::Value::CreateTensor<float>(
+      memoryInfo, inputTensorValues.data(), inputTensorSize, inputShape.data(), inputShape.size());
+
+  std::vector<const char*> inputNamesCStr;
+  inputNamesCStr.reserve(inputNames.size());
+  for(auto& s : inputNames) inputNamesCStr.push_back(s.c_str());
+
+  std::vector<const char*> outputNamesCStr;
+  outputNamesCStr.reserve(outputNames.size());
+  for(auto& s : outputNames) outputNamesCStr.push_back(s.c_str());
+
+  auto outputTensors = session.Run(Ort::RunOptions{ nullptr }, inputNamesCStr.data(), &inputTensor,
+                                   1, outputNamesCStr.data(), outputNamesCStr.size());
+
+  std::vector<std::vector<float>> results;
+  results.reserve(outputTensors.size());
+
+  for(auto& tensor : outputTensors) {
+    float* floatArray = tensor.GetTensorMutableData<float>();
+    size_t totalSize = tensor.GetTensorTypeAndShapeInfo().GetElementCount();
+    results.emplace_back(floatArray, floatArray + totalSize);
+  }
+
+  return results;
+}
+
+void BackgroundDirectionDetector::postprocess(const std::vector<std::vector<float>>& outputs,
+                                              const Mat& frame, float scale, int padX, int padY,
                                               BackgroundDirectionResult& result)
 {
   vector<int> classIds;       // 最も高いスコアを持つクラスIDを格納するリスト
   vector<float> confidences;  // 信頼度を格納するリスト
   vector<Rect> boxes;         // バウンディングボックスを格納するリスト
 
-  for(const auto& output : outputs) {
-    int numBoxes = output.size[1];    // 検出候補の総数
-    int attributes = output.size[2];  // ボックスが属性の数　（座標やスコアなど）
+  if(outputs.empty()) {
+    result.wasDetected = false;
+    return;
+  }
 
-    const float* data = (float*)output.data;  // 出力の実体をdataに格納する
+  const std::vector<float>& data = outputs[0];
 
-    // 検出候補の数だけループを回す
-    for(int i = 0; i < numBoxes; ++i) {
-      // 処理中の候補の先頭のデータ位置を計算
-      int idx = i * attributes;
+  // YOLO11 出力 shape: [1, 8, N]
+  int attributes = 8;
+  int numClasses = 8 - 4;  // 座標4つ以外はクラススコア
+  int numBoxes = data.size() / attributes;
 
-      // 5番目にあるボックスの信頼度（confidence）スコアを取得。頼度が閾値未満なら次の候補へ
-      float conf = data[idx + 4];
-      if(conf < CONFIDENCE_THRESHOLD) continue;
-
-      // 最も高いクラススコアとそのクラスID（インデックス）を取得
-      float* classScores = (float*)&data[idx + 5];
-      Mat scores(1, attributes - 5, CV_32FC1, classScores);
-      Point classIdPoint;
-      double maxScore;
-      minMaxLoc(scores, 0, &maxScore, 0, &classIdPoint);
-
-      // 最大クラススコアも閾値を超えているかチェック
-      if(maxScore > CONFIDENCE_THRESHOLD) {
-        // バウンディングボックスの中心座標とサイズを表す値
-        float cx_norm = data[idx + 0];
-        float cy_norm = data[idx + 1];
-        float w_norm = data[idx + 2];
-        float h_norm = data[idx + 3];
-
-        int centerX = static_cast<int>((cx_norm - padX) / scale);
-        int centerY = static_cast<int>((cy_norm - padY) / scale);
-        int width = static_cast<int>(w_norm / scale);
-        int height = static_cast<int>(h_norm / scale);
-
-        int left = centerX - width / 2;
-        int top = centerY - height / 2;
-
-        // 画面内に収まるように処理
-        left = max(0, min(left, frame.cols - 1));
-        top = max(0, min(top, frame.rows - 1));
-        width = min(width, frame.cols - left);
-        height = min(height, frame.rows - top);
-
-        // リストに追加
-        boxes.emplace_back(left, top, width, height);
-        confidences.push_back(static_cast<float>(maxScore));
-        classIds.push_back(classIdPoint.x);
+  // 検出候補の数だけループを回す
+  for(int i = 0; i < numBoxes; i++) {
+    // クラススコアの最大値とクラスIDを取得
+    float maxScore = -1.0f;
+    int bestClass = -1;
+    for(int j = 0; j < numClasses; j++) {
+      float score = data[i + numBoxes * (4 + j)];
+      if(score > maxScore) {
+        maxScore = score;
+        bestClass = j;
       }
     }
+
+    // 最大クラススコアが閾値を超えているかチェック
+    if(maxScore < CONFIDENCE_THRESHOLD) continue;
+
+    float cx = data[i];
+    float cy = data[i + numBoxes];
+    float w = data[i + numBoxes * 2];
+    float h = data[i + numBoxes * 3];
+
+    // バウンディングボックスの中心座標とサイズを表す値
+    int centerX = static_cast<int>((cx - padX) / scale);
+    int centerY = static_cast<int>((cy - padY) / scale);
+    int width = static_cast<int>(w / scale);
+    int height = static_cast<int>(h / scale);
+
+    int left = centerX - width / 2;
+    int top = centerY - height / 2;
+
+    // 画面内に収まるように処理
+    left = max(0, min(left, frame.cols - 1));
+    top = max(0, min(top, frame.rows - 1));
+    width = min(width, frame.cols - left);
+    height = min(height, frame.rows - top);
+
+    // リストに追加
+    boxes.emplace_back(left, top, width, height);
+    confidences.push_back(maxScore);
+    classIds.push_back(bestClass);
   }
 
   // 信頼度を超えるバウンディングボックスがなかった時の処理
