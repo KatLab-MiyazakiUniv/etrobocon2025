@@ -23,7 +23,6 @@ IMUController::IMUController()
 
 void IMUController::calculateOffset()
 {
-  calculateCorrectionMatrix();
   float angv[3];  // 角速度を格納のするための配列
 
   std::cout << "IMUオフセット計算を開始します。ロボットを静止状態に保ってください..." << std::endl;
@@ -59,6 +58,7 @@ void IMUController::resetAngle()
 {
   std::lock_guard<std::mutex> lock(imuMutex);  // ミューテックスで保護
   currentAngle = 0.0f;
+  currentAngleRaw = 0.0f;
 }
 
 void IMUController::startAngleCalculation()
@@ -70,6 +70,8 @@ void IMUController::startAngleCalculation()
 
   // 現在時刻を記録
   lastUpdateTime = std::chrono::high_resolution_clock::now();
+  previousAngularVelocity = 0.0;
+  previousAngularVelocityRaw = 0.0;
 
   // 角度更新用の専用スレッドを開始
   angleCalculationThread = std::thread([this]() { angleCalculationLoop(); });
@@ -90,43 +92,50 @@ void IMUController::stopAngleCalculation()
 
 void IMUController::angleCalculationLoop()
 {
-  // 必要な変数をループ外で宣言
-  float angv[3];
+  float angv[3];     // 補正行列あり用
+  float rawAngv[3];  // 生データ用
   const auto sleepDuration = std::chrono::milliseconds(1);
   auto currentTime = std::chrono::high_resolution_clock::now();
   double deltaTime, currentAngularVelocity;
 
-  // 1ms間隔で角速度積分による角度計算を実行（台形積分+測定タイミング中心化版）
   while(isCalculating) {
     {
       std::lock_guard<std::mutex> lock(imuMutex);
-      if(!isCalculating) break;  // 停止指示があれば終了
+      if(!isCalculating) break;
     }
-    // 測定開始時刻を記録
+
     auto measurementStartTime = std::chrono::high_resolution_clock::now();
 
-    // IMUからX軸角速度を取得しオフセット補正
+    // 補正行列あり + オフセット補正
     getCorrectedAngularVelocity(angv);
-    currentAngularVelocity = angv[2];  // Z軸角速度を使用
+    currentAngularVelocity = angv[2];
 
-    // 測定終了時刻を記録
+    // 補正行列なし + オフセット補正
+    getRawAngularVelocity(rawAngv);
+    rawAngv[0] -= offsetX;
+    rawAngv[1] -= offsetY;
+    rawAngv[2] -= offsetZ;
+    double currentAngularVelocityRawLocal = rawAngv[2];
+
     auto measurementEndTime = std::chrono::high_resolution_clock::now();
-
-    // 測定中間時刻を算出: (開始時刻 + 終了時刻) / 2
     currentTime = measurementStartTime + (measurementEndTime - measurementStartTime) / 2;
+
     {
-      std::lock_guard<std::mutex> lock(imuMutex);  // ミューテックスで保護
+      std::lock_guard<std::mutex> lock(imuMutex);
       deltaTime = std::chrono::duration<double>(currentTime - lastUpdateTime).count();
 
-      // 台形積分による角度更新: θ += (ω₁ + ω₀)/2 × Δt
+      // 補正行列あり
       currentAngle += (currentAngularVelocity + previousAngularVelocity) / 2.0 * deltaTime;
 
-      // 次回計算用に現在値を保存（中間時刻と角速度）
+      // 補正行列なし
+      currentAngleRaw
+          += (currentAngularVelocityRawLocal + previousAngularVelocityRaw) / 2.0 * deltaTime;
+
       previousAngularVelocity = currentAngularVelocity;
+      previousAngularVelocityRaw = currentAngularVelocityRawLocal;
       lastUpdateTime = currentTime;
     }
 
-    // 1ms間隔を維持
     std::this_thread::sleep_for(sleepDuration);
   }
 }
@@ -215,4 +224,10 @@ void IMUController::getCorrectedAngularVelocity(float angv[3])
   angv[0] -= offsetX;
   angv[1] -= offsetY;
   angv[2] -= offsetZ;
+}
+
+float IMUController::getAngleRaw() const
+{
+  std::lock_guard<std::mutex> lock(imuMutex);
+  return currentAngleRaw;
 }

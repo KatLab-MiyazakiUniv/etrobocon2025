@@ -52,16 +52,18 @@ class IMUController {
    */
   void getCorrectedAngularVelocity(float angv[3]);
 
+  /**
+   * @brief IMUの傾きを補正するための行列を計算する
+   */
+  void calculateCorrectionMatrix();
+
+  float getAngleRaw() const;
+
  private:
   /**
    * @brief 角度計算ループ処理
    */
   void angleCalculationLoop();
-
-  /**
-   * @brief IMUの傾きを補正するための行列を計算する
-   */
-  void calculateCorrectionMatrix();
 
   /**
    * @brief 補正行列を用いて角速度を補正する
@@ -90,6 +92,9 @@ class IMUController {
   float offsetZ = 0.0f;                  // Z軸角速度オフセット値(deg/s)
   float currentAngle = 0.0f;             // 計測結果用の現在角度(deg)
   double previousAngularVelocity = 0.0;  // 台形積分用：前回の角速度
+
+  float currentAngleRaw = 0.0f;             // 生データ+オフセット補正の積分角度
+  double previousAngularVelocityRaw = 0.0;  // 前回の生データ角速度
   std::array<std::array<float, 3>, 3> correctionMatrix
       = { { { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } } };  // 補正行列
 
