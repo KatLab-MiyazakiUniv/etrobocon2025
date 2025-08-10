@@ -29,6 +29,8 @@ void EtRobocon2025::start()
   robot.getIMUControllerInstance().stopAngleCalculation();
   std::cout << "=== 手動テスト終了 ===" << std::endl;
 
+  std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+
   if(!robot.getCameraCaptureInstance().setCameraID(
          robot.getCameraCaptureInstance().findAvailableCameraID()))
     return;
