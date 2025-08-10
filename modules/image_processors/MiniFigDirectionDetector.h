@@ -46,7 +46,7 @@ class MiniFigDirectionDetector {
                               = "etrobocon2025/datafiles/models/yolo_optimized.onnx");
 
  private:
-  static cv::dnn::Net net;    // DNNモデルを格納する変数
+  static cv::dnn::Net net;  // DNNモデルを格納する変数
   static bool isInitialized;  // モデルの読み込みを行ったかどうかの状態を表す静的変数
   const std::string outputImagePath
       = "etrobocon2025/datafiles/processed_images/"
