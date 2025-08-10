@@ -13,6 +13,8 @@ void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
   robot.getIMUControllerInstance().calculateOffset();
+    // IMU手動テスト実行
+  robot.getIMUControllerInstance().continuousAngleOutput();
 
   if(!robot.getCameraCaptureInstance().setCameraID(
          robot.getCameraCaptureInstance().findAvailableCameraID()))

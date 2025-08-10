@@ -52,6 +52,11 @@ class IMUController {
    */
   void getAngularVelocity(float angv[3]);
 
+  /**
+   * @brief 手動テスト用：角度を継続的に出力する
+   */
+  void continuousAngleOutput();
+
 
  private:
   /**
@@ -70,8 +75,8 @@ class IMUController {
   bool isCalculating = false;
   std::chrono::high_resolution_clock::time_point lastUpdateTime;
   
-  // -45度傾き補正用定数
-  static constexpr double TILT_ANGLE_RAD = -45.0 * M_PI / 180.0;
+  // -53度傾き補正用定数（実測値に基づく）
+  static constexpr double TILT_ANGLE_RAD = -53.2573 * M_PI / 180.0;
   static constexpr double COS_TILT_ANGLE = cos(TILT_ANGLE_RAD);
   static constexpr double SIN_TILT_ANGLE = sin(TILT_ANGLE_RAD);
 };
