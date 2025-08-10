@@ -85,3 +85,8 @@ bool Robot::getIsLeftEdge() const
 {
   return isLeftEdge;
 }
+
+IMUController& Robot::getIMUControllerInstance()
+{
+  return imuController;
+}
