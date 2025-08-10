@@ -53,7 +53,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       }
 
       // IMR: IMU角度指定回頭
-      // [1]:int 角度[deg], [2]:double パワー値(-100~100), [3]:string 方向(clockwise or anticlockwise)
+      // [1]:int 角度[deg], [2]:double パワー値(-100~100), [3]:string 方向(clockwise or
+      // anticlockwise)
       case COMMAND::IMR: {
         auto imr = new IMURotation(robot, stoi(params[1]), stod(params[2]),
                                    convertBool(params[0], params[3]));

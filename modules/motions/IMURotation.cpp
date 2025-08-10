@@ -7,9 +7,7 @@
 #include "IMURotation.h"
 
 IMURotation::IMURotation(Robot& _robot, int _targetAngle, double _power, bool _isClockwise)
-  : Rotation(_robot, _power, _isClockwise),
-    targetAngle(_targetAngle),
-    power(_power)
+  : Rotation(_robot, _power, _isClockwise), targetAngle(_targetAngle), power(_power)
 {
 }
 
@@ -28,7 +26,7 @@ bool IMURotation::isMetContinuationCondition()
 {
   // 現在角度を取得
   float currentAngle = robot.getIMUControllerInstance().getAngle();
-  
+
   // IMUは時計回りをマイナス、反時計回りをプラスで出力
   if(isClockwise) {
     // 時計回り: currentAngle <= -targetAngle で停止

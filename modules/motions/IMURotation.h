@@ -53,8 +53,8 @@ class IMURotation : public Rotation {
   void updateMotorControl() override;
 
  private:
-  int targetAngle;             // 目標回転角度(deg) 0~360
-  double power;                // モーターパワー値(-100~100)
+  int targetAngle;  // 目標回転角度(deg) 0~360
+  double power;     // モーターパワー値(-100~100)
 };
 
 #endif
