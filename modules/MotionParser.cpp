@@ -52,6 +52,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // IMR: IMU角度指定回頭
+      // [1]:int 角度[deg], [2]:double パワー値(-100~100), [3]:string 方向(clockwise or anticlockwise)
+      case COMMAND::IMR: {
+        auto imr = new IMURotation(robot, stoi(params[1]), stod(params[2]),
+                                   convertBool(params[0], params[3]));
+        motionList.push_back(imr);
+        break;
+      }
+
       // DS: 指定距離直進
       // [1]:double 距離[mm], [2]:double 速度[mm/s]
       case COMMAND::DS: {
@@ -233,6 +242,7 @@ COMMAND MotionParser::convertCommand(const string& str)
   // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
   static const unordered_map<string, COMMAND> commandMap = {
     { "AR", COMMAND::AR },    // 角度指定回頭
+    { "IMR", COMMAND::IMR },  // IMU角度指定回頭
     { "DS", COMMAND::DS },    // 指定距離直進
     { "CS", COMMAND::CS },    // 指定色直進
     { "DL", COMMAND::DL },    // 指定距離ライントレース
@@ -261,8 +271,8 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   // 末尾の改行を削除
   string param = StringOperator::removeEOL(stringParameter);
 
-  // 回転動作(AR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-  if(command == "AR" || command == "MCA" || command == "BCA") {
+  // 回転動作(AR,IMR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  if(command == "AR" || command == "IMR" || command == "MCA" || command == "BCA") {
     if(param == "clockwise") {
       return true;
     } else if(param == "anticlockwise") {
