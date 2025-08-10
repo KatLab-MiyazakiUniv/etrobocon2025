@@ -25,14 +25,22 @@ void IMUController::calculateOffset()
 {
   float angv[3];  // 角速度を格納のするための配列
 
-  std::cout << "IMUオフセット計算を開始します。ロボットを静止状態に保ってください..." << std::endl;
+  std::cout << "IMU初期化を開始します。ロボットを静止状態に保ってください..." << std::endl;
 
-  // オフセット値を初期化
+  // 1. 最初に変換行列を計算（IMUの傾き補正のため）
+  std::cout << "変換行列を計算中..." << std::endl;
+  calculateCorrectionMatrix();
+  std::cout << "変換行列の計算が完了しました。" << std::endl;
+
+  // 2. オフセット値を初期化
   offsetX = 0.0f;
   offsetY = 0.0f;
   offsetZ = 0.0f;
 
-  // オフセットの計算((1秒間で1000回測定して平均取る)
+  std::cout << "オフセット値を計算中..." << std::endl;
+
+  // 3. オフセットの計算（1秒間で1000回測定して平均取る）
+  // 変換行列適用済みの角速度を使ってオフセットを計算
   for(int i = 0; i < 1000; i++) {
     getCorrectedAngularVelocityWithoutOffset(angv);  // 補正済みの角速度取得
     offsetX += angv[0];
@@ -45,7 +53,7 @@ void IMUController::calculateOffset()
   offsetY = offsetY / 1000.0f;
   offsetZ = offsetZ / 1000.0f;
 
-  std::cout << "IMUオフセット計算が完了しました。" << std::endl;
+  std::cout << "IMU初期化が完了しました。" << std::endl;
 }
 
 float IMUController::getAngle() const
