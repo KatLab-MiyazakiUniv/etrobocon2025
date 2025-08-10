@@ -14,6 +14,7 @@
 class EtRobocon2025 {
  public:
   static void start();
+  static Robot& getRobot();  // Robotインスタンス取得メソッド
 
  private:
   static Robot robot;  // Robotインスタンス

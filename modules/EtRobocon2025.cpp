@@ -40,3 +40,8 @@ void EtRobocon2025::start()
   AreaMaster lineTraceAreaMaster(robot, area, isLeftCourse, targetBrightness);
   lineTraceAreaMaster.run();
 }
+
+Robot& EtRobocon2025::getRobot()
+{
+  return robot;
+}

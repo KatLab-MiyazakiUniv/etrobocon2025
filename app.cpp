@@ -15,3 +15,16 @@ void main_task(intptr_t unused)
   EtRobocon2025::start();
   ext_tsk();
 }
+
+// IMU周期ハンドラ（1ms間隔）
+void imu_handler(intptr_t unused)
+{
+  static IMUController* imu = nullptr;
+  
+  if (!imu) {
+    imu = &EtRobocon2025::getRobot().getIMUControllerInstance();
+    return;
+  }
+  
+  imu->updateAngleFromHandler();
+}

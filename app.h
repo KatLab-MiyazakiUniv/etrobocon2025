@@ -6,6 +6,7 @@ extern "C" {
 
 /* タスク優先度 */
 #define MAIN_PRIORITY (TMIN_APP_TPRI + 1) /* メインタスク */
+#define IMU_PRIORITY  (TMIN_APP_TPRI)     /* IMUタスク */
 
 #ifndef STACK_SIZE
 #define STACK_SIZE (4096)
@@ -14,6 +15,7 @@ extern "C" {
 #ifndef TOPPERS_MACRO_ONLY
 
 extern void main_task(intptr_t exinf);
+extern void imu_handler(intptr_t exinf);
 
 #endif /* TOPPERS_MACRO_ONLY */
 

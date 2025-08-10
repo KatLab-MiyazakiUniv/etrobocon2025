@@ -51,12 +51,13 @@ class IMUController {
    */
   void getAngularVelocity(float angv[3]);
 
+  /**
+   * @brief 周期ハンドラから呼ばれる角度更新処理
+   */
+  void updateAngleFromHandler();
+
 
  private:
-  /**
-   * @brief 角度計算ループ処理
-   */
-  void angleCalculationLoop();
   spikeapi::IMU imu;      // IMUインスタンス
   float offsetX = 0.0f;  // X軸角速度オフセット値(deg/s)
   float offsetY = 0.0f;  // Y軸角速度オフセット値(deg/s)
