@@ -107,9 +107,10 @@ void IMUController::angleCalculationLoop()
     // 測定開始時刻を記録
     auto measurementStartTime = std::chrono::high_resolution_clock::now();
 
-    // IMUからZ軸角速度を取得しオフセット補正
+    // IMUから角速度を取得し、45度傾きとオフセットを補正
     getAngularVelocity(angv);
-    currentAngularVelocity = angv[2] - offsetZ;
+    currentAngularVelocity = (angv[2] - offsetZ) * COS_TILT_ANGLE
+                           - (angv[0] - offsetX) * SIN_TILT_ANGLE;
 
     // 測定終了時刻を記録
     auto measurementEndTime = std::chrono::high_resolution_clock::now();

@@ -11,6 +11,7 @@
 #include <chrono>
 #include <thread>
 #include <iostream>
+#include <cmath>
 
 class IMUController {
  public:
@@ -68,6 +69,11 @@ class IMUController {
   std::thread angleCalculationThread;
   bool isCalculating = false;
   std::chrono::high_resolution_clock::time_point lastUpdateTime;
+  
+  // 45度傾き補正用定数
+  static constexpr double TILT_ANGLE_RAD = 45.0 * M_PI / 180.0;
+  static constexpr double COS_TILT_ANGLE = cos(TILT_ANGLE_RAD);
+  static constexpr double SIN_TILT_ANGLE = sin(TILT_ANGLE_RAD);
 };
 
 #endif
