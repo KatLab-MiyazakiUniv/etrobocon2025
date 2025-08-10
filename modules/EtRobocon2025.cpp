@@ -22,7 +22,7 @@ void EtRobocon2025::start()
   while(true) {
     float currentAngle = robot.getIMUControllerInstance().getAngle();
     std::cout << "現在角度: " << currentAngle << " deg" << std::endl;
-    if(abs(currentAngle) >= 360.0f) break;
+    if(abs(currentAngle) >= 90.0f) break;
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 
