@@ -70,12 +70,18 @@ void IMUController::startAngleCalculation()
   // 既に計算中の場合は二重実行を防止
   if(isCalculating) return;
   isCalculating = true;
+  
+  // IMU周期ハンドラを開始
+  sta_cyc(IMU_CYC);
 }
 
 void IMUController::stopAngleCalculation()
 {
   if(!isCalculating) return;
   isCalculating = false;
+  
+  // IMU周期ハンドラを停止
+  stp_cyc(IMU_CYC);
 }
 
 void IMUController::updateAngleFromHandler()

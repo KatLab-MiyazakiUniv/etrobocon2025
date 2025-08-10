@@ -12,6 +12,7 @@
 #include <cmath>
 #include <chrono>
 #include <thread>
+#include "app.h"
 
 class IMUController {
  public:
