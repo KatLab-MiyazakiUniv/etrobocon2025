@@ -40,15 +40,18 @@ class MiniFigCameraAction : public CompositeMotion {
   void run() override;
 
  private:
-  bool isClockwise = false;          // カメラをミニフィグに向けるための回頭方向
-  int preTargetAngle = 90;           // カメラをミニフィグに向けるための回頭角度
-  int postTargetAngle = 90;          // 黒線復帰のための目標角度
-  double targetRotationSpeed = 200;  // 撮影前後の回頭のための目標速度
-  double backTargetDistance = 150;   // 撮影前の後退距離
+  bool isClockwise = false;            // カメラをミニフィグに向けるための回頭方向
+  int preTargetAngle = 90;             // カメラをミニフィグに向けるための回頭角度
+  int postTargetAngle = 90;            // 黒線復帰のための目標角度
+  double targetRotationSpeed = 200;    // 撮影前後の回頭のための目標速度
+  double backTargetDistance = 150;     // 撮影前の後退距離
   double forwardTargetDistance = 150;  // 撮影後の前進距離
   double backSpeed = 200;              // 撮影後の後退速度
   double forwardSpeed = 200;           // 撮影前の前進速度
-  int position = 0;  // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
+  int position = 0;                    // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
+  const std::string detectionTargetPath
+      = "etrobocon2025/datafiles/detection_target";  // 判定用画像ディレクトリのパス
+  const std::string detectionTargetName = "fig";     // ミニフィグ向き判定用画像ファイル名
   static constexpr const char* filePath
       = "etrobocon2025/datafiles/figures/";  // ミニフィグ画像保存先のディレクトリパス
   static constexpr const char* uploadFileName = "upload_front_fig";  // アップロード用の画像名

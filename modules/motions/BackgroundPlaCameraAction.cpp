@@ -43,7 +43,8 @@ void BackgroundPlaCameraAction::detectDirection(cv::Mat& frame)
   cout << "風景の向きの判定開始" << endl;
   BackgroundDirectionDetector detector;
   // 風景の向きを判定
-  detector.detect(frame, robot.getBackgroundDirectionResult());
+  FrameSave::save(frame, detectionTargetPath, detectionTargetName);
+  detector.detect(robot.getBackgroundDirectionResult());
   cout << "風景の向きの判定終了" << endl;
   // 検出結果を取得
   BackgroundDirectionResult& result = robot.getBackgroundDirectionResult();
