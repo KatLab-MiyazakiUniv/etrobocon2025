@@ -47,8 +47,10 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 help:
 	@echo ビルドする
 	@echo " $$ make build"
-	@echo 背景検出を行う
+	@echo 背景向き判定を行う
 	@echo " $$ make background-detection"
+	@echo ミニフィグ向き判定を行う
+	@echo " $$ make fig-detection"
 	@echo buildディレクトリを削除する
 	@echo " $$ make clean"
 	@echo 一時/エディタ生成ファイルのみ削除
@@ -63,6 +65,10 @@ help:
 background-detection:
 	@mkdir -p result
 	./$(TARGET) background
+
+fig-detection:
+	@mkdir -p result
+	./$(TARGET) fig
 
 build: clean $(TARGET)
 
