@@ -12,8 +12,8 @@ BackgroundDirectionDetector::BackgroundDirectionDetector() {}
 
 void BackgroundDirectionDetector::detect(BackgroundDirectionResult& result)
 {
-  int result = CommandExecutor::exec(command);
-  if(result != 0) {
+  int commandResult = CommandExecutor::exec(command);
+  if(commandResult != 0) {
     std::cerr << "コマンド実行に失敗しました" << std::endl;
     result.wasDetected = false;
     return;
