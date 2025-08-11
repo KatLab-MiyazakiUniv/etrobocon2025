@@ -30,7 +30,7 @@ class BackgroundDirectionDetector {
                               = "../datafiles/models/BackgroundDetector.onnx");
 
   /**
-   * @brief         入力画像から風景の向きを判定し、結果を result に格納する
+   * @brief 入力画像から風景の向きを判定し、結果を result に格納する
    */
   void detect();
 
@@ -41,7 +41,7 @@ class BackgroundDirectionDetector {
   std::vector<std::string> outputNames;
   const std::string modelPath;  // モデルのパス
   const std::string outputImagePath
-      = "../../tests/test_images/"
+      = "../datafiles/processed_images/"
         "background_detected_result.jpg";  // バウンディングボックス付きの画像パス
   const std::string outputJsonPath
       = "result/background_result.json";  // 風景の向きを判定した結果を出力するファイルパス
