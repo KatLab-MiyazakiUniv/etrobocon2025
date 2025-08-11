@@ -6,6 +6,8 @@ datafiles/models
 datafiles/figures
 tests/test_images
 third_party
+yolo_detection_system/result
+yolo_detection_system/build
 
 # yoloモデル
 *.onnx
