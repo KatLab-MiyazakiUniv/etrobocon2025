@@ -19,18 +19,6 @@ if(ENABLE_COVERAGE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()
 
-# ONNX Runtime の設定
-if(DEFINED ENV{ONNXRUNTIME_DIR})
-  set(ONNXRUNTIME_DIR $ENV{ONNXRUNTIME_DIR})
-else()
-  message(FATAL_ERROR "Environment variable ONNXRUNTIME_DIR is not set")
-endif()
-set(ONNXRUNTIME_INCLUDE_DIR "${ONNXRUNTIME_DIR}/include")
-set(ONNXRUNTIME_LIB_DIR "${ONNXRUNTIME_DIR}/lib")
-
-include_directories(${ONNXRUNTIME_INCLUDE_DIR})
-link_directories(${ONNXRUNTIME_LIB_DIR})
-
 # GoogleTest のフェッチとビルド
 include(FetchContent)
 FetchContent_Declare(
@@ -77,7 +65,7 @@ list(FILTER PROJECT_SOURCES EXCLUDE REGEX ".*/modules/utils/CommandExecutor\\.cp
 # プロジェクトのライブラリターゲットを作成
 add_library(${PROJECT_NAME}_impl STATIC ${PROJECT_SOURCES})
 target_include_directories(${PROJECT_NAME}_impl PUBLIC ${INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME}_impl ${OpenCV_LIBS} onnxruntime)
+target_link_libraries(${PROJECT_NAME}_impl ${OpenCV_LIBS})
 
 # テスト設定
 enable_testing()
@@ -98,7 +86,6 @@ target_link_libraries(${PROJECT_NAME}_test
     ${PROJECT_NAME}_impl
     gtest_main
     ${OpenCV_LIBS}
-    onnxruntime
 )
 
 # テストの登録

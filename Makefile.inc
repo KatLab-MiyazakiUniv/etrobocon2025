@@ -30,15 +30,12 @@ INCLUDES += \
 	-I$(mkfile_path)modules/common\
 	-I$(mkfile_path)modules/motions\
 	-I$(mkfile_path)modules/image_processors\
-	-I$(mkfile_path)modules/camera \
-	-I$(mkfile_path)modules/utils \
-	-I$(mkfile_path)../../common/library/libcpp-spike/include \
-	-I/usr/include/opencv4 \
-	-I$(mkfile_path)third_party/onnxruntime/include
+	-I$(mkfile_path)modules/camera\
+	-I$(mkfile_path)modules/utils\
+	-I$(mkfile_path)../../common/library/libcpp-spike/include\
+	-I/usr/include/opencv4
 
-APPL_LIBS += \
-	$(shell pkg-config --libs opencv4) \
-	$(mkfile_path)third_party/onnxruntime/lib
+APPL_LIBS += $(shell pkg-config --libs opencv4)
 
 CXXFLAGS += -std=c++11 -pthread
 LDFLAGS += -pthread
