@@ -1,6 +1,4 @@
 MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-ONNXRUNTIME_DIR := $(MAKEFILE_PATH)third_party/onnxruntime
-export ONNXRUNTIME_DIR
 
 # サーバーのIPアドレス
 SERVER_IP = 192.168.11.16
@@ -36,8 +34,8 @@ build:
 
 # 実機の場合、走行を開始する
 start:
-	rm -rf  datafiles/detection_target
-	mkdir -p datafiles/detection_target
+	rm -rf  datafiles/detection_target yolo_detection_system/result
+	mkdir -p datafiles/detection_target yolo_detection_system/result
 	cd $(MAKEFILE_PATH)../ && make start
 
 ## テスト関連 ##
