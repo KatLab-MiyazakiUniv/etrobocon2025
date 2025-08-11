@@ -26,8 +26,8 @@ class BackgroundDirectionDetector {
   /**
    * コンストラクタ
    */
-  BackgroundDirectionDetector(const std::string& _modelPath
-                              = "../datafiles/models/BackgroundDetector.onnx");
+  BackgroundDirectionDetector(const std::string& modelPath
+                              = "../datafiles/models/11n_100epoch_&_640imgsz_background.onnx");
 
   /**
    * @brief 入力画像から風景の向きを判定し、結果を result に格納する
@@ -39,7 +39,6 @@ class BackgroundDirectionDetector {
   Ort::Session session;  // 推論セッション
   std::vector<std::string> inputNames;
   std::vector<std::string> outputNames;
-  const std::string modelPath;  // モデルのパス
   const std::string outputImagePath
       = "../datafiles/processed_images/"
         "background_detected_result.jpg";  // バウンディングボックス付きの画像パス

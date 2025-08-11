@@ -25,7 +25,7 @@ class MiniFigDirectionDetector {
  public:
   // コンストラクタ
   MiniFigDirectionDetector(const std::string& modelPath
-                           = "../datafiles/models/yolo_optimized.onnx");
+                           = "../datafiles/models/11n_100epoch_&_650imgsz_fig.onnx");
 
   /**
    * @brief 入力画像からミニフィグの向きを判定し、結果を result に格納する

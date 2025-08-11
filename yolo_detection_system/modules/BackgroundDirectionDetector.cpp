@@ -11,10 +11,8 @@ using namespace dnn;
 using namespace std;
 using json = nlohmann::json;
 
-BackgroundDirectionDetector::BackgroundDirectionDetector(const string& _modelPath)
-  : env(ORT_LOGGING_LEVEL_WARNING, "BackgroundDirectionDetector"),
-    session(nullptr),
-    modelPath(_modelPath)
+BackgroundDirectionDetector::BackgroundDirectionDetector(const string& modelPath)
+  : env(ORT_LOGGING_LEVEL_WARNING, "BackgroundDirectionDetector"), session(nullptr)
 {
   // セッション設定
   Ort::SessionOptions sessionOptions;
