@@ -36,6 +36,7 @@ build:
 
 # 実機の場合、走行を開始する
 start:
+	@mkdir -p datafiles/detection_target
 	cd $(MAKEFILE_PATH)../ && make start
 
 ## テスト関連 ##
