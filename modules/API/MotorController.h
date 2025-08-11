@@ -6,8 +6,8 @@
 #ifndef MOTOR_MOTORCONTROLLER_H
 #define MOTOR_MOTORCONTROLLER_H
 
-#include "Motor.h"
 #include "SystemInfo.h"  // WHEEL_RADIUS, PI, RAD_TO_DEG, DEG_TO_RADの定義を含む
+#include "spike_client/SpikeClient.h"
 
 class MotorController {
  public:
@@ -20,7 +20,7 @@ class MotorController {
   /**
    * コンストラクタ
    */
-  MotorController();
+  explicit MotorController(SpikeClient& spikeClient);
 
   /**
    * @brief 右タイヤのモータにPower値をセット
@@ -142,9 +142,7 @@ class MotorController {
   double getLeftMotorSpeed();
 
  private:
-  spikeapi::Motor rightWheel;  // 右タイヤモータのインスタンス
-  spikeapi::Motor leftWheel;   // 左タイヤモータのインスタンス
-  spikeapi::Motor armMotor;    // アームモータのインスタンス
+  SpikeClient& spikeClient;  // SpikeClientのインスタンス
 
   /**
    * @brief モータに設定するpower値の制限

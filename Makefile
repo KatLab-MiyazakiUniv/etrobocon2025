@@ -29,8 +29,13 @@ help:
 	@echo " $$ make upload-image"
 
 ## 実行関連 ##
-build:
+build-server:
 	cd $(MAKEFILE_PATH)../ && make img=etrobocon2025
+
+build-client:
+	@echo "Building client..."
+	$(MAKE) -f Makefile.client
+
 
 # 実機の場合、走行を開始する
 start:

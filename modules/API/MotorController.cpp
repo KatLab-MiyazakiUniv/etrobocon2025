@@ -1,159 +1,154 @@
-/**
- * @file MotorController.cpp
- * @brief モータ制御に用いる関数をまとめたラッパークラス
- * @author nishijima515
- */
 #include "MotorController.h"
+#include <string>
+#include <vector>
+#include "../common/StringOperator.h"
 
-using namespace spikeapi;
-
-MotorController::MotorController()
-  : rightWheel(EPort::PORT_A),
-    leftWheel(EPort::PORT_B, Motor::EDirection::COUNTERCLOCKWISE),
-    armMotor(EPort::PORT_C, Motor::EDirection::COUNTERCLOCKWISE)
+MotorController::MotorController(SpikeClient& client)
+  : spikeClient(client)
 {
-}
-
-// モータに設定するpower値の制限
-int MotorController::limitPowerValue(int inputPower)
-{
-  if(inputPower > MOTOR_POWER_MAX) {
-    return MOTOR_POWER_MAX;
-  } else if(inputPower < MOTOR_POWER_MIN) {
-    return MOTOR_POWER_MIN;
-  }
-  return inputPower;
 }
 
 // 右モータにpower値をセット
 void MotorController::setRightMotorPower(int power)
 {
-  rightWheel.setPower(limitPowerValue(power));
+  std::string command = "motor,set_power,right,";
+  command += std::to_string(power);
+  spikeClient.sendCommand(command);
 }
 
 // 左モータにpower値をセット
 void MotorController::setLeftMotorPower(int power)
 {
-  leftWheel.setPower(limitPowerValue(power));
+  std::string command = "motor,set_power,left,";
+  command += std::to_string(power);
+  spikeClient.sendCommand(command);
 }
 
 // 右モータのpower値をリセット
 void MotorController::resetRightMotorPower()
 {
-  rightWheel.setPower(0);
+  setRightMotorPower(0);
 }
 
 // 左モータのpower値をリセット
 void MotorController::resetLeftMotorPower()
 {
-  leftWheel.setPower(0);
+  setLeftMotorPower(0);
 }
 
 // 右左両モータの状態をリセット
 void MotorController::resetWheelsMotorPower()
 {
-  rightWheel.setPower(0);
-  leftWheel.setPower(0);
+  resetRightMotorPower();
+  resetLeftMotorPower();
 }
 
 // 右タイヤのモータに,線速度を回転速度に変換しセットする
 void MotorController::setRightMotorSpeed(double speed)
 {
-  int rightAngleSpeed = static_cast<int>(speed / WHEEL_RADIUS * (RAD_TO_DEG));
-  rightWheel.setSpeed(rightAngleSpeed);
+  std::string command = "motor,set_speed,right,";
+  command += std::to_string(speed);
+  spikeClient.sendCommand(command);
 }
 
 // 左タイヤのモータに,線速度を回転速度に変換しセットする
 void MotorController::setLeftMotorSpeed(double speed)
 {
-  int leftAngleSpeed = static_cast<int>(speed / WHEEL_RADIUS * (RAD_TO_DEG));
-  leftWheel.setSpeed(leftAngleSpeed);
+  std::string command = "motor,set_speed,left,";
+  command += std::to_string(speed);
+  spikeClient.sendCommand(command);
 }
 
 // 両タイヤのモータを停止する
 void MotorController::stopWheelsMotor()
 {
-  rightWheel.stop();
-  leftWheel.stop();
+  spikeClient.sendCommand("motor,stop_wheels");
 }
 
 // ブレーキをかけてタイヤのモータを停止する
 void MotorController::brakeWheelsMotor()
 {
-  rightWheel.brake();
-  leftWheel.brake();
+    spikeClient.sendCommand("motor,brake_wheels");
 }
 
 // アームのモータにpower値をセット
 void MotorController::setArmMotorPower(int power)
 {
-  armMotor.setPower(limitPowerValue(power));
+  std::string command = "motor,set_power,arm,";
+  command += std::to_string(power);
+  spikeClient.sendCommand(command);
 }
 
 // アームのモータのpower値をリセット
 void MotorController::resetArmMotorPower()
 {
-  armMotor.setPower(0);
+  setArmMotorPower(0);
 }
 
 // アームのモータを停止する
 void MotorController::stopArmMotor()
 {
-  armMotor.stop();
+  spikeClient.sendCommand("motor,stop_arm");
 }
 
 // アームモータを止めて角度を維持する
 void MotorController::holdArmMotor()
 {
-  armMotor.hold();
-}
-
-// 右タイヤのpower値を取得する
-int MotorController::getRightMotorPower()
-{
-  return rightWheel.getPower();
-}
-
-// 左タイヤのpower値を取得する
-int MotorController::getLeftMotorPower()
-{
-  return leftWheel.getPower();
-}
-
-// アームモータのpower値を取得する
-int MotorController::getArmMotorPower()
-{
-  return armMotor.getPower();
+  spikeClient.sendCommand("motor,hold_arm");
 }
 
 // 右モータの角位置を取得する
 int32_t MotorController::getRightMotorCount()
 {
-  return rightWheel.getCount();
+  std::string res = spikeClient.sendCommand("motor,get_count,right");
+  return std::stoi(res);
 }
 
 // 左モータの角位置を取得する
 int32_t MotorController::getLeftMotorCount()
 {
-  return leftWheel.getCount();
+  std::string res = spikeClient.sendCommand("motor,get_count,left");
+  return std::stoi(res);
 }
 
 // アームモータの角位置を取得する
 int32_t MotorController::getArmMotorCount()
 {
-  return armMotor.getCount();
+  std::string res = spikeClient.sendCommand("motor,get_count,arm");
+  return std::stoi(res);
+}
+
+// 右タイヤのpower値を取得する
+int MotorController::getRightMotorPower()
+{
+    std::string res = spikeClient.sendCommand("motor,get_power,right");
+    return std::stoi(res);
+}
+
+// 左タイヤのpower値を取得する
+int MotorController::getLeftMotorPower()
+{
+    std::string res = spikeClient.sendCommand("motor,get_power,left");
+    return std::stoi(res);
+}
+
+// アームモータのpower値を取得する
+int MotorController::getArmMotorPower()
+{
+    std::string res = spikeClient.sendCommand("motor,get_power,arm");
+    return std::stoi(res);
 }
 
 // 右タイヤモータの線速度を取得する
 double MotorController::getRightMotorSpeed()
 {
-  double rightSpeed = rightWheel.getSpeed() * DEG_TO_RAD * WHEEL_RADIUS;
-  return rightSpeed;
+    std::string res = spikeClient.sendCommand("motor,get_speed,right");
+    return std::stod(res);
 }
 
 // 左タイヤモータの線速度を取得する
 double MotorController::getLeftMotorSpeed()
 {
-  double leftSpeed = leftWheel.getSpeed() * DEG_TO_RAD * WHEEL_RADIUS;
-  return leftSpeed;
+    std::string res = spikeClient.sendCommand("motor,get_speed,left");
+    return std::stod(res);
 }

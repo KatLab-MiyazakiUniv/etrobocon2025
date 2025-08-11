@@ -1,33 +1,28 @@
-/**
- * @file   Robot.cpp
- * @brief  外部リソースのインスタンスを管理するクラス
- * @author takuchi17
- */
-
 #include "Robot.h"
 
 Robot::Robot()
-  : motorController(),
+  : spikeClient(),
+    motorController(spikeClient),
     defaultCameraCapture(),
     cameraCapture(defaultCameraCapture),
-    colorSensor(EPort::PORT_E),
-    clock(),
-    button(),
-    forceSensor(EPort::PORT_D),
-    display()
+    colorSensor(spikeClient),
+    clock(spikeClient),
+    button(spikeClient),
+    forceSensor(spikeClient),
+    display(spikeClient)
 {
 }
 
-// DI(依存性注入)用コンストラクタ
 Robot::Robot(ICameraCapture& cam)
-  : motorController(),
+  : spikeClient(),
+    motorController(spikeClient),
     defaultCameraCapture(),
     cameraCapture(cam),
-    colorSensor(EPort::PORT_E),
-    clock(),
-    button(),
-    forceSensor(EPort::PORT_D),
-    display()
+    colorSensor(spikeClient),
+    clock(spikeClient),
+    button(spikeClient),
+    forceSensor(spikeClient),
+    display(spikeClient)
 {
 }
 
@@ -41,44 +36,44 @@ ICameraCapture& Robot::getCameraCaptureInstance()
   return cameraCapture;
 }
 
-spikeapi::ColorSensor& Robot::getColorSensorInstance()
+ColorSensorClient& Robot::getColorSensorInstance()
 {
   return colorSensor;
 }
 
-spikeapi::Clock& Robot::getClockInstance()
+ClockClient& Robot::getClockInstance()
 {
   return clock;
 }
 
-spikeapi::Button& Robot::getButtonInstance()
+ButtonClient& Robot::getButtonInstance()
 {
   return button;
 }
 
-spikeapi::ForceSensor& Robot::getForceSensorInstance()
+ForceSensorClient& Robot::getForceSensorInstance()
 {
   return forceSensor;
 }
 
-spikeapi::Display& Robot::getDisplayInstance()
+DisplayClient& Robot::getDisplayInstance()
 {
   return display;
 }
 
 MiniFigDirectionResult& Robot::getMiniFigDirectionResult()
 {
-  return miniFigDirectionResult;  // ミニフィグの向き検出結果を返す
+  return miniFigDirectionResult;
 }
 
 BackgroundDirectionResult& Robot::getBackgroundDirectionResult()
 {
-  return backgroundDirectionResult;  // 背景の向き検出結果を返す
+  return backgroundDirectionResult;
 }
 
 void Robot::setIsLeftEdge(bool isLeft)
 {
-  isLeftEdge = isLeft;  // エッジの左右判定を設定
+  isLeftEdge = isLeft;
 }
 
 bool Robot::getIsLeftEdge() const

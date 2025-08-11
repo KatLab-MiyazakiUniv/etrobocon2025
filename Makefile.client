@@ -1,0 +1,65 @@
+# Compiler and flags
+CXX := g++
+CXXFLAGS := -std=c++11 -I/usr/include/opencv4
+LDFLAGS += -pthread
+
+# OpenCV libs
+OPENCV_LIBS := $(shell pkg-config --libs opencv4)
+
+# Directories
+BUILD_DIR := build
+MODULES_DIR := modules
+
+# Sources (相対パスで管理)
+SRCS := $(shell find $(MODULES_DIR) -name '*.cpp')
+SRCS += client_main.cpp
+
+# Application directories
+APPL_DIRS += $(mkfile_path)modules\
+	$(mkfile_path)modules/API\
+	$(mkfile_path)modules/calculators\
+	$(mkfile_path)modules/common\
+	$(mkfile_path)modules/motions\
+	$(mkfile_path)modules/image_processors\
+	$(mkfile_path)modules/camera\
+	$(mkfile_path)modules/utils\
+	$(mkfile_path)../../common/library/libcpp-spike/src
+
+# Includes
+INCLUDES += \
+	-I$(mkfile_path)modules\
+	-I$(mkfile_path)modules/API\
+	-I$(mkfile_path)modules/calculators\
+	-I$(mkfile_path)modules/common\
+	-I$(mkfile_path)modules/motions\
+	-I$(mkfile_path)modules/image_processors\
+	-I$(mkfile_path)modules/camera \
+	-I$(mkfile_path)modules/utils \
+	-I$(mkfile_path)modules/spike_client \
+	-I$(mkfile_path)../../common/library/libcpp-spike/include \
+	-I/usr/include/opencv4
+CXXFLAGS += $(INCLUDES)
+
+# Objects
+OBJS := $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(SRCS))
+
+# Target
+TARGET := etrobocon_client
+
+# Default
+all: $(TARGET)
+
+# Link
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(OPENCV_LIBS)
+
+# Compile rule
+$(BUILD_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+# Clean
+clean:
+	rm -rf $(BUILD_DIR) $(TARGET)
+
+.PHONY: all clean

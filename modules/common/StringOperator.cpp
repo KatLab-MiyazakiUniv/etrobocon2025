@@ -1,29 +1,30 @@
-/**
- * @file   StringOperator.cpp
- * @brief  文字列を操作するstatic関数を持つクラス
- * @author Hara1274
- */
-
 #include "StringOperator.h"
+#include <algorithm>
+#include <vector>
 
 std::string StringOperator::removeEOL(const std::string& str)
 {
-  if(str.empty()) {
-    return str;
-  }
-
-  size_t endIndex = str.size() - 1;
-
-  // 末尾の改行コードを削除（LF,CR,CR+LF対応）
-  // LFの場合
-  if(str[endIndex] == 0x0a) {
-    endIndex--;
-  }
-  // CRの場合
-  if(endIndex != std::string::npos && str[endIndex] == 0x0d) {
-    endIndex--;
-  }
-
-  // substrの第2引数は長さなので +1 必要
-  return str.substr(0, endIndex + 1);
+  std::string result = str;
+  result.erase(std::remove(result.begin(), result.end(), '\n'), result.end());
+  result.erase(std::remove(result.begin(), result.end(), '\r'), result.end());
+  return result;
 }
+
+std::vector<std::string> StringOperator::split(const std::string& str, char del)
+{
+  std::vector<std::string> result;
+  std::string item;
+  for(char ch : str) {
+    if(ch == del) {
+      result.push_back(item);
+      item.clear();
+    } else {
+      item += ch;
+    }
+  }
+  result.push_back(item);
+  return result;
+}
+
+StringOperator::StringOperator(){};
+

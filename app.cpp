@@ -6,12 +6,12 @@
 
 #include "app.h"
 #include <iostream>
-#include "EtRobocon2025.h"
+#include "SpikeServer.h"
 
 // メインタスク
 void main_task(intptr_t unused)
 {
-  std::cout << "Hello ETROBO!" << std::endl;
-  EtRobocon2025::start();
+  std::cout << "This is Spike!" << std::endl;
+  SpikeServer::start();
   ext_tsk();
 }
