@@ -49,7 +49,7 @@ class BackgroundPlaCameraAction : public CompositeMotion {
   int position = 0;                    // 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
   cv::Rect roi;                        // 動体検出用の注目領域
   const std::string detectionTargetPath
-      = "etrobocon2025/datafiles/detection_target";      // 判定用画像ディレクトリのパス
+      = "etrobocon2025/datafiles/detection_target";  // 判定用画像ディレクトリのパス
   const std::string detectionTargetName = "background";  // 風景向き判定用画像ファイル名
 
   /**
