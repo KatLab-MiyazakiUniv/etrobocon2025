@@ -13,13 +13,13 @@ bool ImageUploader::uploadImage(const std::string& filePath, const std::string& 
 {
   // 空のファイルパスのチェック
   if(filePath.empty()) {
-    std::cerr << "Error: Empty file path provided" << std::endl;
+    std::cerr << "エラー: ファイルパスが空です" << std::endl;
     return false;
   }
 
   // 空のファイル名のチェック
   if(uploadFileName.empty()) {
-    std::cerr << "Error: Empty upload file name provided" << std::endl;
+    std::cerr << "エラー: アップロード用ファイル名が空です" << std::endl;
     return false;
   }
 
@@ -35,7 +35,7 @@ bool ImageUploader::uploadImage(const std::string& filePath, const std::string& 
   // ファイル存在チェック
   std::ifstream file(fullImagePath);
   if(!file.good()) {
-    std::cerr << "Error: File does not exist: " << fullImagePath << std::endl;
+    std::cerr << "エラー: ファイルが存在しません: " << fullImagePath << std::endl;
     return false;
   }
 
@@ -44,7 +44,7 @@ bool ImageUploader::uploadImage(const std::string& filePath, const std::string& 
 
   // 無効な最大試行回数のチェック
   if(maxAttempts <= 0) {
-    std::cerr << "Error: Invalid retry count: " << maxAttempts << std::endl;
+    std::cerr << "エラー: 無効な再試行回数: " << maxAttempts << std::endl;
     return false;
   }
 
@@ -59,6 +59,6 @@ bool ImageUploader::uploadImage(const std::string& filePath, const std::string& 
     attempts++;
   }
 
-  std::cerr << "Upload failed after " << maxAttempts << " attempts" << std::endl;
+  std::cerr << "アップロードが" << maxAttempts << "回の試行後に失敗しました" << std::endl;
   return false;
 }
