@@ -29,10 +29,7 @@ JSON_INC ?=
 INC := -I$(SRC_DIR) -I$(ONNX_INC) $(JSON_INC) $(OPENCV_CFLAGS)
 LIB := -L$(ONNX_LIB) -lonnxruntime $(OPENCV_LIBS) -pthread -Wl,-rpath,$(ONNX_LIB)
 
-SRCS := \
-	$(SRC_DIR)/main.cpp \
-	$(SRC_DIR)/BackgroundDirectionDetector.cpp \
-	$(SRC_DIR)/MiniFigDirectionDetector.cpp
+SRCS := $(wildcard $(SRC_DIR)/*.cpp)
 
 OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
