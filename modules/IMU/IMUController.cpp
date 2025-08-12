@@ -1,13 +1,10 @@
 /**
  * @file   IMUController.cpp
  * @brief  IMU制御クラス
- * @author Hara1274
+ * @author Hara1274 takuchi17
  */
 
 #include "IMUController.h"
-#include <chrono>
-#include <thread>
-#include <iostream>
 
 IMUController::IMUController()
   : imu(),
