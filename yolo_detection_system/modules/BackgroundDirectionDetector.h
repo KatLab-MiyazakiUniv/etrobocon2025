@@ -17,7 +17,7 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 
-#define MODEL_INPUT_SIZE 640
+#define MODEL_INPUT_SIZE 640       // モデルの入力サイズ（640x640）
 #define CONFIDENCE_THRESHOLD 0.5f  // 検出結果を採用する最低信頼度の閾値
 #define NMS_THRESHOLD 0.5f         // 検出ボックス同士の重なりを判断する閾値
 
@@ -25,6 +25,7 @@ class BackgroundDirectionDetector {
  public:
   /**
    * コンストラクタ
+   * @param YOLOモデルのパス
    */
   BackgroundDirectionDetector(const std::string& modelPath
                               = "../datafiles/models/11n_100epoch_&_640imgsz_background.onnx");
@@ -35,10 +36,10 @@ class BackgroundDirectionDetector {
   void detect();
 
  private:
-  Ort::Env env;          // ONNX Runtime 環境
-  Ort::Session session;  // 推論セッション
-  std::vector<std::string> inputNames;
-  std::vector<std::string> outputNames;
+  Ort::Env env;                          // ONNX Runtime 環境
+  Ort::Session session;                  // 推論セッション
+  std::vector<std::string> inputNames;   // モデルの入力名
+  std::vector<std::string> outputNames;  // モデルの出力名
   const std::string inputImagePath
       = "../datafiles/detection_target/background.JPEG";  // 判定用画像のパス
   const std::string outputImagePath
@@ -58,7 +59,7 @@ class BackgroundDirectionDetector {
   cv::Mat preprocess(const cv::Mat& frame, float scale, int padX, int padY);
 
   /**
-   * @brief 出力結果を後処理して検出結果を生成する関数
+   * @brief         出力結果を後処理して検出結果を生成する関数
    * @param outputs ネットワークの出力結果
    * @param frame   入力画像フレーム
    * @param scale   スケール係数

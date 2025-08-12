@@ -89,6 +89,7 @@ Mat BackgroundDirectionDetector::preprocess(const Mat& frame, float scale, int p
 
 vector<vector<float>> BackgroundDirectionDetector::infer(const Mat& inputImage)
 {
+  // ONNX Runtime で推論を行うために、引数の型を適した形に変換する
   size_t inputTensorSize = MODEL_INPUT_SIZE * MODEL_INPUT_SIZE * 3;
   vector<float> inputTensorValues(inputTensorSize);
   memcpy(inputTensorValues.data(), inputImage.data, inputTensorSize * sizeof(float));
@@ -108,9 +109,11 @@ vector<vector<float>> BackgroundDirectionDetector::infer(const Mat& inputImage)
   outputNamesCStr.reserve(outputNames.size());
   for(auto& s : outputNames) outputNamesCStr.push_back(s.c_str());
 
+  // 推論
   auto outputTensors = session.Run(Ort::RunOptions{ nullptr }, inputNamesCStr.data(), &inputTensor,
                                    1, outputNamesCStr.data(), outputNamesCStr.size());
 
+  // 推論の結果をfloatのベクター配列に変換
   vector<vector<float>> results;
   results.reserve(outputTensors.size());
 

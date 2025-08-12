@@ -23,7 +23,10 @@
 
 class MiniFigDirectionDetector {
  public:
-  // コンストラクタ
+  /**
+   * コンストラクタ
+   * @param YOLOモデルのパス
+   */
   MiniFigDirectionDetector(const std::string& modelPath
                            = "../datafiles/models/11n_100epoch_&_650imgsz_fig.onnx");
 
@@ -33,10 +36,10 @@ class MiniFigDirectionDetector {
   void detect();
 
  private:
-  Ort::Env env;          // ONNX Runtime 環境
-  Ort::Session session;  // 推論セッション
-  std::vector<std::string> inputNames;
-  std::vector<std::string> outputNames;
+  Ort::Env env;                                                                 // ONNX Runtime 環境
+  Ort::Session session;                                                         // 推論セッション
+  std::vector<std::string> inputNames;                                          // モデルの入力名
+  std::vector<std::string> outputNames;                                         // モデルの出力名
   const std::string inputImagePath = "../datafiles/detection_target/fig.JPEG";  // 判定用画像のパス
   const std::string outputImagePath
       = "../datafiles/processed_images/"
@@ -55,7 +58,7 @@ class MiniFigDirectionDetector {
   cv::Mat preprocess(const cv::Mat& frame, float scale, int padX, int padY);
 
   /**
-   * @brief 出力結果を後処理して検出結果を生成する関数
+   * @brief         出力結果を後処理して検出結果を生成する関数
    * @param outputs ネットワークの出力結果
    * @param frame   入力画像フレーム
    * @param scale   スケール係数
