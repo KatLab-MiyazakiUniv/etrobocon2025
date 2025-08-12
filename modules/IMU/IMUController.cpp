@@ -17,6 +17,15 @@ IMUController::IMUController()
 {
 }
 
+void IMUController::getRawAngularVelocity(float angv[3])
+{
+  spikeapi::IMU::AngularVelocity ang;
+  imu.getAngularVelocity(ang);
+  angv[0] = ang.x;  // 生のX軸角速度
+  angv[1] = ang.y;  // 生のY軸角速度
+  angv[2] = ang.z;  // 生のZ軸角速度
+}
+
 void IMUController::calculateOffset()
 {
   float tempAngularVelocity[3];  // 角速度取得用の一時配列
@@ -33,7 +42,7 @@ void IMUController::calculateOffset()
 
   // オフセットの計算(1秒間で1000回測定して平均取る)
   for(int i = 0; i < 1000; i++) {
-    getAngularVelocity(tempAngularVelocity);  // 角速度取得
+    getRawAngularVelocity(tempAngularVelocity);  // 角速度取得
     offsetX += tempAngularVelocity[0];
     offsetY += tempAngularVelocity[1];
     offsetZ += tempAngularVelocity[2];
@@ -45,17 +54,6 @@ void IMUController::calculateOffset()
   offsetZ = offsetZ / 1000.0f;
 
   std::cout << "IMUオフセット計算が完了しました。" << std::endl;
-  std::cout << "オフセット値 - X: " << offsetX << ", Y: " << offsetY << ", Z: " << offsetZ
-            << " deg/s" << std::endl;
-}
-
-void IMUController::getAngularVelocity(float angv[3])
-{
-  spikeapi::IMU::AngularVelocity ang;
-  imu.getAngularVelocity(ang);
-  angv[0] = ang.x;
-  angv[1] = ang.y;
-  angv[2] = ang.z;
 }
 
 float IMUController::getAngle() const
@@ -109,9 +107,9 @@ void IMUController::angleCalculationLoop()
     auto measurementStartTime = std::chrono::high_resolution_clock::now();
 
     // IMUから角速度を取得し、53度傾きとオフセットを補正
-    getAngularVelocity(tempAngularVelocity);
-    currentAngularVelocity
-        = (tempAngularVelocity[2] - offsetZ) * COS_TILT_ANGLE - (tempAngularVelocity[0] - offsetX) * SIN_TILT_ANGLE;
+    getRawAngularVelocity(tempAngularVelocity);
+    currentAngularVelocity = (tempAngularVelocity[2] - offsetZ) * COS_TILT_ANGLE
+                             - (tempAngularVelocity[0] - offsetX) * SIN_TILT_ANGLE;
 
     // 測定終了時刻を記録
     auto measurementEndTime = std::chrono::high_resolution_clock::now();

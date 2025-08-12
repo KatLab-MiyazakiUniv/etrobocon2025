@@ -22,19 +22,15 @@ class IMUController {
   IMUController();
 
   /**
+   * @brief 生の角速度を取得する（補正なし）
+   * @param angv 生の角速度格納用配列[3] (X, Y, Z軸)
+   */
+  void getRawAngularVelocity(float angv[3]);
+
+  /**
    * @brief オフセットを計算して設定する
    */
   void calculateOffset();
-
-  /**
-   * @brief 角度計算を開始する
-   */
-  void startAngleCalculation();
-
-  /**
-   * @brief 角度計算を終了する
-   */
-  void stopAngleCalculation();
 
   /**
    * @brief 計測結果の角度を取得する
@@ -48,10 +44,14 @@ class IMUController {
   void resetAngle();
 
   /**
-   * @brief 角速度を取得する
-   * @param angv 角速度格納用配列[3] (X, Y, Z軸)
+   * @brief 角度計算を開始する
    */
-  void getAngularVelocity(float angv[3]);
+  void startAngleCalculation();
+
+  /**
+   * @brief 角度計算を終了する
+   */
+  void stopAngleCalculation();
 
  private:
   /**
