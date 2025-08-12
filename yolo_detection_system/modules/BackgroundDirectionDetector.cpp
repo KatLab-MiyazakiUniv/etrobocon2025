@@ -36,7 +36,7 @@ void BackgroundDirectionDetector::detect()
   }
 
   // 入力画像を読み込み
-  Mat frame = imread("../datafiles/detection_target/background.JPEG");
+  Mat frame = imread(inputImagePath);
 
   // 入力画像が空かどうかチェック
   if(frame.empty()) {

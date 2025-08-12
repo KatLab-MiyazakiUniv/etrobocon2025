@@ -39,6 +39,8 @@ class BackgroundDirectionDetector {
   Ort::Session session;  // 推論セッション
   std::vector<std::string> inputNames;
   std::vector<std::string> outputNames;
+  const std::string inputImagePath
+      = "../datafiles/detection_target/background.JPEG";  // 判定用画像のパス
   const std::string outputImagePath
       = "../datafiles/processed_images/"
         "background_detected_result.jpg";  // バウンディングボックス付きの画像パス
