@@ -8,7 +8,7 @@
 #define COLOR_JUDGE_H
 
 #include <string>
-#include "ColorSensor.h"
+#include "../common/SpikeCommand.h"
 
 enum class COLOR : int {
   NONE = 0,
@@ -41,7 +41,7 @@ class ColorJudge {
    * @param hsv値を設定するHSV構造体、h(16ビット)、s(8ビット)、v(8ビット)
    * @return 色（hsvによる表現）
    */
-  static COLOR convertHsvToColor(const spikeapi::ColorSensor::HSV& hsv);
+  static COLOR convertHsvToColor(const spike::HsvResponse& hsv);
 
  private:
   ColorJudge();

@@ -5,18 +5,27 @@ ButtonClient::ButtonClient(SpikeClient& client) : spikeClient(client) {}
 
 bool ButtonClient::isRightPressed()
 {
-  std::string response = spikeClient.sendCommand("button,is_right_pressed");
-  return response == "true";
+    auto res = spikeClient.executeQuery<bool>(
+        spike::CommandId::BUTTON_IS_PRESSED,
+        spike::ButtonTarget::RIGHT
+    );
+    return res.value_or(false);
 }
 
 bool ButtonClient::isLeftPressed()
 {
-  std::string response = spikeClient.sendCommand("button,is_left_pressed");
-  return response == "true";
+    auto res = spikeClient.executeQuery<bool>(
+        spike::CommandId::BUTTON_IS_PRESSED,
+        spike::ButtonTarget::LEFT
+    );
+    return res.value_or(false);
 }
 
 bool ButtonClient::isCenterPressed()
 {
-  std::string response = spikeClient.sendCommand("button,is_center_pressed");
-  return response == "true";
+    auto res = spikeClient.executeQuery<bool>(
+        spike::CommandId::BUTTON_IS_PRESSED,
+        spike::ButtonTarget::CENTER
+    );
+    return res.value_or(false);
 }

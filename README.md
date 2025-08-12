@@ -33,10 +33,15 @@ docker-compose run --rm etrobocon
 - Dockerイメージから構築する場合
 ```etrobocon2025```で以下を順に実行
 1. (まだの場合は)bookworm環境のイメージを以下のコマンドで作成
+サーバープログラムもビルドしたい場合。
 ```shell
 docker buildx build --platform linux/arm64 -t kat_etrobo2025:arm64 .
 ```
-2. コンテナ作成と起動
+クライアントのみのビルドでよい場合。
+```shell
+docker buildx build --platform linux/amd64 -t kat_etrobo2025:amd64 .
+```
+1. コンテナ作成と起動
 ```shell
 docker run -it --rm -v $(pwd):/RasPike-ART/sdk/workspace/etrobocon2025 kat_etrobo2025:arm64 bash
 ```
@@ -52,7 +57,7 @@ id -g
 docker run -it --rm --user UID:GID -v $(pwd):/RasPike-ART/sdk/workspace/etrobocon2025 kat_etrobo2025:arm64 bash
 ```
 
-3. プロジェクトのビルド
+1. プロジェクトのビルド
 ```shell
 make build
 ```

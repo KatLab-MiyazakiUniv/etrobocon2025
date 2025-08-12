@@ -2,7 +2,7 @@
 #define ROBOT_H
 
 #include "SpikeClient.h"
-#include "MotorController.h"
+#include "MotorControllerClient.h"
 #include "ColorSensorClient.h"
 #include "ClockClient.h"
 #include "ButtonClient.h"
@@ -17,7 +17,7 @@ class Robot {
   Robot();
   Robot(ICameraCapture& cam);
 
-  MotorController& getMotorControllerInstance();
+  MotorControllerClient& getMotorControllerInstance();
   ICameraCapture& getCameraCaptureInstance();
   ColorSensorClient& getColorSensorInstance();
   ClockClient& getClockInstance();
@@ -31,7 +31,7 @@ class Robot {
 
  private:
   SpikeClient spikeClient;
-  MotorController motorController;
+  MotorControllerClient motorController;
   CameraCapture defaultCameraCapture;
   ICameraCapture& cameraCapture;
   ColorSensorClient colorSensor;

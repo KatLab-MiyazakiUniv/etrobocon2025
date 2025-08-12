@@ -29,17 +29,28 @@ help:
 	@echo " $$ make upload-image"
 
 ## 実行関連 ##
+build: smart-clean build-server build-client
+	@echo "ビルドが完了しました。"
+
 build-server:
 	cd $(MAKEFILE_PATH)../ && make img=etrobocon2025
 
+
 build-client:
 	@echo "Building client..."
-	$(MAKE) -f Makefile.client
+	$(MAKE) -j3 -f Makefile.client
+	@echo "ビルドが完了しました。"
 
 
-# 実機の場合、走行を開始する
+# ロボットが起動出来たら、etrobocon_clientを起動する
 start:
+	@echo "ロボット起動中..."
 	cd $(MAKEFILE_PATH)../ && make start
+	@echo "ロボットの起動が完了しました。"
+	@echo "ETRobocon2025起動中..."
+	cd $(MAKEFILE_PATH) && ./etrobocon_client
+	@echo "ETRobocon2025の起動が完了しました。"
+
 
 ## テスト関連 ##
 # テストのビルドディレクトリが存在しない場合は作成する
@@ -75,17 +86,20 @@ clean:
 	else \
 		echo "'build/' ディレクトリは既に存在しません。"; \
 	fi
+	@echo "クライアントのビルド成果物をクリーンアップ中..."
+	$(MAKE) -f Makefile.client clean
 
 # 実行環境が変更されている場合にのみ 'build' を削除する
 smart-clean:
+	@# Test build clean logic
 	@if [ -d $(MAKEFILE_PATH)bin/build ]; then \
 		if [ -f "$(MAKEFILE_PATH)bin/build/Makefile" ]; then \
 			CMAKE_SOURCE_DIR=`grep -E "^CMAKE_SOURCE_DIR[[:space:]]*=" $(MAKEFILE_PATH)bin/build/Makefile | cut -d= -f2 | xargs`; \
-			CMAKE_SOURCE_DIR_REAL=`readlink -f "$$CMAKE_SOURCE_DIR"`; \
-			CURRENT_DIR_REAL=`readlink -f "$$(pwd)"`; \
-			echo "[DEBUG] CMAKE_SOURCE_DIR: '$$CMAKE_SOURCE_DIR_REAL'"; \
-			echo "[DEBUG] CURRENT_DIR    : '$$CURRENT_DIR_REAL'"; \
-			if [ "$$CMAKE_SOURCE_DIR_REAL" != "$$CURRENT_DIR_REAL" ]; then \
+			CMAKE_SOURCE_DIR_REAL=`readlink -f "$CMAKE_SOURCE_DIR"`; \
+			CURRENT_DIR_REAL=`readlink -f "$(pwd)"`; \
+			echo "[DEBUG] CMAKE_SOURCE_DIR: '$CMAKE_SOURCE_DIR_REAL'"; \
+			echo "[DEBUG] CURRENT_DIR    : '$CURRENT_DIR_REAL'"; \
+			if [ "$CMAKE_SOURCE_DIR_REAL" != "$CURRENT_DIR_REAL" ]; then \
 				echo "[LOG] 実行環境の変更が検出されたため 'build' を削除します。"; \
 				rm -rf $(MAKEFILE_PATH)bin/build; \
 			else \
@@ -98,6 +112,14 @@ smart-clean:
 		fi; \
 	else \
 		echo "'build' ディレクトリは既に存在しません。"; \
+	fi
+	@# Client build clean logic
+	@if [ -d $(MAKEFILE_PATH)build ]; then \
+		echo "[LOG] クライアントのビルド環境をチェック中..."; \
+		$(MAKE) -f Makefile.client clean; \
+		echo "[LOG] クライアントのビルド成果物をクリーンアップしました。"; \
+	else \
+		echo "[LOG] クライアントの 'build' ディレクトリは既に存在しません。"; \
 	fi
 
 ## 開発関連 ##

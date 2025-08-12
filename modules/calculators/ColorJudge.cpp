@@ -5,6 +5,7 @@
  */
 
 #include "ColorJudge.h"
+#include "../common/SpikeCommand.h"
 
 COLOR ColorJudge::convertStringToColor(const std::string& str)
 {
@@ -37,7 +38,7 @@ const char* ColorJudge::convertColorToString(const COLOR& color)
   }
 }
 
-COLOR ColorJudge::convertHsvToColor(const spikeapi::ColorSensor::HSV& hsv)
+COLOR ColorJudge::convertHsvToColor(const spike::HsvResponse& hsv)
 {
   // HSV値がすべて0のときは黒
   if(hsv.h == 0 && hsv.s == 0 && hsv.v == 0) {
@@ -48,14 +49,14 @@ COLOR ColorJudge::convertHsvToColor(const spikeapi::ColorSensor::HSV& hsv)
     return COLOR::WHITE;
   }
   // 定数定義されている色の判定はH値(色相)で行う
-  switch(hsv.h) {
-    case PBIO_COLOR_HUE_RED:
+  switch(static_cast<int>(hsv.h)) {
+    case static_cast<int>(spike::ColorHue::RED):
       return COLOR::RED;
-    case PBIO_COLOR_HUE_YELLOW:
+    case static_cast<int>(spike::ColorHue::YELLOW):
       return COLOR::YELLOW;
-    case PBIO_COLOR_HUE_GREEN:
+    case static_cast<int>(spike::ColorHue::GREEN):
       return COLOR::GREEN;
-    case PBIO_COLOR_HUE_BLUE:
+    case static_cast<int>(spike::ColorHue::BLUE):
       return COLOR::BLUE;
     default:
       break;

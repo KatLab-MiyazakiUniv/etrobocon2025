@@ -1,15 +1,16 @@
 /**
- * @file MotorController.h
+ * @file MotorControllerClient.h
  * @brief モータ制御に用いる関数をまとめたラッパークラス
  * @author nishijima515
  */
-#ifndef MOTOR_MOTORCONTROLLER_H
-#define MOTOR_MOTORCONTROLLER_H
+#ifndef MOTOR_CONTROLLER_CLIENT_H
+#define MOTOR_CONTROLLER_CLIENT_H
 
 #include "SystemInfo.h"  // WHEEL_RADIUS, PI, RAD_TO_DEG, DEG_TO_RADの定義を含む
-#include "spike_client/SpikeClient.h"
+#include "SpikeClient.h"
+#include "SpikeCommand.h"
 
-class MotorController {
+class MotorControllerClient {
  public:
   /** Power値の上限 */
   static constexpr int MOTOR_POWER_MAX = 100;
@@ -20,7 +21,7 @@ class MotorController {
   /**
    * コンストラクタ
    */
-  explicit MotorController(SpikeClient& spikeClient);
+  explicit MotorControllerClient(SpikeClient& spikeClient);
 
   /**
    * @brief 右タイヤのモータにPower値をセット

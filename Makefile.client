@@ -1,6 +1,6 @@
 # Compiler and flags
 CXX := g++
-CXXFLAGS := -std=c++11 -I/usr/include/opencv4
+CXXFLAGS := -std=c++17 -I/usr/include/opencv4
 LDFLAGS += -pthread
 
 # OpenCV libs
@@ -11,7 +11,9 @@ BUILD_DIR := build
 MODULES_DIR := modules
 
 # Sources (相対パスで管理)
-SRCS := $(shell find $(MODULES_DIR) -name '*.cpp')
+SRCS := $(shell find $(MODULES_DIR) -name '*.cpp' | grep -v '$(MODULES_DIR)/spike_server/' | grep -v '$(MODULES_DIR)/spike_client/')
+SRCS += $(MODULES_DIR)/spike_client/SpikeClient.cpp
+SRCS += $(MODULES_DIR)/EtRobocon2025.cpp
 SRCS += client_main.cpp
 
 # Application directories
@@ -23,6 +25,7 @@ APPL_DIRS += $(mkfile_path)modules\
 	$(mkfile_path)modules/image_processors\
 	$(mkfile_path)modules/camera\
 	$(mkfile_path)modules/utils\
+	$(mkfile_path)modules/spike_client \
 	$(mkfile_path)../../common/library/libcpp-spike/src
 
 # Includes
@@ -37,6 +40,9 @@ INCLUDES += \
 	-I$(mkfile_path)modules/utils \
 	-I$(mkfile_path)modules/spike_client \
 	-I$(mkfile_path)../../common/library/libcpp-spike/include \
+	-I$(mkfile_path)../../../libraspike-art/drivers/include/spike \
+	-I$(mkfile_path)../../../libraspike-art/external/libpybricks/lib/pbio/include \
+	-I$(mkfile_path)../../../libraspike-art/drivers \
 	-I/usr/include/opencv4
 CXXFLAGS += $(INCLUDES)
 

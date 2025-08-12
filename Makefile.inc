@@ -18,7 +18,7 @@ APPL_LIBS += -lm
 
 # Application directories
 APPL_DIRS += \
-	$(mkfile_path) \
+	$(mkfile_path)modules/spike_server \
 	$(mkfile_path)modules/utils \
 	$(mkfile_path)modules/common \
 	$(mkfile_path)../../common/library/libcpp-spike/src

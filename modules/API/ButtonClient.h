@@ -1,7 +1,8 @@
 #ifndef BUTTON_CLIENT_H
 #define BUTTON_CLIENT_H
 
-#include "../spike_client/SpikeClient.h"
+#include "SpikeClient.h"
+#include "SpikeCommand.h"
 
 class ButtonClient {
  public:

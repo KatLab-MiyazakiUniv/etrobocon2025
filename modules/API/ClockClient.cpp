@@ -1,13 +1,18 @@
 #include "ClockClient.h"
-#include <string>
 
 ClockClient::ClockClient(SpikeClient& client) : spikeClient(client) {}
 
-void ClockClient::sleep(int time) {
-    spikeClient.sendCommand("clock,sleep," + std::to_string(time));
+void ClockClient::sleep(uint32_t milliseconds) {
+    spike::ClockSleepRequest req{ milliseconds };
+    spikeClient.executeCommand(
+        spike::CommandId::CLOCK_SLEEP,
+        req
+    );
 }
 
-unsigned long ClockClient::now() {
-    std::string res = spikeClient.sendCommand("clock,now");
-    return std::stoul(res);
+uint32_t ClockClient::now() {
+    auto res = spikeClient.executeQuery<uint32_t>(
+        spike::CommandId::CLOCK_NOW
+    );
+    return res.value_or(0);
 }

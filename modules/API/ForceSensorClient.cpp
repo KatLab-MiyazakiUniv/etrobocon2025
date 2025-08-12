@@ -1,14 +1,16 @@
 #include "ForceSensorClient.h"
-#include <string>
 
 ForceSensorClient::ForceSensorClient(SpikeClient& client) : spikeClient(client) {}
 
-bool ForceSensorClient::isPressed() {
-    std::string res = spikeClient.sendCommand("forcesensor,is_pressed");
-    return res == "true";
+bool ForceSensorClient::isPressed(float threshold = 0.5f)
+{
+  spike::ForceSensorIsPressedRequest req{ threshold };
+  auto res = spikeClient.executeQuery<bool>(spike::CommandId::FORCE_SENSOR_IS_PRESSED, req);
+  return res.value_or(false);
 }
 
-int ForceSensorClient::getForce() {
-    std::string res = spikeClient.sendCommand("forcesensor,get_force");
-    return std::stoi(res);
+int32_t ForceSensorClient::getForce()
+{
+  auto res = spikeClient.executeQuery<int32_t>(spike::CommandId::FORCE_SENSOR_GET_FORCE);
+  return res.value_or(0);
 }

@@ -16,7 +16,7 @@ AngleRotation::AngleRotation(Robot& _robot, int _targetAngle, double _speed, boo
 
 void AngleRotation::prepare()
 {
-  MotorController& motorController = robot.getMotorControllerInstance();
+  MotorControllerClient& motorController = robot.getMotorControllerInstance();
 
   // 現在の走行距離を取得
   double initLeftMileage = Mileage::calculateWheelMileage(motorController.getLeftMotorCount());
@@ -49,7 +49,7 @@ bool AngleRotation::isMetPreCondition()
 
 bool AngleRotation::isMetContinuationCondition()
 {
-  MotorController& motorController = robot.getMotorControllerInstance();
+  MotorControllerClient& motorController = robot.getMotorControllerInstance();
   // 残りの回転に必要な走行距離を算出
   double diffLeftDistance
       = (targetLeftDistance - Mileage::calculateWheelMileage(motorController.getLeftMotorCount()))

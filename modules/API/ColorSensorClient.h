@@ -1,13 +1,14 @@
 #ifndef COLORSENSOR_CLIENT_H
 #define COLORSENSOR_CLIENT_H
 
-#include "../spike_client/SpikeClient.h"
+#include "SpikeClient.h"
+#include "SpikeCommand.h"
 
 class ColorSensorClient {
  public:
   explicit ColorSensorClient(SpikeClient& client);
-  void getColor(HSV& hsv);
-  int getReflection();
+  spike::HsvResponse getColor();
+  int32_t getReflection();
 
  private:
   SpikeClient& spikeClient;

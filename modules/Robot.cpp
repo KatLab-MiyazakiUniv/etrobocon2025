@@ -26,7 +26,7 @@ Robot::Robot(ICameraCapture& cam)
 {
 }
 
-MotorController& Robot::getMotorControllerInstance()
+MotorControllerClient& Robot::getMotorControllerInstance()
 {
   return motorController;
 }

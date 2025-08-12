@@ -9,3 +9,6 @@ build
 
 # yoloモデル
 *.onnx
+
+# 実行ファイル
+etrobocon_client

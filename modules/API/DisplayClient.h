@@ -1,13 +1,16 @@
 #ifndef DISPLAY_CLIENT_H
 #define DISPLAY_CLIENT_H
 
-#include "../spike_client/SpikeClient.h"
+#include "SpikeClient.h"
+#include "SpikeCommand.h"
 #include <string>
 
 class DisplayClient {
 public:
     explicit DisplayClient(SpikeClient& client);
-    void drawString(const char* str, int x, int y);
+    void showChar(const char str);
+    void showNumber(const int8_t number);
+    void scrollText(const char* text, int speed = 50);
 
 private:
     SpikeClient& spikeClient;

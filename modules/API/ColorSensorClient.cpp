@@ -1,23 +1,19 @@
 #include "ColorSensorClient.h"
-#include "../common/StringOperator.h"
-#include <string>
-#include <vector>
 
 ColorSensorClient::ColorSensorClient(SpikeClient& client) : spikeClient(client) {}
 
-void ColorSensorClient::getColor(spikeapi::ColorSensor::HSV& hsv)
+spike::HsvResponse ColorSensorClient::getColor()
 {
-  std::string response = spikeClient.sendCommand("colorsensor,get_color_hsv");
-  std::vector<std::string> values = StringOperator::split(response, ',');
-  if(values.size() == 3) {
-    hsv.h = std::stof(values[0]);
-    hsv.s = std::stof(values[1]);
-    hsv.v = std::stof(values[2]);
-  }
+  auto res = spikeClient.executeQuery<spike::HsvResponse>(
+      spike::CommandId::COLOR_SENSOR_GET_COLOR_HSV
+  );
+  return res.value_or(spike::HsvResponse{0.0f, 0.0f, 0.0f});
 }
 
-int ColorSensorClient::getReflection()
+int32_t ColorSensorClient::getReflection()
 {
-  std::string response = spikeClient.sendCommand("colorsensor,get_reflection");
-  return std::stoi(response);
+  auto res = spikeClient.executeQuery<int32_t>(
+      spike::CommandId::COLOR_SENSOR_GET_REFLECTION
+  );
+  return res.value_or(0);
 }

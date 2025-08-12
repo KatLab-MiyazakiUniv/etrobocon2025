@@ -17,8 +17,7 @@ Rotation::Rotation(Robot& _robot, double _speed, bool _isClockwise)
 
 void Rotation::run()
 {
-  MotorController& motorController = robot.getMotorControllerInstance();
-  spikeapi::Clock& clock = robot.getClockInstance();
+  MotorControllerClient& motorController = robot.getMotorControllerInstance();
 
   prepare();
   if(!isMetPreCondition()) return;

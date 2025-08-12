@@ -81,6 +81,40 @@ int Socket::receive(std::string& message) const {
     return bytes_received;
 }
 
+// New method implementations
+bool Socket::sendData(const void* data, size_t size) const {
+    if (!isValid() || data == nullptr) return false;
+
+    const char* buffer = static_cast<const char*>(data);
+    size_t total_sent = 0;
+    while (total_sent < size) {
+        ssize_t sent_now = ::send(sock, buffer + total_sent, size - total_sent, 0);
+        if (sent_now == -1) {
+            return false; // Error
+        }
+        total_sent += sent_now;
+    }
+    return true;
+}
+
+bool Socket::receiveData(void* buffer, size_t size) const {
+    if (!isValid() || buffer == nullptr) return false;
+
+    char* char_buffer = static_cast<char*>(buffer);
+    size_t total_received = 0;
+    while (total_received < size) {
+        ssize_t received_now = ::recv(sock, char_buffer + total_received, size - total_received, 0);
+        if (received_now == -1) {
+            return false; // Error
+        }
+        if (received_now == 0) {
+            return false; // Connection closed
+        }
+        total_received += received_now;
+    }
+    return true;
+}
+
 bool Socket::isValid() const {
     return sock != -1;
 }
