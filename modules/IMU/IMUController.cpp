@@ -26,6 +26,13 @@ void IMUController::getRawAngularVelocity(float angv[3])
   angv[2] = ang.z;  // 生のZ軸角速度
 }
 
+double IMUController::getCorrectedZAxisAngularVelocity()
+{
+  // SPIKE傾き角度とオフセットを補正した角速度を計算
+  return (imu.getAngularVelocity().z - offsetZ) * COS_TILT_ANGLE 
+         - (imu.getAngularVelocity().x - offsetX) * SIN_TILT_ANGLE;
+}
+
 void IMUController::calculateOffset()
 {
   float tempAngularVelocity[3];  // 角速度取得用の一時配列
@@ -96,7 +103,6 @@ void IMUController::stopAngleCalculation()
 void IMUController::angleCalculationLoop()
 {
   // 必要な変数をループ外で宣言
-  float tempAngularVelocity[3];
   const auto sleepDuration = std::chrono::milliseconds(1);
   auto currentTime = std::chrono::high_resolution_clock::now();
   double deltaTime, currentAngularVelocity;
@@ -106,10 +112,8 @@ void IMUController::angleCalculationLoop()
     // 測定開始時刻を記録
     auto measurementStartTime = std::chrono::high_resolution_clock::now();
 
-    // IMUから角速度を取得し、53度傾きとオフセットを補正
-    getRawAngularVelocity(tempAngularVelocity);
-    currentAngularVelocity = (tempAngularVelocity[2] - offsetZ) * COS_TILT_ANGLE
-                             - (tempAngularVelocity[0] - offsetX) * SIN_TILT_ANGLE;
+    // IMUから補正済み角速度を取得
+    currentAngularVelocity = getCorrectedZAxisAngularVelocity();
 
     // 測定終了時刻を記録
     auto measurementEndTime = std::chrono::high_resolution_clock::now();

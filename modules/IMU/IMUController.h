@@ -33,6 +33,12 @@ class IMUController {
   void calculateOffset();
 
   /**
+   * @brief 補正済みZ軸角速度を取得する（傾き補正+オフセット補正）
+   * @return 補正済みZ軸角速度(deg/s)
+   */
+  double getCorrectedZAxisAngularVelocity();
+
+  /**
    * @brief 計測結果の角度を取得する
    * @return 角度(deg)
    */
