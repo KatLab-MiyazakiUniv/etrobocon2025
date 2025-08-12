@@ -64,7 +64,7 @@ namespace etrobocon2025_test {
   {
     MotorController MotorController;
     const int power = -150;
-    MotorController.setLeftMotorPower(MotorController::MOTOR_POWER_MIN);
+    MotorController.setLeftMotorPower(MotorControllerClient::MOTOR_POWER_MIN);
     int minCount = MotorController.getLeftMotorPower();
     MotorController.resetLeftMotorPower();
     MotorController.setLeftMotorPower(power);
@@ -78,7 +78,7 @@ namespace etrobocon2025_test {
   {
     MotorController MotorController;
     const int power = 150;
-    MotorController.setLeftMotorPower(MotorController::MOTOR_POWER_MAX);
+    MotorController.setLeftMotorPower(MotorControllerClient::MOTOR_POWER_MAX);
     int maxCount = MotorController.getLeftMotorPower();
     MotorController.resetLeftMotorPower();
     MotorController.setLeftMotorPower(power);

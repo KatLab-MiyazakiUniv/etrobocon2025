@@ -16,7 +16,7 @@ class EtRobocon2025 {
   static void start();
 
  private:
-  static Robot robot;  // Robotインスタンス
+  // Removed static Robot robot;
 };
 
 #endif

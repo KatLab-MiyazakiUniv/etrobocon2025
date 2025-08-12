@@ -6,7 +6,7 @@ services:
     stdin_open: true
     volumes:
       - .:/RasPike-ART/sdk/workspace/etrobocon2025
-  etrobocon_client:
+  etrobocon_faster:
     image: kat_etrobo2025:amd64
     container_name: etrobocon2025_client
     tty: true

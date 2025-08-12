@@ -6,12 +6,25 @@
 
 #include "EtRobocon2025.h"
 #include "AreaMaster.h"
+#include "SpikeClient.h" // Include the real SpikeClient
 
-Robot EtRobocon2025::robot;  // Robotインスタンス
+// Remove the static Robot instance here, it will be created in start()
+// Robot EtRobocon2025::robot;
 
 void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
+
+  // Create a real SpikeClient instance
+  SpikeClient realSpikeClient;
+  // Connect to the SpikeServer (assuming localhost:8888)
+  if (!realSpikeClient.connect("127.0.0.1", 8888)) {
+      std::cerr << "Failed to connect to SpikeServer!" << std::endl;
+      return;
+  }
+
+  // Pass the real SpikeClient to the Robot constructor
+  Robot robot(realSpikeClient);
 
   if(!robot.getCameraCaptureInstance().setCameraID(
          robot.getCameraCaptureInstance().findAvailableCameraID()))
@@ -34,4 +47,7 @@ void EtRobocon2025::start()
   Area lineTraceArea = Area::LineTrace;
   AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
   lineTraceAreaMaster.run();
+
+  // Disconnect the SpikeClient when done
+  realSpikeClient.disconnect();
 }

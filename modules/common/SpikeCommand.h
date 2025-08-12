@@ -72,7 +72,7 @@ namespace spike {
 
   // 全てのレスポンスに共通のヘッダ
   struct Response {
-    bool success;
+    bool value;
   };
 
   // --- リクエスト用データ構造 ---
@@ -124,6 +124,10 @@ namespace spike {
 
   struct UInt32Response {
     uint32_t value;
+  };
+
+  struct UInt64Response {
+    uint64_t value;
   };
 
   struct DoubleResponse {

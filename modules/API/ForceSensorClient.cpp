@@ -2,7 +2,7 @@
 
 ForceSensorClient::ForceSensorClient(SpikeClient& client) : spikeClient(client) {}
 
-bool ForceSensorClient::isPressed(float threshold = 0.5f)
+bool ForceSensorClient::isPressed(float threshold)
 {
   spike::ForceSensorIsPressedRequest req{ threshold };
   auto res = spikeClient.executeQuery<bool>(spike::CommandId::FORCE_SENSOR_IS_PRESSED, req);

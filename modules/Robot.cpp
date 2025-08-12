@@ -1,10 +1,11 @@
 #include "Robot.h"
 
-Robot::Robot()
-  : spikeClient(),
+// Constructor for dependency injection of SpikeClient
+Robot::Robot(SpikeClient& client)
+  : spikeClient(client),  // Initialize reference
     motorController(spikeClient),
     defaultCameraCapture(),
-    cameraCapture(defaultCameraCapture),
+    cameraCapture(defaultCameraCapture),  // Use defaultCameraCapture
     colorSensor(spikeClient),
     clock(spikeClient),
     button(spikeClient),
@@ -13,11 +14,12 @@ Robot::Robot()
 {
 }
 
-Robot::Robot(ICameraCapture& cam)
-  : spikeClient(),
+// Constructor with camera injection
+Robot::Robot(SpikeClient& client, ICameraCapture& cam)
+  : spikeClient(client),  // Initialize reference
     motorController(spikeClient),
     defaultCameraCapture(),
-    cameraCapture(cam),
+    cameraCapture(cam),  // Use injected camera
     colorSensor(spikeClient),
     clock(spikeClient),
     button(spikeClient),

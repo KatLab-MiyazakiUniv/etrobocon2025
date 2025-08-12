@@ -1,7 +1,7 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
-#include "SpikeClient.h"
+#include "SpikeClient.h" // This will be the real SpikeClient for production
 #include "MotorControllerClient.h"
 #include "ColorSensorClient.h"
 #include "ClockClient.h"
@@ -14,8 +14,9 @@
 
 class Robot {
  public:
-  Robot();
-  Robot(ICameraCapture& cam);
+  // New constructor for dependency injection of SpikeClient
+  explicit Robot(SpikeClient& client);
+  Robot(SpikeClient& client, ICameraCapture& cam); // Updated constructor
 
   MotorControllerClient& getMotorControllerInstance();
   ICameraCapture& getCameraCaptureInstance();
@@ -30,7 +31,7 @@ class Robot {
   bool getIsLeftEdge() const;
 
  private:
-  SpikeClient spikeClient;
+  SpikeClient& spikeClient; // Now a reference
   MotorControllerClient motorController;
   CameraCapture defaultCameraCapture;
   ICameraCapture& cameraCapture;

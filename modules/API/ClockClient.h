@@ -8,8 +8,8 @@
 class ClockClient {
 public:
     explicit ClockClient(SpikeClient& client);
-    void sleep(uint32_t milliseconds);
-    uint32_t now();
+    void sleep(uint64_t milliseconds);
+    uint64_t now();
 
 private:
     SpikeClient& spikeClient;

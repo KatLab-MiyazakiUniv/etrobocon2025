@@ -34,6 +34,7 @@ build: smart-clean build-server build-client
 
 build-server:
 	cd $(MAKEFILE_PATH)../ && make img=etrobocon2025
+	@echo "ビルドが完了しました。"
 
 
 build-client:
