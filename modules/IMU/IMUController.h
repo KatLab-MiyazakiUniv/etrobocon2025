@@ -60,17 +60,18 @@ class IMUController {
   void angleCalculationLoop();
 
   spikeapi::IMU imu;                                                 // IMUインスタンス
+  static constexpr double TILT_ANGLE_RAD = -53.2573 * M_PI / 180.0;  // SPIKE傾き角度(rad)
+  static constexpr double COS_TILT_ANGLE = cos(TILT_ANGLE_RAD);      // 傾き角度のcos値
+  static constexpr double SIN_TILT_ANGLE = sin(TILT_ANGLE_RAD);      // 傾き角度のsin値
   float offsetX = 0.0f;                                              // X軸角速度オフセット値(deg/s)
   float offsetY = 0.0f;                                              // Y軸角速度オフセット値(deg/s)
   float offsetZ = 0.0f;                                              // Z軸角速度オフセット値(deg/s)
   float currentAngle = 0.0f;                                         // 計測結果用の現在角度(deg)
-  double previousAngularVelocity = 0.0;                              // 台形積分用：前回の角速度
-  std::thread angleCalculationThread;                                // 角度計算用のスレッド
-  bool isCalculating = false;                                        // 角度計算実行中フラグ
+  double lastAngularVelocity = 0.0;                                  // 台形積分用：前回の角速度
   std::chrono::high_resolution_clock::time_point lastUpdateTime;     // 前回更新時刻
-  static constexpr double TILT_ANGLE_RAD = -53.2573 * M_PI / 180.0;  // SPIKE傾き角度(rad)
-  static constexpr double COS_TILT_ANGLE = cos(TILT_ANGLE_RAD);      // 傾き角度のcos値
-  static constexpr double SIN_TILT_ANGLE = sin(TILT_ANGLE_RAD);      // 傾き角度のsin値
+  mutable std::mutex imuMutex;         // IMUデータのスレッドセーフなアクセス用ミューテックス
+  std::thread angleCalculationThread;  // 角度計算用のスレッド
+  bool isCalculating = false;          // 角度計算実行中フラグ
 };
 
 #endif
