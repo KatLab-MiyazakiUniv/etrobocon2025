@@ -15,7 +15,7 @@ using namespace std;
 
 namespace etrobocon2025_test {
 
-  // 走行直後に3回の色取得で連続して指定色を取得し、かつ目標距離に到達しない時のテストケース
+  // 走行直後に指定色を3回連続取得し、かつ目標距離に到達しない場合、走行距離が初期値より少し進み、目標距離未満で停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunToGetColorImmediate)
   {
     DummyCameraCapture cameraCapture;
@@ -46,7 +46,7 @@ namespace etrobocon2025_test {
     EXPECT_LT(actual, targetDistance);  // 目標距離未満で停止している
   }
 
-  // 少し走行後、指定色を取得し、かつ目標距離に到達しない時のテストケース
+  // 少し走行後に指定色を取得し、かつ目標距離に到達しない場合、走行距離が初期値より進み、目標距離未満で停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunToGetColorDelayed)
   {
     DummyCameraCapture cameraCapture;
@@ -77,7 +77,7 @@ namespace etrobocon2025_test {
     EXPECT_LT(actual, targetDistance);  // 目標距離までに停止している
   }
 
-  // 負のtargetSpeed値で走行しつつ指定色を取得し、かつ目標距離に到達しない時のテストケース
+  // 負のtargetSpeed値で走行しつつ指定色を取得し、かつ目標距離に到達しない場合、初期値より後退し、目標距離未満で停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunBackToGetColor)
   {
     DummyCameraCapture cameraCapture;
@@ -108,7 +108,7 @@ namespace etrobocon2025_test {
     EXPECT_LT(actual, targetDistance);  // 目標距離までに停止している
   }
 
-  // 目標距離までライントレースを行い、かつ指定色を取得できていない時のテストケース
+  // 指定色を取得できないまま目標距離に到達した場合、実際の走行距離が目標距離の許容誤差以内であることを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, DistanceRunNoGetColor)
   {
     DummyCameraCapture cameraCapture;
@@ -138,7 +138,7 @@ namespace etrobocon2025_test {
     EXPECT_GT(expected * ERROR, actual);  // ライントレース後に走行した距離が許容誤差未満である
   }
 
-  // targetSpeed値が0の時に終了するテストケース
+  // targetSpeed値が0の場合、停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunZeroSpeed)
   {
     DummyCameraCapture cameraCapture;
@@ -167,7 +167,7 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // 正確に終了している
   }
 
-  // 目標の色がNONEの時に終了するテストケース
+  // 指定色がNONEの場合、停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunNoneColor)
   {
     DummyCameraCapture cameraCapture;
@@ -195,7 +195,7 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // 正確に終了している
   }
 
-  // targetDistance値が0以下の時に終了するテストケース
+  // targetDistance値が0以下の場合、停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunMinusDistance)
   {
     DummyCameraCapture cameraCapture;

@@ -14,6 +14,7 @@ class ColorDistanceCameraLineTrace : public CameraPidTracking {
  public:
   /**
    * コンストラクタ
+   * @param _robot ロボットインスタンス
    * @param _targetColor 指定色
    * @param _targetDistance 目標距離
    * @param _targetSpeed 目標速度
@@ -50,7 +51,7 @@ class ColorDistanceCameraLineTrace : public CameraPidTracking {
 
  private:
   static constexpr int JUDGE_COUNT = 2;           // 色取得の決定に必要な連続回数
-  int colorCount;                                 // 色取得した回数
+  int colorCount;                                 // 指定色を取得した回数
   COLOR targetColor;                              // 指定色
   double targetDistance;                          // 目標距離
   double initDistance;                            // 実行前の走行距離

@@ -44,9 +44,6 @@ void ColorDistanceCameraLineTrace::prepare()
   // 初期値を代入
   initDistance = Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
                                            robot.getMotorControllerInstance().getLeftMotorCount());
-
-  // 色カウントを初期化
-  colorCount = 0;
 }
 
 // 色距離指定カメラライントレースの継続条件
@@ -63,13 +60,21 @@ bool ColorDistanceCameraLineTrace::isMetContinuationCondition()
     colorCount = 0;
   }
 
-  // (走行距離が目標距離に到達)||(指定された色をJUDGE_COUNT回連続で取得したとき)モータが止まる
-  if((fabs(Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
-                                     robot.getMotorControllerInstance().getLeftMotorCount())
-           - initDistance)
-      >= targetDistance)
-     || (colorCount >= JUDGE_COUNT))
+  // 走行距離を計算
+  double diffDistance
+      = fabs(Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
+                                       robot.getMotorControllerInstance().getLeftMotorCount())
+             - initDistance);
+
+  // 走行距離が目標距離に到達したときモータが止まる
+  if(diffDistance >= targetDistance) {
     return false;
+  }
+
+  // 目標色をJUDGE_COUNT回連続で取得したときモータが止まる
+  if(colorCount >= JUDGE_COUNT) {
+    return false;
+  }
 
   return true;
 }
