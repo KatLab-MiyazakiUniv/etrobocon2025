@@ -7,8 +7,9 @@ LDFLAGS += -pthread
 OPENCV_LIBS := $(shell pkg-config --libs opencv4)
 
 # Directories
-BUILD_DIR := build
+BUILD_DIR := bin/build/client/
 MODULES_DIR := modules
+OUTPUT_DIR := $(MAKEFILE_PATH)
 
 # Sources (相対パスで管理)
 SRCS := $(shell find $(MODULES_DIR) -name '*.cpp' | grep -v '$(MODULES_DIR)/spike_server/' | grep -v '$(MODULES_DIR)/spike_client/' | grep -v '$(MODULES_DIR)/spike_server_mock/')
@@ -26,7 +27,6 @@ APPL_DIRS += $(mkfile_path)modules\
 	$(mkfile_path)modules/camera\
 	$(mkfile_path)modules/utils\
 	$(mkfile_path)modules/spike_client \
-	$(mkfile_path)../../common/library/libcpp-spike/src
 
 # Includes
 INCLUDES += \
@@ -39,10 +39,6 @@ INCLUDES += \
 	-I$(mkfile_path)modules/camera \
 	-I$(mkfile_path)modules/utils \
 	-I$(mkfile_path)modules/spike_client \
-	-I$(mkfile_path)../../common/library/libcpp-spike/include \
-	-I$(mkfile_path)../../../libraspike-art/drivers/include/spike \
-	-I$(mkfile_path)../../../libraspike-art/external/libpybricks/lib/pbio/include \
-	-I$(mkfile_path)../../../libraspike-art/drivers \
 	-I/usr/include/opencv4
 CXXFLAGS += $(INCLUDES)
 
@@ -57,7 +53,7 @@ all: $(TARGET)
 
 # Link
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(OPENCV_LIBS)
+	$(CXX) $(CXXFLAGS) -o $(OUTPUT_DIR)$@ $^ $(LDFLAGS) $(OPENCV_LIBS)
 
 # Compile rule
 $(BUILD_DIR)/%.o: %.cpp
@@ -66,6 +62,6 @@ $(BUILD_DIR)/%.o: %.cpp
 
 # Clean
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
+	rm -rf $(BUILD_DIR) $(OUTPUT_DIR)$(TARGET)
 
 .PHONY: all clean

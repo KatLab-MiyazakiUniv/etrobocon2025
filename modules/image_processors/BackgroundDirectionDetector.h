@@ -33,7 +33,7 @@ class BackgroundDirectionDetector {
    * コンストラクタ
    */
   BackgroundDirectionDetector(const std::string& _modelPath
-                              = "etrobocon2025/datafiles/models/BackgroundDetector.onnx");
+                              = "datafiles/models/BackgroundDetector.onnx");
 
   /**
    * @brief         入力画像から風景の向きを判定し、結果を result に格納する
@@ -46,7 +46,7 @@ class BackgroundDirectionDetector {
   cv::dnn::Net net;             // DNNモデルを格納する変数
   const std::string modelPath;  // モデルのパス
   const std::string outputImagePath
-      = "etrobocon2025/datafiles/processed_images/"
+      = "datafiles/processed_images/"
         "background_detected_result.jpg";  // バウンディングボックス付きの画像パス
 
   /**

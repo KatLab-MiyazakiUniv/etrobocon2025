@@ -131,7 +131,7 @@ void Calibrator::getAngleCheckFrame()
   robot.getDisplayInstance().showChar('F');
   // 角度調整フレーム取得
   // 中央ボタンでフレームを取得し、右ボタンで決定する
-  std::string fileName = "angleCheckFrame.jpg";
+  std::string fileName = "angleCheckFrame";
   while(1) {
     // 中央ボタンが押されたらフレーム取得
     if(robot.getButtonInstance().isCenterPressed()) {

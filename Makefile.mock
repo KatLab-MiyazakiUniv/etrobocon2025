@@ -4,8 +4,10 @@
 CXX := g++
 CXXFLAGS := -std=c++17 -pthread -I.
 
+
 # Directories
-BUILD_DIR := build_mock
+BUILD_DIR := bin/build/mock/
+OUTPUT_DIR := $(MAKEFILE_PATH)
 MODULES_DIR := modules
 
 # Sources
@@ -29,7 +31,7 @@ all: $(TARGET)
 
 # Link
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o $(OUTPUT_DIR)$@ $^ $(LDFLAGS)
 
 # Compile rule
 $(BUILD_DIR)/%.o: %.cpp
@@ -38,6 +40,6 @@ $(BUILD_DIR)/%.o: %.cpp
 
 # Clean
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
+	rm -rf $(BUILD_DIR) $(OUTPUT_DIR)$(TARGET)
 
 .PHONY: all clean

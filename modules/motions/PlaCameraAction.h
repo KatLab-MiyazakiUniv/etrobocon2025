@@ -44,7 +44,7 @@ class PlaCameraAction : public Motion {
 
   MotionDetector motionDetector;
   static constexpr int MAX_NO_MOTION = 2;  // 非検知となる検知回数
-  static constexpr const char* filePath = "etrobocon2025/datafiles/plarail/";
+  static constexpr const char* filePath = "datafiles/plarail/";
   std::string imageSaveName = "bestframe";
 };
 
