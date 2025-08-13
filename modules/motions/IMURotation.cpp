@@ -6,8 +6,13 @@
 
 #include "IMURotation.h"
 
-IMURotation::IMURotation(Robot& _robot, int _targetAngle, double _power, bool _isClockwise)
-  : Rotation(_robot, _power, _isClockwise), targetAngle(_targetAngle), power(_power)
+IMURotation::IMURotation(Robot& _robot, int _targetAngle, double _power, bool _isClockwise,
+                         const PidGain& _pidGain)
+  : Rotation(_robot, _power, _isClockwise),
+    targetAngle(_targetAngle),
+    power(_power),
+    pidGain(_pidGain),
+    pid(_pidGain.kp, _pidGain.ki, _pidGain.kd, _targetAngle)
 {
 }
 
@@ -47,5 +52,21 @@ void IMURotation::setMotorControl()
 
 void IMURotation::updateMotorControl()
 {
-  // PID制御等を実装する場合はここに追加
+  // 最新の現在角度を取得
+  float currentAngle = robot.getIMUControllerInstance().getAngle();
+
+  // PID制御で操作量を計算（目標角度との偏差を補正）
+  double pidOutput = pid.calculatePid(currentAngle, 0.01);  // 10ms周期
+
+  // 基本パワーにPID出力を加算して動的制御
+  double adjustedPower = power + pidOutput;
+
+  // パワー値を-100~100の範囲に制限
+  if(adjustedPower > 100.0) adjustedPower = 100.0;
+  if(adjustedPower < -100.0) adjustedPower = -100.0;
+
+  // モーターコントローラーにPID調整済みパワーを設定
+  MotorController& motorController = robot.getMotorControllerInstance();
+  motorController.setLeftMotorPower(adjustedPower * leftSign);
+  motorController.setRightMotorPower(adjustedPower * rightSign);
 }

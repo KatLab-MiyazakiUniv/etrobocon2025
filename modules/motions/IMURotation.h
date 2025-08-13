@@ -8,6 +8,7 @@
 #define IMU_ROTATION_H
 
 #include "Rotation.h"
+#include "Pid.h"
 
 class IMURotation : public Rotation {
  public:
@@ -17,8 +18,10 @@ class IMURotation : public Rotation {
    * @param _targetAngle 目標回転角度(deg) 0~360
    * @param _power       指定するパワー値（-100~100）
    * @param _isClockwise 回頭方向 true:時計回り, false:反時計回り
+   * @param _pidGain     PIDゲイン
    */
-  IMURotation(Robot& _robot, int _targetAngle, double _power, bool _isClockwise);
+  IMURotation(Robot& _robot, int _targetAngle, double _power, bool _isClockwise,
+              const PidGain& _pidGain);
   /**
    * @brief 回頭する
    * @note run() メソッドは Rotation クラスの実装をそのまま使用する
@@ -53,8 +56,10 @@ class IMURotation : public Rotation {
   void updateMotorControl() override;
 
  private:
-  int targetAngle;  // 目標回転角度(deg) 0~360
-  double power;     // モーターパワー値(-100~100)
+  int targetAngle;     // 目標回転角度(deg) 0~360
+  double power;        // モーターパワー値(-100~100)
+  PidGain pidGain;     // PIDゲイン
+  Pid pid;             // PID制御クラス
 };
 
 #endif
