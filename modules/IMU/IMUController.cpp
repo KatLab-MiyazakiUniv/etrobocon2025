@@ -35,7 +35,7 @@ double IMUController::getCorrectedZAxisAngularVelocity()
   return (ang.z - offsetZ) * cosSpikeInclination - (ang.x - offsetX) * sinSpikeInclination;
 }
 
-float IMUController::getSpikeInclination()
+void IMUController::calculateSpikeInclination()
 {
   spikeapi::IMU::Acceleration acc;
   imu.getAcceleration(acc);
@@ -60,8 +60,6 @@ float IMUController::getSpikeInclination()
   // 角度を出力
   std::cout << "SPIKE設置傾斜角: " << spikeInclination << " rad ("
             << spikeInclination * 180.0 / M_PI << " deg)" << std::endl;
-
-  return spikeInclination;
 }
 
 void IMUController::calculateOffset()

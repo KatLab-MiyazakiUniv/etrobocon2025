@@ -28,10 +28,9 @@ class IMUController {
   void getRawAngularVelocity(float angv[3]);
 
   /**
-   * @brief SPIKEの設置傾斜を取得する
-   * @return 傾斜角(rad)
+   * @brief SPIKEの設置傾斜を計算する
    */
-  float getSpikeInclination();
+  void calculateSpikeInclination();
 
   /**
    * @brief オフセットを計算して設定する

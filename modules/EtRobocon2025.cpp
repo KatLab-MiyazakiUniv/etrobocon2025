@@ -12,6 +12,7 @@ Robot EtRobocon2025::robot;  // Robotインスタンス
 void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
+  robot.getIMUControllerInstance().calculateSpikeInclination();
   robot.getIMUControllerInstance().calculateOffset();
 
   // IMU手動テスト実行
