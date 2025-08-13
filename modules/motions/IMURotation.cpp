@@ -42,7 +42,14 @@ bool IMURotation::isMetContinuationCondition()
   if(error < -180.0f) error += 360.0f;
 
   // 誤差の絶対値が許容値より大きい間は継続
-  return std::abs(error) > tolerance;
+  bool shouldContinue = std::abs(error) > tolerance;
+
+  // 継続しない場合（終了する場合）はIMU角度計算を停止
+  if(!shouldContinue) {
+    robot.getIMUControllerInstance().stopAngleCalculation();
+  }
+
+  return shouldContinue;
 }
 
 void IMURotation::setMotorControl()
