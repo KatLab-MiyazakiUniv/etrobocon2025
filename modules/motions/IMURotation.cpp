@@ -56,10 +56,19 @@ void IMURotation::updateMotorControl()
   // PID制御で操作量を計算（目標角度との偏差を補正）
   double correction = pid.calculatePid(currentAngle, 0.01);
 
-  // PID出力をモーターパワーとして使用
+  // 基本パワー + PID補正値
+  double leftPower = power * leftSign + correction;
+  double rightPower = power * rightSign - correction;
+
+  // パワー値を-100~100の範囲に制限
+  if(leftPower > 100.0) leftPower = 100.0;
+  if(leftPower < -100.0) leftPower = -100.0;
+  if(rightPower > 100.0) rightPower = 100.0;
+  if(rightPower < -100.0) rightPower = -100.0;
+
   MotorController& motorController = robot.getMotorControllerInstance();
-  motorController.setLeftMotorPower(leftSign * correction);
-  motorController.setRightMotorPower(rightSign * correction);
+  motorController.setLeftMotorPower(leftPower);
+  motorController.setRightMotorPower(rightPower);
 
   // 10ms待機（これがないと通信バッファオーバーフローになる）
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
