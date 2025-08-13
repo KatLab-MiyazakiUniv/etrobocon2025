@@ -33,8 +33,8 @@ bool IMURotation::isMetContinuationCondition()
   // 現在の角度を取得してメンバ変数に格納
   currentAngle = robot.getIMUControllerInstance().getAngle();
 
-  // 目標角度（leftSign * targetAngle）との誤差を計算
-  float goalAngle = leftSign * targetAngle;
+  // IMUの出力特性に合わせた目標角度を計算(IMUは時計回りをマイナス、反時計回りをプラスで出力)
+  float goalAngle = isClockwise ? -targetAngle : targetAngle;
   float error = goalAngle - currentAngle;
 
   // 誤差計算（±180範囲に正規化）
