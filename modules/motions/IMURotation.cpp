@@ -12,7 +12,8 @@ IMURotation::IMURotation(Robot& _robot, int _targetAngle, double _power, bool _i
     targetAngle(_targetAngle),
     power(_power),
     pidGain(_pidGain),
-    pid(_pidGain.kp, _pidGain.ki, _pidGain.kd, leftSign * _targetAngle)
+    pid(_pidGain.kp, _pidGain.ki, _pidGain.kd, leftSign * _targetAngle),
+    tolerance(1.0)
 {
 }
 
@@ -29,17 +30,19 @@ bool IMURotation::isMetPreCondition()
 
 bool IMURotation::isMetContinuationCondition()
 {
-  // 現在角度を１回だけ取得してメンバ変数に格納
+  // 現在の角度を取得してメンバ変数に格納
   currentAngle = robot.getIMUControllerInstance().getAngle();
 
-  // IMUは時計回りをマイナス、反時計回りをプラスで出力
-  if(isClockwise) {
-    // 時計回り: currentAngle <= -targetAngle で停止
-    return currentAngle > -targetAngle;
-  } else {
-    // 反時計回り: currentAngle >= targetAngle で停止
-    return currentAngle < targetAngle;
-  }
+  // 目標角度（leftSign * targetAngle）との誤差を計算
+  float goalAngle = leftSign * targetAngle;
+  float error = goalAngle - currentAngle;
+
+  // 誤差計算（±180範囲に正規化）
+  if(error > 180.0f) error -= 360.0f;
+  if(error < -180.0f) error += 360.0f;
+
+  // 誤差の絶対値が許容値より大きい間は継続
+  return std::abs(error) > tolerance;
 }
 
 void IMURotation::setMotorControl()

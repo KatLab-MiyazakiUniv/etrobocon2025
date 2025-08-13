@@ -61,6 +61,7 @@ class IMURotation : public Rotation {
   PidGain pidGain;     // PIDゲイン
   Pid pid;             // PID制御クラス
   float currentAngle;  // １回取得した現在角度
+  float tolerance;     // 許容誤差
 };
 
 #endif
