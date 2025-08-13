@@ -56,7 +56,7 @@ void IMURotation::updateMotorControl()
   // PID制御で操作量を計算（目標角度との偏差を補正）
   double correction = pid.calculatePid(currentAngle, 0.01);
 
-  // PID出力を直接モーターパワーとして使用
+  // PID出力をモーターパワーとして使用
   MotorController& motorController = robot.getMotorControllerInstance();
   motorController.setLeftMotorPower(leftSign * correction);
   motorController.setRightMotorPower(rightSign * correction);
