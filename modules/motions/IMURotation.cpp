@@ -29,8 +29,8 @@ bool IMURotation::isMetPreCondition()
 
 bool IMURotation::isMetContinuationCondition()
 {
-  // 現在角度を取得
-  float currentAngle = robot.getIMUControllerInstance().getAngle();
+  // 現在角度を１回だけ取得してメンバ変数に格納
+  currentAngle = robot.getIMUControllerInstance().getAngle();
 
   // IMUは時計回りをマイナス、反時計回りをプラスで出力
   if(isClockwise) {
@@ -52,9 +52,7 @@ void IMURotation::setMotorControl()
 
 void IMURotation::updateMotorControl()
 {
-  // 最新の現在角度を取得
-  float currentAngle = robot.getIMUControllerInstance().getAngle();
-
+  // メンバ変数に格納された現在角度を使用
   // PID制御で操作量を計算（目標角度との偏差を補正）
   double pidOutput = pid.calculatePid(currentAngle, 0.01);  // 10ms周期
 

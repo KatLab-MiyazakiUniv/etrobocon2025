@@ -60,6 +60,7 @@ class IMURotation : public Rotation {
   double power;        // モーターパワー値(-100~100)
   PidGain pidGain;     // PIDゲイン
   Pid pid;             // PID制御クラス
+  float currentAngle;  // １回取得した現在角度
 };
 
 #endif
