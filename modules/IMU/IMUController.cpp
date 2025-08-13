@@ -94,23 +94,27 @@ void IMUController::calculateOffset()
 
 float IMUController::getAngle() const
 {
+  std::lock_guard<std::mutex> lock(imuMutex);
   return currentAngle;
 }
 
 void IMUController::resetAngle()
 {
+  std::lock_guard<std::mutex> lock(imuMutex);
   currentAngle = 0.0f;
   lastAngularVelocity = 0.0;
 }
 
 void IMUController::startAngleCalculation()
 {
+  std::lock_guard<std::mutex> lock(imuMutex);
   // 既に計算中の場合は二重実行を防止
   if(isCalculating) return;
   isCalculating = true;
 
-  // 角度を初期化
-  resetAngle();
+  // 角度を初期化（resetAngle()は呼ばず直接初期化）
+  currentAngle = 0.0f;
+  lastAngularVelocity = 0.0;
 
   // 現在時刻を記録
   lastUpdateTime = std::chrono::high_resolution_clock::now();
@@ -121,8 +125,11 @@ void IMUController::startAngleCalculation()
 
 void IMUController::stopAngleCalculation()
 {
-  if(!isCalculating) return;
-  isCalculating = false;
+  {
+    std::lock_guard<std::mutex> lock(imuMutex);
+    if(!isCalculating) return;
+    isCalculating = false;
+  }
 
   if(angleCalculationThread.joinable()) {
     angleCalculationThread.join();
@@ -132,12 +139,17 @@ void IMUController::stopAngleCalculation()
 void IMUController::angleCalculationLoop()
 {
   // 必要な変数をループ外で宣言
-  const auto sleepDuration = std::chrono::milliseconds(5);
+  const auto sleepDuration = std::chrono::milliseconds(10);
   auto currentTime = std::chrono::high_resolution_clock::now();
   double deltaTime, currentAngularVelocity;
 
-  // 1ms間隔で角速度積分による角度計算を実行（台形積分+測定タイミング中心化版）
+  // 10ms間隔で角速度積分による角度計算を実行（台形積分+測定タイミング中心化版）
   while(isCalculating) {
+    {
+      std::lock_guard<std::mutex> lock(imuMutex);
+      if(!isCalculating) break;
+    }
+
     // 測定開始時刻を記録
     auto measurementStartTime = std::chrono::high_resolution_clock::now();
 
@@ -149,17 +161,21 @@ void IMUController::angleCalculationLoop()
 
     // 測定中間時刻を算出: (開始時刻 + 終了時刻) / 2
     currentTime = measurementStartTime + (measurementEndTime - measurementStartTime) / 2;
-    deltaTime = std::chrono::duration<double>(currentTime - lastUpdateTime).count();
 
-    // 台形積分による角度更新: θ += (ω₁ + ω₀)/2 × Δt
-    // 参考: https://garchiving.com/angular-from-angular-acceleration/
-    currentAngle += (currentAngularVelocity + lastAngularVelocity) / 2.0 * deltaTime;
+    {
+      std::lock_guard<std::mutex> lock(imuMutex);
+      deltaTime = std::chrono::duration<double>(currentTime - lastUpdateTime).count();
 
-    // 次回計算用に現在値を保存（中間時刻と角速度）
-    lastAngularVelocity = currentAngularVelocity;
-    lastUpdateTime = currentTime;
+      // 台形積分による角度更新: θ += (ω₁ + ω₀)/2 × Δt
+      // 参考: https://garchiving.com/angular-from-angular-acceleration/
+      currentAngle += (currentAngularVelocity + lastAngularVelocity) / 2.0 * deltaTime;
 
-    // 1ms間隔を維持
+      // 次回計算用に現在値を保存（中間時刻と角速度）
+      lastAngularVelocity = currentAngularVelocity;
+      lastUpdateTime = currentTime;
+    }
+
+    // 10ms間隔を維持
     std::this_thread::sleep_for(sleepDuration);
   }
 }
