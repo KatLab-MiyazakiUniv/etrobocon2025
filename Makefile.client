@@ -11,7 +11,7 @@ BUILD_DIR := build
 MODULES_DIR := modules
 
 # Sources (相対パスで管理)
-SRCS := $(shell find $(MODULES_DIR) -name '*.cpp' | grep -v '$(MODULES_DIR)/spike_server/' | grep -v '$(MODULES_DIR)/spike_client/')
+SRCS := $(shell find $(MODULES_DIR) -name '*.cpp' | grep -v '$(MODULES_DIR)/spike_server/' | grep -v '$(MODULES_DIR)/spike_client/' | grep -v '$(MODULES_DIR)/spike_server_mock/')
 SRCS += $(MODULES_DIR)/spike_client/SpikeClient.cpp
 SRCS += $(MODULES_DIR)/EtRobocon2025.cpp
 SRCS += client_main.cpp

@@ -68,12 +68,12 @@ namespace spike {
   // 全てのリクエストに共通のヘッダ
   struct Request {
     CommandId id;
-  };
+  } __attribute__((packed));
 
   // 全てのレスポンスに共通のヘッダ
   struct Response {
     bool value;
-  };
+  } __attribute__((packed));
 
   // --- リクエスト用データ構造 ---
 

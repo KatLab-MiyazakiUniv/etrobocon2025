@@ -1,0 +1,43 @@
+# Makefile for building the mock server
+
+# Compiler and flags
+CXX := g++
+CXXFLAGS := -std=c++17 -pthread -I.
+
+# Directories
+BUILD_DIR := build_mock
+MODULES_DIR := modules
+
+# Sources
+SRCS := $(MODULES_DIR)/spike_server_mock/spike_server_mock_main.cpp \
+        $(MODULES_DIR)/spike_server_mock/SpikeServerMock.cpp \
+        $(MODULES_DIR)/common/Socket.cpp
+
+# Include paths
+INCLUDES += -I$(MODULES_DIR)/common \
+            -I$(MODULES_DIR)/spike_server_mock
+CXXFLAGS += $(INCLUDES)
+
+# Objects
+OBJS := $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(SRCS))
+
+# Target
+TARGET := spike_server_mock_app
+
+# Default
+all: $(TARGET)
+
+# Link
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+# Compile rule
+$(BUILD_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+# Clean
+clean:
+	rm -rf $(BUILD_DIR) $(TARGET)
+
+.PHONY: all clean

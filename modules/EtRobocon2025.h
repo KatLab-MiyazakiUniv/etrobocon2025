@@ -10,6 +10,7 @@
 #include <iostream>
 #include "Robot.h"
 #include "Calibrator.h"
+#include "MockCameraCapture.h"
 
 class EtRobocon2025 {
  public:

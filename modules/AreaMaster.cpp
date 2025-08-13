@@ -7,7 +7,7 @@
 #include "AreaMaster.h"
 
 using namespace std;
-const string AreaMaster::basePath = "etrobocon2025/datafiles/commands/";
+const string AreaMaster::basePath = "datafiles/commands/";
 const array<string, 3> AreaMaster::areaCommandNames = { "LineTrace", "DoubleLoop", "SmartCarry" };
 
 AreaMaster::AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)

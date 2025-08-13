@@ -6,7 +6,7 @@
 
 #include "EtRobocon2025.h"
 #include "AreaMaster.h"
-#include "SpikeClient.h" // Include the real SpikeClient
+#include "SpikeClient.h"  // Include the real SpikeClient
 
 // Remove the static Robot instance here, it will be created in start()
 // Robot EtRobocon2025::robot;
@@ -18,13 +18,17 @@ void EtRobocon2025::start()
   // Create a real SpikeClient instance
   SpikeClient realSpikeClient;
   // Connect to the SpikeServer (assuming localhost:8888)
-  if (!realSpikeClient.connect("127.0.0.1", 8888)) {
-      std::cerr << "Failed to connect to SpikeServer!" << std::endl;
-      return;
+  if(!realSpikeClient.connect("172.18.0.5", 8888)) {
+    // if (!realSpikeClient.connect("127.0.0.1", 8888)) {
+    std::cerr << "Failed to connect to SpikeServer!" << std::endl;
+    return;
   }
 
   // Pass the real SpikeClient to the Robot constructor
-  Robot robot(realSpikeClient);
+  // Robot robot(realSpikeClient);
+  // If you need to use a camera, you can create a MockCameraCapture or use the real one
+  MockCameraCapture mockCameraCapture;              // Use MockCameraCapture for testing
+  Robot robot(realSpikeClient, mockCameraCapture);  // Use MockCameraCapture for testing
 
   if(!robot.getCameraCaptureInstance().setCameraID(
          robot.getCameraCaptureInstance().findAvailableCameraID()))
@@ -45,7 +49,7 @@ void EtRobocon2025::start()
   calibrator.waitForStart();
 
   Area lineTraceArea = Area::LineTrace;
-  AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
+  AreaMaster lineTraceAreaMaster(robot, lineTraceArea, true, 50);
   lineTraceAreaMaster.run();
 
   // Disconnect the SpikeClient when done

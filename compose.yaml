@@ -6,10 +6,22 @@ services:
     stdin_open: true
     volumes:
       - .:/RasPike-ART/sdk/workspace/etrobocon2025
-  etrobocon_faster:
+  etrobocon_client:
     image: kat_etrobo2025:amd64
     container_name: etrobocon2025_client
     tty: true
     stdin_open: true
     volumes:
       - .:/RasPike-ART/sdk/workspace/etrobocon2025
+    depends_on:
+      - spike_mock_server
+  spike_mock_server:
+    image: kat_etrobo2025:amd64
+    container_name: spike_mock_server
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/RasPike-ART/sdk/workspace/etrobocon2025
+    tty: true
+    stdin_open: true
+    command: bash

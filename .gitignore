@@ -5,10 +5,11 @@ datafiles/processed_images
 datafiles/models
 datafiles/figures
 tests/test_images
-build
+build*
 
 # yoloモデル
 *.onnx
 
 # 実行ファイル
 etrobocon_client
+spike_server_mock_app
