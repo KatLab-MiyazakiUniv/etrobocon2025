@@ -54,13 +54,13 @@ void IMURotation::updateMotorControl()
 {
   // メンバ変数に格納された現在角度を使用
   // PID制御で操作量を計算（目標角度との偏差を補正）
-  double correction = pid.calculatePid(currentAngle, 0.01);  // 10ms周期
+  double correction = pid.calculatePid(currentAngle, 0.01);
 
   // PID出力を直接モーターパワーとして使用
   MotorController& motorController = robot.getMotorControllerInstance();
   motorController.setLeftMotorPower(leftSign * correction);
   motorController.setRightMotorPower(rightSign * correction);
 
-  // 10ms待機して通信バッファオーバーフローを防ぐ
+  // 10ms待機（これがないと通信バッファオーバーフローになる）
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
