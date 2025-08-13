@@ -1,3 +1,9 @@
+/**
+ * @file   SpikeCommand.h
+ * @brief  SPIKE通信のコマンドIDとデータ構造の定義
+ * @author takuchi17
+ */
+
 #ifndef SPIKE_COMMAND_H
 #define SPIKE_COMMAND_H
 
@@ -84,7 +90,7 @@ namespace spike {
 
   struct MotorSetSpeedRequest {
     MotorTarget target;
-    double speed;
+    int32_t speed; // [°/s]
   };
 
   struct MotorGetRequest {
@@ -96,7 +102,7 @@ namespace spike {
   };
 
   struct ClockSleepRequest {
-    uint32_t milliseconds;
+    uint64_t microseconds;
   };
 
   struct DisplayShowCharRequest {
@@ -109,7 +115,7 @@ namespace spike {
 
   struct DisplayScrollTextRequest {
     char text[64];
-    int32_t speed;
+    uint32_t delay; // [ms]
   };
 
   struct ForceSensorIsPressedRequest {
@@ -130,6 +136,10 @@ namespace spike {
     uint64_t value;
   };
 
+  struct FloatResponse {
+    float value;
+  };
+
   struct DoubleResponse {
     double value;
   };
@@ -139,9 +149,9 @@ namespace spike {
   };
 
   struct HsvResponse {
-    float h;
-    float s;
-    float v;
+    uint16_t h; // 0-359
+    uint8_t  s; // 0-100
+    uint8_t  v; // 0-100
   };
 
 }  // namespace spike

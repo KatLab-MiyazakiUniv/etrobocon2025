@@ -19,7 +19,7 @@
 class LineTrace : public Motion {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param _robot Robotインスタンス
    * @param _targetSpeed 目標速度 0~
    * @param _targetBrightness 目標輝度 0~

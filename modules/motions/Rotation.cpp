@@ -20,7 +20,9 @@ void Rotation::run()
   MotorControllerClient& motorController = robot.getMotorControllerInstance();
 
   prepare();
-  if(!isMetPreCondition()) return;
+  if(!isMetPreCondition()) {
+    return;
+  }
 
   // 回転速度（mm/秒）で指定しモーターを制御
   motorController.setLeftMotorSpeed(speed * leftSign);

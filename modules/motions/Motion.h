@@ -12,7 +12,7 @@
 class Motion {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @brief 外部リソースのインスタンスを初期化する
    */
   Motion(Robot& _robot);

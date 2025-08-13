@@ -12,7 +12,7 @@
 class Rotation : public Motion {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param _robot       ロボット制御クラスへの参照
    * @param _speed       指定する速度（mm/秒）
    * @param _isClockwise 回頭方向 true:時計回り, false:反時計回り

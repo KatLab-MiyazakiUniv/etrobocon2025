@@ -1,3 +1,8 @@
+/**
+ * @file   MockCameraCapture.h
+ * @brief  カメラキャプチャーのモッククラス
+ * @author takuchi17
+ */
 
 #include "MockCameraCapture.h"
 #include <opencv2/opencv.hpp>
@@ -6,7 +11,7 @@
 MockCameraCapture::MockCameraCapture() : currentCameraID(-1)
 {
   // Initialize a dummy frame (e.g., a black image)
-  dummyFrame = cv::Mat::zeros(480, 640, CV_8UC3);  // 640x480, 3 channels, black
+  dummyFrame = cv::Mat::zeros(800, 600, CV_8UC3);  // 640x480, 3 channels, black
   std::cout << "MockCameraCapture: Initialized." << std::endl;
 }
 

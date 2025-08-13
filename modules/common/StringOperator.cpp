@@ -1,3 +1,9 @@
+/**
+ * @file   StringOperator.cpp
+ * @brief  文字列を操作するstatic関数を持つクラス
+ * @author Hara1274
+ */
+
 #include "StringOperator.h"
 #include <algorithm>
 #include <vector>

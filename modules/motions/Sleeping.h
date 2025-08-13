@@ -12,7 +12,7 @@
 class Sleeping : public Motion {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param _robot ロボットのインスタンス
    * @param _milliSec スリープ時間 (ミリ秒)
    */

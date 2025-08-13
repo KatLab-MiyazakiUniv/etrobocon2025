@@ -1,14 +1,20 @@
+/**
+ * @file   SpikeServer.h
+ * @brief  SPIKEデバイスとの通信を管理するサーバークラス
+ * @author takuchi17
+ */
+
 #ifndef SPIKE_SERVER_H
 #define SPIKE_SERVER_H
 
 #include "spikeapi.h"
-#include "SpikeCommand.h"  // Include SpikeCommand.h
-#include "modules/spike_server/handlers/MotorApiHandler.h"
-#include "modules/spike_server/handlers/ColorSensorApiHandler.h"
-#include "modules/spike_server/handlers/ClockApiHandler.h"
-#include "modules/spike_server/handlers/ButtonApiHandler.h"
-#include "modules/spike_server/handlers/ForceSensorApiHandler.h"
-#include "modules/spike_server/handlers/DisplayApiHandler.h"
+#include "SpikeCommand.h"
+#include "MotorApiHandler.h"
+#include "ColorSensorApiHandler.h"
+#include "ClockApiHandler.h"
+#include "ButtonApiHandler.h"
+#include "ForceSensorApiHandler.h"
+#include "DisplayApiHandler.h"
 #include <string>
 #include <vector>  // For potential future use with variable-length data
 
@@ -16,26 +22,49 @@ class Socket;  // Forward declaration
 
 class SpikeServer {
  public:
-  static void start();  // This will now create a SpikeServer instance
+  /**
+   * @brief サーバーを開始する
+   */
+  static void start();
 
  private:
-  // Constructor to initialize API handlers
+  /**
+   * @brief APIハンドラを初期化するためのコンストラクタ
+   * @param client クライアントソケットへのポインタ
+   */
   SpikeServer(Socket* client);
 
-  // Generic receive and send for raw data (non-static now)
+  /**
+   * @brief 生データを受信する
+   * @param client クライアントソケットへのポインタ
+   * @param buffer 受信バッファ
+   * @param size 受信サイズ
+   * @return 成功した場合true、失敗した場合false
+   */
   bool receive(Socket* client, char* buffer, size_t size);
+  /**
+   * @brief 生データを送信する
+   * @param client クライアントソケットへのポインタ
+   * @param buffer 送信バッファ
+   * @param size 送信サイズ
+   * @return 成功した場合true、失敗した場合false
+   */
   bool send(Socket* client, const char* buffer, size_t size);
 
-  // Command handling (non-static now)
+  /**
+   * @brief コマンドを処理する
+   * @param commandId コマンドID
+   * @param client クライアントソケットへのポインタ
+   */
   void handle_command(spike::CommandId commandId, Socket* client);
 
   // Member API handlers
-  MotorApiHandler motorHandler_;
-  ColorSensorApiHandler colorSensorHandler_;
-  ClockApiHandler clockHandler_;
-  ButtonApiHandler buttonHandler_;
-  ForceSensorApiHandler forceSensorHandler_;
-  DisplayApiHandler displayHandler_;
+  MotorApiHandler motorHandler;              // モーターAPIハンドラ
+  ColorSensorApiHandler colorSensorHandler;  // カラーセンサーAPIハンドラ
+  ClockApiHandler clockHandler;              // クロックAPIハンドラ
+  ButtonApiHandler buttonHandler;            // ボタンAPIハンドラ
+  ForceSensorApiHandler forceSensorHandler;  // フォースセンサーAPIハンドラ
+  DisplayApiHandler displayHandler;          // ディスプレイAPIハンドラ
 };
 
 #endif  // SPIKE_SERVER_H

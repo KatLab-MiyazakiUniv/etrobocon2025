@@ -27,7 +27,10 @@ class StringOperator {
   static std::string removeEOL(const std::string& str);
 
  private:
-  StringOperator();  // インスタンス化を禁止する
+  /**
+   * @brief コンストラクタ（インスタンス化を禁止する）
+   */
+  StringOperator();
 };
 
 #endif

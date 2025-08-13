@@ -92,9 +92,7 @@ void MiniFigCameraAction::run()
 
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は一回目(初期位置での)の撮影でしか行わない
-    std::cout << "判定動作実施" << std::endl;
     detectDirection(frame);
-    std::cout << "判定動作終了" << std::endl;
 
     if(robot.getMiniFigDirectionResult().wasDetected
        && robot.getMiniFigDirectionResult().direction == MiniFigDirection::FRONT) {
@@ -104,12 +102,10 @@ void MiniFigCameraAction::run()
 
   } else if(robot.getMiniFigDirectionResult().wasDetected) {
     // 一回目の撮影でミニフィグが検出されていて、向きがFRONTじゃなければ、二回目の撮影でのミニフィグの向きは確実にFRONTになる。
-    std::cout << "正面での撮影" << std::endl;
     FrameSave::save(frame, filePath, uploadFileName);
   } else {
     // 一回目検出falseなら、残り、3回の撮影は確定する。
     // 一回目の撮影でミニフィグが検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
-    std::cout << "ミニフィグ向き判定用写真の撮影" << std::endl;
     FrameSave::save(frame, filePath, "Fig_" + to_string(position));
   }
 

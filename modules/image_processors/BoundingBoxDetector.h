@@ -21,7 +21,7 @@ struct BoundingBoxDetectionResult {
 class BoundingBoxDetector {
  public:
   /**
-   * 仮想デストラクタ
+   * @brief 仮想デストラクタ
    * @brief 派生クラスのデストラクタが正しく呼ばれるようにするために必要
    */
   virtual ~BoundingBoxDetector() = default;

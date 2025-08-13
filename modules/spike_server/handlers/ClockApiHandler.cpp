@@ -1,9 +1,15 @@
+/**
+ * @file   ClockApiHandler.cpp
+ * @brief  時刻関連APIを処理するハンドラクラスの実装
+ * @author takuchi17
+ */
+
 #include "ClockApiHandler.h"
 #include <iostream>
 
 ClockApiHandler::ClockApiHandler(Socket* client)
   : ApiHandler(client),  // Call base class constructor
-    clock_()
+    clock()
 {
 }
 
@@ -13,14 +19,14 @@ void ClockApiHandler::handleSleep(const spike::ClockSleepRequest& request)
 {
   spike::Response response;
   response.value = false;
-  clock_.sleep(request.milliseconds);
+  clock.sleep(request.microseconds);
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
 void ClockApiHandler::handleNow()
 {
-  spike::UInt32Response response;
+  spike::UInt64Response response;
   response.value = 0;
-  response.value = clock_.now();
+  response.value = clock.now();
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }

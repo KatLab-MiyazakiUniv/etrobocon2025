@@ -1,9 +1,15 @@
+/**
+ * @file   ForceSensorApiHandler.cpp
+ * @brief  フォースセンサーAPIを処理するハンドラクラスの実装
+ * @author takuchi17
+ */
+
 #include "ForceSensorApiHandler.h"
 #include <iostream>
 
 ForceSensorApiHandler::ForceSensorApiHandler(Socket* client)
   : ApiHandler(client),  // Call base class constructor
-    forceSensor_(EPort::PORT_D)
+    forceSensor(EPort::PORT_D)
 {
 }
 
@@ -13,14 +19,14 @@ void ForceSensorApiHandler::handleIsPressed(const spike::ForceSensorIsPressedReq
 {
   spike::BoolResponse response;
   response.value = false;
-  response.value = forceSensor_.isPressed(request.threshold);
+  response.value = forceSensor.isPressed(request.threshold);
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
 void ForceSensorApiHandler::handleGetForce()
 {
-  spike::DoubleResponse response;
-  response.value = false;
-  response.value = forceSensor_.getForce();
+  spike::FloatResponse response;
+  response.value = 0.0f;
+  response.value = forceSensor.getForce();
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }

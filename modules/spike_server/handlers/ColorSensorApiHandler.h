@@ -1,3 +1,9 @@
+/**
+ * @file   ColorSensorApiHandler.h
+ * @brief  カラーセンサーAPIを処理するハンドラクラス
+ * @author takuchi17
+ */
+
 #ifndef COLOR_SENSOR_API_HANDLER_H
 #define COLOR_SENSOR_API_HANDLER_H
 
@@ -7,14 +13,23 @@
 
 class ColorSensorApiHandler : public ApiHandler {  // Inherit from ApiHandler
  public:
+  /**
+   * @brief コンストラクタ
+   * @param client クライアントソケットへのポインタ
+   */
   explicit ColorSensorApiHandler(Socket* client);
 
+  /**
+   * @brief 反射値取得を処理する
+   */
   void handleGetReflection();
+  /**
+   * @brief HSVカラー値取得を処理する
+   */
   void handleGetColorHsv();
 
  private:
-  // client_ and send() are now inherited from ApiHandler
-  spikeapi::ColorSensor colorSensor_;
+  spikeapi::ColorSensor colorSensor;  // カラーセンサーインスタンス
 };
 
 #endif  // COLOR_SENSOR_API_HANDLER_H

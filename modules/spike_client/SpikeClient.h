@@ -1,3 +1,9 @@
+/**
+ * @file   SpikeClient.h
+ * @brief  SPIKEサーバーと通信するためのクライアントクラス
+ * @author takuchi17
+ */
+
 #ifndef SPIKE_CLIENT_H
 #define SPIKE_CLIENT_H
 
@@ -9,9 +15,26 @@
 
 class SpikeClient {
  public:
+  /**
+   * @brief コンストラクタ
+   */
   SpikeClient();
+  /**
+   * @brief サーバーに接続する
+   * @param host ホスト名またはIPアドレス
+   * @param port ポート番号
+   * @return 接続成功の場合true、失敗の場合false
+   */
   bool connect(const std::string& host, int port);
+  /**
+   * @brief サーバーから切断する
+   */
   void disconnect();
+  /**
+   * @brief コマンドを実行する
+   * @param id コマンドID
+   * @return 実行成功の場合true、失敗の場合false
+   */
   inline bool executeCommand(spike::CommandId id)
   {
     if(!socket.isValid()) return false;
@@ -22,6 +45,13 @@ class SpikeClient {
     return response.value;
   }
 
+  /**
+   * @brief リクエストを伴うコマンドを実行する
+   * @tparam TRequest リクエストの型
+   * @param id コマンドID
+   * @param request リクエストデータ
+   * @return 実行成功の場合true、失敗の場合false
+   */
   template <typename TRequest>
   bool executeCommand(spike::CommandId id, const TRequest& request)
   {
@@ -34,6 +64,14 @@ class SpikeClient {
     return response.value;
   }
 
+  /**
+   * @brief リクエストとレスポンスを伴うクエリを実行する
+   * @tparam TResponse レスポンスの型
+   * @tparam TRequest リクエストの型
+   * @param id コマンドID
+   * @param request リクエストデータ
+   * @return レスポンスデータ（成功の場合）、またはstd::nullopt（失敗の場合）
+   */
   template <typename TResponse, typename TRequest>
   std::optional<TResponse> executeQuery(spike::CommandId id, const TRequest& request)
   {
@@ -49,6 +87,12 @@ class SpikeClient {
     return response_payload;
   }
 
+  /**
+   * @brief レスポンスを伴うクエリを実行する
+   * @tparam TResponse レスポンスの型
+   * @param id コマンドID
+   * @return レスポンスデータ（成功の場合）、またはstd::nullopt（失敗の場合）
+   */
   template <typename TResponse>
   std::optional<TResponse> executeQuery(spike::CommandId id)
   {
@@ -64,7 +108,7 @@ class SpikeClient {
   }
 
  private:
-  Socket socket;
+  Socket socket;  // ソケットインスタンス
 };
 
 #endif

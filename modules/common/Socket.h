@@ -1,3 +1,9 @@
+/**
+ * @file   Socket.h
+ * @brief  ネットワーク通信のためのソケット操作クラス
+ * @author takuchi17
+ */
+
 #ifndef SOCKET_H
 #define SOCKET_H
 

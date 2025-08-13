@@ -25,7 +25,10 @@ class FrameSave {
 
  private:
   inline static std::string imgExtension = ".JPEG";  // 保存するときの拡張子
-  FrameSave();                                       // インスタンス化の禁止
+  /**
+   * @brief コンストラクタ（インスタンス化の禁止）
+   */
+  FrameSave();
 };
 
 #endif  // FRAME_SAVE_H

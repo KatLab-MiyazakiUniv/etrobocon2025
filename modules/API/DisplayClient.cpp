@@ -1,3 +1,9 @@
+/**
+ * @file   DisplayClient.cpp
+ * @brief  ディスプレイ操作のためのクライアントAPIの実装
+ * @author takuchi17
+ */
+
 #include "DisplayClient.h"
 #include <string.h>
 
@@ -15,10 +21,10 @@ void DisplayClient::showNumber(const int8_t number)
   spikeClient.executeCommand(spike::CommandId::DISPLAY_SHOW_NUMBER, req);
 }
 
-void DisplayClient::scrollText(const char* text, int speed)
+void DisplayClient::scrollText(const char* text, uint32_t delay)
 {
   spike::DisplayScrollTextRequest req;
-  req.speed = speed;
+  req.delay = delay;
   strncpy(req.text, text, sizeof(req.text) - 1);
   req.text[sizeof(req.text) - 1] = '\0';  // Ensure null termination
 

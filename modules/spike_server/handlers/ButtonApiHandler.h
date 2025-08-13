@@ -1,3 +1,9 @@
+/**
+ * @file   ButtonApiHandler.h
+ * @brief  ボタンAPIを処理するハンドラクラス
+ * @author takuchi17
+ */
+
 #ifndef BUTTON_API_HANDLER_H
 #define BUTTON_API_HANDLER_H
 
@@ -5,15 +11,22 @@
 #include "SpikeCommand.h"
 #include "Button.h"
 
-class ButtonApiHandler : public ApiHandler {  // Inherit from ApiHandler
+class ButtonApiHandler : public ApiHandler {
  public:
+  /**
+   * @brief コンストラクタ
+   * @param client クライアントソケットへのポインタ
+   */
   explicit ButtonApiHandler(Socket* client);
 
+  /**
+   * @brief ボタンの押下状態を処理する
+   * @param request ボタン押下リクエスト
+   */
   void handleIsPressed(const spike::ButtonIsPressedRequest& request);
 
  private:
-  // client_ and send() are now inherited from ApiHandler
-  spikeapi::Button button_;
+  spikeapi::Button button;  // ボタンインスタンス
 };
 
 #endif  // BUTTON_API_HANDLER_H

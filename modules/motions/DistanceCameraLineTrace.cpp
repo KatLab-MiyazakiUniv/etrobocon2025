@@ -49,6 +49,5 @@ bool DistanceCameraLineTrace::isMetContinuationCondition()
           - initDistance)
      >= targetDistance)
     return false;
-
   return true;
 }

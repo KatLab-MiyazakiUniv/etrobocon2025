@@ -44,6 +44,9 @@ class ColorJudge {
   static COLOR convertHsvToColor(const spike::HsvResponse& hsv);
 
  private:
+  /**
+   * @brief コンストラクタ（インスタンス化禁止）
+   */
   ColorJudge();
 };
 

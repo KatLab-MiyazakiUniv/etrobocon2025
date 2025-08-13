@@ -12,7 +12,7 @@
 class CompositeMotion : public Motion {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @brief 外部リソースのインスタンスを初期化する
    * @param _robot ロボット制御クラスへの参照
    */

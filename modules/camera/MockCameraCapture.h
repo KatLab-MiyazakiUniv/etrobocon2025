@@ -1,3 +1,8 @@
+/**
+ * @file   MockCameraCapture.h
+ * @brief  カメラキャプチャーのモッククラス
+ * @author takuchi17
+ */
 
 #ifndef MOCK_CAMERA_CAPTURE_H
 #define MOCK_CAMERA_CAPTURE_H

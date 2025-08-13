@@ -29,7 +29,7 @@ help:
 	@echo " $$ make upload-image"
 
 ## 実行関連 ##
-build: smart-clean build-server build-client
+build: smart-clean build-server build-client build-mock-server
 	@echo "ビルドが完了しました。"
 
 build-server:
@@ -62,8 +62,10 @@ start-client:
 
 start-mock-server:
 	@echo "Mock server起動中..."
+	@echo "Server IP: $$(hostname -I)"
 	./spike_server_mock_app
 	@echo "Mock serverの起動が完了しました。"
+
 
 
 ## テスト関連 ##
@@ -165,7 +167,7 @@ else
 endif
 
 format-check:
-	find ./tests ./modules -type f -name "*.cpp" -o -name "*.h" | xargs clang-format --dry-run --Werror *.h *.cpp
+	find ./ ./tests ./modules -type f -name "*.cpp" -o -name "*.h" | xargs clang-format --dry-run --Werror *.h *.cpp
 
 ## 無線通信デバイスとの通信関連 ##
 # サーバーの画像をアップロードする

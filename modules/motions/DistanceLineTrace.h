@@ -12,7 +12,7 @@
 class DistanceLineTrace : public LineTrace {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param _targetDistance 目標距離 0~
    * @param _targetSpeed 目標速度 0~
    * @param _targetBrightness 目標輝度 0~

@@ -6,7 +6,7 @@
 
 #include "EtRobocon2025.h"
 #include "AreaMaster.h"
-#include "SpikeClient.h"  // Include the real SpikeClient
+#include "SpikeClient.h"
 
 // Remove the static Robot instance here, it will be created in start()
 // Robot EtRobocon2025::robot;
@@ -16,19 +16,21 @@ void EtRobocon2025::start()
   std::cout << "Hello KATLAB" << std::endl;
 
   // Create a real SpikeClient instance
-  SpikeClient realSpikeClient;
-  // Connect to the SpikeServer (assuming localhost:8888)
-  if(!realSpikeClient.connect("172.18.0.5", 8888)) {
-    // if (!realSpikeClient.connect("127.0.0.1", 8888)) {
+  SpikeClient spikeClient;
+
+  // Docker containerのIPアドレスを指定して接続（動作確認用）
+  if(!spikeClient.connect("172.18.0.2", 8888)) {
+    // 実機の際はローカルホストのIPアドレスを指定
+    // if(!spikeClient.connect("127.0.0.1", 8888)) {
     std::cerr << "Failed to connect to SpikeServer!" << std::endl;
     return;
   }
 
-  // Pass the real SpikeClient to the Robot constructor
-  // Robot robot(realSpikeClient);
-  // If you need to use a camera, you can create a MockCameraCapture or use the real one
-  MockCameraCapture mockCameraCapture;              // Use MockCameraCapture for testing
-  Robot robot(realSpikeClient, mockCameraCapture);  // Use MockCameraCapture for testing
+  // カメラがない環境で動かす際（動作確認用）
+  MockCameraCapture mockCameraCapture;
+  Robot robot(spikeClient, mockCameraCapture);
+  // 実機の際は以下のようにRobotインスタンスを作成
+  // Robot robot(spikeClient);
 
   if(!robot.getCameraCaptureInstance().setCameraID(
          robot.getCameraCaptureInstance().findAvailableCameraID()))
@@ -53,5 +55,5 @@ void EtRobocon2025::start()
   lineTraceAreaMaster.run();
 
   // Disconnect the SpikeClient when done
-  realSpikeClient.disconnect();
+  spikeClient.disconnect();
 }

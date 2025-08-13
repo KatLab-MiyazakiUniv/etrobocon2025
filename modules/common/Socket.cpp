@@ -1,3 +1,9 @@
+/**
+ * @file   Socket.cpp
+ * @brief  ネットワーク通信のためのソケット操作クラスの実装
+ * @author takuchi17
+ */
+
 #include "Socket.h"
 #include <sys/socket.h>
 #include <arpa/inet.h>

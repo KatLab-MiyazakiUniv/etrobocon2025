@@ -17,7 +17,7 @@ enum Area { LineTrace, DoubleLoop, SmartCarry };
 class AreaMaster {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param robot Robotインスタンスの参照
    * @param area エリアの指定(Enum型のArea)
    * @param isLeftCourse コースのLR判定(true:Lコース, false:Rコース)
@@ -36,11 +36,8 @@ class AreaMaster {
   bool isLeftCourse;     // コースのLR判定(true:Lコース, false:Rコース)
   int targetBrightness;  // 目標輝度
 
-  // 各エリアのコマンドファイルベースパス
-  static const std::string basePath;
-
-  // コマンドファイル名（各エリア名）
-  static const std::array<std::string, 3> areaCommandNames;
+  static const std::string basePath;  // 各エリアのコマンドファイルベースパス
+  static const std::array<std::string, 3> areaCommandNames;  // コマンドファイル名（各エリア名）
 };
 
 #endif

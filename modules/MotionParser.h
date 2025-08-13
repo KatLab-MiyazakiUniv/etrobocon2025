@@ -58,7 +58,10 @@ class MotionParser {
                                             int targetBrightness);
 
  private:
-  MotionParser();  // インスタンス化を禁止する
+  /**
+   * @brief コンストラクタ（インスタンス化を禁止する）
+   */
+  MotionParser();
 
   /**
    * @brief 文字列を列挙型COMMANDに変換する

@@ -1,3 +1,9 @@
+/**
+ * @file   SpikeClient.cpp
+ * @brief  SPIKEサーバーと通信するためのクライアントクラスの実装
+ * @author takuchi17
+ */
+
 #include "SpikeClient.h"
 
 SpikeClient::SpikeClient() {}

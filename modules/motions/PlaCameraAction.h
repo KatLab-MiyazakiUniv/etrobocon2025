@@ -17,7 +17,7 @@
 class PlaCameraAction : public Motion {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param _robot ロボット本体への参照
    * @param _threshold 差分二値化の閾値
    * @param _minArea 動体とみなす最小面積
@@ -42,10 +42,10 @@ class PlaCameraAction : public Motion {
    */
   void getBackgroundFrame();
 
-  MotionDetector motionDetector;
-  static constexpr int MAX_NO_MOTION = 2;  // 非検知となる検知回数
-  static constexpr const char* filePath = "datafiles/plarail/";
-  std::string imageSaveName = "bestframe";
+  MotionDetector motionDetector;                                 // 動体検出器
+  static constexpr int MAX_NO_MOTION = 2;                        // 非検知となる検知回数
+  static constexpr const char* filePath = "datafiles/plarail/";  // 画像保存先のディレクトリパス
+  std::string imageSaveName = "bestframe";  // 動体検知で得た画像のファイル名
 };
 
 #endif

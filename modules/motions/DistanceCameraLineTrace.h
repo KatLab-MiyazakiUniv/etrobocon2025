@@ -12,7 +12,7 @@
 class DistanceCameraLineTrace : public CameraPidTracking {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param _targetDistance 目標距離
    * @param _targetSpeed 目標速度
    * @param _targetXCoordinate 目標x座標
@@ -41,8 +41,7 @@ class DistanceCameraLineTrace : public CameraPidTracking {
   void prepare() override;
 
   /**
-   * @brief
-   * 指定距離カメラライントレースする際の継続条件判定をする。
+   * @brief 指定距離カメラライントレースする際の継続条件判定をする。
    */
   bool isMetContinuationCondition() override;
 

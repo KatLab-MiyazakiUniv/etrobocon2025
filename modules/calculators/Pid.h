@@ -14,7 +14,8 @@ struct PidGain {
   double ki;  // Iゲイン
   double kd;  // Dゲイン
 
-  /** コンストラクタ
+  /**
+   * @brief コンストラクタ
    * @param _kp Pゲイン
    * @param _ki Iゲイン
    * @param _kd Dゲイン
@@ -24,7 +25,8 @@ struct PidGain {
 
 class Pid {
  public:
-  /** コンストラクタ
+  /**
+   * @brief コンストラクタ
    * @param _kp Pゲイン
    * @param _ki Iゲイン
    * @param _kd Dゲイン
@@ -35,7 +37,8 @@ class Pid {
   Pid(double _kp, double _ki, double _kd, double _targetValue, double _maxIntegral,
       double _minIntegral);
 
-  /** 積分値制限を設定しない場合のコンストラクタ
+  /**
+   * @brief 積分値制限を設定しない場合のコンストラクタ
    * @param _kp Pゲイン
    * @param _ki Iゲイン
    * @param _kd Dゲイン
@@ -60,7 +63,7 @@ class Pid {
   double calculatePid(double currentValue, double delta = 0.01);
 
  private:
-  PidGain pidGain;
+  PidGain pidGain;                      // PIDゲイン
   double prevDeviation = 0.0;           // 前回の偏差
   double integral = 0.0;                // 偏差の累積
   double filteredDerivative = 0.0;      // フィルタされた微分項を保持する変数

@@ -1,4 +1,10 @@
 
+/**
+ * @file   spike_server_mock_main.cpp
+ * @brief  SPIKEモックサーバーのメインエントリポイント
+ * @author takuchi17
+ */
+
 #include "SpikeServerMock.h"
 #include <iostream>
 

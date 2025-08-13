@@ -1,3 +1,9 @@
+/**
+ * @file   ButtonClient.cpp
+ * @brief  ボタン操作のためのクライアントAPIの実装
+ * @author takuchi17
+ */
+
 #include "ButtonClient.h"
 #include <string>
 

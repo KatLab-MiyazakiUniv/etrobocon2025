@@ -14,7 +14,7 @@
 class AngleRotation : public Rotation {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param _robot       ロボット制御クラスへの参照
    * @param _targetAngle 目標回転角度(deg) 0~360
    * @param _speed       指定する速度（mm/秒）

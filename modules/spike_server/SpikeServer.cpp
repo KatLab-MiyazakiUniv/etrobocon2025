@@ -1,3 +1,9 @@
+/**
+ * @file   SpikeServer.cpp
+ * @brief  SPIKEデバイスとの通信を管理するサーバークラスの実装
+ * @author takuchi17
+ */
+
 #include "SpikeServer.h"
 #include "Socket.h"
 #include "StringOperator.h"
@@ -16,12 +22,12 @@
 
 // SpikeServer constructor
 SpikeServer::SpikeServer(Socket* client)
-  : motorHandler_(client),
-    colorSensorHandler_(client),
-    clockHandler_(client),
-    buttonHandler_(client),
-    forceSensorHandler_(client),
-    displayHandler_(client)
+  : motorHandler(client),
+    colorSensorHandler(client),
+    clockHandler(client),
+    buttonHandler(client),
+    forceSensorHandler(client),
+    displayHandler(client)
 {
 }
 
@@ -55,99 +61,99 @@ void SpikeServer::handle_command(spike::CommandId commandId, Socket* client)
       case spike::CommandId::MOTOR_SET_POWER: {
         spike::MotorSetPowerRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        motorHandler_.handleSetPower(request);
+        motorHandler.handleSetPower(request);
         break;
       }
       case spike::CommandId::MOTOR_SET_SPEED: {
         spike::MotorSetSpeedRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        motorHandler_.handleSetSpeed(request);
+        motorHandler.handleSetSpeed(request);
         break;
       }
       case spike::CommandId::MOTOR_STOP_WHEELS: {
-        motorHandler_.handleStopWheels();
+        motorHandler.handleStopWheels();
         break;
       }
       case spike::CommandId::MOTOR_BRAKE_WHEELS: {
-        motorHandler_.handleBrakeWheels();
+        motorHandler.handleBrakeWheels();
         break;
       }
       case spike::CommandId::MOTOR_STOP_ARM: {
-        motorHandler_.handleStopArm();
+        motorHandler.handleStopArm();
         break;
       }
       case spike::CommandId::MOTOR_HOLD_ARM: {
-        motorHandler_.handleHoldArm();
+        motorHandler.handleHoldArm();
         break;
       }
       case spike::CommandId::MOTOR_GET_COUNT: {
         spike::MotorGetRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        motorHandler_.handleGetCount(request);
+        motorHandler.handleGetCount(request);
         break;
       }
       case spike::CommandId::MOTOR_GET_POWER: {
         spike::MotorGetRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        motorHandler_.handleGetPower(request);
+        motorHandler.handleGetPower(request);
         break;
       }
       case spike::CommandId::MOTOR_GET_SPEED: {
         spike::MotorGetRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        motorHandler_.handleGetSpeed(request);
+        motorHandler.handleGetSpeed(request);
         break;
       }
       case spike::CommandId::COLOR_SENSOR_GET_REFLECTION: {
-        colorSensorHandler_.handleGetReflection();
+        colorSensorHandler.handleGetReflection();
         break;
       }
       case spike::CommandId::COLOR_SENSOR_GET_COLOR_HSV: {
-        colorSensorHandler_.handleGetColorHsv();
+        colorSensorHandler.handleGetColorHsv();
         break;
       }
       case spike::CommandId::CLOCK_SLEEP: {
         spike::ClockSleepRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        clockHandler_.handleSleep(request);
+        clockHandler.handleSleep(request);
         break;
       }
       case spike::CommandId::CLOCK_NOW: {
-        clockHandler_.handleNow();
+        clockHandler.handleNow();
         break;
       }
       case spike::CommandId::BUTTON_IS_PRESSED: {
         spike::ButtonIsPressedRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        buttonHandler_.handleIsPressed(request);
+        buttonHandler.handleIsPressed(request);
         break;
       }
       case spike::CommandId::FORCE_SENSOR_IS_PRESSED: {
         spike::ForceSensorIsPressedRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        forceSensorHandler_.handleIsPressed(request);
+        forceSensorHandler.handleIsPressed(request);
         break;
       }
       case spike::CommandId::FORCE_SENSOR_GET_FORCE: {
-        forceSensorHandler_.handleGetForce();
+        forceSensorHandler.handleGetForce();
         break;
       }
       case spike::CommandId::DISPLAY_SHOW_CHAR: {
         spike::DisplayShowCharRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        displayHandler_.handleShowChar(request);
+        displayHandler.handleShowChar(request);
         break;
       }
       case spike::CommandId::DISPLAY_SHOW_NUMBER: {
         spike::DisplayShowNumberRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        displayHandler_.handleShowNumber(request);
+        displayHandler.handleShowNumber(request);
         break;
       }
       case spike::CommandId::DISPLAY_SCROLL_TEXT: {
         spike::DisplayScrollTextRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        displayHandler_.handleScrollText(request);
+        displayHandler.handleScrollText(request);
         break;
       }
       default:

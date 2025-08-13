@@ -17,9 +17,9 @@
 class MiniFigCameraAction : public CompositeMotion {
  public:
   /**
-   * コンストラクタ
-   * @param _isClockwise
-   * カメラをミニフィグに向けるための回頭方向　true:時計回り, false:反時計回り
+   * @brief コンストラクタ
+   * @param _robot Robotインスタンス
+   * @param _isClockwise カメラをミニフィグに向けるための回頭方向 true:時計回り, false:反時計回り
    * @param _preTargetAngle カメラをミニフィグに向けるための回頭角度
    * @param _postTargetAngle 黒線復帰のための回頭角度
    * @param _targetRotationSpeed 撮影前後の回頭のための目標速度

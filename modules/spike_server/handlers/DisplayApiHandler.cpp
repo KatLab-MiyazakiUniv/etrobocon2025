@@ -1,9 +1,15 @@
+/**
+ * @file   DisplayApiHandler.cpp
+ * @brief  ディスプレイAPIを処理するハンドラクラスの実装
+ * @author takuchi17
+ */
+
 #include "DisplayApiHandler.h"
 #include <iostream>
 
 DisplayApiHandler::DisplayApiHandler(Socket* client)
   : ApiHandler(client),  // Call base class constructor
-    display_()
+    display()
 {
 }
 
@@ -13,7 +19,7 @@ void DisplayApiHandler::handleShowChar(const spike::DisplayShowCharRequest& requ
 {
   spike::Response response;
   response.value = false;
-  display_.showChar(request.character);
+  display.showChar(request.character);
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
@@ -21,7 +27,7 @@ void DisplayApiHandler::handleShowNumber(const spike::DisplayShowNumberRequest& 
 {
   spike::Response response;
   response.value = false;
-  display_.showNumber(request.number);
+  display.showNumber(request.number);
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
@@ -29,6 +35,6 @@ void DisplayApiHandler::handleScrollText(const spike::DisplayScrollTextRequest& 
 {
   spike::Response response;
   response.value = false;
-  display_.scrollText(request.text, request.speed);
+  display.scrollText(request.text, request.delay);
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }

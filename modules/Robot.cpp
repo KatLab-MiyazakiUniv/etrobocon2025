@@ -1,11 +1,16 @@
+/**
+ * @file   Robot.cpp
+ * @brief  ハードウェアとのインターフェースや攻略状況を管理するクラス
+ * @author takuchi17
+ */
+
 #include "Robot.h"
 
-// Constructor for dependency injection of SpikeClient
 Robot::Robot(SpikeClient& client)
-  : spikeClient(client),  // Initialize reference
+  : spikeClient(client),
     motorController(spikeClient),
     defaultCameraCapture(),
-    cameraCapture(defaultCameraCapture),  // Use defaultCameraCapture
+    cameraCapture(defaultCameraCapture),
     colorSensor(spikeClient),
     clock(spikeClient),
     button(spikeClient),
@@ -14,12 +19,11 @@ Robot::Robot(SpikeClient& client)
 {
 }
 
-// Constructor with camera injection
 Robot::Robot(SpikeClient& client, ICameraCapture& cam)
-  : spikeClient(client),  // Initialize reference
+  : spikeClient(client),
     motorController(spikeClient),
     defaultCameraCapture(),
-    cameraCapture(cam),  // Use injected camera
+    cameraCapture(cam),
     colorSensor(spikeClient),
     clock(spikeClient),
     button(spikeClient),

@@ -19,7 +19,7 @@
 class BackgroundPlaCameraAction : public CompositeMotion {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param _robot ロボットインスタンス
    * @param _isClockwise 時計回りかどうか
    * @param _preTargetAngle カメラを風景に向けるための回頭角度

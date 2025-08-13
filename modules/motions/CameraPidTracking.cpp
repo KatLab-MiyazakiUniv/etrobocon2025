@@ -57,7 +57,7 @@ void CameraPidTracking::run()
     // 旋回値の計算
     double turningPower = pid.calculatePid(currentX) * edgeSign;
 
-    // モータのPower値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
+    // モータのPower値をセット（前進のとき負にならないように，後進のとき正にならないようにセット）
     double rightPower = baseRightPower > 0.0 ? std::max(baseRightPower - turningPower, 0.0)
                                              : std::min(baseRightPower + turningPower, 0.0);
     double leftPower = baseLeftPower > 0.0 ? std::max(baseLeftPower + turningPower, 0.0)

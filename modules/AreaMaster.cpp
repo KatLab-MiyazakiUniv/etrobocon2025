@@ -28,9 +28,15 @@ void AreaMaster::run()
   motionList = MotionParser::createMotions(robot, commandFilePath, targetBrightness);
 
   // 各動作を実行し、動作し終えたらメモリを開放する
+  int command_index = 0; // コマンドのインデックス
   for(auto motion = motionList.begin(); motion != motionList.end();) {
     (*motion)->run();
+
+    // コマンド実行後の出力
+    std::cout << "Command " << command_index << " finished." << std::endl;
+
     delete *motion;                     // メモリを解放
     motion = motionList.erase(motion);  // リストから削除
+    command_index++; // インデックスをインクリメント
   }
 }

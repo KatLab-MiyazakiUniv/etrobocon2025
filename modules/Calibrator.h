@@ -10,12 +10,13 @@
 #include "Robot.h"
 #include "Snapshot.h"
 
-#define PRESS_POWER 0.5f
+#define PRESS_POWER 0.5f  // 押下判定のパワー閾値
 
 class Calibrator {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
+   * @param _robot Robotインスタンスの参照
    */
   Calibrator(Robot& _robot);
 

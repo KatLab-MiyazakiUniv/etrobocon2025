@@ -14,10 +14,10 @@
 
 class EtRobocon2025 {
  public:
+  /**
+   * @brief ETRobocon2025のメイン処理を開始する
+   */
   static void start();
-
- private:
-  // Removed static Robot robot;
 };
 
 #endif

@@ -14,14 +14,16 @@
 #include <vector>
 #include <string>
 
-#define MODEL_INPUT_SIZE 640
+#define MODEL_INPUT_SIZE 640       // モデルの入力サイズ（640x640）
 #define CONFIDENCE_THRESHOLD 0.5f  // 検出結果を採用する最低信頼度の閾値
 #define NMS_THRESHOLD 0.5f         // 検出ボックス同士の重なりを判断する閾値
 
 // 風景の向きを表す列挙体
 enum class BackgroundDirection { FRONT, RIGHT, BACK, LEFT };
 
-// 結果格納用の構造体
+/**
+ * @brief 結果格納用の構造体
+ */
 struct BackgroundDirectionResult {
   bool wasDetected = false;       // 検出が成功したかどうか
   BackgroundDirection direction;  // 風景の向きを表す列挙体
@@ -30,7 +32,8 @@ struct BackgroundDirectionResult {
 class BackgroundDirectionDetector {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
+   * @param _modelPath モデルのパス
    */
   BackgroundDirectionDetector(const std::string& _modelPath
                               = "datafiles/models/BackgroundDetector.onnx");

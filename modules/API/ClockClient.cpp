@@ -1,10 +1,16 @@
+/**
+ * @file   ClockClient.cpp
+ * @brief  時刻操作のためのクライアントAPIの実装
+ * @author takuchi17
+ */
+
 #include "ClockClient.h"
 
 ClockClient::ClockClient(SpikeClient& client) : spikeClient(client) {}
 
-void ClockClient::sleep(uint64_t milliseconds)
+void ClockClient::sleep(uint64_t microseconds)
 {
-  spike::ClockSleepRequest req{ milliseconds };
+  spike::ClockSleepRequest req{ microseconds };
   spikeClient.executeCommand(spike::CommandId::CLOCK_SLEEP, req);
 }
 
