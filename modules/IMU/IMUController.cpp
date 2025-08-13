@@ -49,7 +49,7 @@ void IMUController::calculateSpikeInclination()
   spikeInclination = std::acos(gz);
 
   // 傾きの方向を考慮して符号を調整（X軸方向の傾きで判定）
-  if(gx < 0) {
+  if(gx > 0) {
     spikeInclination = -spikeInclination;
   }
 
