@@ -6,8 +6,8 @@
 
 #include <gtest/gtest.h>
 #include "Robot.h"
-#include "tests/dummy/SpikeClient.h" // Include the mock SpikeClient
-#include "tests/dummy/DummyCameraCapture.h" // Include dummy camera for testing
+#include "tests/dummy/SpikeClient.h"         // Include the mock SpikeClient
+#include "tests/dummy/DummyCameraCapture.h"  // Include dummy camera for testing
 
 namespace etrobocon2025_test {
 
@@ -17,7 +17,7 @@ namespace etrobocon2025_test {
   // ゲッターで取得したMotorControllerインスタンスが等しいか確認するテスト
   TEST(RobotTest, GetMotorControllerInstanceReturnsReference)
   {
-    Robot robot(mockSpikeClient); // Pass mock SpikeClient
+    Robot robot(mockSpikeClient);  // Pass mock SpikeClient
     MotorControllerClient& motorRef1 = robot.getMotorControllerInstance();
     MotorControllerClient& motorRef2 = robot.getMotorControllerInstance();
 
@@ -27,8 +27,8 @@ namespace etrobocon2025_test {
   // ゲッターで取得したCameraCaptureインスタンスが等しいか確認するテスト
   TEST(RobotTest, GetCameraCaptureInstanceReturnsReference)
   {
-    DummyCameraCapture dummyCam; // Create a dummy camera instance
-    Robot robot(mockSpikeClient, dummyCam); // Pass mock SpikeClient and dummy camera
+    DummyCameraCapture dummyCam;             // Create a dummy camera instance
+    Robot robot(mockSpikeClient, dummyCam);  // Pass mock SpikeClient and dummy camera
     ICameraCapture& cameraRef1 = robot.getCameraCaptureInstance();
     ICameraCapture& cameraRef2 = robot.getCameraCaptureInstance();
 
@@ -38,7 +38,7 @@ namespace etrobocon2025_test {
   // ゲッターで取得したColorSensorインスタンスが等しいか確認するテスト
   TEST(RobotTest, GetColorSensorInstanceReturnsReference)
   {
-    Robot robot(mockSpikeClient); // Pass mock SpikeClient
+    Robot robot(mockSpikeClient);  // Pass mock SpikeClient
     ColorSensorClient& colorSensorRef1 = robot.getColorSensorInstance();
     ColorSensorClient& colorSensorRef2 = robot.getColorSensorInstance();
 

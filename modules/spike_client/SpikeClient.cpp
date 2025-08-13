@@ -2,10 +2,12 @@
 
 SpikeClient::SpikeClient() {}
 
-bool SpikeClient::connect(const std::string& host, int port) {
-    return socket.connect(host, port);
+bool SpikeClient::connect(const std::string& host, int port)
+{
+  return socket.connect(host, port);
 }
 
-void SpikeClient::disconnect() {
-    socket.close();
+void SpikeClient::disconnect()
+{
+  socket.close();
 }

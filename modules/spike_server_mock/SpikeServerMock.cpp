@@ -18,9 +18,9 @@ int32_t SpikeServerMock::left_motor_power = 0;
 int32_t SpikeServerMock::arm_motor_power = 0;
 double SpikeServerMock::right_motor_speed = 0.0;
 double SpikeServerMock::left_motor_speed = 0.0;
-int32_t SpikeServerMock::reflection_value = 50; // Default middle value
-spike::HsvResponse SpikeServerMock::hsv_value = {180.0f, 0.5f, 0.8f}; // Default cyan-ish
-bool SpikeServerMock::button_pressed_state[3] = {false, false, false};
+int32_t SpikeServerMock::reflection_value = 50;                          // Default middle value
+spike::HsvResponse SpikeServerMock::hsv_value = { 180.0f, 0.5f, 0.8f };  // Default cyan-ish
+bool SpikeServerMock::button_pressed_state[3] = { false, false, false };
 bool SpikeServerMock::force_sensor_pressed_state = false;
 double SpikeServerMock::force_sensor_value = 0.0;
 char SpikeServerMock::display_char = ' ';
@@ -67,26 +67,34 @@ void handle_client(Socket* client)
 
     spike::Response response_header{ true };
 
-    std::cout << "MockServer: Received Command ID: " << static_cast<uint16_t>(request.id) << std::endl;
+    std::cout << "MockServer: Received Command ID: " << static_cast<uint16_t>(request.id)
+              << std::endl;
 
     switch(request.id) {
       // Motor Commands
       case spike::CommandId::MOTOR_SET_POWER: {
         spike::MotorSetPowerRequest req;
         if(!receiveData(client, &req, sizeof(req))) break;
-        std::cout << "MockServer: MOTOR_SET_POWER - Target: " << static_cast<int>(req.target) << ", Power: " << req.power << std::endl;
-        if (req.target == spike::MotorTarget::RIGHT) SpikeServerMock::right_motor_power = req.power;
-        else if (req.target == spike::MotorTarget::LEFT) SpikeServerMock::left_motor_power = req.power;
-        else if (req.target == spike::MotorTarget::ARM) SpikeServerMock::arm_motor_power = req.power;
+        std::cout << "MockServer: MOTOR_SET_POWER - Target: " << static_cast<int>(req.target)
+                  << ", Power: " << req.power << std::endl;
+        if(req.target == spike::MotorTarget::RIGHT)
+          SpikeServerMock::right_motor_power = req.power;
+        else if(req.target == spike::MotorTarget::LEFT)
+          SpikeServerMock::left_motor_power = req.power;
+        else if(req.target == spike::MotorTarget::ARM)
+          SpikeServerMock::arm_motor_power = req.power;
         if(!sendData(client, &response_header, sizeof(response_header))) break;
         break;
       }
       case spike::CommandId::MOTOR_SET_SPEED: {
         spike::MotorSetSpeedRequest req;
         if(!receiveData(client, &req, sizeof(req))) break;
-        std::cout << "MockServer: MOTOR_SET_SPEED - Target: " << static_cast<int>(req.target) << ", Speed: " << req.speed << std::endl;
-        if (req.target == spike::MotorTarget::RIGHT) SpikeServerMock::right_motor_speed = req.speed;
-        else if (req.target == spike::MotorTarget::LEFT) SpikeServerMock::left_motor_speed = req.speed;
+        std::cout << "MockServer: MOTOR_SET_SPEED - Target: " << static_cast<int>(req.target)
+                  << ", Speed: " << req.speed << std::endl;
+        if(req.target == spike::MotorTarget::RIGHT)
+          SpikeServerMock::right_motor_speed = req.speed;
+        else if(req.target == spike::MotorTarget::LEFT)
+          SpikeServerMock::left_motor_speed = req.speed;
         if(!sendData(client, &response_header, sizeof(response_header))) break;
         break;
       }
@@ -124,11 +132,16 @@ void handle_client(Socket* client)
         spike::MotorGetRequest req;
         if(!receiveData(client, &req, sizeof(req))) break;
         spike::Int32Response res;
-        if (req.target == spike::MotorTarget::RIGHT) res.value = SpikeServerMock::right_motor_count += 1000;
-        else if (req.target == spike::MotorTarget::LEFT) res.value = SpikeServerMock::left_motor_count += 1000;
-        else if (req.target == spike::MotorTarget::ARM) res.value = SpikeServerMock::arm_motor_count += 1000;
-        else res.value = 0; // Should not happen
-        std::cout << "MockServer: MOTOR_GET_COUNT - Target: " << static_cast<int>(req.target) << ", Count: " << res.value << std::endl;
+        if(req.target == spike::MotorTarget::RIGHT)
+          res.value = SpikeServerMock::right_motor_count += 1000;
+        else if(req.target == spike::MotorTarget::LEFT)
+          res.value = SpikeServerMock::left_motor_count += 1000;
+        else if(req.target == spike::MotorTarget::ARM)
+          res.value = SpikeServerMock::arm_motor_count += 1000;
+        else
+          res.value = 0;  // Should not happen
+        std::cout << "MockServer: MOTOR_GET_COUNT - Target: " << static_cast<int>(req.target)
+                  << ", Count: " << res.value << std::endl;
         if(!sendData(client, &response_header, sizeof(response_header))) break;
         if(!sendData(client, &res, sizeof(res))) break;
         break;
@@ -137,11 +150,16 @@ void handle_client(Socket* client)
         spike::MotorGetRequest req;
         if(!receiveData(client, &req, sizeof(req))) break;
         spike::Int32Response res;
-        if (req.target == spike::MotorTarget::RIGHT) res.value = SpikeServerMock::right_motor_power;
-        else if (req.target == spike::MotorTarget::LEFT) res.value = SpikeServerMock::left_motor_power;
-        else if (req.target == spike::MotorTarget::ARM) res.value = SpikeServerMock::arm_motor_power;
-        else res.value = 0; // Should not happen
-        std::cout << "MockServer: MOTOR_GET_POWER - Target: " << static_cast<int>(req.target) << ", Power: " << res.value << std::endl;
+        if(req.target == spike::MotorTarget::RIGHT)
+          res.value = SpikeServerMock::right_motor_power;
+        else if(req.target == spike::MotorTarget::LEFT)
+          res.value = SpikeServerMock::left_motor_power;
+        else if(req.target == spike::MotorTarget::ARM)
+          res.value = SpikeServerMock::arm_motor_power;
+        else
+          res.value = 0;  // Should not happen
+        std::cout << "MockServer: MOTOR_GET_POWER - Target: " << static_cast<int>(req.target)
+                  << ", Power: " << res.value << std::endl;
         if(!sendData(client, &response_header, sizeof(response_header))) break;
         if(!sendData(client, &res, sizeof(res))) break;
         break;
@@ -150,10 +168,14 @@ void handle_client(Socket* client)
         spike::MotorGetRequest req;
         if(!receiveData(client, &req, sizeof(req))) break;
         spike::DoubleResponse res;
-        if (req.target == spike::MotorTarget::RIGHT) res.value = SpikeServerMock::right_motor_speed;
-        else if (req.target == spike::MotorTarget::LEFT) res.value = SpikeServerMock::left_motor_speed;
-        else res.value = 0.0; // Should not happen
-        std::cout << "MockServer: MOTOR_GET_SPEED - Target: " << static_cast<int>(req.target) << ", Speed: " << res.value << std::endl;
+        if(req.target == spike::MotorTarget::RIGHT)
+          res.value = SpikeServerMock::right_motor_speed;
+        else if(req.target == spike::MotorTarget::LEFT)
+          res.value = SpikeServerMock::left_motor_speed;
+        else
+          res.value = 0.0;  // Should not happen
+        std::cout << "MockServer: MOTOR_GET_SPEED - Target: " << static_cast<int>(req.target)
+                  << ", Speed: " << res.value << std::endl;
         if(!sendData(client, &response_header, sizeof(response_header))) break;
         if(!sendData(client, &res, sizeof(res))) break;
         break;
@@ -162,7 +184,8 @@ void handle_client(Socket* client)
       // Color Sensor Commands
       case spike::CommandId::COLOR_SENSOR_GET_REFLECTION: {
         if(!sendData(client, &response_header, sizeof(response_header))) break;
-        SpikeServerMock::reflection_value = reflection_distribution(generator); // Random reflection
+        SpikeServerMock::reflection_value
+            = reflection_distribution(generator);  // Random reflection
         spike::Int32Response res{ SpikeServerMock::reflection_value };
         std::cout << "MockServer: COLOR_SENSOR_GET_REFLECTION - Value: " << res.value << std::endl;
         if(!sendData(client, &res, sizeof(res))) break;
@@ -175,7 +198,9 @@ void handle_client(Socket* client)
         SpikeServerMock::hsv_value.s = hsv_sv_distribution(generator);
         SpikeServerMock::hsv_value.v = hsv_sv_distribution(generator);
         spike::HsvResponse res = SpikeServerMock::hsv_value;
-        std::cout << "MockServer: COLOR_SENSOR_GET_COLOR_HSV - H: " << std::fixed << std::setprecision(2) << res.h << ", S: " << res.s << ", V: " << res.v << std::endl;
+        std::cout << "MockServer: COLOR_SENSOR_GET_COLOR_HSV - H: " << std::fixed
+                  << std::setprecision(2) << res.h << ", S: " << res.s << ", V: " << res.v
+                  << std::endl;
         if(!sendData(client, &res, sizeof(res))) break;
         break;
       }
@@ -206,15 +231,23 @@ void handle_client(Socket* client)
         if(!receiveData(client, &req, sizeof(req))) break;
         spike::BoolResponse res;
         // Toggle button state for demonstration
-        if (req.target == spike::ButtonTarget::RIGHT) SpikeServerMock::button_pressed_state[0] = !SpikeServerMock::button_pressed_state[0];
-        else if (req.target == spike::ButtonTarget::LEFT) SpikeServerMock::button_pressed_state[1] = !SpikeServerMock::button_pressed_state[1];
-        else if (req.target == spike::ButtonTarget::CENTER) SpikeServerMock::button_pressed_state[2] = !SpikeServerMock::button_pressed_state[2];
-        
-        if (req.target == spike::ButtonTarget::RIGHT) res.value = SpikeServerMock::button_pressed_state[0];
-        else if (req.target == spike::ButtonTarget::LEFT) res.value = SpikeServerMock::button_pressed_state[1];
-        else if (req.target == spike::ButtonTarget::CENTER) res.value = SpikeServerMock::button_pressed_state[2];
-        else res.value = false; // Should not happen
-        std::cout << "MockServer: BUTTON_IS_PRESSED - Target: " << static_cast<int>(req.target) << ", Pressed: " << (res.value ? "true" : "false") << std::endl;
+        if(req.target == spike::ButtonTarget::RIGHT)
+          SpikeServerMock::button_pressed_state[0] = !SpikeServerMock::button_pressed_state[0];
+        else if(req.target == spike::ButtonTarget::LEFT)
+          SpikeServerMock::button_pressed_state[1] = !SpikeServerMock::button_pressed_state[1];
+        else if(req.target == spike::ButtonTarget::CENTER)
+          SpikeServerMock::button_pressed_state[2] = !SpikeServerMock::button_pressed_state[2];
+
+        if(req.target == spike::ButtonTarget::RIGHT)
+          res.value = SpikeServerMock::button_pressed_state[0];
+        else if(req.target == spike::ButtonTarget::LEFT)
+          res.value = SpikeServerMock::button_pressed_state[1];
+        else if(req.target == spike::ButtonTarget::CENTER)
+          res.value = SpikeServerMock::button_pressed_state[2];
+        else
+          res.value = false;  // Should not happen
+        std::cout << "MockServer: BUTTON_IS_PRESSED - Target: " << static_cast<int>(req.target)
+                  << ", Pressed: " << (res.value ? "true" : "false") << std::endl;
         if(!sendData(client, &response_header, sizeof(response_header))) break;
         if(!sendData(client, &res, sizeof(res))) break;
         break;
@@ -225,16 +258,18 @@ void handle_client(Socket* client)
         spike::ForceSensorIsPressedRequest req;
         if(!receiveData(client, &req, sizeof(req))) break;
         spike::BoolResponse res;
-        SpikeServerMock::force_sensor_pressed_state = bool_distribution(generator); // Random boolean
+        SpikeServerMock::force_sensor_pressed_state
+            = bool_distribution(generator);  // Random boolean
         res.value = SpikeServerMock::force_sensor_pressed_state;
-        std::cout << "MockServer: FORCE_SENSOR_IS_PRESSED - Threshold: " << req.threshold << ", Pressed: " << (res.value ? "true" : "false") << std::endl;
+        std::cout << "MockServer: FORCE_SENSOR_IS_PRESSED - Threshold: " << req.threshold
+                  << ", Pressed: " << (res.value ? "true" : "false") << std::endl;
         if(!sendData(client, &response_header, sizeof(response_header))) break;
         if(!sendData(client, &res, sizeof(res))) break;
         break;
       }
       case spike::CommandId::FORCE_SENSOR_GET_FORCE: {
         if(!sendData(client, &response_header, sizeof(response_header))) break;
-        SpikeServerMock::force_sensor_value = force_distribution(generator); // Random force
+        SpikeServerMock::force_sensor_value = force_distribution(generator);  // Random force
         spike::DoubleResponse res{ SpikeServerMock::force_sensor_value };
         std::cout << "MockServer: FORCE_SENSOR_GET_FORCE - Value: " << res.value << std::endl;
         if(!sendData(client, &res, sizeof(res))) break;
@@ -246,7 +281,8 @@ void handle_client(Socket* client)
         spike::DisplayShowCharRequest req;
         if(!receiveData(client, &req, sizeof(req))) break;
         SpikeServerMock::display_char = req.character;
-        std::cout << "MockServer: Display Char: '" << SpikeServerMock::display_char << "'" << std::endl;
+        std::cout << "MockServer: Display Char: '" << SpikeServerMock::display_char << "'"
+                  << std::endl;
         if(!sendData(client, &response_header, sizeof(response_header))) break;
         break;
       }
@@ -254,7 +290,8 @@ void handle_client(Socket* client)
         spike::DisplayShowNumberRequest req;
         if(!receiveData(client, &req, sizeof(req))) break;
         SpikeServerMock::display_number = req.number;
-        std::cout << "MockServer: Display Number: " << static_cast<int>(SpikeServerMock::display_number) << std::endl;
+        std::cout << "MockServer: Display Number: "
+                  << static_cast<int>(SpikeServerMock::display_number) << std::endl;
         if(!sendData(client, &response_header, sizeof(response_header))) break;
         break;
       }
@@ -262,7 +299,8 @@ void handle_client(Socket* client)
         spike::DisplayScrollTextRequest req;
         if(!receiveData(client, &req, sizeof(req))) break;
         SpikeServerMock::display_scroll_text = req.text;
-        std::cout << "MockServer: Display Scroll: '" << SpikeServerMock::display_scroll_text << "'" << std::endl;
+        std::cout << "MockServer: Display Scroll: '" << SpikeServerMock::display_scroll_text << "'"
+                  << std::endl;
         if(!sendData(client, &response_header, sizeof(response_header))) break;
         break;
       }

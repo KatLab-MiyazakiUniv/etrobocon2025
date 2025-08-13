@@ -6,14 +6,14 @@
 #include <string>
 
 class DisplayClient {
-public:
-    explicit DisplayClient(SpikeClient& client);
-    void showChar(const char str);
-    void showNumber(const int8_t number);
-    void scrollText(const char* text, int speed = 50);
+ public:
+  explicit DisplayClient(SpikeClient& client);
+  void showChar(const char str);
+  void showNumber(const int8_t number);
+  void scrollText(const char* text, int speed = 50);
 
-private:
-    SpikeClient& spikeClient;
+ private:
+  SpikeClient& spikeClient;
 };
 
 #endif

@@ -27,4 +27,3 @@ std::vector<std::string> StringOperator::split(const std::string& str, char del)
 }
 
 StringOperator::StringOperator(){};
-

@@ -2,6 +2,6 @@
 
 int main()
 {
-    EtRobocon2025::start();
-    return 0;
+  EtRobocon2025::start();
+  return 0;
 }

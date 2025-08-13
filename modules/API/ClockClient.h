@@ -6,13 +6,13 @@
 #include "SpikeCommand.h"
 
 class ClockClient {
-public:
-    explicit ClockClient(SpikeClient& client);
-    void sleep(uint64_t milliseconds);
-    uint64_t now();
+ public:
+  explicit ClockClient(SpikeClient& client);
+  void sleep(uint64_t milliseconds);
+  uint64_t now();
 
-private:
-    SpikeClient& spikeClient;
+ private:
+  SpikeClient& spikeClient;
 };
 
 #endif
