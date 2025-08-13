@@ -28,9 +28,40 @@ void IMUController::getRawAngularVelocity(float angv[3])
 
 double IMUController::getCorrectedZAxisAngularVelocity()
 {
+  spikeapi::IMU::AngularVelocity ang;
+  imu.getAngularVelocity(ang);
+
   // SPIKE傾き角度とオフセットを補正した角速度を計算
-  return (imu.getAngularVelocity().z - offsetZ) * COS_TILT_ANGLE 
-         - (imu.getAngularVelocity().x - offsetX) * SIN_TILT_ANGLE;
+  return (ang.z - offsetZ) * cosSpikeInclination - (ang.x - offsetX) * sinSpikeInclination;
+}
+
+float IMUController::getSpikeInclination()
+{
+  spikeapi::IMU::Acceleration acc;
+  imu.getAcceleration(acc);
+
+  // 正規化
+  float norm = std::sqrt(acc.x * acc.x + acc.y * acc.y + acc.z * acc.z);
+  float gx = acc.x / norm;
+  float gz = acc.z / norm;
+
+  // 理想の重力方向(Z軸)との角度を計算
+  spikeInclination = std::acos(gz);
+
+  // 傾きの方向を考慮して符号を調整（X軸方向の傾きで判定）
+  if(gx < 0) {
+    spikeInclination = -spikeInclination;
+  }
+
+  // cosとsin値を計算
+  cosSpikeInclination = std::cos(spikeInclination);
+  sinSpikeInclination = std::sin(spikeInclination);
+
+  // 角度を出力
+  std::cout << "SPIKE設置傾斜角: " << spikeInclination << " rad ("
+            << spikeInclination * 180.0 / M_PI << " deg)" << std::endl;
+
+  return spikeInclination;
 }
 
 void IMUController::calculateOffset()

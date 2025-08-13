@@ -28,6 +28,12 @@ class IMUController {
   void getRawAngularVelocity(float angv[3]);
 
   /**
+   * @brief SPIKEの設置傾斜を取得する
+   * @return 傾斜角(rad)
+   */
+  float getSpikeInclination();
+
+  /**
    * @brief オフセットを計算して設定する
    */
   void calculateOffset();
@@ -66,12 +72,12 @@ class IMUController {
   void angleCalculationLoop();
 
   spikeapi::IMU imu;                                                 // IMUインスタンス
-  static constexpr double TILT_ANGLE_RAD = -53.2573 * M_PI / 180.0;  // SPIKE傾き角度(rad)
-  static constexpr double COS_TILT_ANGLE = cos(TILT_ANGLE_RAD);      // 傾き角度のcos値
-  static constexpr double SIN_TILT_ANGLE = sin(TILT_ANGLE_RAD);      // 傾き角度のsin値
+  float cosSpikeInclination = 1.0f;                                 // SPIKE傾斜角のcos値
+  float sinSpikeInclination = 0.0f;                                 // SPIKE傾斜角のsin値
   float offsetX = 0.0f;                                              // X軸角速度オフセット値(deg/s)
   float offsetY = 0.0f;                                              // Y軸角速度オフセット値(deg/s)
   float offsetZ = 0.0f;                                              // Z軸角速度オフセット値(deg/s)
+  float spikeInclination = 0.0f;                                     // SPIKE設置傾斜角(rad)
   float currentAngle = 0.0f;                                         // 計測結果用の現在角度(deg)
   double lastAngularVelocity = 0.0;                                  // 台形積分用：前回の角速度
   std::chrono::high_resolution_clock::time_point lastUpdateTime;     // 前回更新時刻
