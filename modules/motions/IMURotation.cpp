@@ -12,7 +12,7 @@ IMURotation::IMURotation(Robot& _robot, int _targetAngle, double _power, bool _i
     targetAngle(_targetAngle),
     power(_power),
     pidGain(_pidGain),
-    pid(_pidGain.kp, _pidGain.ki, _pidGain.kd, _targetAngle)
+    pid(_pidGain.kp, _pidGain.ki, _pidGain.kd, leftSign * _targetAngle)
 {
 }
 
@@ -54,17 +54,13 @@ void IMURotation::updateMotorControl()
 {
   // メンバ変数に格納された現在角度を使用
   // PID制御で操作量を計算（目標角度との偏差を補正）
-  double pidOutput = pid.calculatePid(currentAngle, 0.01);  // 10ms周期
+  double correction = pid.calculatePid(currentAngle, 0.01);  // 10ms周期
 
-  // 基本パワーにPID出力を加算して動的制御
-  double adjustedPower = power + pidOutput;
-
-  // パワー値を-100~100の範囲に制限
-  if(adjustedPower > 100.0) adjustedPower = 100.0;
-  if(adjustedPower < -100.0) adjustedPower = -100.0;
-
-  // モーターコントローラーにPID調整済みパワーを設定
+  // PID出力を直接モーターパワーとして使用
   MotorController& motorController = robot.getMotorControllerInstance();
-  motorController.setLeftMotorPower(adjustedPower * leftSign);
-  motorController.setRightMotorPower(adjustedPower * rightSign);
+  motorController.setLeftMotorPower(leftSign * correction);
+  motorController.setRightMotorPower(rightSign * correction);
+
+  // 10ms待機して通信バッファオーバーフローを防ぐ
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
