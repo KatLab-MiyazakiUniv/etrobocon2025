@@ -153,9 +153,9 @@ int MotorControllerClient::getArmMotorPower()
 // 右タイヤモータの線速度を取得する
 double MotorControllerClient::getRightMotorSpeed()
 {
-  auto res = spikeClient.executeQuery<double>(spike::CommandId::MOTOR_GET_SPEED,
-                                              spike::MotorTarget::RIGHT);
-  double angleSpeed = res.value_or(0.0);
+  auto res = spikeClient.executeQuery<int32_t>(spike::CommandId::MOTOR_GET_SPEED,
+                                               spike::MotorTarget::RIGHT);
+  int32_t angleSpeed = res.value_or(0);
   double linearSpeed = angleSpeed * DEG_TO_RAD * WHEEL_RADIUS;
   return linearSpeed;
 }
@@ -163,9 +163,9 @@ double MotorControllerClient::getRightMotorSpeed()
 // 左タイヤモータの線速度を取得する
 double MotorControllerClient::getLeftMotorSpeed()
 {
-  auto res = spikeClient.executeQuery<double>(spike::CommandId::MOTOR_GET_SPEED,
-                                              spike::MotorTarget::LEFT);
-  double angleSpeed = res.value_or(0.0);
+  auto res = spikeClient.executeQuery<int32_t>(spike::CommandId::MOTOR_GET_SPEED,
+                                               spike::MotorTarget::LEFT);
+  int32_t angleSpeed = res.value_or(0);
   double linearSpeed = angleSpeed * DEG_TO_RAD * WHEEL_RADIUS;
   return linearSpeed;
 }
