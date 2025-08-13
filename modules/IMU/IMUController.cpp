@@ -132,7 +132,7 @@ void IMUController::stopAngleCalculation()
 void IMUController::angleCalculationLoop()
 {
   // 必要な変数をループ外で宣言
-  const auto sleepDuration = std::chrono::milliseconds(1);
+  const auto sleepDuration = std::chrono::milliseconds(5);
   auto currentTime = std::chrono::high_resolution_clock::now();
   double deltaTime, currentAngularVelocity;
 
