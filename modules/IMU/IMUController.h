@@ -28,9 +28,9 @@ class IMUController {
   void getRawAngularVelocity(float angv[3]);
 
   /**
-   * @brief SPIKEの設置傾斜を計算する
+   * @brief 3D回転補正行列を計算する
    */
-  void calculateSpikeInclination();
+  void calculateCorrectionMatrix();
 
   /**
    * @brief オフセットを計算して設定する
@@ -71,6 +71,7 @@ class IMUController {
   void angleCalculationLoop();
 
   spikeapi::IMU imu;                                                 // IMUインスタンス
+  float correctionMatrix[3][3];                                      // 3D回転補正行列
   float cosSpikeInclination = 1.0f;                                 // SPIKE傾斜角のcos値
   float sinSpikeInclination = 0.0f;                                 // SPIKE傾斜角のsin値
   float offsetX = 0.0f;                                              // X軸角速度オフセット値(deg/s)

@@ -31,35 +31,60 @@ double IMUController::getCorrectedZAxisAngularVelocity()
   spikeapi::IMU::AngularVelocity ang;
   imu.getAngularVelocity(ang);
 
-  // SPIKE傾き角度とオフセットを補正した角速度を計算
-  return (ang.z - offsetZ) * cosSpikeInclination - (ang.x - offsetX) * sinSpikeInclination;
+  // 3D回転補正行列を使用してZ軸角速度を補正（オフセット補正も同時実行）
+  return correctionMatrix[2][0] * (ang.x - offsetX) + correctionMatrix[2][1] * (ang.y - offsetY) + correctionMatrix[2][2] * (ang.z - offsetZ);
 }
 
-void IMUController::calculateSpikeInclination()
+void IMUController::calculateCorrectionMatrix()
 {
   spikeapi::IMU::Acceleration acc;
-  imu.getAcceleration(acc);
+  imu.getAcceleration(acc);  // 加速度取得（mm/s^2）
 
   // 正規化
   float norm = std::sqrt(acc.x * acc.x + acc.y * acc.y + acc.z * acc.z);
   float gx = acc.x / norm;
+  float gy = acc.y / norm;
   float gz = acc.z / norm;
 
-  // 理想の重力方向(Z軸)との角度を計算
-  spikeInclination = std::acos(gz);
+  // 正規化後の重力ベクトルをログ出力（座標系確認用）
+  std::cout << "=== IMU座標系検証 ===" << std::endl;
+  std::cout << "生加速度: X=" << acc.x << " Y=" << acc.y << " Z=" << acc.z << " mm/s²" << std::endl;
+  std::cout << "正規化後重力ベクトル: X=" << gx << " Y=" << gy << " Z=" << gz << std::endl;
 
-  // 傾きの方向を考慮して符号を調整（X軸方向の傾きで判定）
-  if(gx > 0) {
-    spikeInclination = -spikeInclination;
+  // 理想の重力方向（Z軸）
+  float ez[3] = { 0.0f, 0.0f, 1.0f };
+
+  // 回転軸 v = ez × g（外積）
+  float vx = ez[1] * gz - ez[2] * gy;  // 0*gz - 1*gy = -gy
+  float vy = ez[2] * gx - ez[0] * gz;  // 1*gx - 0*gz = gx
+  float vz = ez[0] * gy - ez[1] * gx;  // 0*gy - 0*gx = 0
+
+  // 回転角 θ = acos(ez・g)（内積）
+  float dot = ez[0] * gx + ez[1] * gy + ez[2] * gz;
+  float theta = std::acos(dot);
+  
+  std::cout << "回転軸ベクトル: X=" << vx << " Y=" << vy << " Z=" << vz << std::endl;
+  std::cout << "内積値: " << dot << ", 回転角: " << theta << " rad (" << theta * 180.0 / M_PI << " deg)" << std::endl;
+
+  // 回転軸を正規化
+  float v_norm = std::sqrt(vx * vx + vy * vy + vz * vz);
+  vx /= v_norm;
+  vy /= v_norm;
+  vz /= v_norm;
+
+  float c = std::cos(theta);
+  float s = std::sin(theta);
+  float t = 1 - c;
+
+  correctionMatrix = { { { t * vx * vx + c, t * vx * vy - s * vz, t * vx * vz + s * vy },
+                         { t * vx * vy + s * vz, t * vy * vy + c, t * vy * vz - s * vx },
+                         { t * vx * vz - s * vy, t * vy * vz + s * vx, t * vz * vz + c } } };
+
+  std::cout << "=== 3D回転補正行列 ===" << std::endl;
+  for(int i = 0; i < 3; i++) {
+    std::cout << "[" << correctionMatrix[i][0] << ", " << correctionMatrix[i][1] << ", " << correctionMatrix[i][2] << "]" << std::endl;
   }
-
-  // cosとsin値を計算
-  cosSpikeInclination = std::cos(spikeInclination);
-  sinSpikeInclination = std::sin(spikeInclination);
-
-  // 角度を出力
-  std::cout << "SPIKE設置傾斜角: " << spikeInclination << " rad ("
-            << spikeInclination * 180.0 / M_PI << " deg)" << std::endl;
+  std::cout << "=========================" << std::endl;
 }
 
 void IMUController::calculateOffset()
