@@ -31,8 +31,9 @@ double IMUController::getCorrectedZAxisAngularVelocity()
   spikeapi::IMU::AngularVelocity ang;
   imu.getAngularVelocity(ang);
 
-  // 3D回転補正行列を使用してZ軸角速度を補正（オフセット補正も同時実行）
-  return correctionMatrix[2][0] * (ang.x - offsetX) + correctionMatrix[2][1] * (ang.y - offsetY) + correctionMatrix[2][2] * (ang.z - offsetZ);
+  // 3D回転補正行列の転置行列を適用
+  return correctionMatrix[0][2] * (ang.x - offsetX) + correctionMatrix[1][2] * (ang.y - offsetY)
+         + correctionMatrix[2][2] * (ang.z - offsetZ);
 }
 
 void IMUController::calculateCorrectionMatrix()
@@ -62,9 +63,10 @@ void IMUController::calculateCorrectionMatrix()
   // 回転角 θ = acos(ez・g)（内積）
   float dot = ez[0] * gx + ez[1] * gy + ez[2] * gz;
   float theta = std::acos(dot);
-  
+
   std::cout << "回転軸ベクトル: X=" << vx << " Y=" << vy << " Z=" << vz << std::endl;
-  std::cout << "内積値: " << dot << ", 回転角: " << theta << " rad (" << theta * 180.0 / M_PI << " deg)" << std::endl;
+  std::cout << "内積値: " << dot << ", 回転角: " << theta << " rad (" << theta * 180.0 / M_PI
+            << " deg)" << std::endl;
 
   // 回転軸を正規化
   float v_norm = std::sqrt(vx * vx + vy * vy + vz * vz);
@@ -89,7 +91,8 @@ void IMUController::calculateCorrectionMatrix()
 
   std::cout << "=== 3D回転補正行列 ===" << std::endl;
   for(int i = 0; i < 3; i++) {
-    std::cout << "[" << correctionMatrix[i][0] << ", " << correctionMatrix[i][1] << ", " << correctionMatrix[i][2] << "]" << std::endl;
+    std::cout << "[" << correctionMatrix[i][0] << ", " << correctionMatrix[i][1] << ", "
+              << correctionMatrix[i][2] << "]" << std::endl;
   }
   std::cout << "=========================" << std::endl;
 }
