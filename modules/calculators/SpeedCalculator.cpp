@@ -4,6 +4,9 @@
  *  @author miyahara046 HaruArima08
  */
 #include "SpeedCalculator.h"
+#include <chrono>
+
+using namespace std::chrono;
 
 SpeedCalculator::SpeedCalculator(Robot& _robot, double _targetSpeed)
   : robot(_robot),
@@ -11,7 +14,9 @@ SpeedCalculator::SpeedCalculator(Robot& _robot, double _targetSpeed)
     rightPid(RIGHT_K_P, RIGHT_K_I, RIGHT_K_D, _targetSpeed),
     leftPid(LEFT_K_P, LEFT_K_I, LEFT_K_D, _targetSpeed)
 {
-  double currentTime = robot.getClockInstance().now() / 1000000.0;
+  double currentTime = duration_cast<duration<double>>(
+        steady_clock::now().time_since_epoch()
+    ).count();
   prevRightTime = currentTime;
   prevLeftTime = currentTime;
 }
@@ -21,7 +26,9 @@ double SpeedCalculator::calculateRightMotorPower()
   rightMotorPower
       = robot.getMotorControllerInstance().getRightMotorPower();  // rightMotorPowerの初期化
   // 走行時間を算出
-  double currentRightTime = robot.getClockInstance().now() / 1000000.0;  // 現在の時間を取得(秒単位)
+  double currentRightTime = duration_cast<duration<double>>(
+        steady_clock::now().time_since_epoch()
+    ).count();  // 現在の時間を取得(秒単位)
   double diffRightTime = currentRightTime - prevRightTime;
   // 右タイヤの走行速度を算出
   double currentRightSpeed = robot.getMotorControllerInstance().getRightMotorSpeed();
@@ -38,7 +45,9 @@ double SpeedCalculator::calculateLeftMotorPower()
   leftMotorPower
       = robot.getMotorControllerInstance().getLeftMotorPower();  // leftMotorPowerの初期化
   // 走行時間を算出
-  double currentLeftTime = robot.getClockInstance().now() / 1000000.0;  // 現在の時間を取得(秒単位)
+  double currentLeftTime = duration_cast<duration<double>>(
+        steady_clock::now().time_since_epoch()
+    ).count();  // 現在の時間を取得(秒単位)
   double diffLeftTime = currentLeftTime - prevLeftTime;
   // 左タイヤの走行速度を算出
   double currentLeftSpeed = robot.getMotorControllerInstance().getLeftMotorSpeed();

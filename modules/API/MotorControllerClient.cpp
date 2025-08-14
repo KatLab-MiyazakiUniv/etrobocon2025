@@ -104,6 +104,7 @@ int32_t MotorControllerClient::getRightMotorCount()
   auto res = spikeClient.executeQuery<int32_t>(spike::CommandId::MOTOR_GET_COUNT,
                                                spike::MotorTarget::RIGHT);
   int32_t count = res.value_or(0);
+    std::cout << "count: " << count << std::endl;
   return count;
 }
 
@@ -113,6 +114,7 @@ int32_t MotorControllerClient::getLeftMotorCount()
   auto res = spikeClient.executeQuery<int32_t>(spike::CommandId::MOTOR_GET_COUNT,
                                                spike::MotorTarget::LEFT);
   int32_t count = res.value_or(0);
+      std::cout << "count: " << count << std::endl;
   return count;
 }
 

@@ -19,18 +19,18 @@ void EtRobocon2025::start()
   SpikeClient spikeClient;
 
   // Docker containerのIPアドレスを指定して接続（動作確認用）
-  if(!spikeClient.connect("172.18.0.4", 8888)) {
+  // if(!spikeClient.connect("172.18.0.4", 8888)) {
     // 実機の際はローカルホストのIPアドレスを指定
-    // if(!spikeClient.connect("127.0.0.1", 8888)) {
+    if(!spikeClient.connect("127.0.0.1", 8888)) {
     std::cerr << "Failed to connect to SpikeServer!" << std::endl;
     return;
   }
 
   // カメラがない環境で動かす際（動作確認用）
-  MockCameraCapture mockCameraCapture;
-  Robot robot(spikeClient, mockCameraCapture);
+  // MockCameraCapture mockCameraCapture;
+  // Robot robot(spikeClient, mockCameraCapture);
   // 実機の際は以下のようにRobotインスタンスを作成
-  // Robot robot(spikeClient);
+  Robot robot(spikeClient);
 
   if(!robot.getCameraCaptureInstance().setCameraID(
          robot.getCameraCaptureInstance().findAvailableCameraID()))
@@ -42,13 +42,13 @@ void EtRobocon2025::start()
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 
-  Calibrator calibrator(robot);
-  calibrator.selectAndSetCourse();
-  calibrator.measureAndSetTargetBrightness();
-  bool isLeftCourse = calibrator.getIsLeftCourse();
-  int targetBrightness = calibrator.getTargetBrightness();
-  calibrator.getAngleCheckFrame();
-  calibrator.waitForStart();
+  // Calibrator calibrator(robot);
+  // calibrator.selectAndSetCourse();
+  // calibrator.measureAndSetTargetBrightness();
+  // bool isLeftCourse = calibrator.getIsLeftCourse();
+  // int targetBrightness = calibrator.getTargetBrightness();
+  // calibrator.getAngleCheckFrame();
+  // calibrator.waitForStart();
 
   Area lineTraceArea = Area::LineTrace;
   AreaMaster lineTraceAreaMaster(robot, lineTraceArea, true, 50);

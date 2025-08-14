@@ -93,6 +93,8 @@ spike::Int32Response MotorApiHandler::handleGetCount(const spike::MotorGetReques
     response.value = -1;
     std::cerr << "Error: Unknown MotorTarget for getCount" << std::endl;
   }
+    std::cout << "count: " << static_cast<int>(response.value) << std::endl;
+
   return response;
 }
 
@@ -110,6 +112,8 @@ spike::Int32Response MotorApiHandler::handleGetPower(const spike::MotorGetReques
     response.value = -1;
     std::cerr << "Error: Unknown MotorTarget for getPower" << std::endl;
   }
+   std::cout << "power: " << static_cast<int>(response.value) << std::endl;
+
   return response;
 }
 
@@ -124,5 +128,6 @@ spike::Int32Response MotorApiHandler::handleGetSpeed(const spike::MotorGetReques
   } else {
     std::cerr << "Error: Unknown MotorTarget for getSpeed" << std::endl;
   }
+  std::cout << "speed: " << static_cast<int>(response.value) << std::endl;
   return response;
 }
