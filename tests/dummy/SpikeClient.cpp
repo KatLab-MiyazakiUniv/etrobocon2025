@@ -71,12 +71,15 @@ SpikeClient::SpikeClient()
                     });
 
   // === Display Handlers (no return values, just acknowledge) ===
-  setCommandHandler(spike::CommandId::DISPLAY_SHOW_CHAR,
-                    [](const std::vector<char>& req) { return MockResponse{ true, {} }; });
-  setCommandHandler(spike::CommandId::DISPLAY_SHOW_NUMBER,
-                    [](const std::vector<char>& req) { return MockResponse{ true, {} }; });
-  setCommandHandler(spike::CommandId::DISPLAY_SCROLL_TEXT,
-                    [](const std::vector<char>& req) { return MockResponse{ true, {} }; });
+  setCommandHandler(spike::CommandId::DISPLAY_SHOW_CHAR, [](const std::vector<char>& req) {
+    return MockResponse{ true, {} };
+  });
+  setCommandHandler(spike::CommandId::DISPLAY_SHOW_NUMBER, [](const std::vector<char>& req) {
+    return MockResponse{ true, {} };
+  });
+  setCommandHandler(spike::CommandId::DISPLAY_SCROLL_TEXT, [](const std::vector<char>& req) {
+    return MockResponse{ true, {} };
+  });
 
   // === Force Sensor Handlers ===
   setCommandHandler(spike::CommandId::FORCE_SENSOR_IS_PRESSED,

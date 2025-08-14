@@ -31,7 +31,7 @@ namespace etrobocon2025_test {
     const spike::HsvResponse HSV_GREEN = { 120, 100, 100 };
     spikeClient.queueHsv({ HSV_GREEN, HSV_GREEN });
 
-    cd.run();     // 緑までライントレースを実行
+    cd.run();  // 緑までライントレースを実行
 
     // ライントレース後の走行距離
     int rightCount = robot.getMotorControllerInstance().getRightMotorCount();

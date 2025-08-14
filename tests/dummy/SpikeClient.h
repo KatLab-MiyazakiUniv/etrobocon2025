@@ -95,7 +95,7 @@ class SpikeClient {
   uint64_t time_ = 0;
   int32_t reflection_ = 20;  // Default to black
   std::queue<int32_t> reflection_queue_;
-  spike::HsvResponse hsv_{ 0, 0, 0 }; // Default to black
+  spike::HsvResponse hsv_{ 0, 0, 0 };  // Default to black
   std::queue<spike::HsvResponse> hsv_queue_;
   int hsv_get_count_ = 0;
   bool force_sensor_pressed_ = false;

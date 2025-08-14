@@ -90,7 +90,7 @@ namespace spike {
 
   struct MotorSetSpeedRequest {
     MotorTarget target;
-    int32_t speed; // [°/s]
+    int32_t speed;  // [°/s]
   };
 
   struct MotorGetRequest {
@@ -115,7 +115,7 @@ namespace spike {
 
   struct DisplayScrollTextRequest {
     char text[64];
-    uint32_t delay; // [ms]
+    uint32_t delay;  // [ms]
   };
 
   struct ForceSensorIsPressedRequest {
@@ -149,9 +149,9 @@ namespace spike {
   };
 
   struct HsvResponse {
-    uint16_t h; // 0-359
-    uint8_t  s; // 0-100
-    uint8_t  v; // 0-100
+    uint16_t h;  // 0-359
+    uint8_t s;   // 0-100
+    uint8_t v;   // 0-100
   };
 
 }  // namespace spike
