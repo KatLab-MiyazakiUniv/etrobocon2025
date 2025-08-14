@@ -76,9 +76,16 @@ void IMUController::calculateCorrectionMatrix()
   float s = std::sin(theta);
   float t = 1 - c;
 
-  correctionMatrix = { { { t * vx * vx + c, t * vx * vy - s * vz, t * vx * vz + s * vy },
-                         { t * vx * vy + s * vz, t * vy * vy + c, t * vy * vz - s * vx },
-                         { t * vx * vz - s * vy, t * vy * vz + s * vx, t * vz * vz + c } } };
+  // ロドリゲスの回転公式による3D回転行列を計算
+  correctionMatrix[0][0] = t * vx * vx + c;
+  correctionMatrix[0][1] = t * vx * vy - s * vz;
+  correctionMatrix[0][2] = t * vx * vz + s * vy;
+  correctionMatrix[1][0] = t * vx * vy + s * vz;
+  correctionMatrix[1][1] = t * vy * vy + c;
+  correctionMatrix[1][2] = t * vy * vz - s * vx;
+  correctionMatrix[2][0] = t * vx * vz - s * vy;
+  correctionMatrix[2][1] = t * vy * vz + s * vx;
+  correctionMatrix[2][2] = t * vz * vz + c;
 
   std::cout << "=== 3D回転補正行列 ===" << std::endl;
   for(int i = 0; i < 3; i++) {
