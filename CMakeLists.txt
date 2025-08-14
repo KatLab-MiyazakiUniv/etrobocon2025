@@ -38,7 +38,6 @@ set(INCLUDE_DIRS
   ${PROJECT_MODULE_DIR}/camera
   ${PROJECT_MODULE_DIR}/calculators
   ${PROJECT_MODULE_DIR}/common
-  ${PROJECT_MODULE_DIR}/common/spike_client
   ${PROJECT_MODULE_DIR}/motions
   ${PROJECT_MODULE_DIR}/image_processors
   ${PROJECT_MODULE_DIR}/API
@@ -57,11 +56,17 @@ file(GLOB_RECURSE PROJECT_SOURCES
   "${PROJECT_MODULE_DIR}/image_processors/*.cpp"
   "${PROJECT_MODULE_DIR}/utils/*.cpp"
   "${PROJECT_TEST_DIR}/helpers/*.cpp"
+  "${PROJECT_TEST_DIR}/dummy/*.cpp"
   "${PROJECT_TEST_DIR}/dummy/utils/*.cpp"
 )
 
 # 本番用のCommandExecutor.cpp を除外
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX ".*/modules/utils/CommandExecutor\\.cpp$")
+list(FILTER PROJECT_SOURCES EXCLUDE REGEX ".*/modules/spike_client/SpikeClient\\.cpp$")
+# spike_server 関連を除外
+list(FILTER PROJECT_SOURCES EXCLUDE REGEX ".*/modules/spike_server/.*\\.cpp$")
+list(FILTER PROJECT_SOURCES EXCLUDE REGEX ".*/modules/spike_server/helpers/.*\\.cpp$")
+list(FILTER PROJECT_SOURCES EXCLUDE REGEX ".*/modules/spike_server_mock/.*\\.cpp$")
 
 # プロジェクトのライブラリターゲットを作成
 add_library(${PROJECT_NAME}_impl STATIC ${PROJECT_SOURCES})

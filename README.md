@@ -26,8 +26,20 @@ make build
 
 #### Docker仮想環境
 - docker-composeを利用する場合（速いのでおすすめ）
+  
+以下が実機環境と同じコンテナに入るためのコマンド
 ```shell
-docker-compose run --rm etrobocon
+docker-compose run --rm etrobocon_all
+```
+
+以下がモックサーバー環境に入るためのコマンド
+```shell
+docker-compose run --rm spike_mock_server
+```
+
+以下がクライアント環境に入るためのコマンド
+```shell
+docker-compose run --rm etrobocon_client
 ```
 
 - Dockerイメージから構築する場合

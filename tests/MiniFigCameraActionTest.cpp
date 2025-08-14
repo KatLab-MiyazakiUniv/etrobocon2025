@@ -16,7 +16,8 @@ namespace etrobocon2025_test {
   TEST(MiniFigCameraActionTest, NoCameraAction)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     robot.getMiniFigDirectionResult().wasDetected = true;
     robot.getMiniFigDirectionResult().direction = MiniFigDirection::BACK;
     bool isClockwise = false;
@@ -44,7 +45,8 @@ namespace etrobocon2025_test {
   TEST(MiniFigCameraActionTest, PositionIsNotZeroCameraAction)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     robot.getMiniFigDirectionResult().wasDetected = true;
     robot.getMiniFigDirectionResult().direction = MiniFigDirection::BACK;
     bool isClockwise = false;
@@ -72,7 +74,8 @@ namespace etrobocon2025_test {
   TEST(MiniFigCameraActionTest, WasDetectedIsFalseCameraAction)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     robot.getMiniFigDirectionResult().wasDetected = false;
     bool isClockwise = false;
     int preTargetAngle = 90;
@@ -99,7 +102,8 @@ namespace etrobocon2025_test {
   //   TEST(MiniFigCameraActionTest, PositionIsZeroCameraAction)
   //   {
   //     DummyCameraCapture cameraCapture;
-  //     Robot robot(cameraCapture);
+  //     SpikeClient spikeClient;
+  //     Robot robot(spikeClient, cameraCapture);
   //     bool isClockwise = false;
   //     int preTargetAngle = 90;
   //     int postTargetAngle = 90;

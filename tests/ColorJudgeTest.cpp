@@ -173,7 +173,7 @@ namespace etrobocon2025_test {
   // 黒色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorBlack)
   {
-    spikeapi::ColorSensor::HSV hsv{ 0, 0, 0 };  // BLACK
+    spike::HsvResponse hsv{ 0, 0, 0 };  // BLACK
     COLOR expected = COLOR::BLACK;
 
     COLOR actual = ColorJudge::convertHsvToColor(hsv);
@@ -184,7 +184,7 @@ namespace etrobocon2025_test {
   // 白色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorWhite)
   {
-    spikeapi::ColorSensor::HSV hsv{ 0, 0, 100 };  // WHITE
+    spike::HsvResponse hsv{ 0, 0, 100 };  // WHITE
     COLOR expected = COLOR::WHITE;
 
     COLOR actual = ColorJudge::convertHsvToColor(hsv);
@@ -195,7 +195,7 @@ namespace etrobocon2025_test {
   // 赤色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorRed)
   {
-    spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_RED, 100, 100 };
+    spike::HsvResponse hsv{ static_cast<int>(spike::ColorHue::RED), 100, 100 };
     COLOR expected = COLOR::RED;
 
     COLOR actual = ColorJudge::convertHsvToColor(hsv);
@@ -206,7 +206,7 @@ namespace etrobocon2025_test {
   // 黄色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorYellow)
   {
-    spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_YELLOW, 100, 100 };
+    spike::HsvResponse hsv{ static_cast<int>(spike::ColorHue::YELLOW), 100, 100 };
     COLOR expected = COLOR::YELLOW;
 
     COLOR actual = ColorJudge::convertHsvToColor(hsv);
@@ -217,7 +217,7 @@ namespace etrobocon2025_test {
   // 緑色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorGreen)
   {
-    spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_GREEN, 100, 100 };
+    spike::HsvResponse hsv{ static_cast<int>(spike::ColorHue::GREEN), 100, 100 };
     COLOR expected = COLOR::GREEN;
 
     COLOR actual = ColorJudge::convertHsvToColor(hsv);
@@ -228,7 +228,7 @@ namespace etrobocon2025_test {
   // 青色の色相を検出するテスト
   TEST(ColorJudgeTest, GetColorBlue)
   {
-    spikeapi::ColorSensor::HSV hsv{ PBIO_COLOR_HUE_BLUE, 100, 100 };
+    spike::HsvResponse hsv{ static_cast<int>(spike::ColorHue::BLUE), 100, 100 };
     COLOR expected = COLOR::BLUE;
 
     COLOR actual = ColorJudge::convertHsvToColor(hsv);
@@ -239,7 +239,7 @@ namespace etrobocon2025_test {
   // 想定外の色相（NONE）を検出するテスト
   TEST(ColorJudgeTest, GetColorNone)
   {
-    spikeapi::ColorSensor::HSV hsv{ 123, 100, 100 };  // 未定義のH値
+    spike::HsvResponse hsv{ 123, 100, 100 };  // 未定義のH値
     COLOR expected = COLOR::NONE;
 
     COLOR actual = ColorJudge::convertHsvToColor(hsv);

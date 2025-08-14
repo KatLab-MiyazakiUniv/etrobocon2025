@@ -19,7 +19,7 @@ void EtRobocon2025::start()
   SpikeClient spikeClient;
 
   // Docker containerのIPアドレスを指定して接続（動作確認用）
-  if(!spikeClient.connect("172.18.0.2", 8888)) {
+  if(!spikeClient.connect("172.18.0.4", 8888)) {
     // 実機の際はローカルホストのIPアドレスを指定
     // if(!spikeClient.connect("127.0.0.1", 8888)) {
     std::cerr << "Failed to connect to SpikeServer!" << std::endl;

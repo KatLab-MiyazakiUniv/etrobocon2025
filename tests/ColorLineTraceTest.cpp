@@ -8,129 +8,124 @@
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-port.h>
 
-using namespace std;
-
 namespace etrobocon2025_test {
-  // 最初3回の色取得で連続して指定色を取得するテストケース
-  TEST(ColorLineTraceTest, RunToGetFirst)
+  // 色のHSV値を定義
+  const spike::HsvResponse HSV_BLACK = { 0, 0, 0 };
+  const spike::HsvResponse HSV_GREEN = { 120, 100, 100 };
+  const spike::HsvResponse HSV_BLUE = { 240, 100, 100 };
+
+  // ColorLineTraceのテストクラス
+  class ColorLineTraceTest : public ::testing::Test {
+   protected:
+    SpikeClient spikeClient_;
+    Robot robot_{ spikeClient_ };
+  };
+
+  // 継続条件が2回なので、3回目で停止することを期待するテスト
+  TEST_F(ColorLineTraceTest, RunAndStopAfterFindingColor)
   {
-    Robot robot;
     COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = 500.0;
+    double targetSpeed = 600.0;
     double targetBrightness = 50.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain);
+    ColorLineTrace cl(robot_, targetColor, targetSpeed, targetBrightness, gain);
 
-    double expected = 0.0;
-    srand(9037);  // 3回連続して緑を取得する乱数シード
-    cl.run();     // 緑までライントレースを実行
+    // センサー値のシーケンスを設定
+    spikeClient_.queueHsv({ HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_GREEN, HSV_GREEN });
 
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
-    double actual = Mileage::calculateMileage(rightCount, leftCount);
-
-    // 色を乱数で取得するため、正確な走行距離が予測できず走行距離が進んでいることを確認
-    EXPECT_LT(expected, actual);  // 初期値より少しでも進んでいる
-  }
-
-  // 目標色が最初から取得され、停止するテストケース
-  TEST(ColorLineTraceTest, runImmediatelyStopsIfTargetColorDetected)
-  {
-    Robot robot;
-    COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = 100.0;
-    double targetBrightness = 50.0;
-    PidGain gain = { 0.1, 0.05, 0.05 };
-
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain);
-
-    double expected = 0.0;
-    srand(9037);  // 最初に緑を取得できるよう調整
-    cl.run();     // ライントレース実行
-
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
-    double actual = Mileage::calculateMileage(rightCount, leftCount);
-
-    // 目標色が最初から取得されているため、走行距離は0に近い。継続条件が指定色の取得回数であるためその間走行する。
-    EXPECT_NEAR(expected, actual, 30.0);  // 許容誤差を±30.0mmとする
-    /**
-     * 色所得回数における誤差は以下のとおりである
-     * 1回->19.5476mm
-     * 2回->21.9911mm
-     * 3回->95.2949mm
-     */
-  }
-
-  // 指定色を取得し、後退するテストケース
-  TEST(ColorLineTraceTest, RunBack)
-  {
-    Robot robot;
-    COLOR targetColor = COLOR::BLUE;
-    double targetSpeed = -500.0;
-    double targetBrightness = 50.0;
-    PidGain gain = { 0.1, 0.05, 0.05 };
-
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain);
-
-    double expected = 0.0;
-    srand(0);
     cl.run();
 
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
+    int rightCount = robot_.getMotorControllerInstance().getRightMotorCount();
+    int leftCount = robot_.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    // 初期値より少しでも後退していることを確認
-    EXPECT_LT(actual, expected);
+    // 走行距離が0より大きいことを確認
+    EXPECT_LT(0.0, actual);
   }
 
-  // targetSpeedが0の時に走行しないテストケース
-  TEST(ColorLineTraceTest, RunZeroSpeed)
+  // 即座に停止するテスト
+  TEST_F(ColorLineTraceTest, runImmediatelyStopsIfTargetColorDetected)
   {
-    Robot robot;
+    COLOR targetColor = COLOR::GREEN;
+    double targetSpeed = 600.0;
+    double targetBrightness = 50.0;
+    PidGain gain = { 0.1, 0.05, 0.05 };
+
+    ColorLineTrace cl(robot_, targetColor, targetSpeed, targetBrightness, gain);
+
+    // 最初に2回連続で緑を読み、すぐに停止するシナリオ
+    spikeClient_.queueHsv({ HSV_GREEN, HSV_GREEN });
+
+    cl.run();
+
+    int rightCount = robot_.getMotorControllerInstance().getRightMotorCount();
+    int leftCount = robot_.getMotorControllerInstance().getLeftMotorCount();
+    double actual = Mileage::calculateMileage(rightCount, leftCount);
+
+    // 走行距離はほぼ0のはず
+    EXPECT_NEAR(0.0, actual, 30.0);  // 許容誤差を±30.0mmとする
+  }
+
+  // 後退するテスト
+  TEST_F(ColorLineTraceTest, RunBack)
+  {
+    COLOR targetColor = COLOR::BLUE;
+    double targetSpeed = -600.0;
+    double targetBrightness = 50.0;
+    PidGain gain = { 0.1, 0.05, 0.05 };
+
+    ColorLineTrace cl(robot_, targetColor, targetSpeed, targetBrightness, gain);
+
+    // センサー値のシーケンスを設定
+    spikeClient_.queueHsv({ HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLUE, HSV_BLUE });
+
+    cl.run();
+
+    int rightCount = robot_.getMotorControllerInstance().getRightMotorCount();
+    int leftCount = robot_.getMotorControllerInstance().getLeftMotorCount();
+    double actual = Mileage::calculateMileage(rightCount, leftCount);
+
+    // 走行距離が負（後退）であることを確認
+    EXPECT_GT(0.0, actual);
+  }
+
+  // targetSpeedが0の時に走行しないテスト
+  TEST_F(ColorLineTraceTest, RunZeroSpeed)
+  {
     COLOR targetColor = COLOR::BLUE;
     double targetSpeed = 0.0;
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain);
+    ColorLineTrace cl(robot_, targetColor, targetSpeed, targetBrightness, gain);
 
-    double expected = 0.0;
-
-    srand(0);
     cl.run();
 
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
+    int rightCount = robot_.getMotorControllerInstance().getRightMotorCount();
+    int leftCount = robot_.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    // 正確に終了している
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(0.0, actual);
   }
 
-  // targetColorがNONEの時に走行しないテストケース
-  TEST(ColorLineTraceTest, RunNoneColor)
+  // targetColorがNONEの時に走行しないテスト
+  TEST_F(ColorLineTraceTest, RunNoneColor)
   {
-    Robot robot;
     COLOR targetColor = COLOR::NONE;
-    double targetSpeed = 100.0;
+    double targetSpeed = 600.0;
     double targetBrightness = 45.0;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    ColorLineTrace cl(robot, targetColor, targetSpeed, targetBrightness, gain);
-
-    double expected = 0.0;
+    ColorLineTrace cl(robot_, targetColor, targetSpeed, targetBrightness, gain);
 
     cl.run();
 
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
+    int rightCount = robot_.getMotorControllerInstance().getRightMotorCount();
+    int leftCount = robot_.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    // 正確に終了している
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(0.0, actual);
   }
 
 }  // namespace etrobocon2025_test

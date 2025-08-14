@@ -16,7 +16,8 @@ namespace etrobocon2025_test {
   TEST(DistanceCameraLineTraceTest, RunDetectCalled)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     double targetDistance = 1000.0;
     double targetSpeed = 500.0;
     int targetPoint = 320;
@@ -44,7 +45,8 @@ namespace etrobocon2025_test {
   TEST(DistanceCameraLineTraceTest, RunZeroSpeed)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     double targetDistance = 1000.0;
     double targetSpeed = 0.0;
     int targetPoint = 320;
@@ -70,7 +72,8 @@ namespace etrobocon2025_test {
   TEST(DistanceCameraLineTraceTest, RunMinusDistance)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     double targetDistance = -1000.0;
     double targetSpeed = 500.0;
     int targetPoint = 320;
@@ -97,7 +100,8 @@ namespace etrobocon2025_test {
   TEST(DistanceCameraLineTraceTest, RunZeroDistance)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     double targetDistance = 0.0;
     double targetSpeed = 500.0;
     int targetPoint = 320;

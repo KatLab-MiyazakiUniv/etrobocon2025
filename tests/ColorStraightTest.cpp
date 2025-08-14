@@ -8,148 +8,140 @@
 #include "Mileage.h"
 #include <gtest/gtest.h>
 
-using namespace std;
-
 namespace etrobocon2025_test {
 
-  // 最初の色取得で指定色を取得し、停止するテスト
-  TEST(ColorStraightTest, RunToGetFirst)
+  // 色のHSV値を定義
+  const spike::HsvResponse HSV_BLACK = { 0, 0, 0 };
+  const spike::HsvResponse HSV_GREEN = { 120, 100, 100 };
+  const spike::HsvResponse HSV_YELLOW = { 60, 100, 100 };
+
+  class ColorStraightTest : public ::testing::Test {
+   protected:
+    SpikeClient spikeClient_;
+    Robot robot_{ spikeClient_ };
+  };
+
+  // 少し直進して指定色を検出し停止するテスト
+  TEST_F(ColorStraightTest, RunAndStop)
   {
-    Robot robot;
     COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = 300.0;
-    double basePower = 100.0;
-    ColorStraight cs(robot, targetColor, targetSpeed);
+    double targetSpeed
+        = 600.0;  // スピードカルクのpidが小さすぎて、カウントが動く前に色を検出してしまうため、speedを極端に大きくする必要がある。
+    ColorStraight cs(robot_, targetColor, targetSpeed);
 
-    double expected = 0.0;
+    // 一時前進し、その後3回緑を読んで停止するシナリオ
+    spikeClient_.queueHsv(
+        { HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_GREEN, HSV_GREEN, HSV_GREEN });
 
-    // モーターに1回setMotorPower()を呼ぶと、モータカウントが power × 0.05分進む
-    // 10ステップ分の走行距離を許容誤差とする
-    double error
-        = Mileage::calculateMileage(basePower * 0.05 * 10, basePower * 0.05 * 10);  // 許容誤差
+    cs.run();
 
-    srand(9037);  // 最初に緑を取得する乱数シード
-
-    cs.run();  // 緑まで直進を実行
-
-    // 直進後の走行距離
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
+    int rightCount = robot_.getMotorControllerInstance().getRightMotorCount();
+    int leftCount = robot_.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    EXPECT_GE(actual, expected);
-    EXPECT_LE(actual, expected + error);
-  }
-
-  // 最初3回の色取得で連続して指定色を取得するテスト
-  TEST(ColorStraightTest, RunToGetThreeConsecutive)
-  {
-    Robot robot;
-    COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = 500.0;
-    ColorStraight cs(robot, targetColor, targetSpeed);
-
     double expected = 0.0;
-
-    srand(9037);  // 3回連続して緑を取得する乱数シード
-
-    cs.run();  // 緑までライントレースを実行
-
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
-    double actual = Mileage::calculateMileage(rightCount, leftCount);
-
     EXPECT_LT(expected, actual);  // 初期値より少しは進んでいる
   }
 
-  // 少し直進して指定色を取得するテスト
-  TEST(ColorStraightTest, RunToGetLater)
+  // 指定色を即検出し、すぐに停止するテスト
+  TEST_F(ColorStraightTest, StopImmediately)
   {
-    Robot robot;
     COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = 500.0;
-    ColorStraight cs(robot, targetColor, targetSpeed);
+    double targetSpeed = 300.0;
+    ColorStraight cs(robot_, targetColor, targetSpeed);
 
-    double expectedMinDistance = 10.0;  // 少なくとも10mmは直進する設定
+    // 最初に3回連続で緑を読み、すぐに停止するシナリオ
+    spikeClient_.queueHsv({ HSV_GREEN, HSV_GREEN, HSV_GREEN });
 
-    // 色センサがすぐに緑を返さないような乱数シード
-    srand(2131);  // 少し走ってから緑を認識
+    cs.run();
 
-    cs.run();  // 色取得まで直進
-
-    // 直進後の走行距離を取得
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
+    int rightCount = robot_.getMotorControllerInstance().getRightMotorCount();
+    int leftCount = robot_.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    // ある程度走行してから停止したことを確認（少なくとも10mmは直進している）
-    EXPECT_GT(actual, expectedMinDistance);
+    double expected = 0.0;
+    // 走行距離はほぼ0のはず
+    EXPECT_NEAR(expected, actual, 30.0);
   }
 
-  // 少し後退して指定色を取得するテストケース
-  TEST(ColorStraightTest, RunBackToGetLater)
+  // 少し後退して指定色を取得するテスト
+  TEST_F(ColorStraightTest, RunBackAndStop)
   {
-    Robot robot;
     COLOR targetColor = COLOR::GREEN;
-    double targetSpeed = -500.0;
-    ColorStraight cs(robot, targetColor, targetSpeed);
+    double targetSpeed = -600.0;
+    ColorStraight cs(robot_, targetColor, targetSpeed);
 
-    double expectedMinDistance = -10.0;  // 少なくとも10mmは後退する設定
+    // 一時後進し、その後3回緑を読んで停止するシナリオ
+    spikeClient_.queueHsv(
+        { HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK,
+          HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_BLACK, HSV_GREEN, HSV_GREEN, HSV_GREEN });
 
-    // 色センサがすぐに緑を返さないような乱数シード
-    srand(2131);  // 少し走ってから緑を認識
+    cs.run();
 
-    cs.run();  // 色取得まで後退を実行
-
-    // 後退後の走行距離
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
+    int rightCount = robot_.getMotorControllerInstance().getRightMotorCount();
+    int leftCount = robot_.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    // ある程度走行してから停止したことを確認（少なくとも10mmは後退している）
-    EXPECT_LT(actual, expectedMinDistance);
+    double expected = 0.0;
+    // 走行距離が負（後退）であることを確認
+    EXPECT_GT(expected, actual);
   }
 
-  // 目標速度が0で停止するかのテスト
-  TEST(ColorStraightTest, RunZeroPower)
+  // 目標速度が0で走行しないことを確認するテスト
+  TEST_F(ColorStraightTest, RunZeroSpeed)
   {
-    Robot robot;
     COLOR targetColor = COLOR::YELLOW;
     double targetSpeed = 0.0;
-    ColorStraight cs(robot, targetColor, targetSpeed);
+    ColorStraight cs(robot_, targetColor, targetSpeed);
 
-    double expected = 0.0;
+    cs.run();
 
-    srand(0);  // 最初に黄色を取得しない乱数シード
-
-    cs.run();  // 黄色まで直進を実行
-
-    // 直進後の走行距離
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
+    int rightCount = robot_.getMotorControllerInstance().getRightMotorCount();
+    int leftCount = robot_.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    EXPECT_EQ(expected, actual);  // 直進前後で走行距離に変化はない
+    double expected = 0.0;
+    EXPECT_EQ(expected, actual);
   }
 
-  // 目標色がなしで停止するかのテスト
-  TEST(ColorStraightTest, RunNoneColor)
+  // 目標色がNONEで走行しないことを確認するテスト
+  TEST_F(ColorStraightTest, RunNoneColor)
   {
-    Robot robot;
     COLOR targetColor = COLOR::NONE;
     double targetSpeed = 100.0;
-    ColorStraight cs(robot, targetColor, targetSpeed);
+    ColorStraight cs(robot_, targetColor, targetSpeed);
 
-    double expected = 0.0;
+    cs.run();
 
-    cs.run();  // 直進を実行
-
-    // 直進後の走行距離
-    int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
-    int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
+    int rightCount = robot_.getMotorControllerInstance().getRightMotorCount();
+    int leftCount = robot_.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
 
-    EXPECT_EQ(expected, actual);  // 直進前後で走行距離に変化はない
+    double expected = 0.0;
+    EXPECT_EQ(expected, actual);
   }
 
 }  // namespace etrobocon2025_test

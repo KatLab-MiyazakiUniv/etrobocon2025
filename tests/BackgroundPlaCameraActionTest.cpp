@@ -19,7 +19,8 @@ namespace etrobocon2025_test {
     DummyPlaCameraCapture dummyPlaCameraCapture;
     dummyPlaCameraCapture.setMotionLikeFrames();
 
-    Robot robot(dummyPlaCameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, dummyPlaCameraCapture);
     robot.getBackgroundDirectionResult().wasDetected = true;
     robot.getBackgroundDirectionResult().direction = BackgroundDirection::BACK;
     bool isClockwise = false;
@@ -47,7 +48,8 @@ namespace etrobocon2025_test {
     DummyPlaCameraCapture dummyPlaCameraCapture;
     dummyPlaCameraCapture.setMotionLikeFrames();
 
-    Robot robot(dummyPlaCameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, dummyPlaCameraCapture);
     robot.getBackgroundDirectionResult().wasDetected = true;
     robot.getBackgroundDirectionResult().direction = BackgroundDirection::BACK;
     bool isClockwise = false;
@@ -72,7 +74,8 @@ namespace etrobocon2025_test {
   //   {
   //       DummyPlaCameraCapture dummyPlaCameraCapture;
   //      dummyPlaCameraCapture.setMotionLikeFrames();
-  //     Robot robot(dummyPlaCameraCapture);
+  //         SpikeClient spikeClient;
+  //     Robot robot(spikeClient, dummyPlaCameraCapture);
   //     robot.getBackgroundDirectionResult().wasDetected = true;
   //     robot.getBackgroundDirectionResult().direction = BackgroundDirection::BACK;
   //     bool isClockwise = false;

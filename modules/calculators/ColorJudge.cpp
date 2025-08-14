@@ -5,7 +5,7 @@
  */
 
 #include "ColorJudge.h"
-#include "../common/SpikeCommand.h"
+#include "SpikeCommand.h"
 
 COLOR ColorJudge::convertStringToColor(const std::string& str)
 {

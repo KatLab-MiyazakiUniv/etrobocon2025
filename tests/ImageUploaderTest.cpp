@@ -47,7 +47,7 @@ namespace etrobocon2025_test {
     cv::Mat frame;
     camera.getFrame(frame);
 
-    std::string filePath = "../../tests/test_images/";
+    std::string filePath = "../../../tests/test_images/";
     std::string fileName = "test_data";
 
     FrameSave::save(frame, filePath, fileName);

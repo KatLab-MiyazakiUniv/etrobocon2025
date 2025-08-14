@@ -6,12 +6,11 @@
 
 #include <gtest/gtest.h>
 #include "Robot.h"
-#include "tests/dummy/SpikeClient.h"         // Include the mock SpikeClient
-#include "tests/dummy/DummyCameraCapture.h"  // Include dummy camera for testing
+#include "SpikeClient.h"
+#include "DummyCameraCapture.h"  // Include dummy camera for testing
 
 namespace etrobocon2025_test {
 
-  // Global mock SpikeClient instance for all tests
   SpikeClient mockSpikeClient;
 
   // ゲッターで取得したMotorControllerインスタンスが等しいか確認するテスト

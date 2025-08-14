@@ -12,7 +12,8 @@ namespace etrobocon2025_test {
   // 左右のモーターに少しでもPower値が入っているかのテスト
   TEST(SpeedCalculatorTest, CalculateMotorPower)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     // Powerの初期化
     robot.getMotorControllerInstance().setRightMotorPower(0.0);
     robot.getMotorControllerInstance().setLeftMotorPower(0.0);
@@ -27,7 +28,8 @@ namespace etrobocon2025_test {
   // 左右のモーターに少しでも負のPower値が入っているかのテスト
   TEST(SpeedCalculatorTest, CalculateMotorPoewerFromMinusSpeed)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     // Powerの初期化
     robot.getMotorControllerInstance().setRightMotorPower(0.0);
     robot.getMotorControllerInstance().setLeftMotorPower(0.0);
@@ -42,7 +44,8 @@ namespace etrobocon2025_test {
   // 左右のモータ―にPower値が入っていないかのテスト
   TEST(SpeedCalculatorTest, CalculateMotorPowerFromZeroSpeed)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     // Powerの初期化
     robot.getMotorControllerInstance().setRightMotorPower(0.0);
     robot.getMotorControllerInstance().setLeftMotorPower(0.0);

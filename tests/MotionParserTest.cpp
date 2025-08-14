@@ -14,8 +14,9 @@ namespace etrobocon2025_test {
   // ファイルパスが存在しない場合のテスト
   TEST(MotionParserTest, NotCreateMotions)
   {
-    Robot robot;
-    string csvPath = "../../tests/test_data/NonExistent.csv";  // 存在しないファイルパス
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    string csvPath = "../../../tests/test_data/NonExistent.csv";  // 存在しないファイルパス
     int targetBrightness = 45;
 
     vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
@@ -27,8 +28,9 @@ namespace etrobocon2025_test {
   // 複数の異なるモーションタイプを正しく作成するテスト
   TEST(MotionParserTest, CreateMotions)
   {
-    Robot robot;
-    string csvPath = "../../tests/test_data/MotionParserTestData.csv";
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    string csvPath = "../../../tests/test_data/MotionParserTestData.csv";
     int targetBrightness = 45;
 
     vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
@@ -53,8 +55,9 @@ namespace etrobocon2025_test {
   // 無効なコマンドを含む行がスキップされることをテスト
   TEST(MotionParserTest, SkipsInvalidCommand)
   {
-    Robot robot;
-    string csvPath = "../../tests/test_data/MotionParserInvalidCommandTestData.csv";
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    string csvPath = "../../../tests/test_data/MotionParserInvalidCommandTestData.csv";
     int targetBrightness = 45;
 
     vector<Motion*> actualList = MotionParser::createMotions(robot, csvPath, targetBrightness);
@@ -75,8 +78,9 @@ namespace etrobocon2025_test {
   // 実際のLineTraceLeftファイルで実行できるかのテスト
   TEST(MotionParserTest, ParseLineTraceLeftFile)
   {
-    Robot robot;
-    string csvPath = "../../datafiles/commands/LineTraceLeft.csv";
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    string csvPath = "datafiles/commands/LineTraceLeft.csv";
     int targetBrightness = 45;
 
     ifstream file(csvPath);
@@ -103,8 +107,9 @@ namespace etrobocon2025_test {
   // 実際のLineTraceRightファイルで実行できるかのテスト
   TEST(MotionParserTest, ParseLineTraceRightFile)
   {
-    Robot robot;
-    string csvPath = "../../datafiles/commands/LineTraceRight.csv";
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    string csvPath = "datafiles/commands/LineTraceRight.csv";
     int targetBrightness = 45;
 
     ifstream file(csvPath);

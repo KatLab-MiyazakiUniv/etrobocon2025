@@ -17,7 +17,8 @@ namespace etrobocon2025_test {
   TEST(AreaMasterTest, RunLineTraceLeft)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     Area area = Area::LineTrace;
     bool isLeftCourse = true;
     int targetBrightness = 45;
@@ -43,7 +44,8 @@ namespace etrobocon2025_test {
   TEST(AreaMasterTest, RunLineTraceRight)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     Area area = Area::LineTrace;
     bool isLeftCourse = false;
     int targetBrightness = 45;
