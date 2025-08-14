@@ -56,12 +56,12 @@ class IMURotation : public Rotation {
   void updateMotorControl() override;
 
  private:
-  int targetAngle;     // 目標回転角度(deg) 0~360
-  double power;        // モーターパワー値(-100~100)
-  PidGain pidGain;     // PIDゲイン
-  Pid pid;             // PID制御クラス
-  float currentAngle;  // １回取得した現在角度
-  float tolerance;     // 許容誤差
+  static constexpr float TOLERANCE = 1.0f;  // 許容誤差
+  int targetAngle;                          // 目標回転角度(deg) 0~360
+  double power;                             // モーターパワー値(-100~100)
+  PidGain pidGain;                          // PIDゲイン
+  Pid pid;                                  // PID制御クラス
+  float currentAngle;                       // 現在の回頭角度
 };
 
 #endif

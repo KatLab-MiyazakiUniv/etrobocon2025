@@ -12,13 +12,15 @@ IMURotation::IMURotation(Robot& _robot, int _targetAngle, double _power, bool _i
     targetAngle(_targetAngle),
     power(_power),
     pidGain(_pidGain),
-    pid(_pidGain.kp, _pidGain.ki, _pidGain.kd, leftSign * _targetAngle),
-    tolerance(1.0)
+    pid(_pidGain.kp, _pidGain.ki, _pidGain.kd, 0.0)
 {
 }
 
 void IMURotation::prepare()
 {
+  // IMUの出力特性に合わせて目標角度を変換(IMUは時計回りをマイナス、反時計回りをプラスで出力)
+  targetAngle = isClockwise ? -targetAngle : targetAngle;
+
   // IMU角度計算開始
   robot.getIMUControllerInstance().startAngleCalculation();
 }
@@ -33,16 +35,14 @@ bool IMURotation::isMetContinuationCondition()
   // 現在の角度を取得してメンバ変数に格納
   currentAngle = robot.getIMUControllerInstance().getAngle();
 
-  // IMUの出力特性に合わせた目標角度を計算(IMUは時計回りをマイナス、反時計回りをプラスで出力)
-  float goalAngle = isClockwise ? -targetAngle : targetAngle;
-  float error = goalAngle - currentAngle;
+  float error = targetAngle - currentAngle;
 
   // 誤差計算（±180範囲に正規化）
   if(error > 180.0f) error -= 360.0f;
   if(error < -180.0f) error += 360.0f;
 
   // 誤差の絶対値が許容値より大きい間は継続
-  bool shouldContinue = std::abs(error) > tolerance;
+  bool shouldContinue = std::abs(error) > TOLERANCE;
 
   // 継続しない場合（終了する場合）はIMU角度計算を停止
   if(!shouldContinue) {
@@ -62,19 +62,19 @@ void IMURotation::setMotorControl()
 
 void IMURotation::updateMotorControl()
 {
-  // メンバ変数に格納された現在角度を使用
-  // PID制御で操作量を計算（目標角度との偏差を補正）
-  double correction = pid.calculatePid(currentAngle, 0.01);
+  // 目標角度との偏差を計算
+  double error = targetAngle - currentAngle;
+
+  // 誤差を±180範囲に正規化
+  if(error > 180.0) error -= 360.0;
+  if(error < -180.0) error += 360.0;
+
+  // PID制御で操作量を計算（偏差を入力として使用）
+  double correction = pid.calculatePid(error, 0.01);
 
   // 基本パワー + PID補正値
   double leftPower = power * leftSign + correction;
   double rightPower = power * rightSign - correction;
-
-  // パワー値を-100~100の範囲に制限
-  if(leftPower > 100.0) leftPower = 100.0;
-  if(leftPower < -100.0) leftPower = -100.0;
-  if(rightPower > 100.0) rightPower = 100.0;
-  if(rightPower < -100.0) rightPower = -100.0;
 
   MotorController& motorController = robot.getMotorControllerInstance();
   motorController.setLeftMotorPower(leftPower);
