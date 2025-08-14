@@ -7,11 +7,11 @@
 #ifndef DISPLAY_CLIENT_H
 #define DISPLAY_CLIENT_H
 
-#include "SpikeClient.h"
+#include "APIClient.h"  // Inherit from APIClient
 #include "SpikeCommand.h"
 #include <string>
 
-class DisplayClient {
+class DisplayClient : public APIClient {
  public:
   /**
    * @brief コンストラクタ
@@ -36,7 +36,7 @@ class DisplayClient {
   void scrollText(const char* text, uint32_t delay = 50);
 
  private:
-  SpikeClient& spikeClient;  // SpikeClientの参照
+  // SpikeClient& spikeClient; // Moved to base class APIClient
 };
 
 #endif

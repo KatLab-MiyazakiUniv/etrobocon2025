@@ -6,7 +6,7 @@
 
 #include "ForceSensorClient.h"
 
-ForceSensorClient::ForceSensorClient(SpikeClient& client) : spikeClient(client) {}
+ForceSensorClient::ForceSensorClient(SpikeClient& client) : APIClient(client) {}
 
 bool ForceSensorClient::isPressed(float threshold)
 {

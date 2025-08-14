@@ -8,10 +8,10 @@
 #define CLOCK_CLIENT_H
 
 #include <cstdint>
-#include "SpikeClient.h"
+#include "APIClient.h"  // Inherit from APIClient
 #include "SpikeCommand.h"
 
-class ClockClient {
+class ClockClient : public APIClient {
  public:
   /**
    * @brief コンストラクタ
@@ -30,7 +30,7 @@ class ClockClient {
   uint64_t now();
 
  private:
-  SpikeClient& spikeClient;  // SpikeClientの参照
+  // SpikeClient& spikeClient; // Moved to base class APIClient
 };
 
 #endif

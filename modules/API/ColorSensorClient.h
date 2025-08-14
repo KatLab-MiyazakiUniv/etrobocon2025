@@ -7,10 +7,10 @@
 #ifndef COLORSENSOR_CLIENT_H
 #define COLORSENSOR_CLIENT_H
 
-#include "SpikeClient.h"
+#include "APIClient.h"  // Inherit from APIClient
 #include "SpikeCommand.h"
 
-class ColorSensorClient {
+class ColorSensorClient : public APIClient {
  public:
   /**
    * @brief コンストラクタ
@@ -29,7 +29,7 @@ class ColorSensorClient {
   int32_t getReflection();
 
  private:
-  SpikeClient& spikeClient;  // SpikeClientの参照
+  // SpikeClient& spikeClient; // Moved to base class APIClient
 };
 
 #endif

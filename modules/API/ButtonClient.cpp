@@ -7,7 +7,7 @@
 #include "ButtonClient.h"
 #include <string>
 
-ButtonClient::ButtonClient(SpikeClient& client) : spikeClient(client) {}
+ButtonClient::ButtonClient(SpikeClient& client) : APIClient(client) {}
 
 bool ButtonClient::isRightPressed()
 {

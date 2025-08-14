@@ -7,10 +7,10 @@
 #define MOTOR_CONTROLLER_CLIENT_H
 
 #include "SystemInfo.h"  // WHEEL_RADIUS, PI, RAD_TO_DEG, DEG_TO_RADの定義を含む
-#include "SpikeClient.h"
+#include "APIClient.h"   // Inherit from APIClient
 #include "SpikeCommand.h"
 
-class MotorControllerClient {
+class MotorControllerClient : public APIClient {
  public:
   /**
    * @brief Power値の上限
@@ -147,7 +147,7 @@ class MotorControllerClient {
   double getLeftMotorSpeed();
 
  private:
-  SpikeClient& spikeClient;  // SpikeClientのインスタンス
+  // SpikeClient& spikeClient; // Moved to base class APIClient
 
   /**
    * @brief モータに設定するpower値の制限

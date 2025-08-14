@@ -10,7 +10,7 @@
 #include <iostream>
 #include "SystemInfo.h"
 
-MotorControllerClient::MotorControllerClient(SpikeClient& client) : spikeClient(client) {}
+MotorControllerClient::MotorControllerClient(SpikeClient& client) : APIClient(client) {}
 
 // 右モータにpower値をセット
 void MotorControllerClient::setRightMotorPower(int power)
@@ -148,7 +148,7 @@ int MotorControllerClient::getArmMotorPower()
   return res.value_or(0);
 }
 
-// 右タイヤモータの線速度を取得する
+// 右タイヤの線速度を取得する
 double MotorControllerClient::getRightMotorSpeed()
 {
   auto res = spikeClient.executeQuery<int32_t>(spike::CommandId::MOTOR_GET_SPEED,
@@ -158,7 +158,7 @@ double MotorControllerClient::getRightMotorSpeed()
   return linearSpeed;
 }
 
-// 左タイヤモータの線速度を取得する
+// 左タイヤの線速度を取得する
 double MotorControllerClient::getLeftMotorSpeed()
 {
   auto res = spikeClient.executeQuery<int32_t>(spike::CommandId::MOTOR_GET_SPEED,

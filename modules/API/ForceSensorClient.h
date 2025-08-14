@@ -7,10 +7,10 @@
 #ifndef FORCESENSOR_CLIENT_H
 #define FORCESENSOR_CLIENT_H
 
-#include "SpikeClient.h"
+#include "APIClient.h"  // Inherit from APIClient
 #include "SpikeCommand.h"
 
-class ForceSensorClient {
+class ForceSensorClient : public APIClient {
  public:
   /**
    * @brief コンストラクタ
@@ -30,7 +30,7 @@ class ForceSensorClient {
   float getForce();
 
  private:
-  SpikeClient& spikeClient;  // SpikeClientの参照
+  // SpikeClient& spikeClient; // Moved to base class APIClient
 };
 
 #endif

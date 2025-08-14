@@ -6,7 +6,7 @@
 
 #include "ColorSensorClient.h"
 
-ColorSensorClient::ColorSensorClient(SpikeClient& client) : spikeClient(client) {}
+ColorSensorClient::ColorSensorClient(SpikeClient& client) : APIClient(client) {}
 
 spike::HsvResponse ColorSensorClient::getColor()
 {

@@ -6,7 +6,7 @@
 
 #include "ClockClient.h"
 
-ClockClient::ClockClient(SpikeClient& client) : spikeClient(client) {}
+ClockClient::ClockClient(SpikeClient& client) : APIClient(client) {}
 
 void ClockClient::sleep(uint64_t microseconds)
 {

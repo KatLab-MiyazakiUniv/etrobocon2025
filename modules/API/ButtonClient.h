@@ -7,10 +7,10 @@
 #ifndef BUTTON_CLIENT_H
 #define BUTTON_CLIENT_H
 
-#include "SpikeClient.h"
+#include "APIClient.h"  // Inherit from APIClient
 #include "SpikeCommand.h"
 
-class ButtonClient {
+class ButtonClient : public APIClient {
  public:
   /**
    * @brief コンストラクタ
@@ -32,9 +32,6 @@ class ButtonClient {
    * @return 押されている場合true、それ以外false
    */
   bool isCenterPressed();
-
- private:
-  SpikeClient& spikeClient;  // SpikeClientの参照
 };
 
 #endif

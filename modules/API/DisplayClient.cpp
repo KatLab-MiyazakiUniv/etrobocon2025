@@ -7,7 +7,7 @@
 #include "DisplayClient.h"
 #include <string.h>
 
-DisplayClient::DisplayClient(SpikeClient& client) : spikeClient(client) {}
+DisplayClient::DisplayClient(SpikeClient& client) : APIClient(client) {}
 
 void DisplayClient::showChar(const char str)
 {
