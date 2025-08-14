@@ -31,7 +31,7 @@ double IMUController::getCorrectedZAxisAngularVelocity()
   spikeapi::IMU::AngularVelocity ang;
   imu.getAngularVelocity(ang);
 
-  // 3D回転補正行列の転置行列を適用
+  // 補正行列の転置を適用し測定された角速度を地面座標系に変換
   return correctionMatrix[0][2] * (ang.x - offsetX) + correctionMatrix[1][2] * (ang.y - offsetY)
          + correctionMatrix[2][2] * (ang.z - offsetZ);
 }
@@ -47,11 +47,6 @@ void IMUController::calculateCorrectionMatrix()
   float gy = acc.y / norm;
   float gz = acc.z / norm;
 
-  // 正規化後の重力ベクトルをログ出力（座標系確認用）
-  std::cout << "=== IMU座標系検証 ===" << std::endl;
-  std::cout << "生加速度: X=" << acc.x << " Y=" << acc.y << " Z=" << acc.z << " mm/s²" << std::endl;
-  std::cout << "正規化後重力ベクトル: X=" << gx << " Y=" << gy << " Z=" << gz << std::endl;
-
   // 理想の重力方向（Z軸）
   float ez[3] = { 0.0f, 0.0f, 1.0f };
 
@@ -63,10 +58,6 @@ void IMUController::calculateCorrectionMatrix()
   // 回転角 θ = acos(ez・g)（内積）
   float dot = ez[0] * gx + ez[1] * gy + ez[2] * gz;
   float theta = std::acos(dot);
-
-  std::cout << "回転軸ベクトル: X=" << vx << " Y=" << vy << " Z=" << vz << std::endl;
-  std::cout << "内積値: " << dot << ", 回転角: " << theta << " rad (" << theta * 180.0 / M_PI
-            << " deg)" << std::endl;
 
   // 回転軸を正規化
   float v_norm = std::sqrt(vx * vx + vy * vy + vz * vz);
@@ -88,13 +79,6 @@ void IMUController::calculateCorrectionMatrix()
   correctionMatrix[2][0] = t * vx * vz - s * vy;
   correctionMatrix[2][1] = t * vy * vz + s * vx;
   correctionMatrix[2][2] = t * vz * vz + c;
-
-  std::cout << "=== 3D回転補正行列 ===" << std::endl;
-  for(int i = 0; i < 3; i++) {
-    std::cout << "[" << correctionMatrix[i][0] << ", " << correctionMatrix[i][1] << ", "
-              << correctionMatrix[i][2] << "]" << std::endl;
-  }
-  std::cout << "=========================" << std::endl;
 }
 
 void IMUController::calculateOffset()
