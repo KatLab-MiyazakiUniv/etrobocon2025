@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <cerrno>
+#include <iostream>
 
 Socket::Socket() : sock(-1) {}
 
@@ -23,7 +24,27 @@ Socket::~Socket()
 bool Socket::create()
 {
   sock = socket(AF_INET, SOCK_STREAM, 0);
-  return sock != -1;
+  if (sock == -1) {
+    return false;
+  }
+
+  // Set send buffer size to 64KB (65536 bytes)
+  int requested_buffer_size = 65536;
+  if (setsockopt(sock, SOL_SOCKET, SO_SNDBUF, &requested_buffer_size, sizeof(requested_buffer_size)) == -1) {
+    std::cerr << "Error setting SO_SNDBUF: " << strerror(errno) << std::endl;
+    // Continue even if setting buffer fails, as it might still work with default
+  }
+
+  // Get and print the actual send buffer size
+  int actual_buffer_size;
+  socklen_t optlen = sizeof(actual_buffer_size);
+  if (getsockopt(sock, SOL_SOCKET, SO_SNDBUF, &actual_buffer_size, &optlen) == -1) {
+    std::cerr << "Error getting SO_SNDBUF: " << strerror(errno) << std::endl;
+  } else {
+    std::cerr << "Actual SO_SNDBUF size: " << actual_buffer_size << std::endl;
+  }
+
+  return true;
 }
 
 bool Socket::bind(int port)

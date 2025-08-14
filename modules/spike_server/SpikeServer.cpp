@@ -205,6 +205,7 @@ void SpikeServer::handle_command(spike::CommandId commandId, Socket* client)
 
         send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
         send(client, reinterpret_cast<char*>(&res), sizeof(res));
+        std::cerr << "Server: Finished GET_ALL_ROBOT_STATE" << std::endl;
         break;
       }
       default:

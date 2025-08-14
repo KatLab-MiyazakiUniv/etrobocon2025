@@ -46,7 +46,7 @@ void RobotStateCache::updateLoop()
     }
 
     // Sleep for a short period before the next update
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));  // Update every 50ms
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));  // Update every 50ms
   }
 }
 

@@ -43,6 +43,7 @@ bool DistanceStraight::isMetContinuationCondition()
   double currentRightMotorCount = cachedState.rightMotorCount;
   double currentLeftMotorCount = cachedState.leftMotorCount;
   double currentDistance = Mileage::calculateMileage(currentRightMotorCount, currentLeftMotorCount);
+  std::cout << currentDistance << std::endl;
 
   // 現在の走行距離が目標走行距離に達した場合falseを返す
   // ここでは、走行体全体の距離 (左右の距離の平均) が達したかどうかで判断する
