@@ -33,6 +33,7 @@ package "ロボコンスナップ攻略システム" {
       SL
       SS
       MCA
+      BCA
       NONE
     }
 
@@ -117,8 +118,8 @@ package "走行体情報管理システム" {
     ' 背景方向の列挙型
     enum BackgroundDirection {
       FRONT
-      BACK
       RIGHT
+      BACK
       LEFT
     }
 
@@ -152,6 +153,7 @@ package "走行体情報管理システム" {
       + setIsLeftEdge(bool isLeft): void
       + getIsLeftEdge() const: bool
       + getMiniFigDirectionResult(): MiniFigDirectionResult&
+      + getBackgroundDirectionResult(): BackgroundDirectionResult&
       - motorController: MotorController
       - defaultCameraCapture: CameraCapture
       - cameraCapture: ICameraCapture&
@@ -278,7 +280,20 @@ package "走行制御システム" {
     }
   }
 
-  package "基本動作部" {
+  package "動作部" {
+    ' Motionクラス
+    abstract class Motion {
+      + Motion(Robot& _robot)
+      + {abstract} run(): void
+      # robot: Robot&
+    }
+
+    ' 応用動作クラス
+    abstract class CompositeMotion {
+      + CompositeMotion(Robot& _robot)
+      + {abstract} run(): void
+    }
+
     ' ライントレースクラス
     abstract class LineTrace {
       + LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
@@ -380,30 +395,32 @@ package "走行制御システム" {
       - targetAngle: int
     }
 
+    ' カメラ走行系、地区大会のモデルでは書かない予定
+
     ' カメラPID監視クラス
-    abstract class CameraPidTracking {
-      + CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, BoundingBoxDetector& _boundingBoxDetector)
-      + run(): void
-      # {abstract} isMetPreCondition(): bool
-      # {abstract} prepare(): void
-      # {abstract} isMetContinuationCondition(): bool
-      # boundingBoxDetector: BoundingBoxDetector&
-      # result: BoundingBoxDetectionResult
-      # targetSpeed: double
-      # targetXCoordinate: int
-      # pidGain: PidGain
-    }
+    ' abstract class CameraPidTracking {
+    '   + CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, BoundingBoxDetector& _boundingBoxDetector)
+    '   + run(): void
+    '   # {abstract} isMetPreCondition(): bool
+    '   # {abstract} prepare(): void
+    '   # {abstract} isMetContinuationCondition(): bool
+    '   # boundingBoxDetector: BoundingBoxDetector&
+    '   # result: BoundingBoxDetectionResult
+    '   # targetSpeed: double
+    '   # targetXCoordinate: int
+    '   # pidGain: PidGain
+    ' }
 
     ' 距離指定カメラライントレースクラス
-    class DistanceCameraLineTrace {
-      + DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, std::unique_ptr<BoundingBoxDetector> _detector)
-      # isMetPreCondition(): bool
-      # prepare(): void
-      # isMetContinuationCondition(): bool
-      - targetDistance: double
-      - initDistance: double
-      - detector: std::unique_ptr<BoundingBoxDetector>
-    }
+    ' class DistanceCameraLineTrace {
+    '   + DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, std::unique_ptr<BoundingBoxDetector> _detector)
+    '   # isMetPreCondition(): bool
+    '   # prepare(): void
+    '   # isMetContinuationCondition(): bool
+    '   - targetDistance: double
+    '   - initDistance: double
+    '   - detector: std::unique_ptr<BoundingBoxDetector>
+    ' }
 
     ' エッジ変更クラス
     class EdgeChange {
@@ -418,19 +435,6 @@ package "走行制御システム" {
       + run(): void
       - milliSec: int
     }
-  }
-
-  ' Motionクラス
-  abstract class Motion {
-    + Motion(Robot& _robot)
-    + {abstract} run(): void
-    # robot: Robot&
-  }
-
-  ' 応用動作クラス
-  abstract class CompositeMotion {
-    + CompositeMotion(Robot& _robot)
-    + {abstract} run(): void
   }
 }
 
@@ -472,33 +476,6 @@ package "カメラ撮影システム" {
     '   - fileName: std::string
     '   - {static} const path: std::string
     ' }
-
-    ' 画像処理系
-    struct BoundingBoxDetectionResult {
-      + wasDetected: bool
-      + topLeft: cv::Point
-      + topRight: cv::Point
-      + bottomLeft: cv::Point
-      + bottomRight: cv::Point
-    }
-
-    abstract class BoundingBoxDetector {
-      + {abstract} ~BoundingBoxDetector()
-      + {abstract} detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
-    }
-
-    class LineBoundingBoxDetector {
-      + LineBoundingBoxDetector(const cv::Scalar& _lowerHSV, const cv::Scalar& _upperHSV)
-      + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi)
-      + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi, const cv::Size& resolution)
-      + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
-      - {static} MIN_LINE_CONTOUR_AREA: double
-      - lowerHSV: cv::Scalar
-      - upperHSV: cv::Scalar
-      - roi: cv::Rect
-      - resolution: cv::Size
-      - validateParameters(): void
-    }
 
     ' フレーム保存クラス
     class FrameSave {
@@ -549,20 +526,20 @@ package "配置エリアA撮影システム" {
 ' サブシステム、配置エリアB撮影システム
 package "配置エリアB撮影システム" {
   package "配置エリアB攻略部" {
-    ' プラレールカメラアクション
-    class PlaCameraAction {
-      + PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect& _roi)
+    ' 風景プラレールカメラアクション
+    class BackgroundPlaCameraAction {
+      + BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle, double _targetRotationSpeed, double _threshold, double _minArea, const cv::Rect& _roi, int _position)
       + run(): void
-      - getBackgroundFrame(): void
-      - motionDetector: MotionDetector
-      - {static} constexpr MAX_NO_MOTION: int
-      - {static} constexpr filePath: const char*
-      - {static} constexpr uploadFile: const char*
-    }
-
-    ' 風景カメラアクション
-    ' 実装予定のクラスを記述
-    class BackgroundCameraAction {
+      - isClockwise: bool
+      - preTargetAngle: int
+      - postTargetAngle: int
+      - targetRotationSpeed: double
+      - threshold: double
+      - minArea: double
+      - position: int
+      - roi: cv::Rect
+      - isMetPreCondition(): bool
+      - detectDirection(cv::Mat& frame): void
     }
   }
 
@@ -577,6 +554,46 @@ package "配置エリアB撮影システム" {
       - minArea: double
       - roi: cv::Rect
       - bgFrame: cv::Mat
+    }
+
+    ' プラレールカメラアクション
+    class PlaCameraAction {
+      + PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect& _roi)
+      + run(): void
+      + setImageSaveName(const std::string& fileName): void
+      - getBackgroundFrame(): void
+      - motionDetector: MotionDetector
+      - imageSaveName: std::string
+      - {static} constexpr MAX_NO_MOTION: int
+      - {static} constexpr filePath: const char*
+    }
+
+    ' 画像処理系
+    ' カメラライントレースが出てくるなら、カメラ撮影部へ移動
+    struct BoundingBoxDetectionResult {
+      + wasDetected: bool
+      + topLeft: cv::Point
+      + topRight: cv::Point
+      + bottomLeft: cv::Point
+      + bottomRight: cv::Point
+    }
+
+    abstract class BoundingBoxDetector {
+      + {abstract} ~BoundingBoxDetector()
+      + {abstract} detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
+    }
+
+    class LineBoundingBoxDetector {
+      + LineBoundingBoxDetector(const cv::Scalar& _lowerHSV, const cv::Scalar& _upperHSV)
+      + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi)
+      + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi, const cv::Size& resolution)
+      + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
+      - {static} MIN_LINE_CONTOUR_AREA: double
+      - lowerHSV: cv::Scalar
+      - upperHSV: cv::Scalar
+      - roi: cv::Rect
+      - resolution: cv::Size
+      - validateParameters(): void
     }
   }
 
@@ -594,11 +611,23 @@ package "配置エリアB撮影システム" {
   }
 }
 
+' サブシステム、ユーティリティシステム
+package "ユーティリティシステム" {
+  package "コマンド実行部" {
+    ' シェルコマンド実行クラス
+    class CommandExecutor {
+      + {static} exec(const std::string& command): int
+      - CommandExecutor()
+    }
+  }
+}
+
 ' サブシステム、走行体・無線通信デバイス間通信システム
 package "走行体・無線通信デバイス間通信システム" {
   ' 走行体から無線通信デバイスへの画像アップロードクラス
-  ' 実装予定のクラスを記述
   class ImageUploader {
+    + {static} uploadImage(const std::string& imagePath, int maxAttempts): bool
+    - ImageUploader()
   }
 }
 
@@ -620,7 +649,7 @@ package "画像アップロードシステム" {
 LineTrace --|> Motion : 継承
 Straight --|> Motion : 継承
 Rotation --|> Motion : 継承
-CameraPidTracking --|> Motion : 継承
+' CameraPidTracking --|> Motion : 継承
 CompositeMotion --|> Motion : 継承
 
 DistanceLineTrace --|> LineTrace : 継承
@@ -632,14 +661,16 @@ ColorStraight --|> Straight : 継承
 
 AngleRotation --|> Rotation : 継承
 
-DistanceCameraLineTrace --|> CameraPidTracking : 継承
+' DistanceCameraLineTrace --|> CameraPidTracking : 継承
 
 MiniFigCameraAction --|> CompositeMotion : 継承
+BackgroundPlaCameraAction --|> CompositeMotion : 継承
 
 EdgeChange --|> Motion : 継承
 Sleeping --|> Motion : 継承
 ' Snapshot --|> Motion : 継承
-PlaCameraAction --|> Motion : 継承
+' 実際に継承してるが、モデル上ではあまり必要性がないため継承していないことにする
+' PlaCameraAction --|> Motion : 継承
 
 LineBoundingBoxDetector --|> BoundingBoxDetector : 継承
 MotionDetector --|> BoundingBoxDetector : 継承
@@ -671,8 +702,8 @@ ColorJudge *-- COLOR : コンポジション
 
 ' 4. 集約関係 (Aggregation) - 弱い所有関係
 Robot o-- ICameraCapture : 集約
-CameraPidTracking o-- BoundingBoxDetector : 集約
-DistanceCameraLineTrace o-- BoundingBoxDetector : 集約
+' CameraPidTracking o-- BoundingBoxDetector : 集約
+' DistanceCameraLineTrace o-- BoundingBoxDetector : 集約
 
 ' 5. 関連関係 (Association) - 永続的な関係
 AreaMaster --> Robot : 関連
@@ -691,11 +722,12 @@ MotionParser ..> ColorDistanceLineTrace : 依存
 MotionParser ..> DistanceStraight : 依存
 MotionParser ..> ColorStraight : 依存
 MotionParser ..> AngleRotation : 依存
-MotionParser ..> DistanceCameraLineTrace : 依存
+' MotionParser ..> DistanceCameraLineTrace : 依存
 MotionParser ..> EdgeChange : 依存
 MotionParser ..> Sleeping : 依存
 ' MotionParser ..> Snapshot : 依存
 MotionParser ..> MiniFigCameraAction : 依存
+MotionParser ..> BackgroundPlaCameraAction : 依存
 MotionParser ..> StringOperator : 依存
 
 LineTrace ..> PidGain : 依存
@@ -726,14 +758,16 @@ ColorDistanceLineTrace ..> COLOR : 依存
 BoundingBoxDetector ..> BoundingBoxDetectionResult : 依存
 LineBoundingBoxDetector ..> BoundingBoxDetectionResult : 依存
 MotionDetector ..> BoundingBoxDetectionResult : 依存
-CameraPidTracking ..> PidGain : 依存
-CameraPidTracking ..> BoundingBoxDetectionResult : 依存
+' CameraPidTracking ..> PidGain : 依存
+' CameraPidTracking ..> BoundingBoxDetectionResult : 依存
 
 BackgroundDirectionDetector ..> BackgroundDirectionResult : 依存
 BackgroundDirectionDetector ..> BackgroundDirection : 依存
 
 MiniFigDirectionDetector ..> MiniFigDirectionResult : 依存
 MiniFigDirectionDetector ..> MiniFigDirection : 依存
+
+
 
 ' 構造体と列挙型の関係
 MiniFigDirectionResult ..> MiniFigDirection : 依存
@@ -746,6 +780,12 @@ MiniFigCameraAction ..> DistanceStraight : 依存
 ' Snapshot ..> FrameSave : 依存
 PlaCameraAction ..> FrameSave : 依存
 MotionDetector ..> FrameSave : 依存
+BackgroundPlaCameraAction ..> BackgroundDirectionDetector : 依存
+BackgroundPlaCameraAction ..> PlaCameraAction : 依存
+BackgroundPlaCameraAction ..> AngleRotation : 依存
+MiniFigCameraAction ..> ImageUploader : 依存
+BackgroundPlaCameraAction ..> ImageUploader : 依存
+ImageUploader ..> CommandExecutor : 依存
 
 
 @enduml
