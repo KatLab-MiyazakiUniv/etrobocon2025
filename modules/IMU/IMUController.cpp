@@ -53,7 +53,7 @@ void IMUController::calculateCorrectionMatrix()
   std::cout << "正規化後重力ベクトル: X=" << gx << " Y=" << gy << " Z=" << gz << std::endl;
 
   // 理想の重力方向（Z軸）
-  float ez[3] = { 0.0f, 0.0f, -1.0f };
+  float ez[3] = { 0.0f, 0.0f, 1.0f };
 
   // 回転軸 v = ez × g（外積）
   float vx = ez[1] * gz - ez[2] * gy;  // 0*gz - 1*gy = -gy
