@@ -9,6 +9,8 @@
 
 namespace etrobocon2025_test {
 
+  // isRightPressedのテスト:
+  // 右ボタンが押された状態と押されていない状態を正しく検出できることを検証する。
   TEST(ButtonClientTest, isRightPressed)
   {
     SpikeClient dummy_client;
@@ -21,6 +23,8 @@ namespace etrobocon2025_test {
     EXPECT_FALSE(button_client.isRightPressed());
   }
 
+  // isLeftPressedのテスト:
+  // 左ボタンが押された状態と押されていない状態を正しく検出できることを検証する。
   TEST(ButtonClientTest, isLeftPressed)
   {
     SpikeClient dummy_client;
@@ -33,6 +37,8 @@ namespace etrobocon2025_test {
     EXPECT_FALSE(button_client.isLeftPressed());
   }
 
+  // isCenterPressedのテスト:
+  // 中央ボタンが押された状態と押されていない状態を正しく検出できることを検証する。
   TEST(ButtonClientTest, isCenterPressed)
   {
     SpikeClient dummy_client;
@@ -45,6 +51,8 @@ namespace etrobocon2025_test {
     EXPECT_FALSE(button_client.isCenterPressed());
   }
 
+  // MixedPressのテスト:
+  // 複数のボタンが同時に押されたり、押されなかったりする状態を正しく検出できることを検証する。
   TEST(ButtonClientTest, MixedPress)
   {
     SpikeClient dummy_client;

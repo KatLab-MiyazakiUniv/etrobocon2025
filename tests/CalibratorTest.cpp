@@ -11,7 +11,8 @@
 using namespace std;
 
 namespace etrobocon2025_test {
-  // waitForStart()において期待した出力がされており，WarningやErrorが出ていないかテスト
+  // waitForStart()において期待した出力がされており，WarningやErrorが出ていないかテスト:
+  // waitForStartメソッドが正しく動作し、期待される出力がされることを検証する。
   TEST(CalibratorTest, WaitForStart)
   {
     SpikeClient spikeClient;
@@ -26,7 +27,8 @@ namespace etrobocon2025_test {
     EXPECT_TRUE(actual);
   }
 
-  // 左右ボタンでLRコースを選択できるかのテスト
+  // 左右ボタンでLRコースを選択できるかのテスト:
+  // 左右ボタンの操作によってL/Rコースが正しく選択されることを検証する。
   TEST(CalibratorTest, GetIsLeftCourse)
   {
     SpikeClient spikeClient;
@@ -55,7 +57,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);                 // 出力とゲッタの値が等しいかテスト
   }
 
-  // 目標輝度値を取得できるかのテスト
+  // 目標輝度値を取得できるかのテスト:
+  // 黒と白の輝度測定によって目標輝度値が正しく設定されることを検証する。
   TEST(CalibratorTest, getTargetBrightness)
   {
     SpikeClient spikeClient;

@@ -12,7 +12,8 @@ using namespace std;
 
 namespace etrobocon2025_test {
 
-  // 最初3回の色取得で連続して指定色を取得し、かつ目標距離に到達しない時のテストケース
+  // 最初3回の色取得で連続して指定色を取得し、かつ目標距離に到達しない時のテストケース:
+  // 指定色を検出する前に目標距離に到達しないことを検証する。
   TEST(ColorDistanceLineTraceTest, RunToGetFirst)
   {
     SpikeClient spikeClient;
@@ -43,7 +44,8 @@ namespace etrobocon2025_test {
     EXPECT_LT(actual, targetDistance);  // 目標距離までに停止している
   }
 
-  // 少し走ってから指定色を取得し、かつ、目標距離に到達しない時のテストケース
+  // 少し走ってから指定色を取得し、かつ、目標距離に到達しない時のテストケース:
+  // 少し走行した後に指定色を検出し、目標距離に到達しないことを検証する。
   TEST(ColorDistanceLineTraceTest, ColorRunLeftEdge)
   {
     SpikeClient spikeClient;
@@ -75,7 +77,8 @@ namespace etrobocon2025_test {
     EXPECT_LT(actual, targetDistance);  // 目標距離までに停止している
   }
 
-  // 負のtargetSpeed値で走行し、指定色を取得し、かつ、目標距離に到達しない時のテストケース
+  // 負のtargetSpeed値で走行し、指定色を取得し、かつ、目標距離に到達しない時のテストケース:
+  // 負の速度で走行し、指定色を検出する前に目標距離に到達しないことを検証する。
   TEST(ColorDistanceLineTraceTest, ColorRunBackLeftEdge)
   {
     SpikeClient spikeClient;
@@ -102,7 +105,8 @@ namespace etrobocon2025_test {
     EXPECT_LT(actual, targetDistance);  // 目標距離までに停止している
   }
 
-  // targetSpeed値が0の時に終了するテストケース
+  // targetSpeed値が0の時に終了するテストケース:
+  // 速度が0の場合にライントレースが開始されずに終了することを検証する。
   TEST(ColorDistanceLineTraceTest, RunZeroSpeed)
   {
     SpikeClient spikeClient;
@@ -128,7 +132,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // 正確に終了している
   }
 
-  // 目標の色がNONEの時に終了するテストケース
+  // 目標の色がNONEの時に終了するテストケース:
+  // 目標色がNONEの場合にライントレースが開始されずに終了することを検証する。
   TEST(ColorDistanceLineTraceTest, RunNoneColorDistance)
   {
     SpikeClient spikeClient;
@@ -153,7 +158,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // 正確に終了している
   }
 
-  // 目標距離までライントレースを行い、かつ、指定色を取得できていない時のテストケース
+  // 目標距離までライントレースを行い、かつ、指定色を取得できていない時のテストケース:
+  // 指定色を検出せずに目標距離までライントレースが実行されることを検証する。
   TEST(ColorDistanceLineTraceTest, DistanceRunLeftEdge)
   {
     SpikeClient spikeClient;
@@ -180,7 +186,8 @@ namespace etrobocon2025_test {
     EXPECT_NEAR(expected, actual, 30.0);  // actualに±30.0mmの誤差を許容
   }
 
-  // targetDistance値が0以下の時に終了するテストケース
+  // targetDistance値が0以下の時に終了するテストケース:
+  // 目標距離が0以下の場合にライントレースが開始されずに終了することを検証する。
   TEST(ColorDistanceLineTraceTest, RunMinusDistance)
   {
     SpikeClient spikeClient;

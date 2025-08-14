@@ -12,7 +12,8 @@
 
 #define ERROR 1.01  // 許容誤差の倍率
 namespace etrobocon2025_test {
-  // 目標距離までカメラライントレースを行うテストケース
+  // 目標距離までカメラライントレースを行うテストケース:
+  // 指定した目標距離までカメラライントレースが正しく行われることを検証する。
   TEST(DistanceCameraLineTraceTest, RunDetectCalled)
   {
     DummyCameraCapture cameraCapture;
@@ -32,7 +33,7 @@ namespace etrobocon2025_test {
 
     dcl.run();  // ライントレースを実行
 
-    // カメラライントレース後の走行距離
+    // ライントレース後の走行距離
     int rightCount = robot.getMotorControllerInstance().getRightMotorCount();
     int leftCount = robot.getMotorControllerInstance().getLeftMotorCount();
     double actual = Mileage::calculateMileage(rightCount, leftCount);
@@ -41,7 +42,8 @@ namespace etrobocon2025_test {
     EXPECT_GT(expected * ERROR, actual);  // ライントレース後に走行した距離が許容誤差未満である
   }
 
-  // targetSpeed値が0の時に終了するテストケース
+  // targetSpeed値が0の時に終了するテストケース:
+  // 速度が0の場合にカメラライントレースが開始されずに終了することを検証する。
   TEST(DistanceCameraLineTraceTest, RunZeroSpeed)
   {
     DummyCameraCapture cameraCapture;
@@ -68,7 +70,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // ライントレース前後で走行距離に変化はない
   }
 
-  // targetDistance値が負の時に終了するテストケース
+  // targetDistance値が負の時に終了するテストケース:
+  // 目標距離が負の場合にカメラライントレースが開始されずに終了することを検証する。
   TEST(DistanceCameraLineTraceTest, RunMinusDistance)
   {
     DummyCameraCapture cameraCapture;
@@ -96,7 +99,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // ライントレース前後で走行距離に変化はない
   }
 
-  // targetDistance値が0のとき終了するテストケース
+  // targetDistance値が0のとき終了するテストケース:
+  // 目標距離が0の場合にカメラライントレースが開始されずに終了することを検証する。
   TEST(DistanceCameraLineTraceTest, RunZeroDistance)
   {
     DummyCameraCapture cameraCapture;

@@ -16,31 +16,33 @@ namespace etrobocon2025_test {
     ColorSensorClient color_sensor_client_{ dummy_client_ };
   };
 
+  // getReflectionのテスト: 反射率が正しく取得できることを検証する。
   TEST_F(ColorSensorClientTest, getReflection)
   {
     // Test default value (which is 20, representing black)
-    EXPECT_EQ(color_sensor_client_.getReflection(), 20);
+    EXPECT_EQ(20, color_sensor_client_.getReflection());
 
     // Set a new reflection value and test
     dummy_client_.setReflection(95);  // White
-    EXPECT_EQ(color_sensor_client_.getReflection(), 95);
+    EXPECT_EQ(95, color_sensor_client_.getReflection());
   }
 
+  // getColorのテスト: HSV値が正しく取得できることを検証する。
   TEST_F(ColorSensorClientTest, getColor)
   {
     // Test default value (black)
     spike::HsvResponse hsv = color_sensor_client_.getColor();
-    EXPECT_EQ(hsv.h, 0);
-    EXPECT_EQ(hsv.s, 0);
-    EXPECT_EQ(hsv.v, 0);
+    EXPECT_EQ(0, hsv.h);
+    EXPECT_EQ(0, hsv.s);
+    EXPECT_EQ(0, hsv.v);
 
     // Set a new color (e.g., green) and test
     spike::HsvResponse green{ 120, 100, 100 };
     dummy_client_.setHsv(green);
     hsv = color_sensor_client_.getColor();
-    EXPECT_EQ(hsv.h, green.h);
-    EXPECT_EQ(hsv.s, green.s);
-    EXPECT_EQ(hsv.v, green.v);
+    EXPECT_EQ(green.h, hsv.h);
+    EXPECT_EQ(green.s, hsv.s);
+    EXPECT_EQ(green.v, hsv.v);
   }
 
 }  // namespace etrobocon2025_test

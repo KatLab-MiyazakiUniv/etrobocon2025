@@ -15,7 +15,7 @@ namespace etrobocon2025_test {
   // @see https://github.com/KatLab-MiyazakiUniv/etrobocon2022/blob/main/docs/odometry.md
   constexpr double TRANSFORM = 2.0 * WHEEL_RADIUS / TREAD;  // 回頭角度を求める式の係数
 
-  // 右回頭のテスト
+  // 右回頭のテスト: 指定した角度と速度で右回頭が正しく行われることを検証する。
   TEST(AngleRotationTest, RunRight)
   {
     SpikeClient spikeClient;
@@ -50,7 +50,7 @@ namespace etrobocon2025_test {
     EXPECT_GE(expected + error, actual);
   }
 
-  // 左回頭のテスト
+  // 左回頭のテスト: 指定した角度と速度で左回頭が正しく行われることを検証する。
   TEST(AngleRotationTest, RunLeft)
   {
     SpikeClient spikeClient;
@@ -86,7 +86,8 @@ namespace etrobocon2025_test {
     EXPECT_GE(expected + error, actual);
   }
 
-  // speedを0に設定したときに回頭をせずに終了するかのテスト
+  // speedを0に設定したときに回頭をせずに終了するかのテスト:
+  // 速度が0の場合に回頭動作が行われないことを検証する。
   TEST(AngleRotationTest, RunZeroSpeed)
   {
     SpikeClient spikeClient;
@@ -116,7 +117,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // speedをマイナスに設定したときに回頭をせずに終了するかのテスト
+  // speedをマイナスに設定したときに回頭をせずに終了するかのテスト:
+  // 速度が負の場合に回頭動作が行われないことを検証する。
   TEST(AngleRotationTest, RunMinusSpeed)
   {
     SpikeClient spikeClient;
@@ -146,7 +148,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 回頭角度を0に設定したときに回頭をせずに終了するかのテスト
+  // 回頭角度を0に設定したときに回頭をせずに終了するかのテスト:
+  // 回頭角度が0の場合に回頭動作が行われないことを検証する。
   TEST(AngleRotationTest, RunZeroAngle)
   {
     SpikeClient spikeClient;
@@ -176,7 +179,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 回頭角度をマイナスに設定したときに回頭をせずに終了するかのテスト
+  // 回頭角度をマイナスに設定したときに回頭をせずに終了するかのテスト:
+  // 回頭角度が負の場合に回頭動作が行われないことを検証する。
   TEST(AngleRotationTest, RunMinusAngle)
   {
     SpikeClient spikeClient;
@@ -206,7 +210,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 回頭角度を360度以上に設定したときに回頭をせずに終了するかのテスト
+  // 回頭角度を360度以上に設定したときに回頭をせずに終了するかのテスト:
+  // 回頭角度が360度以上の場合に回頭動作が行われないことを検証する。
   TEST(AngleRotationTest, RunOverAngle)
   {
     SpikeClient spikeClient;

@@ -21,7 +21,8 @@ namespace etrobocon2025_test {
     Robot robot_{ spikeClient_ };
   };
 
-  // 継続条件が2回なので、3回目で停止することを期待するテスト
+  // 継続条件が2回なので、3回目で停止することを期待するテスト:
+  // 指定色を検出後、継続条件を満たして停止することを検証する。
   TEST_F(ColorLineTraceTest, RunAndStopAfterFindingColor)
   {
     COLOR targetColor = COLOR::GREEN;
@@ -44,7 +45,8 @@ namespace etrobocon2025_test {
     EXPECT_LT(0.0, actual);
   }
 
-  // 即座に停止するテスト
+  // 即座に停止するテスト:
+  // 走行開始時に指定色が既に検出されている場合に、即座に停止することを検証する。
   TEST_F(ColorLineTraceTest, runImmediatelyStopsIfTargetColorDetected)
   {
     COLOR targetColor = COLOR::GREEN;
@@ -67,7 +69,7 @@ namespace etrobocon2025_test {
     EXPECT_NEAR(0.0, actual, 30.0);  // 許容誤差を±30.0mmとする
   }
 
-  // 後退するテスト
+  // 後退するテスト: 負の速度でライントレースが正しく行われ、後退することを検証する。
   TEST_F(ColorLineTraceTest, RunBack)
   {
     COLOR targetColor = COLOR::BLUE;
@@ -90,7 +92,8 @@ namespace etrobocon2025_test {
     EXPECT_GT(0.0, actual);
   }
 
-  // targetSpeedが0の時に走行しないテスト
+  // targetSpeedが0の時に走行しないテスト:
+  // 速度が0の場合にライントレースが開始されずに停止することを検証する。
   TEST_F(ColorLineTraceTest, RunZeroSpeed)
   {
     COLOR targetColor = COLOR::BLUE;
@@ -109,7 +112,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(0.0, actual);
   }
 
-  // targetColorがNONEの時に走行しないテスト
+  // targetColorがNONEの時に走行しないテスト:
+  // 目標色がNONEの場合にライントレースが開始されずに停止することを検証する。
   TEST_F(ColorLineTraceTest, RunNoneColor)
   {
     COLOR targetColor = COLOR::NONE;

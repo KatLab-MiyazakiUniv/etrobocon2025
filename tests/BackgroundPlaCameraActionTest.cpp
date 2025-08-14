@@ -13,7 +13,8 @@
 using namespace std;
 
 namespace etrobocon2025_test {
-  // 事前条件判定がfalseで撮影動作を行わない場合のテスト
+  // 事前条件判定がfalseで撮影動作を行わない場合のテスト:
+  // 事前条件が満たされない場合に、風景撮影動作が行われないことを検証する。
   TEST(BackgroundPlaCameraActionTest, NoCameraAction)
   {
     DummyPlaCameraCapture dummyPlaCameraCapture;
@@ -42,7 +43,8 @@ namespace etrobocon2025_test {
     EXPECT_TRUE(actual);
   }
 
-  // 2回目の撮影で風景の正面の画像を取得する場合のテスト
+  // 2回目の撮影で風景の正面の画像を取得する場合のテスト:
+  // 2回目の撮影時に風景の正面画像が正しく取得されることを検証する。
   TEST(BackgroundPlaCameraActionTest, PositionIsNotZeroCameraAction)
   {
     DummyPlaCameraCapture dummyPlaCameraCapture;

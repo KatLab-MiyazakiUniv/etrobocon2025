@@ -21,7 +21,8 @@ namespace etrobocon2025_test {
     Robot robot_{ spikeClient_ };
   };
 
-  // 少し直進して指定色を検出し停止するテスト
+  // 少し直進して指定色を検出し停止するテスト:
+  // ロボットが少し直進し、指定色を検出した後に停止することを検証する。
   TEST_F(ColorStraightTest, RunAndStop)
   {
     COLOR targetColor = COLOR::GREEN;
@@ -55,7 +56,8 @@ namespace etrobocon2025_test {
     EXPECT_LT(expected, actual);  // 初期値より少しは進んでいる
   }
 
-  // 指定色を即検出し、すぐに停止するテスト
+  // 指定色を即検出し、すぐに停止するテスト:
+  // 走行開始時に指定色が既に検出されている場合に、即座に停止することを検証する。
   TEST_F(ColorStraightTest, StopImmediately)
   {
     COLOR targetColor = COLOR::GREEN;
@@ -76,7 +78,8 @@ namespace etrobocon2025_test {
     EXPECT_NEAR(expected, actual, 30.0);
   }
 
-  // 少し後退して指定色を取得するテスト
+  // 少し後退して指定色を取得するテスト:
+  // ロボットが少し後退し、指定色を検出した後に停止することを検証する。
   TEST_F(ColorStraightTest, RunBackAndStop)
   {
     COLOR targetColor = COLOR::GREEN;
@@ -110,7 +113,8 @@ namespace etrobocon2025_test {
     EXPECT_GT(expected, actual);
   }
 
-  // 目標速度が0で走行しないことを確認するテスト
+  // 目標速度が0で走行しないことを確認するテスト:
+  // 速度が0の場合に直進動作が行われないことを検証する。
   TEST_F(ColorStraightTest, RunZeroSpeed)
   {
     COLOR targetColor = COLOR::YELLOW;
@@ -127,7 +131,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 目標色がNONEで走行しないことを確認するテスト
+  // 目標色がNONEで走行しないことを確認するテスト:
+  // 目標色がNONEの場合に直進動作が行われないことを検証する。
   TEST_F(ColorStraightTest, RunNoneColor)
   {
     COLOR targetColor = COLOR::NONE;

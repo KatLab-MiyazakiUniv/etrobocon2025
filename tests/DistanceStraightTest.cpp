@@ -14,7 +14,7 @@ using namespace std;
 
 namespace etrobocon2025_test {
 
-  // 通常速度での直進テスト
+  // 通常速度での直進テスト: 指定した距離と速度で直進が正しく行われることを検証する。
   TEST(DistanceStraightTest, RunNomalSpeed)
   {
     SpikeClient spikeClient;
@@ -59,7 +59,7 @@ namespace etrobocon2025_test {
     EXPECT_NEAR(actualError, 0.0, targetDistance / 10.0);
   }
 
-  // 十分大きい速度での直進テスト
+  // 十分大きい速度での直進テスト: 十分に大きい速度で直進が正しく行われることを検証する。
   TEST(DistanceStraightTest, RunFullPower)
   {
     SpikeClient spikeClient;
@@ -104,7 +104,7 @@ namespace etrobocon2025_test {
     EXPECT_NEAR(actualError, 0.0, targetDistance / 10.0);
   }
 
-  // 後退テスト
+  // 後退テスト: 指定した距離と速度で後退が正しく行われることを検証する。
   TEST(DistanceStraightTest, RunBack)
   {
     SpikeClient spikeClient;
@@ -145,11 +145,11 @@ namespace etrobocon2025_test {
     EXPECT_LE(actualDistance, expectedDistance);  // 目標距離以上進んでいるか
     EXPECT_GE(actualDistance,
               expectedDistance - MILEAGE_ACCEPTABLE_ERROR);  // 許容誤差内に収まっているか
-    // 左右タイヤの走行距離差が0に近い（＝直進できているか）のテスト
+    // 左右タイヤの走行距離差が0に近い（＝後退できているか）のテスト
     EXPECT_NEAR(actualError, 0.0, targetDistance / 10.0);
   }
 
-  // 十分大きい速度での後退テスト
+  // 十分大きい速度での後退テスト: 十分に大きい速度で後退が正しく行われることを検証する。
   TEST(DistanceStraightTest, RunBackFullPower)
   {
     SpikeClient spikeClient;
@@ -194,7 +194,7 @@ namespace etrobocon2025_test {
     EXPECT_NEAR(actualError, 0.0, targetDistance / 10.0);
   }
 
-  // 目標距離が負のとき停止するかのテスト
+  // 目標距離が負のとき停止するかのテスト: 目標距離が負の場合に直進動作が行われないことを検証する。
   TEST(DistanceStraightTest, RunMinusDistance)
   {
     SpikeClient spikeClient;
@@ -222,7 +222,7 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expectedDistance, actualDistance);  // 直進前後で走行距離に変化はない
   }
 
-  // 目標距離が0のとき停止するかのテスト
+  // 目標距離が0のとき停止するかのテスト: 目標距離が0の場合に直進動作が行われないことを検証する。
   TEST(DistanceStraightTest, RunZeroDistance)
   {
     SpikeClient spikeClient;
@@ -250,7 +250,7 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expectedDistance, actualDistance);  // 直進前後で走行距離に変化はない
   }
 
-  // 目標速度が0のとき停止するかのテスト
+  // 目標速度が0のとき停止するかのテスト: 目標速度が0の場合に直進動作が行われないことを検証する。
   TEST(DistanceStraightTest, RunZeroPower)
   {
     SpikeClient spikeClient;
@@ -278,7 +278,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expectedDistance, actualDistance);  // 直進前後で走行距離に変化はない
   }
 
-  // 距離・速度共に異常時の動作確認テスト
+  // 距離・速度共に異常時の動作確認テスト:
+  // 目標距離が負かつ目標速度が0の場合に直進動作が行われないことを検証する。
   TEST(DistanceStraightTest, RunMinusDistanceZeroPower)
   {
     SpikeClient spikeClient;

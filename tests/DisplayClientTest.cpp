@@ -16,17 +16,19 @@ namespace etrobocon2025_test {
     DisplayClient display_client_{ dummy_client_ };
   };
 
-  // 実行できるかのテスト
+  // showCharメソッドのテスト: showCharメソッドが例外を投げずに実行できることを検証する。
   TEST_F(DisplayClientTest, showCharNoCrash)
   {
     ASSERT_NO_THROW(display_client_.showChar('A'));
   }
 
+  // showNumberメソッドのテスト: showNumberメソッドが例外を投げずに実行できることを検証する。
   TEST_F(DisplayClientTest, showNumberNoCrash)
   {
     ASSERT_NO_THROW(display_client_.showNumber(42));
   }
 
+  // scrollTextメソッドのテスト: scrollTextメソッドが例外を投げずに実行できることを検証する。
   TEST_F(DisplayClientTest, scrollTextNoCrash)
   {
     ASSERT_NO_THROW(display_client_.scrollText("Hello World"));

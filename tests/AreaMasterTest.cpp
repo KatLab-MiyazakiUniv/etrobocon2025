@@ -13,7 +13,8 @@ using namespace std;
 
 namespace etrobocon2025_test {
 
-  // 左コースでライントレースを行う場合のテスト
+  // 左コースでライントレースを行う場合のテスト:
+  // 左コース設定時にライントレースが正しく動作し、ロボットが移動することを確認する。
   TEST(AreaMasterTest, RunLineTraceLeft)
   {
     DummyCameraCapture cameraCapture;
@@ -40,7 +41,8 @@ namespace etrobocon2025_test {
     EXPECT_TRUE(isMoved);
   }
 
-  // 右コースでライントレースを行う場合のテスト
+  // 右コースでライントレースを行う場合のテスト:
+  // 右コース設定時にライントレースが正しく動作し、ロボットが移動することを確認する。
   TEST(AreaMasterTest, RunLineTraceRight)
   {
     DummyCameraCapture cameraCapture;

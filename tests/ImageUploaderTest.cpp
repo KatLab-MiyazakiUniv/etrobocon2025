@@ -11,35 +11,38 @@
 #include <opencv2/opencv.hpp>
 
 namespace etrobocon2025_test {
-  // 空文字列のファイルパスで失敗することをテスト
+  // 空文字列のファイルパスで失敗することをテスト:
+  // 空のファイルパスが与えられた場合にアップロードが失敗することを検証する。
   TEST(ImageUploaderTest, EmptyFilePathShouldFail)
   {
     bool result = ImageUploader::uploadImage("", 1);
     EXPECT_FALSE(result);
   }
 
-  // ゼロ回試行で失敗することをテスト
+  // ゼロ回試行で失敗することをテスト: 試行回数がゼロの場合にアップロードが失敗することを検証する。
   TEST(ImageUploaderTest, ZeroRetriesShouldFail)
   {
     bool result = ImageUploader::uploadImage("test.jpg", 0);
     EXPECT_FALSE(result);
   }
 
-  // 負の試行回数で失敗することをテスト
+  // 負の試行回数で失敗することをテスト: 試行回数が負の場合にアップロードが失敗することを検証する。
   TEST(ImageUploaderTest, NegativeRetriesShouldFail)
   {
     bool result = ImageUploader::uploadImage("test.jpg", -1);
     EXPECT_FALSE(result);
   }
 
-  // 存在しないファイルで失敗することをテスト
+  // 存在しないファイルで失敗することをテスト:
+  // 存在しないファイルが指定された場合にアップロードが失敗することを検証する。
   TEST(ImageUploaderTest, NonExistentFileShouldFail)
   {
     bool result = ImageUploader::uploadImage("nonexistent_file.jpg", 1);
     EXPECT_FALSE(result);
   }
 
-  // 実在するファイルでアップロード処理が実行されることをテスト
+  // 実在するファイルでアップロード処理が実行されることをテスト:
+  // 実在するファイルが指定された場合にアップロード処理が成功することを検証する。
   TEST(ImageUploaderTest, ValidFileUploadReturnsTrue)
   {
     // 画像保存の準備
