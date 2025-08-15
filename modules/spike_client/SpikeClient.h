@@ -37,6 +37,7 @@ class SpikeClient {
    */
   inline bool executeCommand(spike::CommandId id)
   {
+    std::lock_guard<std::mutex> lock(mtx); // Acquire lock
     if(!socket.isValid()) return false;
     spike::Request header{ id };
     if(!socket.sendData(&header, sizeof(header))) return false;
@@ -55,6 +56,7 @@ class SpikeClient {
   template <typename TRequest>
   bool executeCommand(spike::CommandId id, const TRequest& request)
   {
+    std::lock_guard<std::mutex> lock(mtx); // Acquire lock
     if(!socket.isValid()) return false;
     spike::Request header{ id };
     if(!socket.sendData(&header, sizeof(header))) return false;
@@ -75,6 +77,7 @@ class SpikeClient {
   template <typename TResponse, typename TRequest>
   std::optional<TResponse> executeQuery(spike::CommandId id, const TRequest& request)
   {
+    std::lock_guard<std::mutex> lock(mtx); // Acquire lock
     if(!socket.isValid()) return std::nullopt;
     spike::Request header{ id };
     if(!socket.sendData(&header, sizeof(header))) return std::nullopt;
@@ -96,6 +99,7 @@ class SpikeClient {
   template <typename TResponse>
   std::optional<TResponse> executeQuery(spike::CommandId id)
   {
+    std::lock_guard<std::mutex> lock(mtx); // Acquire lock
     if(!socket.isValid()) return std::nullopt;
     spike::Request header{ id };
     if(!socket.sendData(&header, sizeof(header))) return std::nullopt;
@@ -109,6 +113,7 @@ class SpikeClient {
 
  private:
   Socket socket;  // ソケットインスタンス
+  std::mutex mtx; // Mutex for thread-safe socket access
 };
 
 #endif

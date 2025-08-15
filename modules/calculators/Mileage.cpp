@@ -14,6 +14,8 @@ double Mileage::calculateWheelMileage(int32_t angle)
   return 2.0 * PI * WHEEL_RADIUS * static_cast<double>(angle) / 360.0;
 }
 
+#include <iostream> // For std::cerr
+
 double Mileage::calculateMileage(int32_t rightAngle, int32_t leftAngle)
 {
   // 右タイヤの累計走行距離を計算
@@ -21,5 +23,11 @@ double Mileage::calculateMileage(int32_t rightAngle, int32_t leftAngle)
   // 左タイヤの累計走行距離を計算
   double leftWheelMileage = calculateWheelMileage(leftAngle);
   // 走行体全体の累計走行距離 = (右タイヤの累計走行距離 + 左タイヤの累計走行距離) / 2
-  return (rightWheelMileage + leftWheelMileage) / 2.0;
+  double totalMileage = (rightWheelMileage + leftWheelMileage) / 2.0;
+
+  std::cerr << "Mileage Calc: RA=" << rightAngle << ", LA=" << leftAngle
+            << ", RWM=" << rightWheelMileage << ", LWM=" << leftWheelMileage
+            << ", Total=" << totalMileage << std::endl;
+
+  return totalMileage;
 }

@@ -40,6 +40,10 @@ void RobotStateCache::updateLoop()
     if(res) {
       std::lock_guard<std::mutex> lock(mtx);
       cachedState = res.value();
+      std::cerr << "Client Recv: RMC=" << cachedState.rightMotorCount << ", LMC=" << cachedState.leftMotorCount
+                << ", RMP=" << cachedState.rightMotorPower << ", LMP=" << cachedState.leftMotorPower
+                << ", RMS=" << cachedState.rightMotorSpeed << ", LMS=" << cachedState.leftMotorSpeed
+                << ", Size=" << sizeof(cachedState) << std::endl;
     } else {
       // Handle error or disconnection
       std::cerr << "Error: Failed to get all robot state from server." << std::endl;

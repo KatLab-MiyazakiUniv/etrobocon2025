@@ -31,17 +31,19 @@ bool DistanceLineTrace::isMetPreCondition()
 // 距離ライントレースの事前処理
 void DistanceLineTrace::prepare()
 {
-  // 初期値を代入
-  initDistance = Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
-                                           robot.getMotorControllerInstance().getLeftMotorCount());
+  // 初期値を代入 (RobotStateCacheから)
+  spike::AllRobotStateResponse cachedState = robot.getRobotStateCacheInstance().getCachedState();
+  initDistance = Mileage::calculateMileage(cachedState.rightMotorCount,
+                                           cachedState.leftMotorCount);
 }
 
 // 距離ライントレースの継続条件
 bool DistanceLineTrace::isMetContinuationCondition()
 {
   // 走行距離が目標距離に到達
-  if(fabs(Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
-                                    robot.getMotorControllerInstance().getLeftMotorCount())
+  spike::AllRobotStateResponse cachedState = robot.getRobotStateCacheInstance().getCachedState();
+  if(fabs(Mileage::calculateMileage(cachedState.rightMotorCount,
+                                    cachedState.leftMotorCount)
           - initDistance)
      >= targetDistance)
     return false;

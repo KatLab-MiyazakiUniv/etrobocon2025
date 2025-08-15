@@ -203,6 +203,11 @@ void SpikeServer::handle_command(spike::CommandId commandId, Socket* client)
             = buttonHandler.handleIsPressed({ spike::ButtonTarget::CENTER }).value;
         res.clockNow = clockHandler.handleNow().value;
 
+        std::cerr << "Server Send: RMC=" << res.rightMotorCount << ", LMC=" << res.leftMotorCount
+                  << ", RMP=" << res.rightMotorPower << ", LMP=" << res.leftMotorPower
+                  << ", RMS=" << res.rightMotorSpeed << ", LMS=" << res.leftMotorSpeed
+                  << ", Size=" << sizeof(res) << std::endl;
+
         send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
         send(client, reinterpret_cast<char*>(&res), sizeof(res));
         std::cerr << "Server: Finished GET_ALL_ROBOT_STATE" << std::endl;
