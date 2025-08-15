@@ -23,11 +23,11 @@ class ForceSensorApiHandler : public ApiHandler {
    * @brief 押下状態を処理する
    * @param request 押下状態リクエスト
    */
-  void handleIsPressed(const spike::ForceSensorIsPressedRequest& request);
+  spike::BoolResponse handleIsPressed(const spike::ForceSensorIsPressedRequest& request);
   /**
    * @brief フォース値取得を処理する
    */
-  void handleGetForce();
+  spike::FloatResponse handleGetForce();
 
  private:
   spikeapi::ForceSensor forceSensor;  // フォースセンサーインスタンス

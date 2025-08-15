@@ -15,7 +15,7 @@ ButtonApiHandler::ButtonApiHandler(Socket* client)
 
 // send() is now inherited from ApiHandler
 
-void ButtonApiHandler::handleIsPressed(const spike::ButtonIsPressedRequest& request)
+spike::BoolResponse ButtonApiHandler::handleIsPressed(const spike::ButtonIsPressedRequest& request)
 {
   spike::BoolResponse response;
   response.value = false;
@@ -29,5 +29,5 @@ void ButtonApiHandler::handleIsPressed(const spike::ButtonIsPressedRequest& requ
     response.value = false;
     std::cerr << "Error: Unknown ButtonTarget for isPressed" << std::endl;
   }
-  send(reinterpret_cast<char*>(&response), sizeof(response));
+  return response;
 }

@@ -27,7 +27,7 @@ class ClockApiHandler : public ApiHandler {
   /**
    * @brief 現在時刻要求を処理する
    */
-  void handleNow();
+  spike::UInt64Response handleNow();
 
  private:
   spikeapi::Clock clock;  // クロックインスタンス

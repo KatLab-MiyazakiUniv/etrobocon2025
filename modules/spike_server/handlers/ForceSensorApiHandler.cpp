@@ -15,18 +15,18 @@ ForceSensorApiHandler::ForceSensorApiHandler(Socket* client)
 
 // send() is now inherited from ApiHandler
 
-void ForceSensorApiHandler::handleIsPressed(const spike::ForceSensorIsPressedRequest& request)
+spike::BoolResponse ForceSensorApiHandler::handleIsPressed(const spike::ForceSensorIsPressedRequest& request)
 {
   spike::BoolResponse response;
   response.value = false;
   response.value = forceSensor.isPressed(request.threshold);
-  send(reinterpret_cast<char*>(&response), sizeof(response));
+  return response;
 }
 
-void ForceSensorApiHandler::handleGetForce()
+spike::FloatResponse ForceSensorApiHandler::handleGetForce()
 {
   spike::FloatResponse response;
   response.value = 0.0f;
   response.value = forceSensor.getForce();
-  send(reinterpret_cast<char*>(&response), sizeof(response));
+  return response;
 }

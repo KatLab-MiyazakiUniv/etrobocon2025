@@ -32,7 +32,6 @@ void MotorApiHandler::handleSetPower(const spike::MotorSetPowerRequest& request)
     response.value = false;
     std::cerr << "Error: Unknown MotorTarget for setPower" << std::endl;
   }
-  send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
 void MotorApiHandler::handleSetSpeed(const spike::MotorSetSpeedRequest& request)
@@ -48,7 +47,6 @@ void MotorApiHandler::handleSetSpeed(const spike::MotorSetSpeedRequest& request)
     response.value = false;
     std::cerr << "Error: Unknown MotorTarget for setSpeed" << std::endl;
   }
-  send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
 void MotorApiHandler::handleStopWheels()
@@ -57,7 +55,6 @@ void MotorApiHandler::handleStopWheels()
   response.value = true;
   rightWheel.stop();
   leftWheel.stop();
-  send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
 void MotorApiHandler::handleBrakeWheels()
@@ -66,7 +63,6 @@ void MotorApiHandler::handleBrakeWheels()
   response.value = true;
   rightWheel.brake();
   leftWheel.brake();
-  send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
 void MotorApiHandler::handleStopArm()
@@ -74,7 +70,6 @@ void MotorApiHandler::handleStopArm()
   spike::Response response;
   response.value = true;
   armMotor.stop();
-  send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
 void MotorApiHandler::handleHoldArm()
@@ -82,10 +77,9 @@ void MotorApiHandler::handleHoldArm()
   spike::Response response;
   response.value = true;
   armMotor.hold();
-  send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
-void MotorApiHandler::handleGetCount(const spike::MotorGetRequest& request)
+spike::Int32Response MotorApiHandler::handleGetCount(const spike::MotorGetRequest& request)
 {
   spike::Int32Response response;
   response.value = -1;
@@ -99,10 +93,10 @@ void MotorApiHandler::handleGetCount(const spike::MotorGetRequest& request)
     response.value = -1;
     std::cerr << "Error: Unknown MotorTarget for getCount" << std::endl;
   }
-  send(reinterpret_cast<char*>(&response), sizeof(response));
+  return response;
 }
 
-void MotorApiHandler::handleGetPower(const spike::MotorGetRequest& request)
+spike::Int32Response MotorApiHandler::handleGetPower(const spike::MotorGetRequest& request)
 {
   spike::Int32Response response;
   response.value = -1;
@@ -116,10 +110,10 @@ void MotorApiHandler::handleGetPower(const spike::MotorGetRequest& request)
     response.value = -1;
     std::cerr << "Error: Unknown MotorTarget for getPower" << std::endl;
   }
-  send(reinterpret_cast<char*>(&response), sizeof(response));
+  return response;
 }
 
-void MotorApiHandler::handleGetSpeed(const spike::MotorGetRequest& request)
+spike::Int32Response MotorApiHandler::handleGetSpeed(const spike::MotorGetRequest& request)
 {
   spike::Int32Response response;
   response.value = 0;
@@ -130,5 +124,5 @@ void MotorApiHandler::handleGetSpeed(const spike::MotorGetRequest& request)
   } else {
     std::cerr << "Error: Unknown MotorTarget for getSpeed" << std::endl;
   }
-  send(reinterpret_cast<char*>(&response), sizeof(response));
+  return response;
 }

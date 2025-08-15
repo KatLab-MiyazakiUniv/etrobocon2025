@@ -22,11 +22,11 @@ class ColorSensorApiHandler : public ApiHandler {  // Inherit from ApiHandler
   /**
    * @brief 反射値取得を処理する
    */
-  void handleGetReflection();
+  spike::Int32Response handleGetReflection();
   /**
    * @brief HSVカラー値取得を処理する
    */
-  void handleGetColorHsv();
+  spike::HsvResponse handleGetColorHsv();
 
  private:
   spikeapi::ColorSensor colorSensor;  // カラーセンサーインスタンス

@@ -23,7 +23,7 @@ class ButtonApiHandler : public ApiHandler {
    * @brief ボタンの押下状態を処理する
    * @param request ボタン押下リクエスト
    */
-  void handleIsPressed(const spike::ButtonIsPressedRequest& request);
+  spike::BoolResponse handleIsPressed(const spike::ButtonIsPressedRequest& request);
 
  private:
   spikeapi::Button button;  // ボタンインスタンス

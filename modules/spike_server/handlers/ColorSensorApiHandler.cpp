@@ -15,15 +15,15 @@ ColorSensorApiHandler::ColorSensorApiHandler(Socket* client)
 
 // send() is now inherited from ApiHandler
 
-void ColorSensorApiHandler::handleGetReflection()
+spike::Int32Response ColorSensorApiHandler::handleGetReflection()
 {
   spike::Int32Response response;
   response.value = -1;
   response.value = colorSensor.getReflection();
-  send(reinterpret_cast<char*>(&response), sizeof(response));
+  return response;
 }
 
-void ColorSensorApiHandler::handleGetColorHsv()
+spike::HsvResponse ColorSensorApiHandler::handleGetColorHsv()
 {
   spike::HsvResponse response;
   response.h = 0;
@@ -34,5 +34,5 @@ void ColorSensorApiHandler::handleGetColorHsv()
   response.h = hsv.h;
   response.s = hsv.s;
   response.v = hsv.v;
-  send(reinterpret_cast<char*>(&response), sizeof(response));
+  return response;
 }

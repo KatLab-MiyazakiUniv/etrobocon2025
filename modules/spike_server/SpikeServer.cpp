@@ -62,80 +62,105 @@ void SpikeServer::handle_command(spike::CommandId commandId, Socket* client)
         spike::MotorSetPowerRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
         motorHandler.handleSetPower(request);
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
         break;
       }
       case spike::CommandId::MOTOR_SET_SPEED: {
         spike::MotorSetSpeedRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
         motorHandler.handleSetSpeed(request);
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
         break;
       }
       case spike::CommandId::MOTOR_STOP_WHEELS: {
         motorHandler.handleStopWheels();
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
         break;
       }
       case spike::CommandId::MOTOR_BRAKE_WHEELS: {
         motorHandler.handleBrakeWheels();
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
         break;
       }
       case spike::CommandId::MOTOR_STOP_ARM: {
         motorHandler.handleStopArm();
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
         break;
       }
       case spike::CommandId::MOTOR_HOLD_ARM: {
         motorHandler.handleHoldArm();
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
         break;
       }
       case spike::CommandId::MOTOR_GET_COUNT: {
         spike::MotorGetRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        motorHandler.handleGetCount(request);
+        spike::Int32Response res = motorHandler.handleGetCount(request);
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
+        send(client, reinterpret_cast<char*>(&res), sizeof(res));
         break;
       }
       case spike::CommandId::MOTOR_GET_POWER: {
         spike::MotorGetRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        motorHandler.handleGetPower(request);
+        spike::Int32Response res = motorHandler.handleGetPower(request);
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
+        send(client, reinterpret_cast<char*>(&res), sizeof(res));
         break;
       }
       case spike::CommandId::MOTOR_GET_SPEED: {
         spike::MotorGetRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        motorHandler.handleGetSpeed(request);
+        spike::Int32Response res = motorHandler.handleGetSpeed(request);
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
+        send(client, reinterpret_cast<char*>(&res), sizeof(res));
         break;
       }
       case spike::CommandId::COLOR_SENSOR_GET_REFLECTION: {
-        colorSensorHandler.handleGetReflection();
+        spike::Int32Response res = colorSensorHandler.handleGetReflection();
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
+        send(client, reinterpret_cast<char*>(&res), sizeof(res));
         break;
       }
       case spike::CommandId::COLOR_SENSOR_GET_COLOR_HSV: {
-        colorSensorHandler.handleGetColorHsv();
+        spike::HsvResponse res = colorSensorHandler.handleGetColorHsv();
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
+        send(client, reinterpret_cast<char*>(&res), sizeof(res));
         break;
       }
       case spike::CommandId::CLOCK_SLEEP: {
         spike::ClockSleepRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
         clockHandler.handleSleep(request);
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
         break;
       }
       case spike::CommandId::CLOCK_NOW: {
-        clockHandler.handleNow();
+        spike::UInt64Response res = clockHandler.handleNow();
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
+        send(client, reinterpret_cast<char*>(&res), sizeof(res));
         break;
       }
       case spike::CommandId::BUTTON_IS_PRESSED: {
         spike::ButtonIsPressedRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        buttonHandler.handleIsPressed(request);
+        spike::BoolResponse res = buttonHandler.handleIsPressed(request);
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
+        send(client, reinterpret_cast<char*>(&res), sizeof(res));
         break;
       }
       case spike::CommandId::FORCE_SENSOR_IS_PRESSED: {
         spike::ForceSensorIsPressedRequest request;
         if(!receive(client, reinterpret_cast<char*>(&request), sizeof(request))) return;
-        forceSensorHandler.handleIsPressed(request);
+        spike::BoolResponse res = forceSensorHandler.handleIsPressed(request);
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
+        send(client, reinterpret_cast<char*>(&res), sizeof(res));
         break;
       }
       case spike::CommandId::FORCE_SENSOR_GET_FORCE: {
-        forceSensorHandler.handleGetForce();
+        spike::FloatResponse res = forceSensorHandler.handleGetForce();
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
+        send(client, reinterpret_cast<char*>(&res), sizeof(res));
         break;
       }
       case spike::CommandId::DISPLAY_SHOW_CHAR: {

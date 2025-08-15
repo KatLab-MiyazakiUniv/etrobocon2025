@@ -20,13 +20,12 @@ void ClockApiHandler::handleSleep(const spike::ClockSleepRequest& request)
   spike::Response response;
   response.value = false;
   clock.sleep(request.microseconds);
-  send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
-void ClockApiHandler::handleNow()
+spike::UInt64Response ClockApiHandler::handleNow()
 {
   spike::UInt64Response response;
   response.value = 0;
   response.value = clock.now();
-  send(reinterpret_cast<char*>(&response), sizeof(response));
+  return response;
 }

@@ -49,17 +49,17 @@ class MotorApiHandler : public ApiHandler {
    * @brief モーターカウント取得を処理する
    * @param request モーター取得リクエスト
    */
-  void handleGetCount(const spike::MotorGetRequest& request);
+  spike::Int32Response handleGetCount(const spike::MotorGetRequest& request);
   /**
    * @brief モーターパワー取得を処理する
    * @param request モーター取得リクエスト
    */
-  void handleGetPower(const spike::MotorGetRequest& request);
+  spike::Int32Response handleGetPower(const spike::MotorGetRequest& request);
   /**
    * @brief モーター速度取得を処理する
    * @param request モーター取得リクエスト
    */
-  void handleGetSpeed(const spike::MotorGetRequest& request);
+  spike::Int32Response handleGetSpeed(const spike::MotorGetRequest& request);
 
  private:
   spikeapi::Motor rightWheel;  // 右車輪モーターインスタンス
