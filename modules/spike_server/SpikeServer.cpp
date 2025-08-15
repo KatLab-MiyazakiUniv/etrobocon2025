@@ -19,8 +19,7 @@
 #include <vector>
 #include <cstring>    // For memcpy
 #include <stdexcept>  // For std::runtime_error
-#include <iostream>
-#include <iomanip>
+#include <arpa/inet.h>
 
 // SpikeServer constructor
 SpikeServer::SpikeServer(Socket* client)
@@ -39,13 +38,6 @@ bool SpikeServer::receive(Socket* client, char* buffer, size_t size)
   bool success = client->receiveData(buffer, size);
   if(!success) {
     std::cerr << "Error: Expected " << size << " bytes, but received " << std::endl;
-  } else {
-    std::cout << "Received " << size << " bytes: ";
-    for(size_t i = 0; i < size; ++i) {
-      std::cout << std::hex << std::setw(2) << std::setfill('0')
-                << static_cast<int>(static_cast<unsigned char>(buffer[i])) << " ";
-    }
-    std::cout << std::dec << std::endl;
   }
   return success;
 }
@@ -200,11 +192,12 @@ void SpikeServer::start()
 
     SpikeServer server(client);
     while(true) {
-      spike::CommandId commandId;
-      if(!server.receive(client, reinterpret_cast<char*>(&commandId), sizeof(commandId))) {
+      uint16_t net_commandId;
+      if(!server.receive(client, reinterpret_cast<char*>(&net_commandId), sizeof(net_commandId))) {
         // Client disconnected or error
         break;
       }
+      spike::CommandId commandId = static_cast<spike::CommandId>(ntohs(net_commandId));
       std::cout << "Received CommandId: " << static_cast<uint16_t>(commandId) << std::endl;
       server.handle_command(commandId, client);
     }

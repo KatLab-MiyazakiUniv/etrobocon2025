@@ -7,6 +7,7 @@
 #include "MotorApiHandler.h"
 #include "Motor.h"
 #include <iostream>
+#include <arpa/inet.h>
 
 MotorApiHandler::MotorApiHandler(Socket* client)
   : ApiHandler(client),  // Call base class constructor
@@ -22,12 +23,13 @@ void MotorApiHandler::handleSetPower(const spike::MotorSetPowerRequest& request)
 {
   spike::Response response;
   response.value = false;
+  int32_t power = ntohl(request.power);
   if(request.target == spike::MotorTarget::RIGHT) {
-    rightWheel.setPower(request.power);
+    rightWheel.setPower(power);
   } else if(request.target == spike::MotorTarget::LEFT) {
-    leftWheel.setPower(request.power);
+    leftWheel.setPower(power);
   } else if(request.target == spike::MotorTarget::ARM) {
-    armMotor.setPower(request.power);
+    armMotor.setPower(power);
   } else {
     response.value = false;
     std::cerr << "Error: Unknown MotorTarget for setPower" << std::endl;
@@ -39,7 +41,8 @@ void MotorApiHandler::handleSetSpeed(const spike::MotorSetSpeedRequest& request)
 {
   spike::Response response;
   response.value = true;
-  int angleSpeed = static_cast<int>(request.speed);
+  int32_t speed = ntohl(request.speed);
+  int angleSpeed = static_cast<int>(speed);
   if(request.target == spike::MotorTarget::RIGHT) {
     rightWheel.setSpeed(angleSpeed);
   } else if(request.target == spike::MotorTarget::LEFT) {
@@ -99,6 +102,7 @@ void MotorApiHandler::handleGetCount(const spike::MotorGetRequest& request)
     response.value = -1;
     std::cerr << "Error: Unknown MotorTarget for getCount" << std::endl;
   }
+  response.value = htonl(response.value);
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
@@ -116,6 +120,7 @@ void MotorApiHandler::handleGetPower(const spike::MotorGetRequest& request)
     response.value = -1;
     std::cerr << "Error: Unknown MotorTarget for getPower" << std::endl;
   }
+  response.value = htonl(response.value);
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
@@ -130,5 +135,6 @@ void MotorApiHandler::handleGetSpeed(const spike::MotorGetRequest& request)
   } else {
     std::cerr << "Error: Unknown MotorTarget for getSpeed" << std::endl;
   }
+  response.value = htonl(response.value);
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }

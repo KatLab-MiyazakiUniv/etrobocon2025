@@ -6,6 +6,7 @@
 
 #include "ColorSensorApiHandler.h"
 #include <iostream>
+#include <arpa/inet.h>
 
 ColorSensorApiHandler::ColorSensorApiHandler(Socket* client)
   : ApiHandler(client),  // Call base class constructor
@@ -20,6 +21,7 @@ void ColorSensorApiHandler::handleGetReflection()
   spike::Int32Response response;
   response.value = -1;
   response.value = colorSensor.getReflection();
+  response.value = htonl(response.value);
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }
 
@@ -31,7 +33,7 @@ void ColorSensorApiHandler::handleGetColorHsv()
   response.v = 0;
   spikeapi::ColorSensor::HSV hsv;
   colorSensor.getColor(hsv);
-  response.h = hsv.h;
+  response.h = htons(hsv.h);
   response.s = hsv.s;
   response.v = hsv.v;
   send(reinterpret_cast<char*>(&response), sizeof(response));
