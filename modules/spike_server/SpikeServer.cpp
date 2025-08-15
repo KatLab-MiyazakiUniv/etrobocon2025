@@ -19,7 +19,6 @@
 #include <vector>
 #include <cstring>    // For memcpy
 #include <stdexcept>  // For std::runtime_error
-#include <arpa/inet.h>
 
 // SpikeServer constructor
 SpikeServer::SpikeServer(Socket* client)
@@ -192,12 +191,11 @@ void SpikeServer::start()
 
     SpikeServer server(client);
     while(true) {
-      uint16_t net_commandId;
-      if(!server.receive(client, reinterpret_cast<char*>(&net_commandId), sizeof(net_commandId))) {
+      spike::CommandId commandId;
+      if(!server.receive(client, reinterpret_cast<char*>(&commandId), sizeof(commandId))) {
         // Client disconnected or error
         break;
       }
-      spike::CommandId commandId = static_cast<spike::CommandId>(ntohs(net_commandId));
       std::cout << "Received CommandId: " << static_cast<uint16_t>(commandId) << std::endl;
       server.handle_command(commandId, client);
     }

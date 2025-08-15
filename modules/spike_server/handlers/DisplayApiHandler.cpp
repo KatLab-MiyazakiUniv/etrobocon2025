@@ -6,7 +6,6 @@
 
 #include "DisplayApiHandler.h"
 #include <iostream>
-#include <arpa/inet.h>
 
 DisplayApiHandler::DisplayApiHandler(Socket* client)
   : ApiHandler(client),  // Call base class constructor
@@ -36,7 +35,6 @@ void DisplayApiHandler::handleScrollText(const spike::DisplayScrollTextRequest& 
 {
   spike::Response response;
   response.value = false;
-  uint32_t delay = ntohl(request.delay);
-  display.scrollText(request.text, delay);
+  display.scrollText(request.text, request.delay);
   send(reinterpret_cast<char*>(&response), sizeof(response));
 }
