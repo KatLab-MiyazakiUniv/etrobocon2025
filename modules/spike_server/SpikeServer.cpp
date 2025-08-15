@@ -19,6 +19,8 @@
 #include <vector>
 #include <cstring>    // For memcpy
 #include <stdexcept>  // For std::runtime_error
+#include <thread>
+#include <chrono>
 
 // SpikeServer constructor
 SpikeServer::SpikeServer(Socket* client)
@@ -198,6 +200,7 @@ void SpikeServer::start()
       }
       std::cout << "Received CommandId: " << static_cast<uint16_t>(commandId) << std::endl;
       server.handle_command(commandId, client);
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
     std::cout << "Client disconnected" << std::endl;
