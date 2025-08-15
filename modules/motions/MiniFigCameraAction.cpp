@@ -5,6 +5,7 @@
  */
 
 #include "MiniFigCameraAction.h"
+#include <thread>
 
 using namespace std;
 
@@ -29,7 +30,7 @@ bool MiniFigCameraAction::isMetPreCondition()
 {
   if(position != 0 && robot.getMiniFigDirectionResult().wasDetected
      && robot.getMiniFigDirectionResult().direction != static_cast<MiniFigDirection>(position)) {
-    std::cout << "ミニフィグの撮影動作は行わない。" << std::endl;
+    cout << "ミニフィグの撮影動作は行わない。" << endl;
     return false;
   } else {
     return true;
@@ -49,20 +50,20 @@ void MiniFigCameraAction::detectDirection(cv::Mat& frame)
 
   // デバッグ出力
   if(!result.wasDetected) {
-    std::cout << "ミニフィグが検出されませんでした" << std::endl;
+    cout << "ミニフィグが検出されませんでした" << endl;
   }
   switch(result.direction) {
     case MiniFigDirection::FRONT:
-      std::cout << "ミニフィグの向き: FRONT" << std::endl;
+      cout << "ミニフィグの向き: FRONT" << endl;
       break;
     case MiniFigDirection::BACK:
-      std::cout << "ミニフィグの向き: BACK" << std::endl;
+      cout << "ミニフィグの向き: BACK" << endl;
       break;
     case MiniFigDirection::LEFT:
-      std::cout << "ミニフィグの向き: LEFT" << std::endl;
+      cout << "ミニフィグの向き: LEFT" << endl;
       break;
     case MiniFigDirection::RIGHT:
-      std::cout << "ミニフィグの向き: RIGHT" << std::endl;
+      cout << "ミニフィグの向き: RIGHT" << endl;
       break;
   }
 }
@@ -79,7 +80,7 @@ void MiniFigCameraAction::run()
   preAR.run();
 
   // 動作安定のためのスリープ
-  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  this_thread::sleep_for(chrono::milliseconds(10));
 
   // 後退
   DistanceStraight back(robot, backTargetDistance, -backSpeed);
@@ -93,29 +94,44 @@ void MiniFigCameraAction::run()
 
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は一回目(初期位置での)の撮影でしか行わない
-    std::cout << "判定動作実施" << std::endl;
+    cout << "判定動作実施" << endl;
     detectDirection(frame);
-    std::cout << "判定動作終了" << std::endl;
+    cout << "判定動作終了" << endl;
 
     if(robot.getMiniFigDirectionResult().wasDetected
        && robot.getMiniFigDirectionResult().direction == MiniFigDirection::FRONT) {
       // FRONT方向の画像を保存
       FrameSave::save(frame, filePath, uploadFileName);
+      // 非同期で画像をアップロード
+      thread([filePath, uploadFileName] {
+        ImageUploader::uploadImage(filePath, uploadFileName, 3);
+      }).detach();
     }
 
   } else if(robot.getMiniFigDirectionResult().wasDetected) {
     // 一回目の撮影でミニフィグが検出されていて、向きがFRONTじゃなければ、二回目の撮影でのミニフィグの向きは確実にFRONTになる。
-    std::cout << "正面での撮影" << std::endl;
+    cout << "正面での撮影" << endl;
     FrameSave::save(frame, filePath, uploadFileName);
+    // 非同期で画像をアップロード
+    thread([filePath, uploadFileName] {
+      ImageUploader::uploadImage(filePath, uploadFileName, 3);
+    }).detach();
   } else {
     // 一回目検出falseなら、残り、3回の撮影は確定する。
     // 一回目の撮影でミニフィグが検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
-    std::cout << "ミニフィグ向き判定用写真の撮影" << std::endl;
-    FrameSave::save(frame, filePath, "Fig_" + to_string(position));
+    cout << "ミニフィグ向き判定用写真の撮影" << endl;
+    string positionImageName = "Fig_" + to_string(position);
+    FrameSave::save(frame, filePath, positionImageName);
+    // 最後のポジションの撮影時のみ非同期で画像をアップロード
+    if(position == 3) {
+      thread([filePath, positionImageName] {
+        ImageUploader::uploadImage(filePath, positionImageName, 3);
+      }).detach();
+    }
   }
 
   // 動作安定のためのスリープ
-  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  this_thread::sleep_for(chrono::milliseconds(10));
 
   robot.getMotorControllerInstance().setLeftMotorPower(0);
   robot.getMotorControllerInstance().setRightMotorPower(0);
@@ -124,13 +140,13 @@ void MiniFigCameraAction::run()
   forward.run();
 
   // 動作安定のためのスリープ
-  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  this_thread::sleep_for(chrono::milliseconds(10));
 
   robot.getMotorControllerInstance().setLeftMotorPower(0);
   robot.getMotorControllerInstance().setRightMotorPower(0);
 
   // 動作安定のためのスリープ
-  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
   AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
