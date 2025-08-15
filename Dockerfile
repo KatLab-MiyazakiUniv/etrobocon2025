@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
   sudo \
   clang-format \
   libopencv-dev \
+  nlohmann-json3-dev \
   && gem install shell \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 

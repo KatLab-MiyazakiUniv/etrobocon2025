@@ -15,5 +15,5 @@ jobs:
 
       - name: Run clang-format check
         run: |
-          find ./ ./tests ./modules -type f \( -name "*.cpp" -o -name "*.h" \) \
+          find ./ ./tests ./modules ./yolo_detection_system/modules -type f \( -name "*.cpp" -o -name "*.h" \) \
           | xargs clang-format --dry-run --Werror
