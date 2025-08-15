@@ -27,6 +27,7 @@
 #include "Snapshot.h"
 #include "MiniFigCameraAction.h"
 #include "BackgroundPlaCameraAction.h"
+#include "CameraRecoveryAction.h"
 
 enum class COMMAND {
   AR,   // 角度指定回頭
@@ -41,6 +42,7 @@ enum class COMMAND {
   SS,   // カメラ撮影動作
   MCA,  // ミニフィグのカメラ撮影動作
   BCA,  // 背景のカメラ撮影動作
+  CRA,  // カメラ復帰動作
   NONE
 };
 
