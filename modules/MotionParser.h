@@ -28,6 +28,7 @@
 #include "MiniFigCameraAction.h"
 #include "BackgroundPlaCameraAction.h"
 #include "ColorDistanceCameraLineTrace.h"
+#include "CameraRecoveryAction.h"
 
 enum class COMMAND {
   AR,    // 角度指定回頭

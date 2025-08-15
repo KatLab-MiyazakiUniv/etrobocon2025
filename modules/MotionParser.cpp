@@ -320,7 +320,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "SL", COMMAND::SL },      // スリープ
     { "SS", COMMAND::SS },      // カメラ撮影動作
     { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
-    { "BCA", COMMAND::BCA }     // 風景・プラレールのカメラ撮影動作
+    { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
     { "CRA", COMMAND::CRA }     // カメラ復帰動作
   };
 
