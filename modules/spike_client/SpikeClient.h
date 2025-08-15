@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <optional>
+#include <mutex> // For std::mutex and std::lock_guard
 
 class SpikeClient {
  public:
