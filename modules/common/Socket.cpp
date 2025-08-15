@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <cstring>
 #include <cerrno>
+#include <iostream>
+#include <iomanip>
 
 Socket::Socket() : sock(-1) {}
 
@@ -99,6 +101,14 @@ int Socket::receive(std::string& message) const
 bool Socket::sendData(const void* data, size_t size) const
 {
   if(!isValid() || data == nullptr) return false;
+
+  const char* char_data = static_cast<const char*>(data);
+  std::cout << "Sending " << size << " bytes: ";
+  for(size_t i = 0; i < size; ++i) {
+    std::cout << std::hex << std::setw(2) << std::setfill('0')
+              << static_cast<int>(static_cast<unsigned char>(char_data[i])) << " ";
+  }
+  std::cout << std::dec << std::endl;
 
   const char* buffer = static_cast<const char*>(data);
   size_t total_sent = 0;

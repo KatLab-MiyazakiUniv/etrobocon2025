@@ -9,10 +9,6 @@
 
 #include <cstdint>
 
-#if defined(_MSC_VER)
-#pragma pack(push, 1)
-#endif
-
 namespace spike {
   // コマンドID
   enum class CommandId : uint16_t {
@@ -159,9 +155,5 @@ namespace spike {
   } __attribute__((packed));
 
 }  // namespace spike
-
-#if defined(_MSC_VER)
-#pragma pack(pop)
-#endif
 
 #endif  // SPIKE_COMMAND_H

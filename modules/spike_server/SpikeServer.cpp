@@ -19,6 +19,8 @@
 #include <vector>
 #include <cstring>    // For memcpy
 #include <stdexcept>  // For std::runtime_error
+#include <iostream>
+#include <iomanip>
 
 // SpikeServer constructor
 SpikeServer::SpikeServer(Socket* client)
@@ -37,6 +39,13 @@ bool SpikeServer::receive(Socket* client, char* buffer, size_t size)
   bool success = client->receiveData(buffer, size);
   if(!success) {
     std::cerr << "Error: Expected " << size << " bytes, but received " << std::endl;
+  } else {
+    std::cout << "Received " << size << " bytes: ";
+    for(size_t i = 0; i < size; ++i) {
+      std::cout << std::hex << std::setw(2) << std::setfill('0')
+                << static_cast<int>(static_cast<unsigned char>(buffer[i])) << " ";
+    }
+    std::cout << std::dec << std::endl;
   }
   return success;
 }
@@ -191,15 +200,11 @@ void SpikeServer::start()
 
     SpikeServer server(client);
     while(true) {
-      uint16_t commandId_raw;
-      if(!server.receive(client, reinterpret_cast<char*>(&commandId_raw), sizeof(commandId_raw))) {
+      spike::CommandId commandId;
+      if(!server.receive(client, reinterpret_cast<char*>(&commandId), sizeof(commandId))) {
         // Client disconnected or error
         break;
       }
-      // Manual byte swap for big-endian to little-endian
-      uint16_t commandId_val = (commandId_raw >> 8) | (commandId_raw << 8);
-      spike::CommandId commandId = static_cast<spike::CommandId>(commandId_val);
-
       std::cout << "Received CommandId: " << static_cast<uint16_t>(commandId) << std::endl;
       server.handle_command(commandId, client);
     }
