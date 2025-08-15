@@ -9,10 +9,11 @@
 
 namespace etrobocon2025_test {
 
-  // 初期値が左エッジかのテスト
+  // 初期値が左エッジかのテスト: ロボットの初期エッジ設定が左エッジであることを検証する。
   TEST(EdgeChangeTest, FirstEdgeIsTrue)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
 
     bool expected = true;
 
@@ -23,10 +24,11 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 右エッジへの切り替えのテスト
+  // 右エッジへの切り替えのテスト: エッジを右に切り替える動作が正しく行われることを検証する。
   TEST(EdgeChangeTest, RunToFalse)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
 
     // 右エッジへ変更
     bool nextEdge = false;

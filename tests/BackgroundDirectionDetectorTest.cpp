@@ -15,7 +15,7 @@
 //     BackgroundDirectionDetector detector("../../datafiles/models/BackgroundDetector.onnx");
 
 //     // 入力画像を読み込み
-//     cv::Mat img = cv::imread("../../tests/test_images/Background_Back_image.JPEG");
+//     cv::Mat img = cv::imread("../../../tests/test_images/Background_Back_image.JPEG");
 //     ASSERT_FALSE(img.empty()) << "画像の読み込みに失敗しました";
 
 //     BackgroundDirectionResult result;

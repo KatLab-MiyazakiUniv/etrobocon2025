@@ -10,13 +10,14 @@
 #include <iostream>
 #include "Robot.h"
 #include "Calibrator.h"
+#include "MockCameraCapture.h"
 
 class EtRobocon2025 {
  public:
+  /**
+   * @brief ETRobocon2025のメイン処理を開始する
+   */
   static void start();
-
- private:
-  static Robot robot;  // Robotインスタンス
 };
 
 #endif

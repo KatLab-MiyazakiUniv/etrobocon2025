@@ -92,9 +92,7 @@ void MiniFigCameraAction::run()
 
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は一回目(初期位置での)の撮影でしか行わない
-    std::cout << "判定動作実施" << std::endl;
     detectDirection(frame);
-    std::cout << "判定動作終了" << std::endl;
 
     if(robot.getMiniFigDirectionResult().wasDetected
        && robot.getMiniFigDirectionResult().direction == MiniFigDirection::FRONT) {

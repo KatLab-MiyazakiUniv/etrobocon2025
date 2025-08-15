@@ -50,7 +50,7 @@ void MotionDetector::detect(const cv::Mat& frame, BoundingBoxDetectionResult& re
   // デバッグ用にバウンディングボックスを描画してJPEG出力
   cv::Mat debugFrame = frame.clone();
   cv::rectangle(debugFrame, boundingBox, cv::Scalar(0, 255, 0), 2);
-  FrameSave::save(debugFrame, "etrobocon2025/datafiles/snapshots/", "debug.JPEG");
+  FrameSave::save(debugFrame, "datafiles/snapshots/", "debug.JPEG");
 }
 
 std::vector<cv::Point> MotionDetector::compareTwoFrames(const cv::Mat& firstFrame,

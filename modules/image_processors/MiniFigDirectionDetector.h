@@ -21,6 +21,9 @@
 // ミニフィグの向きを表す列挙体
 enum class MiniFigDirection { FRONT, RIGHT, BACK, LEFT };
 
+/**
+ * @brief ミニフィグの向き検出結果
+ */
 struct MiniFigDirectionResult {
   bool wasDetected = false;    // 検出が成功したかどうか
   MiniFigDirection direction;  // ミニフィグの向きを表す列挙体
@@ -28,9 +31,11 @@ struct MiniFigDirectionResult {
 
 class MiniFigDirectionDetector {
  public:
-  // コンストラクタ
-  MiniFigDirectionDetector(const std::string& modelPath
-                           = "etrobocon2025/datafiles/models/yolo_optimized.onnx");
+  /**
+   * @brief コンストラクタ
+   * @param modelPath モデルのパス
+   */
+  MiniFigDirectionDetector(const std::string& modelPath = "datafiles/models/yolo_optimized.onnx");
 
   /**
    * @brief         入力画像からミニフィグの向きを判定し、結果を result に格納する
@@ -43,7 +48,7 @@ class MiniFigDirectionDetector {
   cv::dnn::Net net;             // DNNモデルを格納する変数
   const std::string modelPath;  // モデルのパス
   const std::string outputImagePath
-      = "etrobocon2025/datafiles/processed_images/"
+      = "datafiles/processed_images/"
         "fig_detected_result.jpg";  // バウンディングボックス付きの画像のパス
 
   /**

@@ -33,20 +33,20 @@ class SpeedCalculator {
   double calculateLeftMotorPower();
 
  private:
-  const double targetSpeed;
-  Pid rightPid;
-  Pid leftPid;
-  double rightMotorPower;
-  double leftMotorPower;
-  double prevRightTime;
-  double prevLeftTime;
-  Robot& robot;
+  const double targetSpeed;  // 目標とするタイヤ走行速度
+  Pid rightPid;              // 右タイヤのPID制御器
+  Pid leftPid;               // 左タイヤのPID制御器
+  double rightMotorPower;    // 右タイヤのPower値
+  double leftMotorPower;     // 左タイヤのPower値
+  double prevRightTime;      // 前回の右タイヤの時刻
+  double prevLeftTime;       // 前回の左タイヤの時刻
+  Robot& robot;              // Robotクラスのインスタンス
   // PIDゲイン
-  static constexpr double RIGHT_K_P = 0.00535;
-  static constexpr double RIGHT_K_I = 0.00115;
-  static constexpr double RIGHT_K_D = 0.000;
-  static constexpr double LEFT_K_P = 0.00578;
-  static constexpr double LEFT_K_I = 0.0008535;
-  static constexpr double LEFT_K_D = 0.000;
+  static constexpr double RIGHT_K_P = 0.00535;   // 右タイヤのPゲイン
+  static constexpr double RIGHT_K_I = 0.00115;   // 右タイヤのIゲイン
+  static constexpr double RIGHT_K_D = 0.000;     // 右タイヤのDゲイン
+  static constexpr double LEFT_K_P = 0.00578;    // 左タイヤのPゲイン
+  static constexpr double LEFT_K_I = 0.0008535;  // 左タイヤのIゲイン
+  static constexpr double LEFT_K_D = 0.000;      // 左タイヤのDゲイン
 };
 #endif

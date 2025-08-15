@@ -17,7 +17,7 @@
 class CameraPidTracking : public Motion {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @brief カメラ画像を使ったPID走行クラスを初期化する
    * @param _robot ロボットインスタンス
    * @param _targetSpeed 目標速度

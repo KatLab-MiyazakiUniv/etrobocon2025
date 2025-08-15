@@ -13,7 +13,7 @@
 class ColorStraight : public Straight {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param _robot ロボット本体への参照
    * @param _targetColor 目標色
    * @param _speed       目標速度[mm/s]
@@ -37,10 +37,9 @@ class ColorStraight : public Straight {
   bool isMetContinuationCondition() override;
 
  private:
-  int colorCount = 0;  // 色を取得した回数
-  COLOR targetColor;   // 目標色
-  // 取得色の決定に必要な連続取得回数
-  static constexpr int JUDGE_COUNT = 3;
+  int colorCount = 0;                    // 色を取得した回数
+  COLOR targetColor;                     // 目標色
+  static constexpr int JUDGE_COUNT = 3;  // 取得色の決定に必要な連続取得回数
 };
 
 #endif

@@ -8,7 +8,8 @@
 #include "CameraCapture.h"
 
 namespace etrobocon2025_test {
-  // CameraCaptureクラスがインスタンス化できるか確認するテスト
+  // CameraCaptureクラスがインスタンス化できるか確認するテスト:
+  // CameraCaptureクラスが正しくインスタンス化され、初期状態のカメラIDが期待通りであることを検証する。
   TEST(CameraCaptureTest, CameraCaptureInit)
   {
     CameraCapture cap;
@@ -17,7 +18,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, cap.getCameraID());
   }
 
-  // 有効なcameraIDを指定した場合のテスト
+  // 有効なcameraIDを指定した場合のテスト:
+  // 有効なカメラIDを設定した際に、そのIDが正しく反映されることを検証する。
   TEST(CameraCaptureTest, SetCameraIDTrue)
   {
     CameraCapture cap;
@@ -28,7 +30,8 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, cap.getCameraID());
   }
 
-  // 無効なcameraIDを指定した場合のテスト
+  // 無効なcameraIDを指定した場合のテスト:
+  // 無効なカメラIDを設定した際に、IDが変更されず、エラーが返されることを検証する。
   TEST(CameraCaptureTest, SetCameraIDFalse)
   {
     CameraCapture cap;

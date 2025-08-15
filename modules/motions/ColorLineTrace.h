@@ -12,7 +12,7 @@
 class ColorLineTrace : public LineTrace {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param _targetColor 指定色
    * @param _targetSpeed 目標速度
    * @param _targetBrightness 目標輝度 0~

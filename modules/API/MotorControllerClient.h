@@ -1,26 +1,32 @@
 /**
- * @file MotorController.h
- * @brief モータ制御に用いる関数をまとめたラッパークラス
- * @author nishijima515
+ * @file   MotorControllerClient.h
+ * @brief  モータ制御に用いる関数をまとめたラッパークラス
+ * @author nishijima515 takuchi17
  */
-#ifndef MOTOR_MOTORCONTROLLER_H
-#define MOTOR_MOTORCONTROLLER_H
+#ifndef MOTOR_CONTROLLER_CLIENT_H
+#define MOTOR_CONTROLLER_CLIENT_H
 
-#include "Motor.h"
 #include "SystemInfo.h"  // WHEEL_RADIUS, PI, RAD_TO_DEG, DEG_TO_RADの定義を含む
+#include "APIClient.h"   // Inherit from APIClient
+#include "SpikeCommand.h"
 
-class MotorController {
+class MotorControllerClient : public APIClient {
  public:
-  /** Power値の上限 */
+  /**
+   * @brief Power値の上限
+   */
   static constexpr int MOTOR_POWER_MAX = 100;
 
-  /** Power値の下限 */
+  /**
+   * @brief Power値の下限
+   */
   static constexpr int MOTOR_POWER_MIN = -100;
 
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
+   * @param spikeClient SpikeClientのインスタンス
    */
-  MotorController();
+  explicit MotorControllerClient(SpikeClient& spikeClient);
 
   /**
    * @brief 右タイヤのモータにPower値をセット
@@ -88,8 +94,7 @@ class MotorController {
   void stopArmMotor();
 
   /**
-   * アームモータを止めて角度を維持する
-
+   * @brief アームモータを止めて角度を維持する
    */
   void holdArmMotor();
 
@@ -142,13 +147,11 @@ class MotorController {
   double getLeftMotorSpeed();
 
  private:
-  spikeapi::Motor rightWheel;  // 右タイヤモータのインスタンス
-  spikeapi::Motor leftWheel;   // 左タイヤモータのインスタンス
-  spikeapi::Motor armMotor;    // アームモータのインスタンス
+  // SpikeClient& spikeClient; // Moved to base class APIClient
 
   /**
    * @brief モータに設定するpower値の制限
-   * @param inputpower 入力されたpower値
+   * @param inputPower 入力されたpower値
    * @return 制限されたpower値
    */
   int limitPowerValue(int inputPower);

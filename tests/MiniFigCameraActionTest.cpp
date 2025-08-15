@@ -12,11 +12,13 @@
 using namespace std;
 
 namespace etrobocon2025_test {
-  // 事前条件判定がfalseで撮影動作を行わない場合のテスト
+  // 事前条件判定がfalseで撮影動作を行わない場合のテスト:
+  // 事前条件が満たされない場合に、ミニフィグ撮影動作が行われないことを検証する。
   TEST(MiniFigCameraActionTest, NoCameraAction)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     robot.getMiniFigDirectionResult().wasDetected = true;
     robot.getMiniFigDirectionResult().direction = MiniFigDirection::BACK;
     bool isClockwise = false;
@@ -40,11 +42,13 @@ namespace etrobocon2025_test {
     EXPECT_TRUE(actual);
   }
 
-  // 2回目の撮影でMiniFigの正面の画像を取得する場合のテスト
+  // 2回目の撮影でMiniFigの正面の画像を取得する場合のテスト:
+  // 2回目の撮影時にミニフィグの正面画像が正しく取得されることを検証する。
   TEST(MiniFigCameraActionTest, PositionIsNotZeroCameraAction)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     robot.getMiniFigDirectionResult().wasDetected = true;
     robot.getMiniFigDirectionResult().direction = MiniFigDirection::BACK;
     bool isClockwise = false;
@@ -68,11 +72,13 @@ namespace etrobocon2025_test {
     EXPECT_TRUE(actual);
   }
 
-  // 1回目の撮影でミニフィグが検出出来なかった場合のテスト
+  // 1回目の撮影でミニフィグが検出出来なかった場合のテスト:
+  // ミニフィグが検出されなかった場合に、撮影動作が正しく行われることを検証する。
   TEST(MiniFigCameraActionTest, WasDetectedIsFalseCameraAction)
   {
     DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    SpikeClient spikeClient;
+    Robot robot(spikeClient, cameraCapture);
     robot.getMiniFigDirectionResult().wasDetected = false;
     bool isClockwise = false;
     int preTargetAngle = 90;
@@ -99,7 +105,8 @@ namespace etrobocon2025_test {
   //   TEST(MiniFigCameraActionTest, PositionIsZeroCameraAction)
   //   {
   //     DummyCameraCapture cameraCapture;
-  //     Robot robot(cameraCapture);
+  //     SpikeClient spikeClient;
+  //     Robot robot(spikeClient, cameraCapture);
   //     bool isClockwise = false;
   //     int preTargetAngle = 90;
   //     int postTargetAngle = 90;

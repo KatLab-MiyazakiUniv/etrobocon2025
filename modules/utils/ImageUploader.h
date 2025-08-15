@@ -25,6 +25,9 @@ class ImageUploader {
   bool static uploadImage(const std::string& imagePath, int maxAttempts = 3);
 
  private:
+  /**
+   * @brief コンストラクタ（インスタンス化の禁止）
+   */
   ImageUploader();
 };
 

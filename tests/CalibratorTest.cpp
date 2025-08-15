@@ -11,12 +11,15 @@
 using namespace std;
 
 namespace etrobocon2025_test {
-  // waitForStart()において期待した出力がされており，WarningやErrorが出ていないかテスト
+  // waitForStart()において期待した出力がされており，WarningやErrorが出ていないかテスト:
+  // waitForStartメソッドが正しく動作し、期待される出力がされることを検証する。
   TEST(CalibratorTest, WaitForStart)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     Calibrator calibrator(robot);
-    testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
+    spikeClient.setForceSensorPressed(true);
+    testing::internal::CaptureStdout();
     calibrator.waitForStart();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
     // find("str")はstrが見つからない場合string::nposを返す
@@ -24,11 +27,16 @@ namespace etrobocon2025_test {
     EXPECT_TRUE(actual);
   }
 
-  // 左右ボタンでLRコースを選択できるかのテスト
+  // 左右ボタンでLRコースを選択できるかのテスト:
+  // 左右ボタンの操作によってL/Rコースが正しく選択されることを検証する。
   TEST(CalibratorTest, GetIsLeftCourse)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     Calibrator calibrator(robot);
+    // Lコースを選択するシーケンス
+    spikeClient.queueButtonPressed(spike::ButtonTarget::LEFT, { true, false });
+    spikeClient.queueButtonPressed(spike::ButtonTarget::RIGHT, { true, false });
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     calibrator.selectAndSetCourse();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
@@ -49,11 +57,19 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);                 // 出力とゲッタの値が等しいかテスト
   }
 
-  // 目標輝度値を取得できるかのテスト
+  // 目標輝度値を取得できるかのテスト:
+  // 黒と白の輝度測定によって目標輝度値が正しく設定されることを検証する。
   TEST(CalibratorTest, getTargetBrightness)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     Calibrator calibrator(robot);
+    // 黒と白の輝度を測定するシーケンス
+    spikeClient.queueButtonPressed(spike::ButtonTarget::LEFT, { true, false });
+    spikeClient.queueButtonPressed(spike::ButtonTarget::RIGHT, { true, false });
+    spikeClient.queueButtonPressed(spike::ButtonTarget::LEFT, { true, false });
+    spikeClient.queueButtonPressed(spike::ButtonTarget::RIGHT, { true, false });
+    spikeClient.queueReflection({ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 });
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     calibrator.measureAndSetTargetBrightness();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了

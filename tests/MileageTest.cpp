@@ -9,6 +9,8 @@
 #include "Mileage.h"
 
 namespace etrobocon2025_test {
+  // 正の角度での走行距離計算テスト:
+  // 正のモーター角度が与えられた場合に、走行距離が正しく計算されることを検証する。
   TEST(MileageTest, CalculateMileagePlus)
   {
     int32_t rightAngle = 30;
@@ -38,6 +40,8 @@ namespace etrobocon2025_test {
     EXPECT_GT(expected_max, actual);
   }
 
+  // 負の角度での走行距離計算テスト:
+  // 負のモーター角度が与えられた場合に、走行距離が正しく計算されることを検証する。
   TEST(MileageTest, CalculateMileageMinus)
   {
     int32_t rightAngle = -30;
@@ -49,6 +53,8 @@ namespace etrobocon2025_test {
     EXPECT_GT(expected_max, actual);
   }
 
+  // ゼロ角度での走行距離計算テスト:
+  // モーター角度がゼロの場合に、走行距離がゼロと計算されることを検証する。
   TEST(MileageTest, CalculateMileageZero)
   {
     int32_t rightAngle = 0;

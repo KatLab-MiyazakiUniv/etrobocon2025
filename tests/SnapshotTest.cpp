@@ -12,7 +12,8 @@ namespace etrobocon2025_test {
   // Snapshotのrun()メソッドが実行できるか確認するテスト
   TEST(SnapshotTest, SnapshotInit)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     Snapshot snapshot(robot, "test_snapshot");
 
     // Snapshotのインスタンスが正常に作成されたか確認

@@ -15,11 +15,12 @@ namespace etrobocon2025_test {
   // @see https://github.com/KatLab-MiyazakiUniv/etrobocon2022/blob/main/docs/odometry.md
   constexpr double TRANSFORM = 2.0 * WHEEL_RADIUS / TREAD;  // 回頭角度を求める式の係数
 
-  // 右回頭のテスト
+  // 右回頭のテスト: 指定した角度と速度で右回頭が正しく行われることを検証する。
   TEST(AngleRotationTest, RunRight)
   {
-    Robot robot;
-    MotorController& motorController = robot.getMotorControllerInstance();
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    MotorControllerClient& motorController = robot.getMotorControllerInstance();
 
     int angle = 90;
     double speed = 300.0;
@@ -49,11 +50,12 @@ namespace etrobocon2025_test {
     EXPECT_GE(expected + error, actual);
   }
 
-  // 左回頭のテスト
+  // 左回頭のテスト: 指定した角度と速度で左回頭が正しく行われることを検証する。
   TEST(AngleRotationTest, RunLeft)
   {
-    Robot robot;
-    MotorController& motorController = robot.getMotorControllerInstance();
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    MotorControllerClient& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
     int angle = 180;
@@ -84,11 +86,13 @@ namespace etrobocon2025_test {
     EXPECT_GE(expected + error, actual);
   }
 
-  // speedを0に設定したときに回頭をせずに終了するかのテスト
+  // speedを0に設定したときに回頭をせずに終了するかのテスト:
+  // 速度が0の場合に回頭動作が行われないことを検証する。
   TEST(AngleRotationTest, RunZeroSpeed)
   {
-    Robot robot;
-    MotorController& motorController = robot.getMotorControllerInstance();
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    MotorControllerClient& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
     int angle = 45;
@@ -113,11 +117,13 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // speedをマイナスに設定したときに回頭をせずに終了するかのテスト
+  // speedをマイナスに設定したときに回頭をせずに終了するかのテスト:
+  // 速度が負の場合に回頭動作が行われないことを検証する。
   TEST(AngleRotationTest, RunMinusSpeed)
   {
-    Robot robot;
-    MotorController& motorController = robot.getMotorControllerInstance();
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    MotorControllerClient& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
     int angle = 45;
@@ -142,11 +148,13 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 回頭角度を0に設定したときに回頭をせずに終了するかのテスト
+  // 回頭角度を0に設定したときに回頭をせずに終了するかのテスト:
+  // 回頭角度が0の場合に回頭動作が行われないことを検証する。
   TEST(AngleRotationTest, RunZeroAngle)
   {
-    Robot robot;
-    MotorController& motorController = robot.getMotorControllerInstance();
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    MotorControllerClient& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
     int angle = 0;
@@ -171,11 +179,13 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 回頭角度をマイナスに設定したときに回頭をせずに終了するかのテスト
+  // 回頭角度をマイナスに設定したときに回頭をせずに終了するかのテスト:
+  // 回頭角度が負の場合に回頭動作が行われないことを検証する。
   TEST(AngleRotationTest, RunMinusAngle)
   {
-    Robot robot;
-    MotorController& motorController = robot.getMotorControllerInstance();
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    MotorControllerClient& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
     int angle = -1;
@@ -200,11 +210,13 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 
-  // 回頭角度を360度以上に設定したときに回頭をせずに終了するかのテスト
+  // 回頭角度を360度以上に設定したときに回頭をせずに終了するかのテスト:
+  // 回頭角度が360度以上の場合に回頭動作が行われないことを検証する。
   TEST(AngleRotationTest, RunOverAngle)
   {
-    Robot robot;
-    MotorController& motorController = robot.getMotorControllerInstance();
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
+    MotorControllerClient& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
     int angle = 360;

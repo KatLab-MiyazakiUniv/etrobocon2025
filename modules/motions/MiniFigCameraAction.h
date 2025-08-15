@@ -17,9 +17,9 @@
 class MiniFigCameraAction : public CompositeMotion {
  public:
   /**
-   * コンストラクタ
-   * @param _isClockwise
-   * カメラをミニフィグに向けるための回頭方向　true:時計回り, false:反時計回り
+   * @brief コンストラクタ
+   * @param _robot Robotインスタンス
+   * @param _isClockwise カメラをミニフィグに向けるための回頭方向 true:時計回り, false:反時計回り
    * @param _preTargetAngle カメラをミニフィグに向けるための回頭角度
    * @param _postTargetAngle 黒線復帰のための回頭角度
    * @param _targetRotationSpeed 撮影前後の回頭のための目標速度
@@ -50,7 +50,7 @@ class MiniFigCameraAction : public CompositeMotion {
   double forwardSpeed = 200;           // 撮影前の前進速度
   int position = 0;  // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
   static constexpr const char* filePath
-      = "etrobocon2025/datafiles/figures/";  // ミニフィグ画像保存先のディレクトリパス
+      = "datafiles/figures/";  // ミニフィグ画像保存先のディレクトリパス
   static constexpr const char* uploadFileName = "upload_front_fig";  // アップロード用の画像名
 
   /**

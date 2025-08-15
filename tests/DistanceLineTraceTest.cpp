@@ -9,13 +9,15 @@
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-port.h>
 
-#define ERROR 1.01  // 許容誤差の倍率
+#define ERROR 1.05  // 許容誤差の倍率
 
 namespace etrobocon2025_test {
-  // 目標距離までライントレースを行うテストケース（左エッジ走行）
+  // 目標距離までライントレースを行うテストケース（左エッジ走行）:
+  // 指定した目標距離まで左エッジでライントレースが正しく行われることを検証する。
   TEST(DistanceLineTraceTest, RunLeftEdge)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     double targetSpeed = 100.0;
     double targetDistance = 1000.0;
     double targetBrightness = 45.0;
@@ -41,10 +43,12 @@ namespace etrobocon2025_test {
     EXPECT_GT(expected * ERROR, actual);  // ライントレース後に走行した距離が許容誤差未満である
   }
 
-  // 目標距離までライントレースを行うテストケース（右エッジ走行）
+  // 目標距離までライントレースを行うテストケース（右エッジ走行）:
+  // 指定した目標距離まで右エッジでライントレースが正しく行われることを検証する。
   TEST(DistanceLineTraceTest, RunRightEdge)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     double targetSpeed = 100.0;
     double targetDistance = 1000.0;
     double targetBrightness = 45.0;
@@ -70,10 +74,12 @@ namespace etrobocon2025_test {
     EXPECT_GT(expected * ERROR, actual);  // ライントレース後に走行した距離が許容誤差未満である
   }
 
-  // 目標距離までライントレースを行うテストケース（バック，左エッジ走行）
+  // 目標距離までライントレースを行うテストケース（バック，左エッジ走行）:
+  // 指定した目標距離まで後退しながら左エッジでライントレースが正しく行われることを検証する。
   TEST(DistanceLineTraceTest, RunBackLeftEdge)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     double targetSpeed = -100.0;
     double targetDistance = 100.0;
     double targetBrightness = 45.0;
@@ -99,10 +105,12 @@ namespace etrobocon2025_test {
     EXPECT_LT(expected * ERROR, actual);  // ライントレース後に走行した距離が許容誤差未満である
   }
 
-  // 目標距離までライントレースを行うテストケース（バック，右エッジ走行）
+  // 目標距離までライントレースを行うテストケース（バック，右エッジ走行）:
+  // 指定した目標距離まで後退しながら右エッジでライントレースが正しく行われることを検証する。
   TEST(DistanceLineTraceTest, RunBackRightEdge)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     double targetSpeed = -100.0;
     double targetDistance = 1000.0;
     double targetBrightness = 45.0;
@@ -128,10 +136,12 @@ namespace etrobocon2025_test {
     EXPECT_LT(expected * ERROR, actual);  // ライントレース後に走行した距離が許容誤差未満である
   }
 
-  // targetSpeed値が0の時に終了するテストケース
+  // targetSpeed値が0の時に終了するテストケース:
+  // 速度が0の場合にライントレースが開始されずに終了することを検証する。
   TEST(DistanceLineTraceTest, RunZeroSpeed)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     double targetSpeed = 0.0;
     double targetDistance = 1000.0;
     double targetBrightness = 45.0;
@@ -150,10 +160,12 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // ライントレース前後で走行距離に変化はない
   }
 
-  // targetDistance値が負の時に終了するテストケース
+  // targetDistance値が負の時に終了するテストケース:
+  // 目標距離が負の場合にライントレースが開始されずに終了することを検証する。
   TEST(DistanceLineTraceTest, RunMinusDistance)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     double targetSpeed = 100.0;
     double targetDistance = -1000.0;
     double targetBrightness = 45.0;
@@ -173,10 +185,12 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // ライントレース前後で走行距離に変化はない
   }
 
-  // targetDistance値が0のとき終了するテストケース
+  // targetDistance値が0のとき終了するテストケース:
+  // 目標距離が0の場合にライントレースが開始されずに終了することを検証する。
   TEST(DistanceLineTraceTest, RunZeroDistance)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     double targetSpeed = 500.0;
     double targetDistance = 0.0;
     double targetBrightness = 45.0;

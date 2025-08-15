@@ -29,31 +29,63 @@ help:
 	@echo " $$ make upload-image"
 
 ## 実行関連 ##
-build:
-	cd $(MAKEFILE_PATH)../ && make img=etrobocon2025
+build: smart-clean build-server build-client build-mock-server
+	@echo "ビルドが完了しました。"
 
-# 実機の場合、走行を開始する
-start:
+build-server:
+	cd $(MAKEFILE_PATH)../ && make img=etrobocon2025 -j3
+	@echo "ビルドが完了しました。"
+
+
+build-client:
+	@echo "Building client..."
+	$(MAKE) -j3 -f Makefile.client
+	@echo "ビルドが完了しました。"
+
+build-mock-server:
+	@echo "Building mock server..."
+	$(MAKE) -j3 -f Makefile.mock
+	@echo "ビルドが完了しました。"
+
+
+# SPIKEと接続できたら、etrobocon_clientを起動する
+start-server:
+	@echo "SPIKE接続中..."
+	@echo "SPIKE通信サーバーが立ち上がりました"
 	cd $(MAKEFILE_PATH)../ && make start
+	@echo "SPIKEとの通信を確立しました。"
+
+start-client:
+	@echo "ETRobocon2025起動中..."
+	./etrobocon_client
+	@echo "ETRobocon2025の実行が完了しました。"
+
+start-mock-server:
+	@echo "Mock server起動中..."
+	@echo "Server IP: $$(hostname -I)"
+	./spike_server_mock_app
+	@echo "Mock serverの起動が完了しました。"
+
+
 
 ## テスト関連 ##
 # テストのビルドディレクトリが存在しない場合は作成する
 test-build:
-	@mkdir -p $(MAKEFILE_PATH)bin/build
-	cd $(MAKEFILE_PATH)bin/build && cmake ../.. && make
+	@mkdir -p $(MAKEFILE_PATH)bin/test/build
+	cd $(MAKEFILE_PATH)bin/test/build && cmake ../../.. && make -j7
 
 # テストを実行する
 test-exec: 
-	@if [ ! -f $(MAKEFILE_PATH)bin/build/etrobocon2025_test ]; then \
+	@if [ ! -f $(MAKEFILE_PATH)bin/test/build/etrobocon2025_test ]; then \
 		echo "テスト実行ファイルが見つかりません。まずビルドを実行してください。"; \
 		echo " $$ make test-build"; \
 		exit 1; \
 	else \
-		cd $(MAKEFILE_PATH)bin/build && \
-		mkdir -p etrobocon2025/datafiles/commands && \
-		mkdir -p etrobocon2025/datafiles/processed_images && \
-		cp ../../datafiles/commands/*.csv etrobocon2025/datafiles/commands && \
-		cp ../../Makefile etrobocon2025/ && \
+		cd $(MAKEFILE_PATH)bin/test/build && \
+		mkdir -p datafiles/commands && \
+		mkdir -p datafiles/processed_images && \
+		cp ../../../datafiles/commands/*.csv datafiles/commands && \
+		cp ../../../Makefile . && \
 		./etrobocon2025_test && \
 		rm -rf etrobocon2025 && \
 		rm -f Makefile; \
@@ -62,34 +94,48 @@ test-exec:
 # テストをビルドして実行する
 test: smart-clean test-build test-exec
 
-# build ディレクトリを完全に削除する
-clean:
-	@if [ -d $(MAKEFILE_PATH)bin/build ]; then \
-		rm -rf $(MAKEFILE_PATH)bin/build; \
-		echo "'build/' ディレクトリを削除しました。"; \
+clean-client:
+	@if [ -d $(MAKEFILE_PATH)bin/build/client ]; then \
+		rm -rf $(MAKEFILE_PATH)bin/build/client; \
+		echo "'client' ディレクトリを削除しました。"; \
 	else \
-		echo "'build/' ディレクトリは既に存在しません。"; \
+		echo "'client' ディレクトリは既に存在しません。"; \
+	fi
+clean-mock-server:
+	@if [ -d $(MAKEFILE_PATH)bin/build/mock_server ]; then \
+		rm -rf $(MAKEFILE_PATH)bin/build/mock_server; \
+		echo "'mock_server' ディレクトリを削除しました。"; \
+	else \
+		echo "'mock_server' ディレクトリは既に存在しません。"; \
+	fi
+# bin/test/build ディレクトリを完全に削除する
+clean-test:
+	@if [ -d $(MAKEFILE_PATH)bin/test/build ]; then \
+		rm -rf $(MAKEFILE_PATH)bin/test/build; \
+		echo "'test/build/' ディレクトリを削除しました。"; \
+	else \
+		echo "'test/build/' ディレクトリは既に存在しません。"; \
 	fi
 
 # 実行環境が変更されている場合にのみ 'build' を削除する
 smart-clean:
-	@if [ -d $(MAKEFILE_PATH)bin/build ]; then \
-		if [ -f "$(MAKEFILE_PATH)bin/build/Makefile" ]; then \
-			CMAKE_SOURCE_DIR=`grep -E "^CMAKE_SOURCE_DIR[[:space:]]*=" $(MAKEFILE_PATH)bin/build/Makefile | cut -d= -f2 | xargs`; \
+	@if [ -d $(MAKEFILE_PATH)bin/test/build ]; then \
+		if [ -f "$(MAKEFILE_PATH)bin/test/build/Makefile" ]; then \
+			CMAKE_SOURCE_DIR=`grep -E "^CMAKE_SOURCE_DIR[[:space:]]*=" $(MAKEFILE_PATH)bin/test/build/Makefile | cut -d= -f2 | xargs`; \
 			CMAKE_SOURCE_DIR_REAL=`readlink -f "$$CMAKE_SOURCE_DIR"`; \
 			CURRENT_DIR_REAL=`readlink -f "$$(pwd)"`; \
 			echo "[DEBUG] CMAKE_SOURCE_DIR: '$$CMAKE_SOURCE_DIR_REAL'"; \
 			echo "[DEBUG] CURRENT_DIR    : '$$CURRENT_DIR_REAL'"; \
 			if [ "$$CMAKE_SOURCE_DIR_REAL" != "$$CURRENT_DIR_REAL" ]; then \
-				echo "[LOG] 実行環境の変更が検出されたため 'build' を削除します。"; \
-				rm -rf $(MAKEFILE_PATH)bin/build; \
+				echo "[LOG] 実行環境の変更が検出されたため 'test/build' を削除します。"; \
+				rm -rf $(MAKEFILE_PATH)bin/test/build; \
 			else \
 				echo "[LOG] 実行環境は変更されていません。"; \
 			fi; \
 		else \
-			echo "[LOG] 'build/Makefile' が存在しません。"; \
-			echo "[LOG] 'buildディレクトリを完全削除します。"; \
-			make clean; \
+			echo "[LOG] 'test/build/Makefile' が存在しません。"; \
+			echo "[LOG] 'test/buildディレクトリを完全削除します。"; \
+			make clean-test; \
 		fi; \
 	else \
 		echo "'build' ディレクトリは既に存在しません。"; \
@@ -135,7 +181,7 @@ else
 endif
 
 format-check:
-	find ./tests ./modules -type f -name "*.cpp" -o -name "*.h" | xargs clang-format --dry-run --Werror *.h *.cpp
+	find ./ ./tests ./modules -type f -name "*.cpp" -o -name "*.h" | xargs clang-format --dry-run --Werror *.h *.cpp
 
 ## 無線通信デバイスとの通信関連 ##
 # サーバーの画像をアップロードする

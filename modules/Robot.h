@@ -1,113 +1,106 @@
 /**
  * @file   Robot.h
- * @brief  外部リソースのインスタンスを管理するクラス
+ * @brief  ハードウェアとのインターフェースや攻略状況を管理するクラス
  * @author takuchi17
  */
 
 #ifndef ROBOT_H
 #define ROBOT_H
 
-#include "spikeapi.h"
-#include "MotorController.h"
+#include "SpikeClient.h"
+#include "MotorControllerClient.h"
+#include "ColorSensorClient.h"
+#include "ClockClient.h"
+#include "ButtonClient.h"
+#include "ForceSensorClient.h"
+#include "DisplayClient.h"
 #include "CameraCapture.h"
-#include "ColorSensor.h"
-#include "Clock.h"
-#include "Button.h"
-#include "ForceSensor.h"
-#include "Display.h"
 #include "MiniFigDirectionDetector.h"
 #include "BackgroundDirectionDetector.h"
 
 class Robot {
  public:
   /**
-   * コンストラクタ
-   * @brief 外部リソースのインスタンスを初期化する
+   * @brief SpikeClientの依存性注入のためのコンストラクタ
+   * @param client SpikeClientの参照
    */
-  Robot();
-
-  // DI用（カメラを差し替えたいテストで使用）
-  Robot(ICameraCapture& cam);
+  explicit Robot(SpikeClient& client);
+  /**
+   * @brief カメラ注入のためのコンストラクタ
+   * @param client SpikeClientの参照
+   * @param cam ICameraCaptureの参照
+   */
+  Robot(SpikeClient& client, ICameraCapture& cam);  // Updated constructor
 
   /**
-   * @brief MotorControllerのインスタンスの参照を返す
-   * @return メンバ変数motorController(MotorControllerのインスタンス)の参照
+   * @brief MotorControllerClientインスタンスを取得する
+   * @return MotorControllerClientインスタンスの参照
    */
-  MotorController& getMotorControllerInstance();
-
+  MotorControllerClient& getMotorControllerInstance();
   /**
-   * @brief ICameraCaptureのインスタンスの参照を返す
-   * @return メンバ変数cameraCapture(ICameraCaptureの実装インスタンス)への参照
+   * @brief ICameraCaptureインスタンスを取得する
+   * @return ICameraCaptureインスタンスの参照
    */
   ICameraCapture& getCameraCaptureInstance();
-
   /**
-   * @brief ColorSensorのインスタンスの参照を返す
-   * @return メンバ変数colorSensor(ColorSensorのインスタンス)の参照
+   * @brief ColorSensorClientインスタンスを取得する
+   * @return ColorSensorClientインスタンスの参照
    */
-  spikeapi::ColorSensor& getColorSensorInstance();
-
+  ColorSensorClient& getColorSensorInstance();
   /**
-   * @brief Clockのインスタンスの参照を返す
-   * @return メンバ変数clock(Clockのインスタンス)の参照
+   * @brief ClockClientインスタンスを取得する
+   * @return ClockClientインスタンスの参照
    */
-  spikeapi::Clock& getClockInstance();
-
+  ClockClient& getClockInstance();
   /**
-   * @brief Buttonのインスタンスの参照を返す
-   * @return メンバ変数button(Buttonのインスタンス)の参照
+   * @brief ButtonClientインスタンスを取得する
+   * @return ButtonClientインスタンスの参照
    */
-  spikeapi::Button& getButtonInstance();
-
+  ButtonClient& getButtonInstance();
   /**
-   * @brief ForceSensorのインスタンスの参照を返す
-   * @return メンバ変数forceSensor(ForceSensorのインスタンス)の参照
+   * @brief ForceSensorClientインスタンスを取得する
+   * @return ForceSensorClientインスタンスの参照
    */
-  spikeapi::ForceSensor& getForceSensorInstance();
-
+  ForceSensorClient& getForceSensorInstance();
   /**
-   * @brief Displayのインスタンスの参照を返す
-   * @return メンバ変数display(Displayのインスタンス)の参照
+   * @brief DisplayClientインスタンスを取得する
+   * @return DisplayClientインスタンスの参照
    */
-  spikeapi::Display& getDisplayInstance();
-
+  DisplayClient& getDisplayInstance();
   /**
-   * @brief ミニフィグの向き検出結果を取得する
-   * @return ミニフィグの向き検出結果の参照
+   * @brief MiniFigDirectionResultを取得する
+   * @return MiniFigDirectionResultの参照
    */
   MiniFigDirectionResult& getMiniFigDirectionResult();
-
   /**
-   * @brief 風景の向き検出結果を取得する
-   * @return 風景の向き検出結果の参照
+   * @brief BackgroundDirectionResultを取得する
+   * @return BackgroundDirectionResultの参照
    */
   BackgroundDirectionResult& getBackgroundDirectionResult();
   /**
-   * @brief エッジの左右判定を設定する
-   * @param isLeft true:左エッジ, false:右エッジ
+   * @brief isLeftEdgeを設定する
+   * @param isLeft 左エッジの場合true
    */
   void setIsLeftEdge(bool isLeft);
-
   /**
-   * @brief エッジの左右判定を取得する
-   * @return true:左エッジ, false:右エッジ
+   * @brief isLeftEdgeを取得する
+   * @return 左エッジの場合true
    */
   bool getIsLeftEdge() const;
 
  private:
-  MotorController motorController;                // MotorControllerインスタンス
-  CameraCapture defaultCameraCapture;             // 実機用のCameraCaptureインスタンス
-  ICameraCapture& cameraCapture;                  // 実際に使うカメラ（参照）
-  spikeapi::ColorSensor colorSensor;              // ColorSensorインスタンス
-  spikeapi::Clock clock;                          // Clockインスタンス
-  spikeapi::Button button;                        // Buttonインスタンス
-  spikeapi::ForceSensor forceSensor;              // ForceSensorインスタンス
-  spikeapi::Display display;                      // Displayインスタンス
-  MiniFigDirectionResult miniFigDirectionResult;  // ミニフィグの向き検出結果
-  BackgroundDirectionResult backgroundDirectionResult;  // 風景の向き検出結果
-  // formatチェックをパスするためのコメント
-  bool isLeftEdge = true;  // 左エッジを走行するかの真偽値
-                           // （true: 左エッジ、false: 右エッジ）、初期値は左エッジ
+  SpikeClient& spikeClient;               // SpikeClientの参照
+  MotorControllerClient motorController;  // モーターコントローラー
+  CameraCapture defaultCameraCapture;     // デフォルトのカメラキャプチャ
+  ICameraCapture& cameraCapture;          // カメラキャプチャインターフェース
+  ColorSensorClient colorSensor;          // カラーセンサー
+  ClockClient clock;                      // クロック
+  ButtonClient button;                    // ボタン
+  ForceSensorClient forceSensor;          // フォースセンサー
+  DisplayClient display;                  // ディスプレイ
+  MiniFigDirectionResult miniFigDirectionResult;        // ミニフィグの向き検出結果
+  BackgroundDirectionResult backgroundDirectionResult;  // 背景の向き検出結果
+  bool isLeftEdge = true;                               // 左エッジフラグ
 };
 
 #endif

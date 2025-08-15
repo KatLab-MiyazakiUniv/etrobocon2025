@@ -13,22 +13,25 @@
 class Mileage {
  public:
   /**
-  ** @brief タイヤの累計走行距離を計算する
-  ** @param angle タイヤの回転角度[deg]
-  ** @return タイヤの累計走行距離[mm]
-  **/
+   * @brief タイヤの累計走行距離を計算する
+   * @param angle タイヤの回転角度[deg]
+   * @return タイヤの累計走行距離[mm]
+   */
   static double calculateWheelMileage(int32_t angle);
 
   /**
-   ** @brief 走行体全体の累計走行距離を計算する
-   ** @param rightAngle 右タイヤの回転角度[deg]
-   ** @param leftAngle 左タイヤの回転角度[deg]
-   ** @return 走行体全体の累計走行距離[mm]
-   **/
+   * @brief 走行体全体の累計走行距離を計算する
+   * @param rightAngle 右タイヤの回転角度[deg]
+   * @param leftAngle 左タイヤの回転角度[deg]
+   * @return 走行体全体の累計走行距離[mm]
+   */
   static double calculateMileage(int32_t rightAngle, int32_t leftAngle);
 
  private:
-  Mileage();  // インスタンス化を禁止する
+  /**
+   * @brief コンストラクタ（インスタンス化を禁止する）
+   */
+  Mileage();
 };
 
 #endif

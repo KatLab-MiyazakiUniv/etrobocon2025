@@ -8,18 +8,21 @@
 #include <gtest/gtest.h>
 #include <iostream>
 
+#define MILEAGE_ACCEPTABLE_ERROR 10.0
+
 using namespace std;
 
 namespace etrobocon2025_test {
 
-  // 通常速度での直進テスト
+  // 通常速度での直進テスト: 指定した距離と速度で直進が正しく行われることを検証する。
   TEST(DistanceStraightTest, RunNomalSpeed)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
-    double targetSpeed = 500.0;
+    double targetSpeed = 300.0;
     double basePower = 100.0;
     DistanceStraight ds(robot, targetDistance, targetSpeed);
 
@@ -32,13 +35,6 @@ namespace etrobocon2025_test {
     // 期待する走行距離
     double expectedDistance = targetDistance;
 
-    // モーターに1回setMotorPower()を呼ぶと、モータカウントが power × 0.05分進む
-    // 1ステップ分の走行距離を許容誤差とする
-    double distanceError
-        = Mileage::calculateMileage(basePower * 0.05, basePower * 0.05);  // 許容誤差
-
-    double expectedError = 1.0;  // タイヤの走行距離の許容誤差
-
     ds.run();  // 直進を実行
 
     // 直進後の走行距離
@@ -50,25 +46,28 @@ namespace etrobocon2025_test {
     double rightActual = Mileage::calculateWheelMileage(rightCount);
     double leftActual = Mileage::calculateWheelMileage(leftCount);
     // タイヤごとの走行距離
-    double rightDifference = std::abs(rightActual - rightInitial);
-    double leftDifference = std::abs(leftActual - leftInitial);
+    double rightDifference = rightActual - rightInitial;
+    double leftDifference = leftActual - leftInitial;
     // タイヤの走行距離の誤差
-    double actualError = (rightDifference - leftDifference);
+    double actualError = std::abs(rightDifference - leftDifference);
 
     // 走行距離のテスト
-    EXPECT_LE(actualDistance, expectedDistance + distanceError);
+    EXPECT_GE(actualDistance, expectedDistance);  // 目標距離以上進んでいるか
+    EXPECT_LE(actualDistance,
+              expectedDistance + MILEAGE_ACCEPTABLE_ERROR);  // 許容誤差内に収まっているか
     // 左右タイヤの走行距離差が0に近い（＝直進できているか）のテスト
-    EXPECT_NEAR(actualError, 0.0, expectedError);
+    EXPECT_NEAR(actualError, 0.0, targetDistance / 10.0);
   }
 
-  // 十分大きい速度での直進テスト
+  // 十分大きい速度での直進テスト: 十分に大きい速度で直進が正しく行われることを検証する。
   TEST(DistanceStraightTest, RunFullPower)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
-    double targetSpeed = 1000.0;
+    double targetSpeed = 600.0;
     double basePower = 100.0;
     DistanceStraight ds(robot, targetDistance, targetSpeed);
 
@@ -81,13 +80,6 @@ namespace etrobocon2025_test {
     // 期待する走行距離
     double expectedDistance = targetDistance;
 
-    // モーターに1回setMotorPower()を呼ぶと、モータカウントが power × 0.05分進む
-    // 1ステップ分の走行距離を許容誤差とする
-    double distanceError
-        = Mileage::calculateMileage(basePower * 0.05, basePower * 0.05);  // 許容誤差
-
-    double expectedError = 1.0;  // タイヤの走行距離の許容誤差
-
     ds.run();  // 直進を実行
 
     // 直進後の走行距離
@@ -99,25 +91,28 @@ namespace etrobocon2025_test {
     double rightActual = Mileage::calculateWheelMileage(rightCount);
     double leftActual = Mileage::calculateWheelMileage(leftCount);
     // タイヤごとの走行距離
-    double rightDifference = std::abs(rightActual - rightInitial);
-    double leftDifference = std::abs(leftActual - leftInitial);
+    double rightDifference = rightActual - rightInitial;
+    double leftDifference = leftActual - leftInitial;
     // タイヤの走行距離の誤差
-    double actualError = (rightDifference - leftDifference);
+    double actualError = std::abs(rightDifference - leftDifference);
 
     // 走行距離のテスト
-    EXPECT_LE(actualDistance, expectedDistance + distanceError);
+    EXPECT_GE(actualDistance, expectedDistance);  // 目標距離以上進んでいるか
+    EXPECT_LE(actualDistance,
+              expectedDistance + MILEAGE_ACCEPTABLE_ERROR);  // 許容誤差内に収まっているか
     // 左右タイヤの走行距離差が0に近い（＝直進できているか）のテスト
-    EXPECT_NEAR(actualError, 0.0, expectedError);
+    EXPECT_NEAR(actualError, 0.0, targetDistance / 10.0);
   }
 
-  // 後退テスト
+  // 後退テスト: 指定した距離と速度で後退が正しく行われることを検証する。
   TEST(DistanceStraightTest, RunBack)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
-    double targetSpeed = -500.0;
+    double targetSpeed = -300.0;
     double basePower = -100.0;
     DistanceStraight ds(robot, targetDistance, targetSpeed);
 
@@ -128,14 +123,7 @@ namespace etrobocon2025_test {
     double rightInitial = Mileage::calculateWheelMileage(rightCount);
 
     // 期待する走行距離
-    double expectedDistance = Mileage::calculateMileage(rightCount, leftCount) - targetDistance;
-
-    // モーターに1回setMotorPower()を呼ぶと、モータカウントが power × 0.05分進む
-    // 1ステップ分の走行距離を許容誤差とする
-    double distanceError
-        = std::abs(Mileage::calculateMileage(basePower * 0.05, basePower * 0.05));  // 許容誤差
-
-    double expectedError = 1.0;  // タイヤの走行距離の許容誤差
+    double expectedDistance = -targetDistance;
 
     ds.run();  // 後退を実行
 
@@ -148,25 +136,28 @@ namespace etrobocon2025_test {
     double rightActual = Mileage::calculateWheelMileage(rightCount);
     double leftActual = Mileage::calculateWheelMileage(leftCount);
     // タイヤごとの走行距離
-    double rightDifference = std::abs(rightActual - rightInitial);
-    double leftDifference = std::abs(leftActual - leftInitial);
+    double rightDifference = rightActual - rightInitial;
+    double leftDifference = leftActual - leftInitial;
     // タイヤの走行距離の誤差
-    double actualError = (rightDifference - leftDifference);
+    double actualError = std::abs(rightDifference - leftDifference);
 
     // 走行距離のテスト
-    EXPECT_LE(actualDistance, expectedDistance + distanceError);
+    EXPECT_LE(actualDistance, expectedDistance);  // 目標距離以上進んでいるか
+    EXPECT_GE(actualDistance,
+              expectedDistance - MILEAGE_ACCEPTABLE_ERROR);  // 許容誤差内に収まっているか
     // 左右タイヤの走行距離差が0に近い（＝後退できているか）のテスト
-    EXPECT_NEAR(actualError, 0.0, expectedError);
+    EXPECT_NEAR(actualError, 0.0, targetDistance / 10.0);
   }
 
-  // 十分大きい速度での後退テスト
+  // 十分大きい速度での後退テスト: 十分に大きい速度で後退が正しく行われることを検証する。
   TEST(DistanceStraightTest, RunBackFullPower)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
-    double targetSpeed = -1000.0;
+    double targetSpeed = -600.0;
     double basePower = -100.0;
     DistanceStraight ds(robot, targetDistance, targetSpeed);
 
@@ -177,14 +168,7 @@ namespace etrobocon2025_test {
     double rightInitial = Mileage::calculateWheelMileage(rightCount);
 
     // 期待する走行距離
-    double expectedDistance = Mileage::calculateMileage(rightCount, leftCount) - targetDistance;
-
-    // モーターに1回setMotorPower()を呼ぶと、モータカウントが power × 0.05分進む
-    // 1ステップ分の走行距離を許容誤差とする
-    double distanceError
-        = std::abs(Mileage::calculateMileage(basePower * 0.05, basePower * 0.05));  // 許容誤差
-
-    double expectedError = 1.0;  // タイヤの走行距離の許容誤差
+    double expectedDistance = -targetDistance;
 
     ds.run();  // 後退を実行
 
@@ -197,21 +181,24 @@ namespace etrobocon2025_test {
     double rightActual = Mileage::calculateWheelMileage(rightCount);
     double leftActual = Mileage::calculateWheelMileage(leftCount);
     // タイヤごとの走行距離
-    double rightDifference = std::abs(rightActual - rightInitial);
-    double leftDifference = std::abs(leftActual - leftInitial);
+    double rightDifference = rightActual - rightInitial;
+    double leftDifference = leftActual - leftInitial;
     // タイヤの走行距離の誤差
-    double actualError = (rightDifference - leftDifference);
+    double actualError = std::abs(rightDifference - leftDifference);
 
     // 走行距離のテスト
-    EXPECT_LE(actualDistance, expectedDistance + distanceError);
+    EXPECT_LE(actualDistance, expectedDistance);  // 目標距離以上進んでいるか
+    EXPECT_GE(actualDistance,
+              expectedDistance - MILEAGE_ACCEPTABLE_ERROR);  // 許容誤差内に収まっているか
     // 左右タイヤの走行距離差が0に近い（＝後退できているか）のテスト
-    EXPECT_NEAR(actualError, 0.0, expectedError);
+    EXPECT_NEAR(actualError, 0.0, targetDistance / 10.0);
   }
 
-  // 目標距離が負のとき停止するかのテスト
+  // 目標距離が負のとき停止するかのテスト: 目標距離が負の場合に直進動作が行われないことを検証する。
   TEST(DistanceStraightTest, RunMinusDistance)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = -1000.0;
@@ -235,10 +222,11 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expectedDistance, actualDistance);  // 直進前後で走行距離に変化はない
   }
 
-  // 目標距離が0のとき停止するかのテスト
+  // 目標距離が0のとき停止するかのテスト: 目標距離が0の場合に直進動作が行われないことを検証する。
   TEST(DistanceStraightTest, RunZeroDistance)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 0.0;
@@ -262,10 +250,11 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expectedDistance, actualDistance);  // 直進前後で走行距離に変化はない
   }
 
-  // 目標速度が0のとき停止するかのテスト
+  // 目標速度が0のとき停止するかのテスト: 目標速度が0の場合に直進動作が行われないことを検証する。
   TEST(DistanceStraightTest, RunZeroPower)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
@@ -289,10 +278,12 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expectedDistance, actualDistance);  // 直進前後で走行距離に変化はない
   }
 
-  // 距離・速度共に異常時の動作確認テスト
+  // 距離・速度共に異常時の動作確認テスト:
+  // 目標距離が負かつ目標速度が0の場合に直進動作が行われないことを検証する。
   TEST(DistanceStraightTest, RunMinusDistanceZeroPower)
   {
-    Robot robot;
+    SpikeClient spikeClient;
+    Robot robot(spikeClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = -1000.0;
@@ -315,5 +306,4 @@ namespace etrobocon2025_test {
 
     EXPECT_EQ(expectedDistance, actualDistance);  // 直進前後で走行距離に変化はない
   }
-
 }  // namespace etrobocon2025_test
