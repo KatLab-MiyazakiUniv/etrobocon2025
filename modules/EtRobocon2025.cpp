@@ -32,6 +32,8 @@ void EtRobocon2025::start()
   // 実機の際は以下のようにRobotインスタンスを作成
   Robot robot(spikeClient);
 
+  robot.getRobotStateCacheInstance().startUpdating(); // Start updating the cache
+
   if(!robot.getCameraCaptureInstance().setCameraID(
          robot.getCameraCaptureInstance().findAvailableCameraID()))
     return;
@@ -55,5 +57,6 @@ void EtRobocon2025::start()
   lineTraceAreaMaster.run();
 
   // Disconnect the SpikeClient when done
+  robot.getRobotStateCacheInstance().stopUpdating(); // Stop updating the cache
   spikeClient.disconnect();
 }

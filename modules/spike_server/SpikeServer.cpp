@@ -181,6 +181,32 @@ void SpikeServer::handle_command(spike::CommandId commandId, Socket* client)
         displayHandler.handleScrollText(request);
         break;
       }
+      case spike::CommandId::GET_ALL_ROBOT_STATE: {
+        spike::AllRobotStateResponse res;
+        res.rightMotorCount = motorHandler.handleGetCount({ spike::MotorTarget::RIGHT }).value;
+        res.leftMotorCount = motorHandler.handleGetCount({ spike::MotorTarget::LEFT }).value;
+        res.rightMotorPower = motorHandler.handleGetPower({ spike::MotorTarget::RIGHT }).value;
+        res.leftMotorPower = motorHandler.handleGetPower({ spike::MotorTarget::LEFT }).value;
+        res.rightMotorSpeed = motorHandler.handleGetSpeed({ spike::MotorTarget::RIGHT }).value;
+        res.leftMotorSpeed = motorHandler.handleGetSpeed({ spike::MotorTarget::LEFT }).value;
+        res.reflection = colorSensorHandler.handleGetReflection().value;
+        spike::HsvResponse hsv = colorSensorHandler.handleGetColorHsv();
+        res.hsv_h = hsv.h;
+        res.hsv_s = hsv.s;
+        res.hsv_v = hsv.v;
+        res.forceSensorPressed = forceSensorHandler.handleIsPressed({ 0.5f }).value;
+        res.forceSensorForce = forceSensorHandler.handleGetForce().value;
+        res.buttonPressedRight
+            = buttonHandler.handleIsPressed({ spike::ButtonTarget::RIGHT }).value;
+        res.buttonPressedLeft = buttonHandler.handleIsPressed({ spike::ButtonTarget::LEFT }).value;
+        res.buttonPressedCenter
+            = buttonHandler.handleIsPressed({ spike::ButtonTarget::CENTER }).value;
+        res.clockNow = clockHandler.handleNow().value;
+
+        send(client, reinterpret_cast<char*>(&response_header), sizeof(response_header));
+        send(client, reinterpret_cast<char*>(&res), sizeof(res));
+        break;
+      }
       default:
         std::cerr << "Error: Unknown CommandId received: " << static_cast<uint16_t>(commandId)
                   << std::endl;
@@ -221,7 +247,6 @@ void SpikeServer::start()
         // Client disconnected or error
         break;
       }
-      std::cout << "Received CommandId: " << static_cast<uint16_t>(commandId) << std::endl;
       server.handle_command(commandId, client);
     }
 

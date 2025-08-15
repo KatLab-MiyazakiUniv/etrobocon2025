@@ -15,7 +15,8 @@ Robot::Robot(SpikeClient& client)
     clock(spikeClient),
     button(spikeClient),
     forceSensor(spikeClient),
-    display(spikeClient)
+    display(spikeClient),
+    robotStateCache(spikeClient)  // Initialize RobotStateCache
 {
 }
 
@@ -28,7 +29,8 @@ Robot::Robot(SpikeClient& client, ICameraCapture& cam)
     clock(spikeClient),
     button(spikeClient),
     forceSensor(spikeClient),
-    display(spikeClient)
+    display(spikeClient),
+    robotStateCache(spikeClient)  // Initialize RobotStateCache
 {
 }
 
@@ -85,4 +87,9 @@ void Robot::setIsLeftEdge(bool isLeft)
 bool Robot::getIsLeftEdge() const
 {
   return isLeftEdge;
+}
+
+RobotStateCache& Robot::getRobotStateCacheInstance()
+{
+  return robotStateCache;
 }

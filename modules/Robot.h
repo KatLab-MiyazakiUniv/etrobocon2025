@@ -17,6 +17,7 @@
 #include "CameraCapture.h"
 #include "MiniFigDirectionDetector.h"
 #include "BackgroundDirectionDetector.h"
+#include "RobotStateCache.h" // New include
 
 class Robot {
  public:
@@ -77,6 +78,12 @@ class Robot {
    * @return BackgroundDirectionResultの参照
    */
   BackgroundDirectionResult& getBackgroundDirectionResult();
+
+  /**
+   * @brief RobotStateCacheインスタンスを取得する
+   * @return RobotStateCacheインスタンスの参照
+   */
+  RobotStateCache& getRobotStateCacheInstance();
   /**
    * @brief isLeftEdgeを設定する
    * @param isLeft 左エッジの場合true
@@ -101,6 +108,7 @@ class Robot {
   MiniFigDirectionResult miniFigDirectionResult;        // ミニフィグの向き検出結果
   BackgroundDirectionResult backgroundDirectionResult;  // 背景の向き検出結果
   bool isLeftEdge = true;                               // 左エッジフラグ
+  RobotStateCache robotStateCache;                      // ロボット状態キャッシュ
 };
 
 #endif

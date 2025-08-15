@@ -46,6 +46,9 @@ namespace spike {
     DISPLAY_SHOW_CHAR,
     DISPLAY_SHOW_NUMBER,
     DISPLAY_SCROLL_TEXT,
+
+    // Batch
+    GET_ALL_ROBOT_STATE,
   };
 
   // モーターのターゲット
@@ -156,6 +159,26 @@ namespace spike {
     uint16_t h;  // 0-359
     uint8_t s;   // 0-100
     uint8_t v;   // 0-100
+  } __attribute__((packed));
+
+  // 全ロボット状態レスポンス用データ構造
+  struct AllRobotStateResponse {
+    int32_t rightMotorCount;
+    int32_t leftMotorCount;
+    int32_t rightMotorPower;
+    int32_t leftMotorPower;
+    double rightMotorSpeed;
+    double leftMotorSpeed;
+    int32_t reflection;
+    uint16_t hsv_h;
+    uint8_t hsv_s;
+    uint8_t hsv_v;
+    bool forceSensorPressed;
+    float forceSensorForce;
+    bool buttonPressedRight;
+    bool buttonPressedLeft;
+    bool buttonPressedCenter;
+    uint64_t clockNow;
   } __attribute__((packed));
 
 }  // namespace spike

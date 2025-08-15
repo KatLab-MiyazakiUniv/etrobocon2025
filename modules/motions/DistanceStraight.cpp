@@ -29,19 +29,20 @@ bool DistanceStraight::isMetPreCondition()
 
 void DistanceStraight::prepare()
 {
-  // 呼び出し時の走行距離を取得する
-  double initialRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
-  double initialLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
+  // 呼び出し時の走行距離を取得する (RobotStateCacheから)
+  spike::AllRobotStateResponse cachedState = robot.getRobotStateCacheInstance().getCachedState();
+  double initialRightMotorCount = cachedState.rightMotorCount;
+  double initialLeftMotorCount = cachedState.leftMotorCount;
   initialDistance = Mileage::calculateMileage(initialRightMotorCount, initialLeftMotorCount);
 }
 
 bool DistanceStraight::isMetContinuationCondition()
 {
-  // 現在の走行距離を取得する
-  double currentRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
-  double currentLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
+  // 現在の走行距離を取得する (RobotStateCacheから)
+  spike::AllRobotStateResponse cachedState = robot.getRobotStateCacheInstance().getCachedState();
+  double currentRightMotorCount = cachedState.rightMotorCount;
+  double currentLeftMotorCount = cachedState.leftMotorCount;
   double currentDistance = Mileage::calculateMileage(currentRightMotorCount, currentLeftMotorCount);
-  std::cout << currentDistance << std::endl;
 
   // 現在の走行距離が目標走行距離に達した場合falseを返す
   // ここでは、走行体全体の距離 (左右の距離の平均) が達したかどうかで判断する
