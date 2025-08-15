@@ -19,9 +19,6 @@
 #include <vector>
 #include <cstring>    // For memcpy
 #include <stdexcept>  // For std::runtime_error
-#include <thread>
-#include <chrono>
-#include <iomanip>
 
 // SpikeServer constructor
 SpikeServer::SpikeServer(Socket* client)
@@ -40,13 +37,6 @@ bool SpikeServer::receive(Socket* client, char* buffer, size_t size)
   bool success = client->receiveData(buffer, size);
   if(!success) {
     std::cerr << "Error: Expected " << size << " bytes, but received " << std::endl;
-  } else {
-    std::cout << "Received " << size << " bytes: ";
-    for(size_t i = 0; i < size; ++i) {
-      std::cout << std::hex << std::setw(2) << std::setfill('0')
-                << static_cast<int>(static_cast<unsigned char>(buffer[i])) << " ";
-    }
-    std::cout << std::dec << std::endl;
   }
   return success;
 }
@@ -208,7 +198,6 @@ void SpikeServer::start()
       }
       std::cout << "Received CommandId: " << static_cast<uint16_t>(commandId) << std::endl;
       server.handle_command(commandId, client);
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
     std::cout << "Client disconnected" << std::endl;
