@@ -7,8 +7,6 @@
 #ifndef SPIKE_COMMAND_H
 #define SPIKE_COMMAND_H
 
-#include <cstdint>
-
 namespace spike {
   // コマンドID
   enum class CommandId : uint16_t {
@@ -74,85 +72,85 @@ namespace spike {
   // 全てのリクエストに共通のヘッダ
   struct Request {
     CommandId id;
-  } __attribute__((packed));
+  };
 
   // 全てのレスポンスに共通のヘッダ
   struct Response {
     bool value;
-  } __attribute__((packed));
+  };
 
   // --- リクエスト用データ構造 ---
 
   struct MotorSetPowerRequest {
     MotorTarget target;
     int32_t power;
-  } __attribute__((packed));
+  };
 
   struct MotorSetSpeedRequest {
     MotorTarget target;
     int32_t speed;  // [°/s]
-  } __attribute__((packed));
+  };
 
   struct MotorGetRequest {
     MotorTarget target;
-  } __attribute__((packed));
+  };
 
   struct ButtonIsPressedRequest {
     ButtonTarget target;
-  } __attribute__((packed));
+  };
 
   struct ClockSleepRequest {
     uint64_t microseconds;
-  } __attribute__((packed));
+  };
 
   struct DisplayShowCharRequest {
     char character;
-  } __attribute__((packed));
+  };
 
   struct DisplayShowNumberRequest {
     int8_t number;
-  } __attribute__((packed));
+  };
 
   struct DisplayScrollTextRequest {
     char text[64];
     uint32_t delay;  // [ms]
-  } __attribute__((packed));
+  };
 
   struct ForceSensorIsPressedRequest {
     float threshold;
-  } __attribute__((packed));
+  };
 
   // --- レスポンス用データ構造 ---
 
   struct Int32Response {
     int32_t value;
-  } __attribute__((packed));
+  };
 
   struct UInt32Response {
     uint32_t value;
-  } __attribute__((packed));
+  };
 
   struct UInt64Response {
     uint64_t value;
-  } __attribute__((packed));
+  };
 
   struct FloatResponse {
     float value;
-  } __attribute__((packed));
+  };
 
   struct DoubleResponse {
     double value;
-  } __attribute__((packed));
+  };
 
   struct BoolResponse {
     bool value;
-  } __attribute__((packed));
+  };
 
   struct HsvResponse {
     uint16_t h;  // 0-359
     uint8_t s;   // 0-100
     uint8_t v;   // 0-100
-  } __attribute__((packed));
+  };
 
 }  // namespace spike
 
