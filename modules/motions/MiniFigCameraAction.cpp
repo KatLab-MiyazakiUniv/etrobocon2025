@@ -5,7 +5,10 @@
  */
 
 #include "MiniFigCameraAction.h"
+#include "AngleRotation.h"
+#include "DistanceStraight.h"
 #include <thread>
+#include <iostream>
 
 using namespace std;
 
@@ -28,43 +31,14 @@ MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _
 
 bool MiniFigCameraAction::isMetPreCondition()
 {
+  // 2回目以降の撮影で、1回目の結果が「正面以外」であった場合、
+  // その向きに応じた撮影場所以外では撮影しない
   if(position != 0 && robot.getMiniFigDirectionResult().wasDetected
      && robot.getMiniFigDirectionResult().direction != static_cast<MiniFigDirection>(position)) {
-    cout << "ミニフィグの撮影動作は行わない。" << endl;
+    cout << "This is not the correct location for this minifig direction. Skipping." << endl;
     return false;
-  } else {
-    return true;
   }
-}
-
-// 判定動作を行う関数
-void MiniFigCameraAction::detectDirection(cv::Mat& frame)
-{
-  MiniFigDirectionDetector detector;
-  // ミニフィグの向きを判定
-  detector.detect(frame, robot.getMiniFigDirectionResult());
-
-  // 検出結果を取得
-  MiniFigDirectionResult& result = robot.getMiniFigDirectionResult();
-
-  // デバッグ出力
-  if(!result.wasDetected) {
-    cout << "ミニフィグが検出されませんでした" << endl;
-  }
-  switch(result.direction) {
-    case MiniFigDirection::FRONT:
-      cout << "ミニフィグの向き: FRONT" << endl;
-      break;
-    case MiniFigDirection::BACK:
-      cout << "ミニフィグの向き: BACK" << endl;
-      break;
-    case MiniFigDirection::LEFT:
-      cout << "ミニフィグの向き: LEFT" << endl;
-      break;
-    case MiniFigDirection::RIGHT:
-      cout << "ミニフィグの向き: RIGHT" << endl;
-      break;
-  }
+  return true;
 }
 
 void MiniFigCameraAction::run()
@@ -85,48 +59,26 @@ void MiniFigCameraAction::run()
   DistanceStraight back(robot, backTargetDistance, -backSpeed);
   back.run();
 
-  // 判定用の写真を撮影
-  cv::Mat frame;
-  for(int i = 0; i < 5; i++) {
-    robot.getCameraCaptureInstance().getFrame(frame);
-  }
+  // サーバーに撮影と判定を依頼
+  cout << "Requesting MiniFig action from server for position: " << position << endl;
+  CameraServer::MiniFigActionRequest request;
+  request.command = CameraServer::Command::MINIFIG_CAMERA_ACTION;
+  request.position = position;
 
-  if(position == 0) {
-    // 向きの判定とresultの更新(detection)は一回目(初期位置での)の撮影でしか行わない
-    cout << "判定動作実施" << endl;
-    detectDirection(frame);
-    cout << "判定動作終了" << endl;
+  CameraServer::MiniFigActionResponse response;
+  bool success = robot.getSocketClient().executeMiniFigAction(request, response);
 
-    if(robot.getMiniFigDirectionResult().wasDetected
-       && robot.getMiniFigDirectionResult().direction == MiniFigDirection::FRONT) {
-      // FRONT方向の画像を保存
-      FrameSave::save(frame, filePath, uploadFileName);
-      // 非同期で画像をアップロード
-      thread([filePath, uploadFileName] {
-        ImageUploader::uploadImage(filePath, uploadFileName, 3);
-      }).detach();
+  if(success) {
+    cout << "Server response: wasDetected=" << response.wasDetected
+         << ", direction=" << response.direction << endl;
+    // 1回目の撮影結果だった場合、Robotの状態を更新する
+    if(position == 0) {
+      MiniFigDirectionResult& result = robot.getMiniFigDirectionResult();
+      result.wasDetected = response.wasDetected;
+      result.direction = static_cast<MiniFigDirection>(response.direction);
     }
-
-  } else if(robot.getMiniFigDirectionResult().wasDetected) {
-    // 一回目の撮影でミニフィグが検出されていて、向きがFRONTじゃなければ、二回目の撮影でのミニフィグの向きは確実にFRONTになる。
-    cout << "正面での撮影" << endl;
-    FrameSave::save(frame, filePath, uploadFileName);
-    // 非同期で画像をアップロード
-    thread([filePath, uploadFileName] {
-      ImageUploader::uploadImage(filePath, uploadFileName, 3);
-    }).detach();
   } else {
-    // 一回目検出falseなら、残り、3回の撮影は確定する。
-    // 一回目の撮影でミニフィグが検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
-    cout << "ミニフィグ向き判定用写真の撮影" << endl;
-    string positionImageName = "Fig_" + to_string(position);
-    FrameSave::save(frame, filePath, positionImageName);
-    // 最後のポジションの撮影時のみ非同期で画像をアップロード
-    if(position == 3) {
-      thread([filePath, positionImageName] {
-        ImageUploader::uploadImage(filePath, positionImageName, 3);
-      }).detach();
-    }
+    cout << "Failed to get response from server." << endl;
   }
 
   // 動作安定のためのスリープ
