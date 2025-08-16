@@ -45,11 +45,6 @@ class AngleRotation : public Rotation {
   bool isMetContinuationCondition() override;
 
   /**
-   * @brief モーター制御方式を設定する
-   */
-  void setMotorControl() override;
-
-  /**
    * @brief 継続中にモーターを動的制御する
    */
   void updateMotorControl() override;

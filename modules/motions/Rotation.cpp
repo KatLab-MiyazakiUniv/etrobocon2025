@@ -22,9 +22,6 @@ void Rotation::run()
   prepare();
   if(!isMetPreCondition()) return;
 
-  // モーター制御方式を設定
-  setMotorControl();
-
   while(isMetContinuationCondition()) {
     // 動的モーター制御
     updateMotorControl();

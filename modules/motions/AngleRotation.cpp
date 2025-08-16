@@ -29,6 +29,10 @@ void AngleRotation::prepare()
   // 目標走行距離を方向に応じて設定
   targetLeftDistance = initLeftMileage + targetDistance * leftSign;
   targetRightDistance = initRightMileage + targetDistance * rightSign;
+  
+  // モーター速度を設定
+  motorController.setLeftMotorSpeed(speed * leftSign);
+  motorController.setRightMotorSpeed(speed * rightSign);
 }
 
 bool AngleRotation::isMetPreCondition()
@@ -63,13 +67,6 @@ bool AngleRotation::isMetContinuationCondition()
     return false;
   }
   return true;
-}
-
-void AngleRotation::setMotorControl()
-{
-  MotorController& motorController = robot.getMotorControllerInstance();
-  motorController.setLeftMotorSpeed(speed * leftSign);
-  motorController.setRightMotorSpeed(speed * rightSign);
 }
 
 void AngleRotation::updateMotorControl()

@@ -44,12 +44,6 @@ class Rotation : public Motion {
   virtual bool isMetContinuationCondition() = 0;
 
   /**
-   * @brief モーター制御方式を設定する
-   * @note オーバーライド必須
-   */
-  virtual void setMotorControl() = 0;
-
-  /**
    * @brief 継続中にモーターを動的制御する
    * @note オーバーライド必須
    */
