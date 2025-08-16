@@ -17,12 +17,12 @@ Robot::Robot()
     miniFigDirectionResult(),
     backgroundDirectionResult()
 {
-    socketClient.connectToServer();
+  socketClient.connectToServer();
 }
 
 Robot::~Robot()
 {
-    socketClient.disconnectFromServer();
+  socketClient.disconnectFromServer();
 }
 
 MotorController& Robot::getMotorControllerInstance()

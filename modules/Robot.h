@@ -14,9 +14,9 @@
 #include "Button.h"
 #include "ForceSensor.h"
 #include "Display.h"
-#include "image_processors/BackgroundDirectionDetector.h"
-#include "image_processors/MiniFigDirectionDetector.h" // Re-add for result struct
-#include "client/SocketClient.h"
+#include "BackgroundDirectionDetector.h"
+#include "MiniFigDirectionDetector.h"
+#include "SocketClient.h"
 
 class Robot {
  public:

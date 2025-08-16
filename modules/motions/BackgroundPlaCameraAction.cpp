@@ -57,22 +57,22 @@ void BackgroundPlaCameraAction::run()
   request.position = position;
   request.threshold = threshold;
   request.minArea = minArea;
-  request.roi = roi; // Directly assign cv::Rect
+  request.roi = roi;  // Directly assign cv::Rect
 
   CameraServer::BackgroundPlaActionResponse response;
   bool success = robot.getSocketClient().executeBackgroundPlaAction(request, response);
 
-  if (success) {
-      cout << "Server response: wasDetected=" << response.wasDetected 
-           << ", direction=" << response.direction << endl;
-      // 1回目の撮影結果だった場合、Robotの状態を更新する
-      if (position == 0) {
-          BackgroundDirectionResult& result = robot.getBackgroundDirectionResult();
-          result.wasDetected = response.wasDetected;
-          result.direction = static_cast<BackgroundDirection>(response.direction);
-      }
+  if(success) {
+    cout << "Server response: wasDetected=" << response.wasDetected
+         << ", direction=" << response.direction << endl;
+    // 1回目の撮影結果だった場合、Robotの状態を更新する
+    if(position == 0) {
+      BackgroundDirectionResult& result = robot.getBackgroundDirectionResult();
+      result.wasDetected = response.wasDetected;
+      result.direction = static_cast<BackgroundDirection>(response.direction);
+    }
   } else {
-      cout << "Failed to get response from server." << endl;
+    cout << "Failed to get response from server." << endl;
   }
 
   // 動作安定のためのスリープ
