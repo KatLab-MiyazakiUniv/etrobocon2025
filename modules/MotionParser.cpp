@@ -53,12 +53,11 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       }
 
       // IMUR: IMU角度指定回頭
-      // [1]:int 角度[deg], [2]:double パワー値(-100~100), [3]:string 方向(clockwise or
-      // anticlockwise), [4-6]:double PIDゲイン(kp, ki, kd)
+      // [1]:int 角度[deg], [2]:string 方向(clockwise or anticlockwise),
+      // [3-5]:double 角度PIDゲイン(kp, ki, kd)
       case COMMAND::IMUR: {
-        auto imr = new IMURotation(robot, stoi(params[1]), stod(params[2]),
-                                   convertBool(params[0], params[3]),
-                                   PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
+        auto imr = new IMURotation(robot, stoi(params[1]), convertBool(params[0], params[2]),
+                                   PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
         motionList.push_back(imr);
         break;
       }
@@ -243,19 +242,19 @@ COMMAND MotionParser::convertCommand(const string& str)
 {
   // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
   static const unordered_map<string, COMMAND> commandMap = {
-    { "AR", COMMAND::AR },    // 角度指定回頭
+    { "AR", COMMAND::AR },      // 角度指定回頭
     { "IMUR", COMMAND::IMUR },  // IMU角度指定回頭
-    { "DS", COMMAND::DS },    // 指定距離直進
-    { "CS", COMMAND::CS },    // 指定色直進
-    { "DL", COMMAND::DL },    // 指定距離ライントレース
-    { "DCL", COMMAND::DCL },  // 指定距離カメラライントレース
-    { "CL", COMMAND::CL },    // 指定色ライントレース
-    { "CDL", COMMAND::CDL },  // 色距離指定ライントレース
-    { "EC", COMMAND::EC },    // エッジ切り替え
-    { "SL", COMMAND::SL },    // スリープ
-    { "SS", COMMAND::SS },    // カメラ撮影動作
-    { "MCA", COMMAND::MCA },  // ミニフィグのカメラ撮影動作
-    { "BCA", COMMAND::BCA }   // 風景・プラレールのカメラ撮影動作
+    { "DS", COMMAND::DS },      // 指定距離直進
+    { "CS", COMMAND::CS },      // 指定色直進
+    { "DL", COMMAND::DL },      // 指定距離ライントレース
+    { "DCL", COMMAND::DCL },    // 指定距離カメラライントレース
+    { "CL", COMMAND::CL },      // 指定色ライントレース
+    { "CDL", COMMAND::CDL },    // 色距離指定ライントレース
+    { "EC", COMMAND::EC },      // エッジ切り替え
+    { "SL", COMMAND::SL },      // スリープ
+    { "SS", COMMAND::SS },      // カメラ撮影動作
+    { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
+    { "BCA", COMMAND::BCA }     // 風景・プラレールのカメラ撮影動作
 
   };
 

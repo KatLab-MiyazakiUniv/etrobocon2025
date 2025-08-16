@@ -6,13 +6,11 @@
 
 #include "IMURotation.h"
 
-IMURotation::IMURotation(Robot& _robot, int _targetAngle, double _power, bool _isClockwise,
-                         const PidGain& _pidGain)
-  : Rotation(_robot, _power, _isClockwise),
+IMURotation::IMURotation(Robot& _robot, int _targetAngle, bool _isClockwise, const PidGain& _anglePidGain)
+  : Rotation(_robot, _isClockwise),
     targetAngle(_targetAngle),
-    power(_power),
-    pidGain(_pidGain),
-    pid(_pidGain.kp, _pidGain.ki, _pidGain.kd, 0.0)
+    anglePid(_anglePidGain.kp, _anglePidGain.ki, _anglePidGain.kd, 0.0),
+    angularVelocityPid(ANGULAR_VELOCITY_K_P, ANGULAR_VELOCITY_K_I, ANGULAR_VELOCITY_K_D, 0.0)
 {
 }
 
@@ -52,33 +50,29 @@ bool IMURotation::isMetContinuationCondition()
   return shouldContinue;
 }
 
-void IMURotation::setMotorControl()
-{
-  MotorController& motorController = robot.getMotorControllerInstance();
-  // setPowerを使用
-  motorController.setLeftMotorPower(power * leftSign);
-  motorController.setRightMotorPower(power * rightSign);
-}
 
 void IMURotation::updateMotorControl()
 {
-  // 目標角度との偏差を計算
-  double error = targetAngle - currentAngle;
-
+  // 外側ループ：角度制御（角度偏差から目標角速度を計算）
+  double angleError = targetAngle - currentAngle;
+  
   // 誤差を±180範囲に正規化
-  if(error > 180.0) error -= 360.0;
-  if(error < -180.0) error += 360.0;
-
-  // PID制御で操作量を計算（偏差を入力として使用）
-  double correction = pid.calculatePid(error, 0.01);
-
-  // 基本パワー + PID補正値
-  double leftPower = power * leftSign + correction;
-  double rightPower = power * rightSign - correction;
+  if(angleError > 180.0) angleError -= 360.0;
+  if(angleError < -180.0) angleError += 360.0;
+  
+  // 角度PID制御で目標角速度を決定
+  double targetAngularVelocity = anglePid.calculatePid(angleError, 0.01);
+  
+  // 内側ループ：角速度制御（角速度偏差からモータパワーを計算）
+  double currentAngularVelocity = robot.getIMUControllerInstance().getCorrectedZAxisAngularVelocity();
+  double velocityError = targetAngularVelocity - currentAngularVelocity;
+  
+  // 角速度PID制御で操作量を計算
+  double motorPower = angularVelocityPid.calculatePid(velocityError, 0.01);
 
   MotorController& motorController = robot.getMotorControllerInstance();
-  motorController.setLeftMotorPower(leftPower);
-  motorController.setRightMotorPower(rightPower);
+  motorController.setLeftMotorPower(motorPower * leftSign);
+  motorController.setRightMotorPower(motorPower * rightSign);
 
   // 10ms待機（これがないと通信バッファオーバーフローになる）
   std::this_thread::sleep_for(std::chrono::milliseconds(10));

@@ -16,12 +16,10 @@ class IMURotation : public Rotation {
    * コンストラクタ
    * @param _robot       ロボット制御クラスへの参照
    * @param _targetAngle 目標回転角度(deg) 0~360
-   * @param _power       指定するパワー値（-100~100）
    * @param _isClockwise 回頭方向 true:時計回り, false:反時計回り
-   * @param _pidGain     PIDゲイン
+   * @param _angleGain   角度制御ゲイン
    */
-  IMURotation(Robot& _robot, int _targetAngle, double _power, bool _isClockwise,
-              const PidGain& _pidGain);
+  IMURotation(Robot& _robot, int _targetAngle, bool _isClockwise, double _angleGain);
   /**
    * @brief 回頭する
    * @note run() メソッドは Rotation クラスの実装をそのまま使用する
@@ -46,22 +44,19 @@ class IMURotation : public Rotation {
   bool isMetContinuationCondition() override;
 
   /**
-   * @brief モーター制御方式を設定する
-   */
-  void setMotorControl() override;
-
-  /**
    * @brief 継続中にモーターを動的制御する
    */
   void updateMotorControl() override;
 
  private:
-  static constexpr float TOLERANCE = 1.0f;  // 許容誤差
-  int targetAngle;                          // 目標回転角度(deg) 0~360
-  double power;                             // モーターパワー値(-100~100)
-  PidGain pidGain;                          // PIDゲイン
-  Pid pid;                                  // PID制御クラス
-  float currentAngle;                       // 現在の回頭角度
+  static constexpr float TOLERANCE = 1.0f;              // 許容誤差
+  static constexpr double ANGULAR_VELOCITY_K_P = 0.5;   // 角速度比例ゲイン
+  static constexpr double ANGULAR_VELOCITY_K_I = 0.01;  // 角速度積分ゲイン
+  static constexpr double ANGULAR_VELOCITY_K_D = 0.0;   // 角速度微分ゲイン
+  int targetAngle;                                      // 目標回転角度(deg) 0~360
+  Pid anglePid;                                         // 角度PID制御クラス
+  Pid angularVelocityPid;                               // 角速度PID制御クラス
+  float currentAngle;                                   // 現在の回頭角度
 };
 
 #endif
