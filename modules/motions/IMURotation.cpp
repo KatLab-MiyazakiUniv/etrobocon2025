@@ -6,7 +6,8 @@
 
 #include "IMURotation.h"
 
-IMURotation::IMURotation(Robot& _robot, int _targetAngle, bool _isClockwise, const PidGain& _anglePidGain)
+IMURotation::IMURotation(Robot& _robot, int _targetAngle, bool _isClockwise,
+                         const PidGain& _anglePidGain)
   : Rotation(_robot, _isClockwise),
     targetAngle(_targetAngle),
     anglePid(_anglePidGain.kp, _anglePidGain.ki, _anglePidGain.kd, 0.0),
@@ -25,6 +26,18 @@ void IMURotation::prepare()
 
 bool IMURotation::isMetPreCondition()
 {
+  // 角度が0以下または360以上なら終了
+  if(targetAngle <= 0 || targetAngle >= 360) {
+    std::cerr << "targetAngle=" << targetAngle << " は範囲外です。" << std::endl;
+    return false;
+  }
+  
+  // IMU角度計算が開始されているかチェック
+  if(!robot.getIMUControllerInstance().isAngleCalculating()) {
+    std::cerr << "IMU角度計算が開始されていません。" << std::endl;
+    return false;
+  }
+  
   return true;
 }
 
@@ -50,23 +63,23 @@ bool IMURotation::isMetContinuationCondition()
   return shouldContinue;
 }
 
-
 void IMURotation::updateMotorControl()
 {
   // 外側ループ：角度制御（角度偏差から目標角速度を計算）
   double angleError = targetAngle - currentAngle;
-  
+
   // 誤差を±180範囲に正規化
   if(angleError > 180.0) angleError -= 360.0;
   if(angleError < -180.0) angleError += 360.0;
-  
+
   // 角度PID制御で目標角速度を決定
   double targetAngularVelocity = anglePid.calculatePid(angleError, 0.01);
-  
+
   // 内側ループ：角速度制御（角速度偏差からモータパワーを計算）
-  double currentAngularVelocity = robot.getIMUControllerInstance().getCorrectedZAxisAngularVelocity();
+  double currentAngularVelocity
+      = robot.getIMUControllerInstance().getCorrectedZAxisAngularVelocity();
   double velocityError = targetAngularVelocity - currentAngularVelocity;
-  
+
   // 角速度PID制御で操作量を計算
   double motorPower = angularVelocityPid.calculatePid(velocityError, 0.01);
 

@@ -198,3 +198,9 @@ void IMUController::angleCalculationLoop()
     std::this_thread::sleep_for(sleepDuration);
   }
 }
+
+bool IMUController::isAngleCalculating() const
+{
+  std::lock_guard<std::mutex> lock(imuMutex);
+  return isCalculating;
+}

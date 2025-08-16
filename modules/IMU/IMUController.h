@@ -64,6 +64,12 @@ class IMUController {
    */
   void stopAngleCalculation();
 
+  /**
+   * @brief 角度計算が実行中かどうかを取得する
+   * @return true: 実行中, false: 停止中
+   */
+  bool isAngleCalculating() const;
+
  private:
   /**
    * @brief 角度計算用のループ処理
