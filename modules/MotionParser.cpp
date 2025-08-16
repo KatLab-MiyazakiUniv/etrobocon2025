@@ -46,9 +46,14 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // AR: 角度指定回頭
       // [1]:int 角度[deg], [2]:double 速度[mm/s], [3]:string 方向(clockwise or anticlockwise)
       case COMMAND::AR: {
-        auto ar = new AngleRotation(robot, stoi(params[1]), stod(params[2]),
-                                    convertBool(params[0], params[3]));
-        motionList.push_back(ar);
+        // === 角速度PIDテスト用（一時的変更） ===
+        auto avt = new AngularVelocityTest(robot, stod(params[1]), stod(params[2]), stod(params[3]));
+        motionList.push_back(avt);
+        
+        // === 元のコード（テスト後に復元） ===
+        // auto ar = new AngleRotation(robot, stoi(params[1]), stod(params[2]),
+        //                             convertBool(params[0], params[3]));
+        // motionList.push_back(ar);
         break;
       }
 
