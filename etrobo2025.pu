@@ -27,6 +27,7 @@ package "ロボコンスナップ攻略システム" {
       CS
       DL
       DCL
+      ' CDCL
       CL
       CDL
       EC
@@ -34,7 +35,8 @@ package "ロボコンスナップ攻略システム" {
       SS
       MCA
       BCA
-      NONE
+      CRA
+      ' NONE
     }
 
     ' 攻略エリアの列挙型
@@ -422,6 +424,32 @@ package "走行制御システム" {
     '   - detector: std::unique_ptr<BoundingBoxDetector>
     ' }
 
+    ' 色距離指定カメラライントレースクラス
+    ' class ColorDistanceCameraLineTrace {
+    '   + ColorDistanceCameraLineTrace(Robot& _robot, COLOR _targetColor, double _targetDistance, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, std::unique_ptr<BoundingBoxDetector> _detector)
+    '   # isMetPreCondition(): bool
+    '   # prepare(): void
+    '   # isMetContinuationCondition(): bool
+    '   - {static} constexpr JUDGE_COUNT: int
+    '   - colorCount: int
+    '   - targetColor: COLOR
+    '   - targetDistance: double
+    '   - initDistance: double
+    '   - detector: std::unique_ptr<BoundingBoxDetector>
+    ' }
+
+    ' ' カメラフレーム復帰クラス
+    ' class CameraRecoveryAction {
+    '   + CameraRecoveryAction(Robot& _robot, int _angle, double _speed, bool _isClockwise, std::unique_ptr<BoundingBoxDetector> _boundingBoxDetector)
+    '   + run(): void
+    '   - boundingBoxDetector: std::unique_ptr<BoundingBoxDetector>
+    '   - result: BoundingBoxDetectionResult
+    '   - recoveryAngle: int
+    '   - speed: double
+    '   - isClockwise: bool
+    '   - {static} constexpr FRAME_NUMBER: int
+    ' }
+
     ' エッジ変更クラス
     class EdgeChange {
       + EdgeChange(Robot& _robot, bool _isLeftEdge)
@@ -662,9 +690,11 @@ ColorStraight --|> Straight : 継承
 AngleRotation --|> Rotation : 継承
 
 ' DistanceCameraLineTrace --|> CameraPidTracking : 継承
+' ColorDistanceCameraLineTrace --|> CameraPidTracking : 継承
 
 MiniFigCameraAction --|> CompositeMotion : 継承
 BackgroundPlaCameraAction --|> CompositeMotion : 継承
+' CameraRecoveryAction --|> CompositeMotion : 継承
 
 EdgeChange --|> Motion : 継承
 Sleeping --|> Motion : 継承
@@ -723,11 +753,13 @@ MotionParser ..> DistanceStraight : 依存
 MotionParser ..> ColorStraight : 依存
 MotionParser ..> AngleRotation : 依存
 ' MotionParser ..> DistanceCameraLineTrace : 依存
+' MotionParser ..> ColorDistanceCameraLineTrace : 依存
 MotionParser ..> EdgeChange : 依存
 MotionParser ..> Sleeping : 依存
 ' MotionParser ..> Snapshot : 依存
 MotionParser ..> MiniFigCameraAction : 依存
 MotionParser ..> BackgroundPlaCameraAction : 依存
+' MotionParser ..> CameraRecoveryAction : 依存
 MotionParser ..> StringOperator : 依存
 
 LineTrace ..> PidGain : 依存
@@ -785,6 +817,8 @@ BackgroundPlaCameraAction ..> PlaCameraAction : 依存
 BackgroundPlaCameraAction ..> AngleRotation : 依存
 MiniFigCameraAction ..> ImageUploader : 依存
 BackgroundPlaCameraAction ..> ImageUploader : 依存
+' CameraRecoveryAction ..> BoundingBoxDetector : 依存
+' CameraRecoveryAction ..> BoundingBoxDetectionResult : 依存
 ImageUploader ..> CommandExecutor : 依存
 
 
