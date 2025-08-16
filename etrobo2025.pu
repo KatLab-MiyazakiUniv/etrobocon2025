@@ -91,13 +91,13 @@ package "ロボコンスナップ攻略システム" {
 ' サブシステム、走行体情報管理システム
 package "走行体情報管理システム" {
   package "走行体情報中継部" {
-    ' ミニフィグ方向判定結果
+    ' ミニフィグの向き判定結果
     struct MiniFigDirectionResult {
       + wasDetected: bool
       + direction: MiniFigDirection
     }
 
-    ' ミニフィグ方向の列挙型
+    ' ミニフィグの向きの列挙型
     enum MiniFigDirection {
       FRONT
       RIGHT
@@ -170,7 +170,6 @@ package "走行体情報管理システム" {
     class MotorController {
       + {static} constexpr MOTOR_POWER_MAX: int
       + {static} constexpr MOTOR_POWER_MIN: int
-      + MotorController()
       + setRightMotorPower(int power): void
       + setLeftMotorPower(int power): void
       + resetRightMotorPower(): void
@@ -272,14 +271,12 @@ package "走行制御システム" {
   package "動作部" {
     ' Motionクラス
     abstract class Motion {
-      + Motion(Robot& _robot)
       + {abstract} run(): void
       # robot: Robot&
     }
 
     ' 応用動作クラス
     abstract class CompositeMotion {
-      + CompositeMotion(Robot& _robot)
       + {abstract} run(): void
     }
 
@@ -360,9 +357,9 @@ package "走行制御システム" {
       # isMetPreCondition(): bool
       # prepare(): void
       # isMetContinuationCondition(): bool
+      - {static} constexpr JUDGE_COUNT: int
       - colorCount: int
       - targetColor: COLOR
-      - {static} constexpr JUDGE_COUNT: int
     }
 
     ' 角度指定回頭クラス
@@ -443,7 +440,6 @@ package "カメラ撮影システム" {
   package "撮影部" {
     ' カメラキャプチャーインターフェース
     abstract class ICameraCapture {
-      + {abstract} ~ICameraCapture()
       + {abstract} findAvailableCameraID(int maxTested): int
       + {abstract} getCameraID(): int
       + {abstract} setCameraID(int id): bool
@@ -456,15 +452,12 @@ package "カメラ撮影システム" {
     ' + getFrames(std::vector<cv::Mat>& frames, int numFrames, int millisecondInterval): bool
     ' getFrames 関数は未使用であるため、クラス図に含めない
     class CameraCapture {
-      + CameraCapture()
-      + ~CameraCapture()
       + findAvailableCameraID(int maxTested): int
       + getCameraID(): int
       + setCameraID(int id): bool
       + openCamera(): bool
       + setCapProps(double width, double height): void
       + getFrame(cv::Mat& outFrame): bool
-      - cap: cv::VideoCapture
       - cameraID: int
     }
 
@@ -555,10 +548,9 @@ package "配置エリアB撮影システム" {
       + run(): void
       + setImageSaveName(const std::string& fileName): void
       - getBackgroundFrame(): void
-      - motionDetector: MotionDetector
-      - imageSaveName: std::string
       - {static} constexpr MAX_NO_MOTION: int
       - {static} constexpr filePath: const char*
+      - imageSaveName: std::string
     }
 
     ' 画像処理系
