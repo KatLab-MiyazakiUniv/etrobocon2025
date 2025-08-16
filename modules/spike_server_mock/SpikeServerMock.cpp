@@ -346,6 +346,33 @@ void handle_client(Socket* client)
         break;
       }
 
+      case spike::CommandId::GET_ALL_ROBOT_STATE: {
+        std::cout << "MockServer: Received GET_ALL_ROBOT_STATE" << std::endl;
+        spike::AllRobotStateResponse res;
+        res.rightMotorCount = SpikeServerMock::right_motor_count;
+        res.leftMotorCount = SpikeServerMock::left_motor_count;
+        res.rightMotorPower = SpikeServerMock::right_motor_power;
+        res.leftMotorPower = SpikeServerMock::left_motor_power;
+        res.rightMotorSpeed = SpikeServerMock::right_motor_speed;
+        res.leftMotorSpeed = SpikeServerMock::left_motor_speed;
+        res.reflection = SpikeServerMock::reflection_value;
+        res.hsv_h = SpikeServerMock::hsv_value.h;
+        res.hsv_s = SpikeServerMock::hsv_value.s;
+        res.hsv_v = SpikeServerMock::hsv_value.v;
+        res.forceSensorPressed = SpikeServerMock::force_sensor_pressed_state;
+        res.forceSensorForce = SpikeServerMock::force_sensor_value;
+        res.buttonPressedRight = SpikeServerMock::button_pressed_state[0];
+        res.buttonPressedLeft = SpikeServerMock::button_pressed_state[1];
+        res.buttonPressedCenter = SpikeServerMock::button_pressed_state[2];
+        res.clockNow = std::chrono::duration_cast<std::chrono::microseconds>(
+                           std::chrono::system_clock::now().time_since_epoch())
+                           .count();
+
+        if(!sendData(client, &response_header, sizeof(response_header))) break;
+        if(!sendData(client, &res, sizeof(res))) break;
+        break;
+      }
+
       default:
         std::cerr << "MockServer: Unknown command ID: " << static_cast<uint16_t>(request.id)
                   << std::endl;
