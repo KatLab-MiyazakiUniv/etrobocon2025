@@ -54,9 +54,7 @@ package "ロボコンスナップ攻略システム" {
 
     ' エリアマスタークラス
     class エリアマスター {
-      + エリアマスターコンストラクタ(Robot& ロボット, Area エリア, bool 左コース判定, int 目標輝度)
       + エリア攻略を実行する(): void
-      - ロボット: Robot&
       - エリア: Area
       - 左コース判定: bool
       - 目標輝度: int
@@ -66,30 +64,26 @@ package "ロボコンスナップ攻略システム" {
 
     ' キャリブレータクラス
     class キャリブレーター {
-      + キャリブレーターコンストラクタ(Robot& ロボット)
       + コース選択設定(): void
       + 目標輝度測定設定(): void
       + 角度確認フレーム取得(): void
       + スタート待機(): void
       + 左コース判定取得(): bool
       + 目標輝度取得(): int
-      - ロボット: Robot&
       - 左コース判定: bool
       - 目標輝度: int
     }
 
     ' モーションパーサークラス
     class 動作解析器 {
-      + {static} 動作リスト生成(Robot& ロボット, std::string& コマンドファイルパス, int 目標輝度): std::vector<Motion*>
-      - 動作解析器コンストラクタ()
-      - {static} コマンド変換(const std::string& 文字列): COMMAND
-      - {static} 真偽値変換(const std::string& コマンド, const std::string& 文字列パラメータ): bool
+      + {static} 動作リストを生成する(Robot& ロボット, std::string& コマンドファイルパス, int 目標輝度): std::vector<Motion*>
+      - {static} コマンドに変換する(const std::string& 文字列): COMMAND
+      - {static} 真偽値を変換する(const std::string& コマンド, const std::string& 文字列パラメータ): bool
     }
 
     ' 文字列操作クラス
     class 文字列操作器 {
-      + {static} 改行文字削除(const std::string& 文字列): std::string
-      - 文字列操作器コンストラクタ()
+      + {static} 改行文字削除(const std::string& 文字列): std::stringｍ
     }
   }
 }
@@ -111,14 +105,14 @@ package "走行体情報管理システム" {
       左方
     }
 
-    ' 背景方向判定結果
-    struct 背景方向判定結果 {
+    ' 風景方向判定結果
+    struct 風景方向判定結果 {
       + 検出済み: bool
-      + 方向: 背景方向
+      + 方向: 風景方向
     }
 
-    ' 背景方向の列挙型
-    enum 背景方向 {
+    ' 風景方向の列挙型
+    enum 風景方向 {
       前方
       右方
       後方
@@ -141,21 +135,21 @@ package "走行体情報管理システム" {
     }
 
     ' ロボットクラス
-    ' 背景方向判定結果 は実装予定の変数と関係を記述している
+    ' 風景方向判定結果 は実装予定の変数と関係を記述している
     class ロボット {
       + ロボットコンストラクタ()
       + ロボットコンストラクタ(カメラキャプチャインターフェース& cam)
-      + モーターコントローラ取得(): モーターコントローラ&
-      + カメラキャプチャ取得(): カメラキャプチャインターフェース&
-      + カラーセンサー取得(): spikeapi::ColorSensor&
-      + クロック取得(): spikeapi::Clock&
-      + ボタン取得(): spikeapi::Button&
-      + フォースセンサー取得(): spikeapi::ForceSensor&
-      + ディスプレイ取得(): spikeapi::Display&
-      + 左エッジ設定(bool 左エッジ判定): void
-      + 左エッジ判定取得() const: bool
-      + ミニフィグ方向判定結果取得(): ミニフィグ方向判定結果&
-      + 背景方向判定結果取得(): 背景方向判定結果&
+      + モーターコントローラインスタンスを取得する(): モーターコントローラ&
+      + カメラキャプチャインスタンスを取得する(): カメラキャプチャインターフェース&
+      + カラーセンサーインスタンスを取得する(): spikeapi::ColorSensor&
+      + クロックインスタンスを取得する(): spikeapi::Clock&
+      + ボタンインスタンスを取得する(): spikeapi::Button&
+      + フォースセンサーインスタンスを取得する(): spikeapi::ForceSensor&
+      + ディスプレイインスタンスを取得する(): spikeapi::Display&
+      + エッジを設定する(bool エッジ): void
+      + エッジを取得する() const: bool
+      + ミニフィグ方向の判定結果を取得する(): ミニフィグ方向判定結果&
+      + 風景方向の判定結果を取得する(): 風景方向判定結果&
       - モーターコントローラ: モーターコントローラ
       - デフォルトカメラキャプチャ: カメラキャプチャ
       - カメラキャプチャ: カメラキャプチャインターフェース&
@@ -164,9 +158,9 @@ package "走行体情報管理システム" {
       - ボタン: spikeapi::Button
       - フォースセンサー: spikeapi::ForceSensor
       - ディスプレイ: spikeapi::Display
-      - ミニフィグ方向判定結果: ミニフィグ方向判定結果
-      - 背景方向判定結果: 背景方向判定結果
-      - 左エッジ判定: bool
+      - ミニフィグ方向の判定結果: ミニフィグ方向判定結果
+      - 風景方向の判定結果: 風景方向判定結果
+      - エッジ: bool
     }
   }
 
@@ -214,7 +208,6 @@ package "走行制御システム" {
       + 比例ゲイン: double
       + 積分ゲイン: double
       + 微分ゲイン: double
-      + PIDゲインコンストラクタ(double 比例ゲイン, double 積分ゲイン, double 微分ゲイン)
     }
 
     ' 色の列挙型
@@ -230,8 +223,6 @@ package "走行制御システム" {
 
     ' PID制御クラス
     class PID制御 {
-      + PID制御コンストラクタ(double 比例ゲイン, double 積分ゲイン, double 微分ゲイン, double 目標値, double 積分最大値, double 積分最小値)
-      + PID制御コンストラクタ(double 比例ゲイン, double 積分ゲイン, double 微分ゲイン, double 目標値)
       + PIDゲインを設定する(double 比例, double 積分, double 微分): void
       + PID計算を実行する(double 現在値, double デルタ): double
       - PIDゲイン: PIDゲイン
@@ -246,25 +237,21 @@ package "走行制御システム" {
 
     ' 色識別クラス
     class 色判定 {
-      + 色判定コンストラクタ()
-      + {static} 文字列から色変換(const std::string& 文字列): 色
-      + {static} 色から文字列変換(const 色& 色): const char*
-      + {static} HSVから色変換(const spikeapi::ColorSensor::HSV& hsv): 色
-      - 色判定コンストラクタ()
+      + {static} 文字列から色構造体へ変換する(const std::string& 文字列): 色
+      + {static} 色構造体から文字列へ変換する(const 色& 色): const char*
+      + {static} HSVから色構造体へ変換する(const spikeapi::ColorSensor::HSV& hsv): 色
     }
 
     ' 走行距離計算クラス
     class 走行距離計算 {
-      + {static} 車輪走行距離計算(int32_t 角度): double
-      + {static} 走行距離計算(int32_t 右角度, int32_t 左角度): double
-      - 走行距離計算()
+      + {static} 車輪の回転距離を計算する(int32_t 角度): double
+      + {static} 走行距離を計算する(int32_t 右角度, int32_t 左角度): double
     }
 
     ' 速度計算クラス
     class 速度計算器 {
-      + 速度計算器コンストラクタ(Robot& ロボット, double 目標速度)
-      + 右モーター出力計算(): double
-      + 左モーター出力計算(): double
+      + 右モーターのpower値を計算する(): double
+      + 左モーターのpower値を計算する(): double
       - const 目標速度: double
       - 右PID制御: PID制御
       - 左PID制御: PID制御
@@ -272,7 +259,6 @@ package "走行制御システム" {
       - 左モーター出力: double
       - 前回右時刻: double
       - 前回左時刻: double
-      - ロボット: ロボット&
       - {static} constexpr 右比例ゲイン: double
       - {static} constexpr 右積分ゲイン: double
       - {static} constexpr 右微分ゲイン: double
@@ -286,20 +272,19 @@ package "走行制御システム" {
     ' Motionクラス
     abstract class 動作 {
       + 動作コンストラクタ(Robot& ロボット)
-      + {abstract} 実行する(): void
+      + {abstract} 動作を実行する(): void
       # ロボット: Robot&
     }
 
     ' 応用動作クラス
     abstract class 複合動作 {
       + 複合動作コンストラクタ(Robot& ロボット)
-      + {abstract} 実行する(): void
+      + {abstract} 動作を実行する(): void
     }
 
     ' ライントレースクラス
     abstract class ライントレース {
-      + ライントレースコンストラクタ(Robot& ロボット, double 目標速度, int 目標輝度, const PIDゲイン& PIDゲイン)
-      + ライントレースを実行する(): void
+      + 動作を実行する(): void
       # {abstract} 事前条件を判定する(): bool
       # {abstract} 事前準備をする(): void
       # {abstract} 継続条件を判定する(): bool
@@ -310,8 +295,7 @@ package "走行制御システム" {
 
     ' 直進クラス
     abstract class 直進 {
-      + 直進コンストラクタ(Robot& ロボット, double 速度)
-      + 直進を実行する(): void
+      + 動作を実行する(): void
       # {abstract} 事前条件を判定する(): bool
       # {abstract} 事前準備をする(): void
       # {abstract} 継続条件を判定する(): bool
@@ -320,11 +304,10 @@ package "走行制御システム" {
 
     ' 回頭クラス
     abstract class 回頭 {
-      + 回頭コンストラクタ(Robot& ロボット, double 速度, bool 時計回り判定)
-      + 回頭実行(): void
-      + {abstract} 事前条件判定(): bool
-      + {abstract} 事前準備(): void
-      + {abstract} 継続条件判定(): bool
+      + 動作を実行する(): void
+      + {abstract} 事前条件を判定する(): bool
+      + {abstract} 事前準備をする(): void
+      + {abstract} 継続条件を判定する(): bool
       # 速度: double
       # 時計回り判定: bool
       # 左符号: int
@@ -333,7 +316,7 @@ package "走行制御システム" {
 
     ' 色指定ライントレースクラス
     class 色指定ライントレース {
-      + 色指定ライントレースコンストラクタ(Robot& ロボット, 色 目標色, double 目標速度, int 目標輝度, const PIDゲイン& ゲイン)
+      + 動作を実行する(): void
       # 事前条件を判定する(): bool
       # 事前準備をする(): void
       # 指定色検出まで継続判定をする(): bool
@@ -344,7 +327,7 @@ package "走行制御システム" {
 
     ' 距離指定ライントレースクラス
     class 距離指定ライントレース {
-      + 距離指定ライントレースコンストラクタ(Robot& ロボット, double 目標距離, double 目標速度, int 目標輝度, const PIDゲイン& PIDゲイン)
+      + 動作を実行する(): void
       # 事前条件を判定する(): bool
       # 事前準備をする(): void
       # 指定距離まで継続判定をする(): bool
@@ -354,7 +337,7 @@ package "走行制御システム" {
 
     ' 色距離指定ライントレースクラス
     class 色距離指定ライントレース {
-      + 色距離指定ライントレースコンストラクタ(Robot& ロボット, 色 目標色, double 目標距離, double 目標速度, int 目標輝度, const PIDゲイン& PIDゲイン)
+      + 動作を実行する(): void
       # 事前条件を判定する(): bool
       # 事前準備をする(): void
       # 色または距離まで継続判定をする(): bool
@@ -367,7 +350,7 @@ package "走行制御システム" {
 
     ' 距離指定直進クラス
     class 距離指定直進 {
-      + 距離指定直進コンストラクタ(Robot& ロボット, double 目標距離, double 速度)
+      + 動作を実行する(): void
       # 事前条件を判定する(): bool
       # 事前準備をする(): void
       # 指定距離まで継続判定をする(): bool
@@ -377,7 +360,7 @@ package "走行制御システム" {
 
     ' 色指定直進クラス
     class 色指定直進 {
-      + 色指定直進コンストラクタ(Robot& ロボット, 色 目標色, double 速度)
+      + 動作を実行する(): void
       # 事前条件を判定する(): bool
       # 事前準備をする(): void
       # 指定色検出まで継続判定をする(): bool
@@ -388,12 +371,12 @@ package "走行制御システム" {
 
     ' 角度指定回頭クラス
     class 角度指定回頭 {
-      + 角度指定回頭コンストラクタ(Robot& ロボット, int 目標角度, double 速度, bool 時計回り判定)
+      + 動作を実行する(): void
       # 事前準備をする(): void
       # 事前条件を判定する(): bool
       # 指定角度まで継続判定をする(): bool
-      - 左目標距離: double
-      - 右目標距離: double
+      - 左車輪の目標距離: double
+      - 右車輪の目標距離: double
       - 目標角度: int
     }
 
@@ -401,8 +384,7 @@ package "走行制御システム" {
 
     ' ' カメラPID監視クラス
     ' abstract class カメラPID追跡 {
-    '   + カメラPID追跡コンストラクタ(Robot& ロボット, double 目標速度, int 目標X座標, const PIDゲイン& PIDゲイン, 境界ボックス検出器& 境界ボックス検出器)
-    '   + カメラPID追跡を実行する(): void
+    '   + 動作を実行する(): void
     '   # {abstract} 事前条件を判定する(): bool
     '   # {abstract} 事前準備をする(): void
     '   # {abstract} 継続条件を判定する(): bool
@@ -415,7 +397,7 @@ package "走行制御システム" {
 
     ' ' 距離指定カメラライントレースクラス
     ' class 距離指定カメラライントレース {
-    '   + 距離指定カメラライントレースコンストラクタ(Robot& ロボット, double 目標距離, double 目標速度, int 目標X座標, const PIDゲイン& PIDゲイン, std::unique_ptr<境界ボックス検出器> 検出器)
+    '   + 動作を実行する(): void
     '   # 事前条件を判定する(): bool
     '   # 事前準備をする(): void
     '   # 継続条件を判定する(): bool
@@ -426,7 +408,7 @@ package "走行制御システム" {
 
     ' ' 色距離指定カメラライントレースクラス
     ' class 色距離指定カメラライントレース {
-    '   + 色距離指定カメラライントレースコンストラクタ(Robot& ロボット, 色 目標色, double 目標距離, double 目標速度, int 目標X座標, const PIDゲイン& PIDゲイン, std::unique_ptr<境界ボックス検出器> 検出器)
+    '   + 動作を実行する(): void
     '   # 事前条件を判定する(): bool
     '   # 事前準備をする(): void
     '   # 継続条件を判定する(): bool
@@ -440,8 +422,7 @@ package "走行制御システム" {
 
     ' ' カメラフレーム復帰クラス
     ' class カメラ復帰動作 {
-    '   + カメラ復帰動作コンストラクタ(Robot& ロボット, int 角度, double 速度, bool 時計回り判定, std::unique_ptr<境界ボックス検出器> 境界ボックス検出器)
-    '   + カメラ復帰動作を実行する(): void
+    '   + 動作を実行する(): void
     '   - 境界ボックス検出器: std::unique_ptr<境界ボックス検出器>
     '   - 検出結果: 境界ボックス検出結果
     '   - 復帰角度: int
@@ -452,15 +433,13 @@ package "走行制御システム" {
 
     ' エッジ変更クラス
     class エッジ変更 {
-      + エッジ変更コンストラクタ(Robot& ロボット, bool 左エッジ判定)
-      + エッジ変更を実行する(): void
-      - 左エッジ判定: bool
+      + 動作を実行する(): void
+      - エッジ: bool
     }
 
     ' スリープクラス
     class スリープ {
-      + スリープコンストラクタ(Robot& ロボット, int ミリ秒)
-      + スリープを実行する(): void
+      + 動作を実行する(): void
       - ミリ秒: int
     }
   }
@@ -482,8 +461,6 @@ package "カメラ撮影システム" {
 
     ' カメラキャプチャークラス
     class カメラキャプチャ {
-      + カメラキャプチャコンストラクタ()
-      + カメラキャプチャデストラクタ()
       + 利用可能カメラIDを検索する(int 最大テスト数): int
       + カメラIDを取得する(): int
       + カメラIDを設定する(int ID): bool
@@ -497,7 +474,6 @@ package "カメラ撮影システム" {
     ' フレーム保存クラス
     class フレーム保存 {
       + {static} 画像を保存する(cv::Mat& フレーム, const std::string& ファイルパス, const std::string& ファイル名): void
-      - フレーム保存コンストラクタ()
       - {static} inline 画像拡張子: std::string
     }
   }
@@ -508,7 +484,6 @@ package "配置エリアA撮影システム" {
   package "配置エリアA攻略部" {
     ' ミニフィグカメラアクション
     class ミニフィグカメラ動作 {
-      + ミニフィグカメラ動作コンストラクタ(Robot& ロボット, bool 時計回り判定, int 前目標角度, int 後目標角度, double 目標回転速度, double 後進目標距離, double 前進目標距離, double 後進速度, double 前進速度, int 位置)
       + ミニフィグ撮影動作を実行する(): void
       - 時計回り判定: bool
       - 前目標角度: int
@@ -529,7 +504,6 @@ package "配置エリアA撮影システム" {
   package "ミニフィグ向き判定部" {
     ' ミニフィグ向き判定クラス
     class ミニフィグ方向検出器 {
-      + ミニフィグ方向検出器コンストラクタ(const std::string& モデルパス)
       + ミニフィグの向きを検出する(const cv::Mat& フレーム, ミニフィグ方向判定結果& 結果): void
       - ネットワーク: cv::dnn::Net
       - モデルパス: std::string
@@ -544,41 +518,38 @@ package "配置エリアA撮影システム" {
 package "配置エリアB撮影システム" {
   package "配置エリアB攻略部" {
     ' 風景プラレールカメラアクション
-    class 背景プラレールカメラ動作 {
-      + 背景プラレールカメラ動作(Robot& ロボット, bool 時計回り判定, int 前目標角度, int 後目標角度, double 目標回転速度, double 闾値, double 最小面積, const cv::Rect& 関心領域, int 位置)
-      + 背景プラレール撮影動作実行(): void
+    class 風景プラレールカメラ動作 {
+      + 風景プラレール撮影動作を実行する(): void
       - 時計回り判定: bool
       - 前目標角度: int
       - 後目標角度: int
       - 目標回転速度: double
-      - 闾値: double
+      - 閾値: double
       - 最小面積: double
       - 位置: int
       - 関心領域: cv::Rect
       - 事前条件判定(): bool
-      - 方向検出(cv::Mat& フレーム): void
+      - 風景方向を取得する(cv::Mat& フレーム): void
     }
   }
 
   package "動体検出部" {
     ' 動体検出クラス
     class 動体検出器 {
-      + 動体検出器コンストラクタ(double 闾値, double 最小面積, const cv::Rect& 関心領域)
-      + 背景設定(const cv::Mat& 背景): bool
-      + 動体検出(const cv::Mat& フレーム, 境界ボックス検出結果& 結果): void
-      + フレーム2枚比較(const cv::Mat& 第1フレーム, const cv::Mat& 第2フレーム): std::vector<cv::Point>
-      - 闾値: double
+      + 風景を設定する(const cv::Mat& 風景): bool
+      + 動体を検出する(const cv::Mat& フレーム, 境界ボックス検出結果& 結果): void
+      + 2枚のフレームを比較する(const cv::Mat& 第1フレーム, const cv::Mat& 第2フレーム): std::vector<cv::Point>
+      - 閾値: double
       - 最小面積: double
       - 関心領域: cv::Rect
-      - 背景フレーム: cv::Mat
+      - 風景フレーム: cv::Mat
     }
 
     ' プラレールカメラアクション
     class プラレールカメラ動作 {
-      + プラレールカメラ動作コンストラクタ(Robot& ロボット, double 闾値, double 最小面積, const cv::Rect& 関心領域)
-      + プラレール撮影動作実行(): void
-      + 画像保存名設定(const std::string& ファイル名): void
-      - 背景フレーム取得(): void
+      + プラレール撮影動作を実行する(): void
+      + 画像保存名を設定する(const std::string& ファイル名): void
+      - 風景フレームを取得する(): void
       - 動体検出器: 動体検出器
       - 画像保存名: std::string
       - {static} constexpr 最大無動体数: int
@@ -587,7 +558,7 @@ package "配置エリアB撮影システム" {
 
     ' 画像処理系
     struct 境界ボックス検出結果 {
-      + 検出済み: bool
+      + 検出結果: bool
       + 左上: cv::Point
       + 右上: cv::Point
       + 左下: cv::Point
@@ -595,34 +566,29 @@ package "配置エリアB撮影システム" {
     }
 
     abstract class 境界ボックス検出器 {
-      + {abstract} ~境界ボックス検出器()
-      + {abstract} 境界ボックス検出(const cv::Mat& フレーム, 境界ボックス検出結果& 結果): void
+      + {abstract} 境界のバウンディングボックスを検出する(const cv::Mat& フレーム, 境界ボックス検出結果& 結果): void
     }
 
     class ライン境界ボックス検出器 {
-      + ライン境界ボックス検出器コンストラクタ(const cv::Scalar& 下位HSV, const cv::Scalar& 上位HSV)
-      + ライン境界ボックス検出器コンストラクタ(const cv::Scalar& 下位HSV, const cv::Scalar& 上位HSV, const cv::Rect& 関心領域)
-      + ライン境界ボックス検出器コンストラクタ(const cv::Scalar& 下位HSV, const cv::Scalar& 上位HSV, const cv::Rect& 関心領域, const cv::Size& 解像度)
-      + ライン境界ボックス検出(const cv::Mat& フレーム, 境界ボックス検出結果& 結果): void
+      + ライン境界のバウンディングボックスを検出する(const cv::Mat& フレーム, 境界ボックス検出結果& 結果): void
       - {static} 最小ライン輪郭面積: double
       - 下位HSV: cv::Scalar
       - 上位HSV: cv::Scalar
       - 関心領域: cv::Rect
       - 解像度: cv::Size
-      - パラメータ検証(): void
+      - パラメータを検証する(): void
     }
   }
 
   package "風景向き判定部" {
     ' 風景向き判定クラス
-    class 背景方向検出器 {
-      + 背景方向検出器コンストラクタ(const std::string& モデルパス)
-      + 背景方向検出(const cv::Mat& フレーム, 背景方向判定結果& 結果): void
+    class 風景方向検出器 {
+      + 風景方向を検出する(const cv::Mat& フレーム, 風景方向判定結果& 結果): void
       - ネットワーク: cv::dnn::Net
       - モデルパス: std::string
       - 出力画像パス: std::string
-      - 前処理(const cv::Mat& フレーム, float スケール, int パッドX, int パッドY): cv::Mat
-      - 後処理(const std::vector<cv::Mat>& 出力, const cv::Mat& フレーム, float スケール, int パッドX, int パッドY, 背景方向判定結果& 結果): void
+      - 前処理をする(const cv::Mat& フレーム, float スケール, int パッドX, int パッドY): cv::Mat
+      - 後処理をする(const std::vector<cv::Mat>& 出力, const cv::Mat& フレーム, float スケール, int パッドX, int パッドY, 風景方向判定結果& 結果): void
     }
   }
 }
@@ -632,8 +598,7 @@ package "ユーティリティシステム" {
   package "コマンド実行部" {
     ' シェルコマンド実行クラス
     class CommandExecutor {
-      + {static} コマンド実行(const std::string& command): int
-      - コマンド実行器コンストラクタ()
+      + {static} コマンドを実行する(const std::string& command): int
     }
   }
 }
@@ -642,8 +607,7 @@ package "ユーティリティシステム" {
 package "走行体・無線通信デバイス間通信システム" {
   ' 走行体から無線通信デバイスへの画像アップロードクラス
   class ImageUploader {
-    + {static} 画像アップロード(const std::string& imagePath, int maxAttempts): bool
-    - 画像アップローダコンストラクタ()
+    + {static} 走行体から無線通信デバイスへ画像をアップロードする(const std::string& imagePath, int maxAttempts): bool
   }
 }
 
@@ -652,7 +616,7 @@ package "画像アップロードシステム" {
   ' 別リポジトリの etrobocon2025-comm-device-system を参照
   ' 無線通信デバイスから競技システムへの画像アップロードクラス
   class OfficialInterface {
-    + スナップアップロード(std::string imagePath): bool
+    + 無線通信デバイスから競技システムへ画像をアップロードする(std::string imagePath): bool
   }
 }
 
@@ -677,7 +641,7 @@ package "画像アップロードシステム" {
 ' 色距離指定カメラライントレース --|> カメラPID追跡 : 継承
 
 ミニフィグカメラ動作 --|> 複合動作 : 継承
-背景プラレールカメラ動作 --|> 複合動作 : 継承
+風景プラレールカメラ動作 --|> 複合動作 : 継承
 ' カメラ復帰動作 --|> 複合動作 : 継承
 
 エッジ変更 --|> 動作 : 継承
@@ -698,7 +662,7 @@ ETロボコン2025 *-- ロボット : コンポジション
 ロボット *-- "spikeapi::Button" : コンポジション
 ロボット *-- "spikeapi::ForceSensor" : コンポジション
 ロボット *-- "spikeapi::Display" : コンポジション
-ロボット *-- 背景方向判定結果 : コンポジション
+ロボット *-- 風景方向判定結果 : コンポジション
 ロボット *-- ミニフィグ方向判定結果 : コンポジション
 
 モーターコントローラ *-- "spikeapi::Motor" : コンポジション
@@ -736,7 +700,7 @@ PID制御 *-- PIDゲイン : コンポジション
 ' 動作解析器 ..> 距離指定カメラライントレース : 依存
 ' 動作解析器 ..> 色距離指定カメラライントレース : 依存
 動作解析器 ..> ミニフィグカメラ動作 : 依存
-動作解析器 ..> 背景プラレールカメラ動作 : 依存
+動作解析器 ..> 風景プラレールカメラ動作 : 依存
 ' 動作解析器 ..> カメラ復帰動作 : 依存
 動作解析器 ..> 文字列操作器 : 依存
 
@@ -766,15 +730,15 @@ PID制御 *-- PIDゲイン : コンポジション
 ライン境界ボックス検出器 ..> 境界ボックス検出結果 : 依存
 動体検出器 ..> 境界ボックス検出結果 : 依存
 
-背景方向検出器 ..> 背景方向判定結果 : 依存
-背景方向検出器 ..> 背景方向 : 依存
+風景方向検出器 ..> 風景方向判定結果 : 依存
+風景方向検出器 ..> 風景方向 : 依存
 
 ミニフィグ方向検出器 ..> ミニフィグ方向判定結果 : 依存
 ミニフィグ方向検出器 ..> ミニフィグ方向 : 依存
 
 ' 構造体と列挙型の関係
 ミニフィグ方向判定結果 ..> ミニフィグ方向 : 依存
-背景方向判定結果 ..> 背景方向 : 依存
+風景方向判定結果 ..> 風景方向 : 依存
 
 ミニフィグカメラ動作 ..> フレーム保存 : 依存
 ミニフィグカメラ動作 ..> ミニフィグ方向検出器 : 依存
@@ -782,11 +746,11 @@ PID制御 *-- PIDゲイン : コンポジション
 ミニフィグカメラ動作 ..> 距離指定直進 : 依存
 プラレールカメラ動作 ..> フレーム保存 : 依存
 動体検出器 ..> フレーム保存 : 依存
-背景プラレールカメラ動作 ..> 背景方向検出器 : 依存
-背景プラレールカメラ動作 ..> プラレールカメラ動作 : 依存
-背景プラレールカメラ動作 ..> 角度指定回頭 : 依存
+風景プラレールカメラ動作 ..> 風景方向検出器 : 依存
+風景プラレールカメラ動作 ..> プラレールカメラ動作 : 依存
+風景プラレールカメラ動作 ..> 角度指定回頭 : 依存
 ミニフィグカメラ動作 ..> 画像アップローダ : 依存
-背景プラレールカメラ動作 ..> 画像アップローダ : 依存
+風景プラレールカメラ動作 ..> 画像アップローダ : 依存
 ' カメラ復帰動作 ..> 境界ボックス検出器 : 依存
 ' カメラ復帰動作 ..> 境界ボックス検出結果 : 依存
 画像アップローダ ..> コマンド実行器 : 依存

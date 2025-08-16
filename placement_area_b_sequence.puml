@@ -47,8 +47,8 @@ activate PCA
 
 PCA -> PCA: getBackgroundFrame()
 PCA -> Camera: getFrame()
-Camera --> PCA: 背景フレーム
-PCA -> MD: setBackground(背景フレーム)
+Camera --> PCA: 風景フレーム
+PCA -> MD: setBackground(風景フレーム)
 
 loop 動体検出ループ (MAX_NO_MOTION回まで)
     PCA -> Camera: getFrame()

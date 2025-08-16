@@ -54,9 +54,7 @@ package "ロボコンスナップ攻略システム" {
 
     ' エリアマスタークラス
     class AreaMaster {
-      + AreaMaster(Robot& _robot, Area _area, bool _isLeftCourse, int _targetBrightness)
       + run(): void
-      - robot: Robot&
       - area: Area
       - isLeftCourse: bool
       - targetBrightness: int
@@ -66,14 +64,12 @@ package "ロボコンスナップ攻略システム" {
 
     ' キャリブレータクラス
     class Calibrator {
-      + Calibrator(Robot& _robot)
       + selectAndSetCourse(): void
       + measureAndSetTargetBrightness(): void
       + getAngleCheckFrame(): void
       + waitForStart(): void
       + getIsLeftCourse(): bool
       + getTargetBrightness(): int
-      - robot: Robot&
       - isLeftCourse: bool
       - targetBrightness: int
     }
@@ -81,7 +77,6 @@ package "ロボコンスナップ攻略システム" {
     ' モーションパーサークラス
     class MotionParser {
       + {static} createMotions(Robot& robot, std::string& commandFilePath, int targetBrightness): std::vector<Motion*>
-      - MotionParser()
       - {static} convertCommand(const std::string& str): COMMAND
       - {static} convertBool(const std::string& command, const std::string& stringParameter): bool
     }
@@ -89,7 +84,6 @@ package "ロボコンスナップ攻略システム" {
     ' ユーティリティクラス
     class StringOperator {
       + {static} removeEOL(const std::string& str): std::string
-      - StringOperator()
     }
   }
 }
@@ -111,13 +105,13 @@ package "走行体情報管理システム" {
       LEFT
     }
 
-    ' 背景方向判定結果
+    ' 風景方向判定結果
     struct BackgroundDirectionResult {
       + wasDetected: bool
       + direction: BackgroundDirection
     }
 
-    ' 背景方向の列挙型
+    ' 風景方向の列挙型
     enum BackgroundDirection {
       FRONT
       RIGHT
@@ -214,7 +208,6 @@ package "走行制御システム" {
       + kp: double
       + ki: double
       + kd: double
-      + PidGain(double _kp, double _ki, double _kd)
     }
 
     ' 色の列挙型
@@ -230,8 +223,6 @@ package "走行制御システム" {
 
     ' PID制御クラス
     class Pid {
-      + Pid(double _kp, double _ki, double _kd, double _targetValue, double _maxIntegral, double _minIntegral)
-      + Pid(double _kp, double _ki, double _kd, double _targetValue)
       + setPidGain(double _kp, double _ki, double _kd): void
       + calculatePid(double currentValue, double delta): double
       - pidGain: PidGain
@@ -246,18 +237,15 @@ package "走行制御システム" {
 
     ' 色識別クラス
     class ColorJudge {
-      + ColorJudge()
       + {static} convertStringToColor(const std::string& str): COLOR
       + {static} convertColorToString(const COLOR& color): const char*
       + {static} convertHsvToColor(const spikeapi::ColorSensor::HSV& hsv): COLOR
-      - ColorJudge()
     }
 
     ' 走行距離計算クラス
     class Mileage {
       + {static} calculateWheelMileage(int32_t angle): double
       + {static} calculateMileage(int32_t rightAngle, int32_t leftAngle): double
-      - Mileage()
     }
 
     ' 速度計算クラス
@@ -272,7 +260,6 @@ package "走行制御システム" {
       - leftMotorPower: double
       - prevRightTime: double
       - prevLeftTime: double
-      - robot: Robot&
       - {static} constexpr RIGHT_K_P: double
       - {static} constexpr RIGHT_K_I: double
       - {static} constexpr RIGHT_K_D: double
@@ -298,7 +285,6 @@ package "走行制御システム" {
 
     ' ライントレースクラス
     abstract class LineTrace {
-      + LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
       + run(): void
       # {abstract} isMetPreCondition(): bool
       # {abstract} prepare(): void
@@ -310,7 +296,6 @@ package "走行制御システム" {
 
     ' 直進クラス
     abstract class Straight {
-      + Straight(Robot& _robot, double _speed)
       + run(): void
       # {abstract} isMetPreCondition(): bool
       # {abstract} prepare(): void
@@ -320,7 +305,6 @@ package "走行制御システム" {
 
     ' 回頭クラス
     abstract class Rotation {
-      + Rotation(Robot& _robot, double _speed, bool _isClockwise)
       + run(): void
       + {abstract} isMetPreCondition(): bool
       + {abstract} prepare(): void
@@ -333,7 +317,6 @@ package "走行制御システム" {
 
     ' 色指定ライントレースクラス
     class ColorLineTrace {
-      + ColorLineTrace(Robot& _robot, COLOR _targetColor, double _targetSpeed, int _targetBrightness, const PidGain& _gain)
       # isMetPreCondition(): bool
       # prepare(): void
       # isMetContinuationCondition(): bool
@@ -344,7 +327,6 @@ package "走行制御システム" {
 
     ' 距離指定ライントレースクラス
     class DistanceLineTrace {
-      + DistanceLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
       # isMetPreCondition(): bool
       # prepare(): void
       # isMetContinuationCondition(): bool
@@ -354,7 +336,6 @@ package "走行制御システム" {
 
     ' 色距離指定ライントレースクラス
     class ColorDistanceLineTrace {
-      + ColorDistanceLineTrace(Robot& _robot, COLOR _targetColor, double _targetDistance, double _targetSpeed, int _targetBrightness, const PidGain& _pidGain)
       # isMetPreCondition(): bool
       # prepare(): void
       # isMetContinuationCondition(): bool
@@ -367,7 +348,6 @@ package "走行制御システム" {
 
     ' 距離指定直進クラス
     class DistanceStraight {
-      + DistanceStraight(Robot& _robot, double _targetDistance, double _speed)
       # isMetPreCondition(): bool
       # prepare(): void
       # isMetContinuationCondition(): bool
@@ -377,7 +357,6 @@ package "走行制御システム" {
 
     ' 色指定直進クラス
     class ColorStraight {
-      + ColorStraight(Robot& _robot, COLOR _targetColor, double _speed)
       # isMetPreCondition(): bool
       # prepare(): void
       # isMetContinuationCondition(): bool
@@ -388,7 +367,6 @@ package "走行制御システム" {
 
     ' 角度指定回頭クラス
     class AngleRotation {
-      + AngleRotation(Robot& _robot, int _targetAngle, double _speed, bool _isClockwise)
       # prepare(): void
       # isMetPreCondition(): bool
       # isMetContinuationCondition(): bool
@@ -401,7 +379,6 @@ package "走行制御システム" {
 
     ' カメラPID監視クラス
     ' abstract class CameraPidTracking {
-    '   + CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, BoundingBoxDetector& _boundingBoxDetector)
     '   + run(): void
     '   # {abstract} isMetPreCondition(): bool
     '   # {abstract} prepare(): void
@@ -415,7 +392,6 @@ package "走行制御システム" {
 
     ' 距離指定カメラライントレースクラス
     ' class DistanceCameraLineTrace {
-    '   + DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, std::unique_ptr<BoundingBoxDetector> _detector)
     '   # isMetPreCondition(): bool
     '   # prepare(): void
     '   # isMetContinuationCondition(): bool
@@ -426,7 +402,6 @@ package "走行制御システム" {
 
     ' 色距離指定カメラライントレースクラス
     ' class ColorDistanceCameraLineTrace {
-    '   + ColorDistanceCameraLineTrace(Robot& _robot, COLOR _targetColor, double _targetDistance, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain, std::unique_ptr<BoundingBoxDetector> _detector)
     '   # isMetPreCondition(): bool
     '   # prepare(): void
     '   # isMetContinuationCondition(): bool
@@ -438,9 +413,8 @@ package "走行制御システム" {
     '   - detector: std::unique_ptr<BoundingBoxDetector>
     ' }
 
-    ' ' カメラフレーム復帰クラス
+    ' カメラフレーム復帰クラス
     ' class CameraRecoveryAction {
-    '   + CameraRecoveryAction(Robot& _robot, int _angle, double _speed, bool _isClockwise, std::unique_ptr<BoundingBoxDetector> _boundingBoxDetector)
     '   + run(): void
     '   - boundingBoxDetector: std::unique_ptr<BoundingBoxDetector>
     '   - result: BoundingBoxDetectionResult
@@ -452,14 +426,12 @@ package "走行制御システム" {
 
     ' エッジ変更クラス
     class EdgeChange {
-      + EdgeChange(Robot& _robot, bool _isLeftEdge)
       + run(): void
       - isLeftEdge: bool
     }
 
     ' スリープクラス
     class Sleeping {
-      + Sleeping(Robot& _robot, int _milliSec)
       + run(): void
       - milliSec: int
     }
@@ -499,7 +471,6 @@ package "カメラ撮影システム" {
     ' スナップショットクラス
     ' スナップショットクラスはデバッグ用のクラスなので、クラス図に含めない
     ' class Snapshot {
-    '   + Snapshot(Robot& _robot, const std::string& _fileName)
     '   + run(): void
     '   - fileName: std::string
     '   - {static} const path: std::string
@@ -508,7 +479,6 @@ package "カメラ撮影システム" {
     ' フレーム保存クラス
     class FrameSave {
       + {static} save(cv::Mat& frame, const std::string& filePath, const std::string& fileName): void
-      - FrameSave()
       - {static} inline imgExtension: std::string
     }
   }
@@ -519,7 +489,6 @@ package "配置エリアA撮影システム" {
   package "配置エリアA攻略部" {
     ' ミニフィグカメラアクション
     class MiniFigCameraAction {
-      + MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle, double _targetRotationSpeed, double _backTargetDistance, double _forwardTargetDistance, double _backSpeed, double _forwardSpeed, int _position)
       + run(): void
       - isClockwise: bool
       - preTargetAngle: int
@@ -540,7 +509,6 @@ package "配置エリアA撮影システム" {
   package "ミニフィグ向き判定部" {
     ' ミニフィグ向き判定クラス
     class MiniFigDirectionDetector {
-      + MiniFigDirectionDetector(const std::string& modelPath)
       + detect(const cv::Mat& frame, MiniFigDirectionResult& result): void
       - net: cv::dnn::Net
       - modelPath: std::string
@@ -556,7 +524,6 @@ package "配置エリアB撮影システム" {
   package "配置エリアB攻略部" {
     ' 風景プラレールカメラアクション
     class BackgroundPlaCameraAction {
-      + BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle, double _targetRotationSpeed, double _threshold, double _minArea, const cv::Rect& _roi, int _position)
       + run(): void
       - isClockwise: bool
       - preTargetAngle: int
@@ -574,7 +541,6 @@ package "配置エリアB撮影システム" {
   package "動体検出部" {
     ' 動体検出クラス
     class MotionDetector {
-      + MotionDetector(double _threshold, double _minArea, const cv::Rect& _roi)
       + setBackground(const cv::Mat& background): bool
       + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
       + compareTwoFrames(const cv::Mat& firstFrame, const cv::Mat& secondFrame): std::vector<cv::Point>
@@ -586,7 +552,6 @@ package "配置エリアB撮影システム" {
 
     ' プラレールカメラアクション
     class PlaCameraAction {
-      + PlaCameraAction(Robot& _robot, double _threshold, double _minArea, const cv::Rect& _roi)
       + run(): void
       + setImageSaveName(const std::string& fileName): void
       - getBackgroundFrame(): void
@@ -607,14 +572,10 @@ package "配置エリアB撮影システム" {
     }
 
     abstract class BoundingBoxDetector {
-      + {abstract} ~BoundingBoxDetector()
       + {abstract} detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
     }
 
     class LineBoundingBoxDetector {
-      + LineBoundingBoxDetector(const cv::Scalar& _lowerHSV, const cv::Scalar& _upperHSV)
-      + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi)
-      + LineBoundingBoxDetector(const cv::Scalar& lowerHSV, const cv::Scalar& upperHSV, const cv::Rect& roi, const cv::Size& resolution)
       + detect(const cv::Mat& frame, BoundingBoxDetectionResult& result): void
       - {static} MIN_LINE_CONTOUR_AREA: double
       - lowerHSV: cv::Scalar
@@ -628,7 +589,6 @@ package "配置エリアB撮影システム" {
   package "風景向き判定部" {
     ' 風景向き判定クラス
     class BackgroundDirectionDetector {
-      + BackgroundDirectionDetector(const std::string& modelPath)
       + detect(const cv::Mat& frame, BackgroundDirectionResult& result): void
       - net: cv::dnn::Net
       - modelPath: std::string
@@ -645,7 +605,6 @@ package "ユーティリティシステム" {
     ' シェルコマンド実行クラス
     class CommandExecutor {
       + {static} exec(const std::string& command): int
-      - CommandExecutor()
     }
   }
 }
@@ -655,7 +614,6 @@ package "走行体・無線通信デバイス間通信システム" {
   ' 走行体から無線通信デバイスへの画像アップロードクラス
   class ImageUploader {
     + {static} uploadImage(const std::string& imagePath, int maxAttempts): bool
-    - ImageUploader()
   }
 }
 
