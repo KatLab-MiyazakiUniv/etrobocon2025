@@ -17,8 +17,8 @@ skinparam packageFontSize 10
 ' 配置指示
 !define LAYOUT_TOP_TO_BOTTOM_DIRECTION top to bottom direction
 
-' サブシステム、ロボコンスナップ攻略システム
-package "ロボコンスナップ攻略システム" {
+' サブシステム、走行システム
+package "走行システム" {
   package "走行計画部" {
     ' コマンドの列挙型
     enum COMMAND {
