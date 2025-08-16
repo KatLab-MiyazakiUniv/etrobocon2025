@@ -76,16 +76,21 @@ void IMURotation::updateMotorControl()
   double targetAngularVelocity = anglePid.calculatePid(angleError, 0.01);
 
   // 内側ループ：角速度制御（角速度偏差からモータパワーを計算）
-  double currentAngularVelocity
-      = robot.getIMUControllerInstance().getCorrectedZAxisAngularVelocity();
-  double velocityError = targetAngularVelocity - currentAngularVelocity;
+  double motorPower = angularVelocityPid.calculatePid(
+      targetAngularVelocity - robot.getIMUControllerInstance().getCorrectedZAxisAngularVelocity(), 
+      0.01);
+  
+  // 最低モータパワーを適用
+  if(std::abs(motorPower) > 0.0) {
+    if(motorPower > 0) {
+      motorPower = std::max(motorPower, MIN_MOTOR_POWER);
+    } else {
+      motorPower = std::min(motorPower, -MIN_MOTOR_POWER);
+    }
+  }
 
-  // 角速度PID制御で操作量を計算
-  double motorPower = angularVelocityPid.calculatePid(velocityError, 0.01);
-
-  MotorController& motorController = robot.getMotorControllerInstance();
-  motorController.setLeftMotorPower(motorPower * leftSign);
-  motorController.setRightMotorPower(motorPower * rightSign);
+  robot.getMotorControllerInstance().setLeftMotorPower(motorPower * leftSign);
+  robot.getMotorControllerInstance().setRightMotorPower(motorPower * rightSign);
 
   // 10ms待機（これがないと通信バッファオーバーフローになる）
   std::this_thread::sleep_for(std::chrono::milliseconds(10));

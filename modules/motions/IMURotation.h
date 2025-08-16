@@ -53,6 +53,7 @@ class IMURotation : public Rotation {
   static constexpr double ANGULAR_VELOCITY_K_P = 0.5;   // 角速度比例ゲイン
   static constexpr double ANGULAR_VELOCITY_K_I = 0.01;  // 角速度積分ゲイン
   static constexpr double ANGULAR_VELOCITY_K_D = 0.0;   // 角速度微分ゲイン
+  static constexpr double MIN_MOTOR_POWER = 40.0;       // 最低モータパワー
   int targetAngle;                                      // 目標回転角度(deg) 0~360
   Pid anglePid;                                         // 角度PID制御クラス
   Pid angularVelocityPid;                               // 角速度PID制御クラス
