@@ -41,44 +41,8 @@ void IMUController::calculateCorrectionMatrix()
   spikeapi::IMU::Acceleration acc;
   imu.getAcceleration(acc);  // 加速度取得（mm/s^2）
 
-  // 正規化
-  float norm = std::sqrt(acc.x * acc.x + acc.y * acc.y + acc.z * acc.z);
-  float gx = acc.x / norm;
-  float gy = acc.y / norm;
-  float gz = acc.z / norm;
-
-  // 理想の重力方向（Z軸）
-  float ez[3] = { 0.0f, 0.0f, 1.0f };
-
-  // 回転軸 v = ez × g（外積）
-  float vx = ez[1] * gz - ez[2] * gy;  // 0*gz - 1*gy = -gy
-  float vy = ez[2] * gx - ez[0] * gz;  // 1*gx - 0*gz = gx
-  float vz = ez[0] * gy - ez[1] * gx;  // 0*gy - 0*gx = 0
-
-  // 回転角 θ = acos(ez・g)（内積）
-  float dot = ez[0] * gx + ez[1] * gy + ez[2] * gz;
-  float theta = std::acos(dot);
-
-  // 回転軸を正規化
-  float v_norm = std::sqrt(vx * vx + vy * vy + vz * vz);
-  vx /= v_norm;
-  vy /= v_norm;
-  vz /= v_norm;
-
-  float c = std::cos(theta);
-  float s = std::sin(theta);
-  float t = 1 - c;
-
-  // ロドリゲスの回転公式による3D回転行列を計算
-  correctionMatrix[0][0] = t * vx * vx + c;
-  correctionMatrix[0][1] = t * vx * vy - s * vz;
-  correctionMatrix[0][2] = t * vx * vz + s * vy;
-  correctionMatrix[1][0] = t * vx * vy + s * vz;
-  correctionMatrix[1][1] = t * vy * vy + c;
-  correctionMatrix[1][2] = t * vy * vz - s * vx;
-  correctionMatrix[2][0] = t * vx * vz - s * vy;
-  correctionMatrix[2][1] = t * vy * vz + s * vx;
-  correctionMatrix[2][2] = t * vz * vz + c;
+  // RotationMatrixクラスを使用して補正行列を計算
+  RotationMatrix::calculateCorrectionMatrix(acc.x, acc.y, acc.z, correctionMatrix);
 }
 
 void IMUController::calculateOffset()
