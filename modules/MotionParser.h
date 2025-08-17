@@ -28,6 +28,7 @@
 #include "Snapshot.h"
 #include "MiniFigCameraAction.h"
 #include "BackgroundPlaCameraAction.h"
+#include "AngularVelocityTest.h"
 
 enum class COMMAND {
   AR,    // 角度指定回頭

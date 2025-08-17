@@ -7,6 +7,8 @@
 #ifndef SPIKE_CPP_API_IMU_H_
 #define SPIKE_CPP_API_IMU_H_
 
+#include <cstdlib>
+
 namespace spikeapi {
   /**
    * SPIKE IMUクラス

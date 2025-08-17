@@ -14,12 +14,12 @@ class IMURotation : public Rotation {
  public:
   /**
    * コンストラクタ
-   * @param _robot       ロボット制御クラスへの参照
-   * @param _targetAngle 目標回転角度(deg) 0~360
-   * @param _isClockwise 回頭方向 true:時計回り, false:反時計回り
-   * @param _angleGain   角度制御ゲイン
+   * @param _robot        ロボット制御クラスへの参照
+   * @param _targetAngle  目標回転角度(deg) 0~360
+   * @param _isClockwise  回頭方向 true:時計回り, false:反時計回り
+   * @param _anglePidGain 角度制御PIDゲイン
    */
-  IMURotation(Robot& _robot, int _targetAngle, bool _isClockwise, double _angleGain);
+  IMURotation(Robot& _robot, int _targetAngle, bool _isClockwise, const PidGain& _anglePidGain);
   /**
    * @brief 回頭する
    * @note run() メソッドは Rotation クラスの実装をそのまま使用する

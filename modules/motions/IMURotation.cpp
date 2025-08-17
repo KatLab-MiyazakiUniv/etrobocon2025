@@ -31,13 +31,13 @@ bool IMURotation::isMetPreCondition()
     std::cerr << "targetAngle=" << targetAngle << " は範囲外です。" << std::endl;
     return false;
   }
-  
+
   // IMU角度計算が開始されているかチェック
   if(!robot.getIMUControllerInstance().isAngleCalculating()) {
     std::cerr << "IMU角度計算が開始されていません。" << std::endl;
     return false;
   }
-  
+
   return true;
 }
 
@@ -65,22 +65,22 @@ bool IMURotation::isMetContinuationCondition()
 
 void IMURotation::updateMotorControl()
 {
-  // 外側ループ：角度制御（角度偏差から目標角速度を計算）
+  // 目標角度に達するまでの残りの角度を計算
   double angleError = targetAngle - currentAngle;
 
   // 誤差を±180範囲に正規化
   if(angleError > 180.0) angleError -= 360.0;
   if(angleError < -180.0) angleError += 360.0;
 
-  // 角度PID制御で目標角速度を決定
+  // PID制御により角度から目標角速度を決定
   double targetAngularVelocity = anglePid.calculatePid(angleError, 0.01);
 
-  // 内側ループ：角速度制御（角速度偏差からモータパワーを計算）
+  // PID制御により目標角速度からモータパワーを決定
   double motorPower = angularVelocityPid.calculatePid(
-      targetAngularVelocity - robot.getIMUControllerInstance().getCorrectedZAxisAngularVelocity(), 
+      targetAngularVelocity - robot.getIMUControllerInstance().getCorrectedZAxisAngularVelocity(),
       0.01);
-  
-  // 最低モータパワーを適用
+
+  // 停止条件以外で走行体が停止しないように最低モータパワーを適用
   if(std::abs(motorPower) > 0.0) {
     if(motorPower > 0) {
       motorPower = std::max(motorPower, MIN_MOTOR_POWER);
@@ -89,6 +89,7 @@ void IMURotation::updateMotorControl()
     }
   }
 
+  // モータパワーを適用
   robot.getMotorControllerInstance().setLeftMotorPower(motorPower * leftSign);
   robot.getMotorControllerInstance().setRightMotorPower(motorPower * rightSign);
 
