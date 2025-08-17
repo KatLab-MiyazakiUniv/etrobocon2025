@@ -18,6 +18,7 @@ APPL_CXXOBJS += $(OBJS)
 SRCLANG := c++
 
 APPL_LIBS += -lm
+APPL_LIBS += $(shell pkg-config --libs opencv4)
 
 APPL_DIRS += \
 	$(mkfile_path)modules\

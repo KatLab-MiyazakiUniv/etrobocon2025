@@ -8,6 +8,7 @@
 
 Robot::Robot()
   : motorController(),
+    cameraCapture(),
     socketClient(),
     colorSensor(EPort::PORT_E),
     clock(),
@@ -28,6 +29,11 @@ Robot::~Robot()
 MotorController& Robot::getMotorControllerInstance()
 {
   return motorController;
+}
+
+CameraCapture& Robot::getCameraCaptureInstance()
+{
+  return cameraCapture;
 }
 
 SocketClient& Robot::getSocketClient()

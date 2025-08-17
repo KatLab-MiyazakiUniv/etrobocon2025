@@ -6,6 +6,8 @@
 
 #include "EtRobocon2025.h"
 #include "AreaMaster.h"
+#include <thread>
+#include <chrono>
 
 Robot EtRobocon2025::robot;  // Robotインスタンス
 

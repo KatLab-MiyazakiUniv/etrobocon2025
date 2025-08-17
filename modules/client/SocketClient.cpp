@@ -56,8 +56,8 @@ bool SocketClient::connectToServer(const char* server_ip)
 void SocketClient::disconnectFromServer()
 {
   if(isConnected) {
-    send(sock, reinterpret_cast<const char*>(&CameraServer::Command::SHUTDOWN),
-         sizeof(CameraServer::Command), 0);
+    CameraServer::Command cmd = CameraServer::Command::SHUTDOWN;
+    send(sock, reinterpret_cast<const char*>(&cmd), sizeof(cmd), 0);
     close(sock);
     sock = -1;
     isConnected = false;

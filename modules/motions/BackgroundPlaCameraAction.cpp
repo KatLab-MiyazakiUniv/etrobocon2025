@@ -63,13 +63,13 @@ void BackgroundPlaCameraAction::run()
   bool success = robot.getSocketClient().executeBackgroundPlaAction(request, response);
 
   if(success) {
-    cout << "Server response: wasDetected=" << response.wasDetected
-         << ", direction=" << response.direction << endl;
+    cout << "Server response: wasDetected=" << response.result.wasDetected
+         << ", direction=" << static_cast<int>(response.result.direction) << endl;
     // 1回目の撮影結果だった場合、Robotの状態を更新する
     if(position == 0) {
       BackgroundDirectionResult& result = robot.getBackgroundDirectionResult();
-      result.wasDetected = response.wasDetected;
-      result.direction = static_cast<BackgroundDirection>(response.direction);
+      result.wasDetected = response.result.wasDetected;
+      result.direction = response.result.direction;
     }
   } else {
     cout << "Failed to get response from server." << endl;
