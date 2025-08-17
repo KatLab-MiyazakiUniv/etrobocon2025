@@ -17,7 +17,7 @@ namespace IMUTestControl {
   inline int& rotationStateRef()
   {
     static int state = 0;  // 0:静止, 1:右回頭, -1:左回頭
-    return state;          // 回転状態のstatic変数への参照を返す（0:静止, 1:右回頭, -1:左回頭）
+    return state;  // 回転状態のstatic変数への参照を返す（0:静止, 1:右回頭, -1:左回頭）
   }
 }  // namespace IMUTestControl
 
@@ -59,12 +59,12 @@ namespace spikeapi {
     {
       // SPIKEが-45度＋ランダムで傾いている状態をシミュレート
       float randomTilt = (float)(rand() % 21 - 10) * 0.1f;  // ±1度のランダム傾き
-      float tiltAngle = -45.0f + randomTilt;  // -45度 + ランダム
-      float tiltRad = tiltAngle * DEG_TO_RAD;  // ラジアン変換
-      
-      accel.x = 9800.0f * sin(tiltRad);     // 傾きによるX軸成分
-      accel.y = 0.0f;                       // Y軸成分なし
-      accel.z = 9800.0f * cos(tiltRad);     // 傾きによるZ軸成分
+      float tiltAngle = -45.0f + randomTilt;                // -45度 + ランダム
+      float tiltRad = tiltAngle * DEG_TO_RAD;               // ラジアン変換
+
+      accel.x = 9800.0f * sin(tiltRad);  // 傾きによるX軸成分
+      accel.y = 0.0f;                    // Y軸成分なし
+      accel.z = 9800.0f * cos(tiltRad);  // 傾きによるZ軸成分
     }
 
     /**
