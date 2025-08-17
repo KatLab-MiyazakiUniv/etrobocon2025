@@ -56,9 +56,9 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [1]:int 角度[deg], [2]:string 方向(clockwise or anticlockwise),
       // [3-5]:double 角度PIDゲイン(kp, ki, kd)
       case COMMAND::IMUR: {
-        auto imr = new IMURotation(robot, stoi(params[1]), convertBool(params[0], params[2]),
-                                   PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
-        motionList.push_back(imr);
+        auto imur = new IMURotation(robot, stoi(params[1]), convertBool(params[0], params[2]),
+                                    PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
+        motionList.push_back(imur);
         break;
       }
 
