@@ -16,6 +16,9 @@ class SocketClient {
   bool executeBackgroundPlaAction(const CameraServer::BackgroundPlaActionRequest& request,
                                   CameraServer::BackgroundPlaActionResponse& response);
 
+  bool executeSnapshotAction(const CameraServer::SnapshotActionRequest& request,
+                             CameraServer::SnapshotActionResponse& response);
+
  private:
   int sock;
   bool isConnected;

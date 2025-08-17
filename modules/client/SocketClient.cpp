@@ -119,3 +119,30 @@ bool SocketClient::executeBackgroundPlaAction(
 
   return true;
 }
+
+bool SocketClient::executeSnapshotAction(const CameraServer::SnapshotActionRequest& request,
+                                         CameraServer::SnapshotActionResponse& response)
+{
+  if(!isConnected) {
+    std::cerr << "Not connected to server." << std::endl;
+    return false;
+  }
+
+  // 1. Send the request
+  if(send(sock, reinterpret_cast<const char*>(&request), sizeof(request), 0) < 0) {
+    perror("Client: send failed");
+    return false;
+  }
+
+  // 2. Wait for and receive the response
+  ssize_t bytesRead = recv(sock, reinterpret_cast<char*>(&response), sizeof(response), 0);
+  if(bytesRead < 0) {
+    perror("Client: recv failed");
+    return false;
+  } else if(bytesRead != sizeof(response)) {
+    std::cerr << "Client: received incomplete response." << std::endl;
+    return false;
+  }
+
+  return true;
+}

@@ -2,6 +2,7 @@
 #include "CameraCapture.h"
 #include "MiniFigActionHandler.h"
 #include "BackgroundPlaActionHandler.h"
+#include "SnapshotActionHandler.h"
 #include "SocketServer.h"
 
 int main()
@@ -25,9 +26,10 @@ int main()
   // 2. Create Action Handlers
   MiniFigActionHandler minifigHandler(camera);
   BackgroundPlaActionHandler bgPlaHandler(camera);
+  SnapshotActionHandler snapshotHandler(camera);
 
   // 3. Initialize and run the server
-  SocketServer server(minifigHandler, bgPlaHandler);
+  SocketServer server(minifigHandler, bgPlaHandler, snapshotHandler);
   if(!server.init()) {
     std::cerr << "Failed to initialize socket server." << std::endl;
     return 1;

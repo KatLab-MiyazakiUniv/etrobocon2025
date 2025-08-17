@@ -9,8 +9,13 @@
 #define DEFAULT_BUFLEN 512
 
 SocketServer::SocketServer(MiniFigActionHandler& _minifigHandler,
-                           BackgroundPlaActionHandler& _bgPlaHandler)
-  : listenSocket(-1), isRunning(false), minifigHandler(_minifigHandler), bgPlaHandler(_bgPlaHandler)
+                           BackgroundPlaActionHandler& _bgPlaHandler,
+                           SnapshotActionHandler& _snapshotHandler)
+  : listenSocket(-1),
+    isRunning(false),
+    minifigHandler(_minifigHandler),
+    bgPlaHandler(_bgPlaHandler),
+    snapshotHandler(_snapshotHandler)
 {
 }
 
@@ -114,6 +119,18 @@ void SocketServer::handle_connection(int clientSocket)
             send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
           } else {
             std::cerr << "Invalid request size for BACKGROUND_PLA_CAMERA_ACTION." << std::endl;
+          }
+        } else if(cmd == CameraServer::Command::TAKE_SNAPSHOT) {
+          if(static_cast<size_t>(iResult) == sizeof(CameraServer::SnapshotActionRequest)) {
+            auto* request = reinterpret_cast<CameraServer::SnapshotActionRequest*>(recvbuf);
+            std::cout << "Executing TAKE_SNAPSHOT for file " << request->fileName << std::endl;
+
+            CameraServer::SnapshotActionResponse response;
+            snapshotHandler.execute(*request, response);
+
+            send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
+          } else {
+            std::cerr << "Invalid request size for TAKE_SNAPSHOT." << std::endl;
           }
         } else if(cmd == CameraServer::Command::SHUTDOWN) {
           std::cout << "Received SHUTDOWN command." << std::endl;

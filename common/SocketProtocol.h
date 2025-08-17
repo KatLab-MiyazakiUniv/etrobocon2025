@@ -12,6 +12,7 @@ namespace CameraServer {
   enum class Command : uint8_t {
     MINIFIG_CAMERA_ACTION = 0,
     BACKGROUND_PLA_CAMERA_ACTION = 1,
+    TAKE_SNAPSHOT = 2,
     SHUTDOWN = 255
   };
 
@@ -44,6 +45,15 @@ namespace CameraServer {
   };
   struct BoundingBoxDetectorResponse {
     BoundingBoxDetectionResult result;
+  };
+
+  // Data structure for the Snapshot request/response
+  struct SnapshotActionRequest {
+    Command command;    // Should always be TAKE_SNAPSHOT
+    char fileName[64];  // The filename to save the snapshot as
+  };
+  struct SnapshotActionResponse {
+    bool success;
   };
 
 }  // namespace CameraServer

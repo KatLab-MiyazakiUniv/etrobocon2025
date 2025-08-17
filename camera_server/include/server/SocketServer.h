@@ -3,11 +3,13 @@
 
 #include "MiniFigActionHandler.h"
 #include "BackgroundPlaActionHandler.h"
+#include "SnapshotActionHandler.h"
 #include <vector>
 
 class SocketServer {
  public:
-  SocketServer(MiniFigActionHandler& minifigHandler, BackgroundPlaActionHandler& bgPlaHandler);
+  SocketServer(MiniFigActionHandler& minifigHandler, BackgroundPlaActionHandler& bgPlaHandler,
+               SnapshotActionHandler& snapshotHandler);
   bool init();
   void run();
   void shutdown();
@@ -17,6 +19,7 @@ class SocketServer {
   bool isRunning;
   MiniFigActionHandler& minifigHandler;
   BackgroundPlaActionHandler& bgPlaHandler;
+  SnapshotActionHandler& snapshotHandler;
 
   void handle_connection(int clientSocket);
 };
