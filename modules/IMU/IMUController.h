@@ -8,6 +8,7 @@
 #define IMUCONTROLLER_H
 
 #include "IMU.h"
+#include "RotationMatrix.h"
 #include <chrono>
 #include <thread>
 #include <iostream>
