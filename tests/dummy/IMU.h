@@ -8,6 +8,18 @@
 #define SPIKE_CPP_API_IMU_H_
 
 #include <cstdlib>
+#include <cmath>
+#include <iostream>
+#include "SystemInfo.h"
+
+// テスト用のIMU用の走行体の状態管理を行う関数
+namespace IMUTestControl {
+  inline int& rotationStateRef()
+  {
+    static int state = 0;  // 0:静止, 1:右回頭, -1:左回頭
+    return state;          // 回転状態のstatic変数への参照を返す（0:静止, 1:右回頭, -1:左回頭）
+  }
+}  // namespace IMUTestControl
 
 namespace spikeapi {
   /**
@@ -45,9 +57,14 @@ namespace spikeapi {
      */
     void getAcceleration(Acceleration& accel)
     {
-      accel.x = (float)(rand() % 21 - 10);
-      accel.y = (float)(rand() % 21 - 10);
-      accel.z = (float)(rand() % 21 - 10);
+      // SPIKEが-45度＋ランダムで傾いている状態をシミュレート
+      float randomTilt = (float)(rand() % 21 - 10) * 0.1f;  // ±1度のランダム傾き
+      float tiltAngle = -45.0f + randomTilt;  // -45度 + ランダム
+      float tiltRad = tiltAngle * DEG_TO_RAD;  // ラジアン変換
+      
+      accel.x = 9800.0f * sin(tiltRad);     // 傾きによるX軸成分
+      accel.y = 0.0f;                       // Y軸成分なし
+      accel.z = 9800.0f * cos(tiltRad);     // 傾きによるZ軸成分
     }
 
     /**
@@ -57,9 +74,16 @@ namespace spikeapi {
      */
     void getAngularVelocity(AngularVelocity& ang)
     {
-      ang.x = (float)(rand() % 21 - 10);
-      ang.y = (float)(rand() % 21 - 10);
-      ang.z = (float)(rand() % 21 - 10);
+      int state = IMUTestControl::rotationStateRef();
+      if(state == 1) {
+        ang.z = -(float)(rand() % 11);  // 右回頭: -5~-1度/秒
+      } else if(state == -1) {
+        ang.z = (float)(rand() % 11);  // 左回頭: 1~5度/秒
+      } else {
+        ang.z = (float)(rand() % 3 - 1) * 0.1f;  // 静止: ±0.1度/秒の小さなノイズ
+      }
+      ang.x = (float)(rand() % 3 - 1) * 0.1f;  // 小さなノイズ
+      ang.y = (float)(rand() % 3 - 1) * 0.1f;  // 小さなノイズ
     }
 
     /**
