@@ -5,6 +5,7 @@
  */
 
 #include "MotionParser.h"
+#include "SocketProtocol.h"
 
 using namespace std;
 
@@ -259,33 +260,30 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [15]高さ)
       // 補足：ROI（Region of Interest: ライントレース用の画像内注目領域（四角形））
       case COMMAND::CRA: {
-        cv::Scalar lowerHSV, upperHSV;
-        cv::Rect roi;
-        cv::Size resolution;
-        std::unique_ptr<BoundingBoxDetector> boundingBoxDetector;
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
-        lowerHSV = cv::Scalar(stoi(params[4]), stoi(params[5]), stoi(params[6]));
-        upperHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        detectionRequest.command = CameraServer::Command::LINE_DETECTION; // Set the command type
 
-        // パラメータ配列のサイズによってコンストラクタを切り替え
-        if(params.size() > 15) {
-          // ROI + 解像度
-          roi = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
-          resolution = cv::Size(stoi(params[14]), stoi(params[15]));
-          boundingBoxDetector
-              = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi, resolution);
-        } else if(params.size() > 13) {
-          // ROIのみ
-          roi = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
-          boundingBoxDetector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi);
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[4]), stoi(params[5]), stoi(params[6]));
+        detectionRequest.upperHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+
+        // パラメータ配列のサイズによってROIと解像度を設定
+        if(params.size() > 15) { // If resolution parameters are present
+          detectionRequest.roi = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
+          detectionRequest.resolution = cv::Size(stoi(params[14]), stoi(params[15]));
+        } else if(params.size() > 13) { // If only ROI parameters are present
+          detectionRequest.roi = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
+          // Default resolution if not provided
+          detectionRequest.resolution = cv::Size(640, 480); // Assuming a default resolution
         } else {
-          // HSVのみ
-          boundingBoxDetector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV);
+          // Default ROI and resolution if not provided
+          detectionRequest.roi = cv::Rect(50, 240, 540, 240); // Assuming a default ROI
+          detectionRequest.resolution = cv::Size(640, 480); // Assuming a default resolution
         }
 
         auto cra = new CameraRecoveryAction(robot, stoi(params[1]), stod(params[2]),
                                             convertBool(params[0], params[3]),
-                                            std::move(boundingBoxDetector));
+                                            detectionRequest); // Pass the struct
         motionList.push_back(cra);
         break;
       }

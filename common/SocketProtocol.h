@@ -13,6 +13,7 @@ namespace CameraServer {
     MINIFIG_CAMERA_ACTION = 0,
     BACKGROUND_PLA_CAMERA_ACTION = 1,
     TAKE_SNAPSHOT = 2,
+    LINE_DETECTION = 3,
     SHUTDOWN = 255
   };
 
@@ -38,6 +39,7 @@ namespace CameraServer {
   };
 
   struct BoundingBoxDetectorRequest {
+    Command command;
     cv::Scalar lowerHSV;
     cv::Scalar upperHSV;
     cv::Rect roi;

@@ -10,12 +10,14 @@
 
 SocketServer::SocketServer(MiniFigActionHandler& _minifigHandler,
                            BackgroundPlaActionHandler& _bgPlaHandler,
-                           SnapshotActionHandler& _snapshotHandler)
+                           SnapshotActionHandler& _snapshotHandler,
+                           LineDetectionActionHandler& _lineDetectionHandler)
   : listenSocket(-1),
     isRunning(false),
     minifigHandler(_minifigHandler),
     bgPlaHandler(_bgPlaHandler),
-    snapshotHandler(_snapshotHandler)
+    snapshotHandler(_snapshotHandler),
+    lineDetectionHandler(_lineDetectionHandler)
 {
 }
 
@@ -131,6 +133,18 @@ void SocketServer::handle_connection(int clientSocket)
             send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
           } else {
             std::cerr << "Invalid request size for TAKE_SNAPSHOT." << std::endl;
+          }
+        } else if(cmd == CameraServer::Command::LINE_DETECTION) {
+          if(static_cast<size_t>(iResult) == sizeof(CameraServer::BoundingBoxDetectorRequest)) {
+            auto* request = reinterpret_cast<CameraServer::BoundingBoxDetectorRequest*>(recvbuf);
+            std::cout << "Executing LINE_DETECTION command." << std::endl;
+
+            CameraServer::BoundingBoxDetectorResponse response;
+            lineDetectionHandler.execute(*request, response);
+
+            send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
+          } else {
+            std::cerr << "Invalid request size for LINE_DETECTION." << std::endl;
           }
         } else if(cmd == CameraServer::Command::SHUTDOWN) {
           std::cout << "Received SHUTDOWN command." << std::endl;

@@ -19,6 +19,9 @@ class SocketClient {
   bool executeSnapshotAction(const CameraServer::SnapshotActionRequest& request,
                              CameraServer::SnapshotActionResponse& response);
 
+  bool executeLineDetection(const CameraServer::BoundingBoxDetectorRequest& request,
+                            CameraServer::BoundingBoxDetectorResponse& response);
+
  private:
   int sock;
   bool isConnected;
