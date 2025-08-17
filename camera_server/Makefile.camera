@@ -4,14 +4,13 @@
 CXX := g++
 
 # Directories
-SRCDIR := src
+SRCDIR := modules
+INCLUDEDIR := modules
 OBJDIR := obj
-INCLUDEDIR := include
 TARGET_DIR := bin
 TARGET := $(TARGET_DIR)/camera_server
 
 # Compiler and Linker Flags
-# Use -pthread for multi-threading if needed in the future
 CXXFLAGS := -std=c++17 -Wall -Wextra -O2 -pthread
 
 # Use pkg-config to get OpenCV flags, which is standard on Linux
@@ -25,19 +24,19 @@ LIBS := $(OPENCV_LIBS)
 # --- Build Rules ---
 
 # Find all .cpp files
-SOURCES := $(wildcard $(SRCDIR)/*.cpp) $(wildcard $(SRCDIR)/*/*.cpp) $(wildcard $(SRCDIR)/*/*/*.cpp) $(wildcard ../common/*.cpp)
-OBJECTS := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SOURCES))
+SOURCES := main.cpp $(shell find $(SRCDIR) -name '*.cpp') $(shell find ../common -name '*.cpp')
+OBJS := $(addprefix $(OBJDIR)/,$(SOURCES:.cpp=.o))
 
 # Default target
 all: $(TARGET)
 
 # Rule to link the executable
-$(TARGET): $(OBJECTS)
+$(TARGET): $(OBJS)
 	@mkdir -p $(TARGET_DIR)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
-# Rule to compile source files into object files
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+# Generic rule to compile any .cpp file to its corresponding .o file in obj
+$(OBJDIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 

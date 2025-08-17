@@ -9,3 +9,4 @@ tests/test_images
 
 # yoloモデル
 *.onnx
+*.o
