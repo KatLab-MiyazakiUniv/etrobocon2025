@@ -32,9 +32,9 @@ bool IMURotation::isMetPreCondition()
     return false;
   }
 
-  // IMU角度計算が開始されているかチェック
-  if(!robot.getIMUControllerInstance().isAngleCalculating()) {
-    std::cerr << "IMU角度計算が開始されていません。" << std::endl;
+  // IMU角度計算が既に開始されている場合は開始できない
+  if(robot.getIMUControllerInstance().isAngleCalculating()) {
+    std::cerr << "IMU角度計算が既に開始されています。" << std::endl;
     return false;
   }
 
