@@ -33,7 +33,10 @@ namespace spikeapi {
      * @param -
      * @return -
      */
-    IMU(void) = default;
+    IMU(void)
+    {
+      srand(12345);  // テスト用固定シード値
+    }
 
     /**
      * IMUから加速度を取得する
@@ -56,7 +59,7 @@ namespace spikeapi {
     {
       ang.x = (float)(rand() % 21 - 10);
       ang.y = (float)(rand() % 21 - 10);
-      ang.y = (float)(rand() % 21 - 10);
+      ang.z = (float)(rand() % 21 - 10);
     }
 
     /**
