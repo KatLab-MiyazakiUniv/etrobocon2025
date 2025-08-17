@@ -6,14 +6,14 @@
 
 #include "CameraPidTracking.h"
 
-CameraPidTracking::CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
-                                     const PidGain& _pidGain,
-                                     BoundingBoxDetector& _boundingBoxDetector)
+CameraPidTracking::CameraPidTracking(
+    Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain,
+    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
   : Motion(_robot),
     targetSpeed(_targetSpeed),
     targetXCoordinate(_targetXCoordinate),
     pidGain(_pidGain),
-    boundingBoxDetector(_boundingBoxDetector)
+    detectionRequest(_detectionRequest)
 {
 }
 
@@ -33,26 +33,26 @@ void CameraPidTracking::run()
 
   SpeedCalculator speedCalculator(robot, targetSpeed);
 
+  // Get SocketClient from Robot
+  SocketClient& client = robot.getSocketClient();
+
   // 継続条件を満たしている間ループ
   while(isMetContinuationCondition()) {
     // 初期Speed値を計算
     double baseRightPower = speedCalculator.calculateRightMotorPower();
     double baseLeftPower = speedCalculator.calculateLeftMotorPower();
 
-    // カメラからフレームを取得
-    cv::Mat frame;
-    robot.getCameraCaptureInstance().getFrame(frame);
+    // Execute line detection on server
+    CameraServer::BoundingBoxDetectorResponse response;
+    bool success = client.executeLineDetection(detectionRequest, response);
 
-    // 画像処理を実行
-    boundingBoxDetector.detect(frame, result);
-
-    // 検出失敗時はスキップする
-    if(!result.wasDetected) {
+    // If detection failed, skip this iteration
+    if(!success || !response.result.wasDetected) {
       continue;
     }
 
     // バウンディングボックスの中心X座標を計算
-    double currentX = (result.topLeft.x + result.bottomRight.x) / 2.0;
+    double currentX = (response.result.topLeft.x + response.result.bottomRight.x) / 2.0;
 
     // 旋回値の計算
     double turningPower = pid.calculatePid(currentX) * edgeSign;

@@ -87,32 +87,30 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [17-18]int 解像度[px] ([17]幅, [18]高さ)
       // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
       case COMMAND::DCL: {
-        cv::Scalar lowerHSV, upperHSV;
-        cv::Rect roi;
-        cv::Size resolution;
-        std::unique_ptr<BoundingBoxDetector> detector;
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
-        lowerHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
-        upperHSV = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
+        detectionRequest.command = CameraServer::Command::LINE_DETECTION; // Set the command type
 
-        // パラメータ配列のサイズによってコンストラクタを切り替え
-        if(params.size() > 18) {
-          // ROI + 解像度
-          roi = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
-          resolution = cv::Size(stoi(params[17]), stoi(params[18]));
-          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi, resolution);
-        } else if(params.size() > 16) {
-          // ROIのみ
-          roi = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
-          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi);
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        detectionRequest.upperHSV = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
+
+        // パラメータ配列のサイズによってROIと解像度を設定
+        if(params.size() > 18) { // If resolution parameters are present
+          detectionRequest.roi = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
+          detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
+        } else if(params.size() > 16) { // If only ROI parameters are present
+          detectionRequest.roi = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
+          // Default resolution if not provided
+          detectionRequest.resolution = cv::Size(640, 480); // Assuming a default resolution
         } else {
-          // HSVのみ
-          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV);
+          // Default ROI and resolution if not provided
+          detectionRequest.roi = cv::Rect(50, 240, 540, 240); // Assuming a default ROI
+          detectionRequest.resolution = cv::Size(640, 480); // Assuming a default resolution
         }
 
         auto dcl = new DistanceCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stoi(params[3]),
-            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), std::move(detector));
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest); // Pass the struct
         motionList.push_back(dcl);
         break;
       }
@@ -123,33 +121,31 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // ([14]左上隅のx座標, [15]左上隅のy座標, [16]幅, [17]高さ), [18-19]int 解像度[px] ([18]幅,
       // [19]高さ) 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
       case COMMAND::CDCL: {
-        cv::Scalar lowerHSV, upperHSV;
-        cv::Rect roi;
-        cv::Size resolution;
-        std::unique_ptr<BoundingBoxDetector> detector;
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
-        lowerHSV = cv::Scalar(stoi(params[8]), stoi(params[9]), stoi(params[10]));
-        upperHSV = cv::Scalar(stoi(params[11]), stoi(params[12]), stoi(params[13]));
+        detectionRequest.command = CameraServer::Command::LINE_DETECTION; // Set the command type
 
-        // パラメータ配列のサイズによってコンストラクタを切り替え
-        if(params.size() > 19) {
-          // ROI + 解像度
-          roi = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
-          resolution = cv::Size(stoi(params[18]), stoi(params[19]));
-          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi, resolution);
-        } else if(params.size() > 17) {
-          // ROIのみ
-          roi = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
-          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi);
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[8]), stoi(params[9]), stoi(params[10]));
+        detectionRequest.upperHSV = cv::Scalar(stoi(params[11]), stoi(params[12]), stoi(params[13]));
+
+        // パラメータ配列のサイズによってROIと解像度を設定
+        if(params.size() > 19) { // If resolution parameters are present
+          detectionRequest.roi = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
+          detectionRequest.resolution = cv::Size(stoi(params[18]), stoi(params[19]));
+        } else if(params.size() > 17) { // If only ROI parameters are present
+          detectionRequest.roi = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
+          // Default resolution if not provided
+          detectionRequest.resolution = cv::Size(640, 480); // Assuming a default resolution
         } else {
-          // HSVのみ
-          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV);
+          // Default ROI and resolution if not provided
+          detectionRequest.roi = cv::Rect(50, 240, 540, 240); // Assuming a default ROI
+          detectionRequest.resolution = cv::Size(640, 480); // Assuming a default resolution
         }
 
         auto cdcl = new ColorDistanceCameraLineTrace(
             robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
             stoi(params[4]), PidGain(stod(params[5]), stod(params[6]), stod(params[7])),
-            std::move(detector));
+            detectionRequest); // Pass the struct
         motionList.push_back(cdcl);
         break;
       }
