@@ -7,6 +7,8 @@
 #ifndef BOUNDING_BOX_DETECTOR_H
 #define BOUNDING_BOX_DETECTOR_H
 
+#include "ImageRecognitionResults.h"
+
 #include <string>
 #include <opencv2/opencv.hpp>
 

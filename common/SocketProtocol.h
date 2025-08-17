@@ -1,6 +1,8 @@
 #ifndef SOCKET_PROTOCOL_H
 #define SOCKET_PROTOCOL_H
 
+#include "ImageRecognitionResults.h"
+
 #include <cstdint>
 #include <opencv2/core/types.hpp>  // For cv::Rect
 
@@ -19,8 +21,7 @@ namespace CameraServer {
     int32_t position;  // 0 for the first attempt, 1-3 for subsequent ones
   };
   struct MiniFigActionResponse {
-    bool wasDetected;
-    int32_t direction;  // Corresponds to MiniFigDirection enum
+    MiniFigDirectionResult result;
   };
 
   // Data structure for the BackgroundPlaCameraAction request/response
@@ -32,8 +33,17 @@ namespace CameraServer {
     cv::Rect roi;
   };
   struct BackgroundPlaActionResponse {
-    bool wasDetected;
-    int32_t direction;
+    BackgroundDirectionResult result;
+  };
+
+  struct BoundingBoxDetectorRequest {
+    cv::Scalar lowerHSV;
+    cv::Scalar upperHSV;
+    cv::Rect roi;
+    cv::Size resolution;
+  };
+  struct BoundingBoxDetectorResponse {
+    BoundingBoxDetectionResult result;
   };
 
 }  // namespace CameraServer

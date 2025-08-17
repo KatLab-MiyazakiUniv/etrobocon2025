@@ -7,6 +7,8 @@
 #ifndef BACKGROUND_DIRECTION_DETECTOR_H
 #define BACKGROUND_DIRECTION_DETECTOR_H
 
+#include "ImageRecognitionResults.h"
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
 #include <algorithm>

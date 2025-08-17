@@ -48,7 +48,7 @@ void MiniFigActionHandler::execute(int position, CameraServer::MiniFigActionResp
 
   if(frame.empty()) {
     cerr << "Failed to capture frame." << endl;
-    response.wasDetected = false;
+    response.result.wasDetected = false;
     return;
   }
 
@@ -67,8 +67,8 @@ void MiniFigActionHandler::execute(int position, CameraServer::MiniFigActionResp
       }).detach();
     }
     // The response for the first call is the result of that detection.
-    response.wasDetected = this->firstAttemptResult.wasDetected;
-    response.direction = static_cast<int32_t>(this->firstAttemptResult.direction);
+    response.result.wasDetected = this->firstAttemptResult.wasDetected;
+    response.result.direction = this->firstAttemptResult.direction;
 
   } else if(this->firstAttemptResult.wasDetected) {
     // This is a subsequent attempt, and the first one was successful (but not FRONT).
@@ -78,8 +78,8 @@ void MiniFigActionHandler::execute(int position, CameraServer::MiniFigActionResp
     thread([path = string(filePath), name = string(uploadFileName)] {
       ImageUploader::uploadImage(path, name, 3);
     }).detach();
-    response.wasDetected = true;
-    response.direction = static_cast<int32_t>(MiniFigDirection::FRONT);
+    response.result.wasDetected = true;
+    response.result.direction = MiniFigDirection::FRONT;
 
   } else {
     // This is a subsequent attempt, but the first one failed to detect anything.
@@ -94,6 +94,6 @@ void MiniFigActionHandler::execute(int position, CameraServer::MiniFigActionResp
         ImageUploader::uploadImage(path, name, 3);
       }).detach();
     }
-    response.wasDetected = false;  // Still not considered a successful "FRONT" detection
+    response.result.wasDetected = false;  // Still not considered a successful "FRONT" detection
   }
 }

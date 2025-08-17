@@ -84,8 +84,7 @@ void MiniFigCameraAction::run()
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));
 
-  robot.getMotorControllerInstance().setLeftMotorPower(0);
-  robot.getMotorControllerInstance().setRightMotorPower(0);
+  robot.getMotorControllerInstance().stopWheelsMotor();
   // 前進
   DistanceStraight forward(robot, forwardTargetDistance, forwardSpeed);
   forward.run();
@@ -93,8 +92,7 @@ void MiniFigCameraAction::run()
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));
 
-  robot.getMotorControllerInstance().setLeftMotorPower(0);
-  robot.getMotorControllerInstance().setRightMotorPower(0);
+  robot.getMotorControllerInstance().stopWheelsMotor();
 
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));

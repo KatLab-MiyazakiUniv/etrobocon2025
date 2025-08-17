@@ -1,5 +1,6 @@
 # ディレクトリ
 bin
+obj
 datafiles/snapshots
 datafiles/processed_images
 datafiles/models

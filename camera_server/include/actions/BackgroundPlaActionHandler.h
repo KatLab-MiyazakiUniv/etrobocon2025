@@ -1,6 +1,8 @@
 #ifndef BACKGROUND_PLA_ACTION_HANDLER_H
 #define BACKGROUND_PLA_ACTION_HANDLER_H
 
+#include "ImageRecognitionResults.h"
+
 #include "CameraCapture.h"
 #include "BackgroundDirectionDetector.h"
 #include "MotionDetector.h"
@@ -10,10 +12,11 @@ class BackgroundPlaActionHandler {
  public:
   BackgroundPlaActionHandler(CameraCapture& camera);
 
-  void execute(int position, CameraServer::BackgroundPlaActionResponse& response);
+  void execute(const CameraServer::BackgroundPlaActionRequest& request,
+             CameraServer::BackgroundPlaActionResponse& response);
 
  private:
-  void runPlaCameraAction();
+  void runPlaCameraAction(const CameraServer::BackgroundPlaActionRequest& request);
 
   CameraCapture& camera;
   BackgroundDirectionDetector directionDetector;

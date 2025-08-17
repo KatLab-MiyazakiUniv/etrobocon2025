@@ -93,7 +93,7 @@ void BackgroundPlaActionHandler::execute(const CameraServer::BackgroundPlaAction
 
   if(frame.empty()) {
     cerr << "Failed to capture frame." << endl;
-    response.wasDetected = false;
+    response.result.wasDetected = false;
     return;
   }
 
@@ -110,14 +110,14 @@ void BackgroundPlaActionHandler::execute(const CameraServer::BackgroundPlaAction
       string fileName = "bestframe_" + to_string(request.position) + ".jpg";
       FrameSave::save(frame, filePath, fileName);
     }
-    response.wasDetected = this->firstAttemptResult.wasDetected;
-    response.direction = static_cast<int32_t>(this->firstAttemptResult.direction);
+    response.result.wasDetected = this->firstAttemptResult.wasDetected;
+    response.result.direction = this->firstAttemptResult.direction;
 
   } else if(this->firstAttemptResult.wasDetected) {
     cout << "Subsequent attempt (position " << request.position << "). Assuming FRONT." << endl;
     runPlaCameraAction(request);
-    response.wasDetected = true;  // We assume this is the correct one
-    response.direction = static_cast<int32_t>(BackgroundDirection::FRONT);
+    response.result.wasDetected = true;  // We assume this is the correct one
+    response.result.direction = BackgroundDirection::FRONT;
 
   } else {
     cout << "Subsequent attempt (position " << request.position << ") after failed detection."
@@ -129,6 +129,6 @@ void BackgroundPlaActionHandler::execute(const CameraServer::BackgroundPlaAction
         ImageUploader::uploadImage(path, name, 3);
       }).detach();
     }
-    response.wasDetected = false;
+    response.result.wasDetected = false;
   }
 }
