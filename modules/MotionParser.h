@@ -33,6 +33,7 @@
 
 enum class COMMAND {
   AR,    // 角度指定回頭
+  IMUR,  // IMU角度指定回頭
   DS,    // 指定距離直進
   CS,    // 指定色直進
   DL,    // 指定距離ライントレース
