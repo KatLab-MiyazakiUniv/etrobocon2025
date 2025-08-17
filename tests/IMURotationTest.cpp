@@ -250,8 +250,8 @@ namespace etrobocon2025_test {
     robot.getIMUControllerInstance().startAngleCalculation();
     EXPECT_TRUE(robot.getIMUControllerInstance().isAngleCalculating());
 
-    // この状態でIMURotationの実行を試行し、falseが返されることを確認
-    bool result = imuRotation.run();
+    // この状態でIMURotationの事前条件チェックを実行し、falseが返されることを確認
+    bool result = imuRotation.isMetPreCondition();
     EXPECT_FALSE(result);
 
     // 手動で停止
