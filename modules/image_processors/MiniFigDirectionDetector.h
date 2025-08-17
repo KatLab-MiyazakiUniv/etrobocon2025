@@ -34,8 +34,7 @@ class MiniFigDirectionDetector {
   void detect(MiniFigDirectionResult& result);
 
  private:
-  const std::string command
-      = "cd etrobocon2025/yolo_detection_system && make fig-detection && cd ../..";
+  const std::string command = "make -C etrobocon2025/yolo_detection_system/ fig-detection";
   const std::string resultFilePath = "etrobocon2025/yolo_detection_system/result/fig_result.json";
 };
 

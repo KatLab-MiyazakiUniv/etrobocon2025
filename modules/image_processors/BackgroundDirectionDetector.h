@@ -37,8 +37,7 @@ class BackgroundDirectionDetector {
   void detect(BackgroundDirectionResult& result);
 
  private:
-  const std::string command
-      = "cd etrobocon2025/yolo_detection_system && make background-detection && cd ../..";
+  const std::string command = "make -C etrobocon2025/yolo_detection_system background-detection";
   const std::string resultFilePath
       = "etrobocon2025/yolo_detection_system/result/background_result.json";
 };
