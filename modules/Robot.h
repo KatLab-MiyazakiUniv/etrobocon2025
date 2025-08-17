@@ -14,7 +14,6 @@
 #include "Button.h"
 #include "ForceSensor.h"
 #include "Display.h"
-#include "CameraCapture.h"
 #include "ImageRecognitionResults.h"
 #include "SocketClient.h"
 
@@ -71,12 +70,6 @@ class Robot {
   spikeapi::Display& getDisplayInstance();
 
   /**
-   * @brief CameraCaptureのインスタンスの参照を返す
-   * @return メンバ変数cameraCapture(CameraCaptureのインスタンス)の参照
-   */
-  CameraCapture& getCameraCaptureInstance();
-
-  /**
    * @brief ミニフィグの向き検出結果を取得する
    * @return ミニフィグの向き検出結果の参照
    */
@@ -100,9 +93,8 @@ class Robot {
   bool getIsLeftEdge() const;
 
  private:
-  MotorController motorController;                      // MotorControllerインスタンス
-  CameraCapture cameraCapture;                          // CameraCaptureインスタンス
   SocketClient socketClient;                            // SocketClientインスタンス
+  MotorController motorController;                      // MotorControllerインスタンス
   spikeapi::ColorSensor colorSensor;                    // ColorSensorインスタンス
   spikeapi::Clock clock;                                // Clockインスタンス
   spikeapi::Button button;                              // Buttonインスタンス

@@ -17,7 +17,6 @@
 #include "AngleRotation.h"
 #include "DistanceStraight.h"
 #include "DistanceCameraLineTrace.h"
-#include "LineBoundingBoxDetector.h"
 #include "ColorStraight.h"
 #include "ColorLineTrace.h"
 #include "DistanceLineTrace.h"

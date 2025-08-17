@@ -5,6 +5,8 @@
  */
 
 #include "CameraPidTracking.h"
+#include <thread>
+#include <chrono>
 
 CameraPidTracking::CameraPidTracking(
     Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain,
