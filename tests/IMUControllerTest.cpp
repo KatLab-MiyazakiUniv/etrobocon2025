@@ -27,17 +27,20 @@ namespace etrobocon2025_test {
     IMUController imuController;
     float angularVelocity[3];
 
+    // 静止状態に設定
+    IMUTestControl::rotationStateRef() = 0;
+
     // シード値を設定してダミーIMUの値を予測可能にする
     srand(12345);
 
     // 生の角速度を取得
     imuController.getRawAngularVelocity(angularVelocity);
 
-    // ダミーIMUの実装に基づいて期待値を計算 (rand() % 21 - 10)
+    // ダミーIMUの実装に基づいて期待値を計算
     srand(12345);
-    float expectedX = (float)(rand() % 21 - 10);
-    float expectedY = (float)(rand() % 21 - 10);
-    float expectedZ = (float)(rand() % 21 - 10);
+    float expectedZ = (float)(rand() % 3 - 1) * 0.1f;  // 静止時のノイズ（1番目）
+    float expectedX = (float)(rand() % 3 - 1) * 0.1f;  // 小さなノイズ（2番目）
+    float expectedY = (float)(rand() % 3 - 1) * 0.1f;  // 小さなノイズ（3番目）
 
     // 期待値と一致することを確認
     EXPECT_FLOAT_EQ(expectedX, angularVelocity[0]);
@@ -50,6 +53,12 @@ namespace etrobocon2025_test {
   {
     IMUController imuController;
 
+    // 静止状態に設定
+    IMUTestControl::rotationStateRef() = 0;
+
+    // 固定シード値でテスト
+    srand(12345);
+
     // オフセット計算を実行
     imuController.calculateOffset();
 
@@ -59,15 +68,15 @@ namespace etrobocon2025_test {
     // 実際の補正済み角速度を取得（rand()の状態を合わせるためにここで取得する）
     double actualCorrected = imuController.getCorrectedZAxisAngularVelocity();
 
-    // シード値12345でrand()%21-10の値を1000回計算してXYZオフセットの期待値を算出
+    // ダミーIMU実装に基づいてオフセット期待値を計算（静止状態）
     srand(12345);
     float expectedOffsetX = 0.0f;
     float expectedOffsetY = 0.0f;
     float expectedOffsetZ = 0.0f;
     for(int i = 0; i < 1000; i++) {
-      float x = (float)(rand() % 21 - 10);  // x軸角速度
-      float y = (float)(rand() % 21 - 10);  // y軸角速度
-      float z = (float)(rand() % 21 - 10);  // z軸角速度
+      float z = (float)(rand() % 3 - 1) * 0.1f;  // 静止時の小さなノイズ（1番目）
+      float x = (float)(rand() % 3 - 1) * 0.1f;  // 静止時の小さなノイズ（2番目）
+      float y = (float)(rand() % 3 - 1) * 0.1f;  // 静止時の小さなノイズ（3番目）
       expectedOffsetX += x;
       expectedOffsetY += y;
       expectedOffsetZ += z;
@@ -78,20 +87,23 @@ namespace etrobocon2025_test {
 
     // 補正行列の計算を再現（RotationMatrixクラスを使用）
     // 加速度値を取得（ダミーIMUの実装に合わせて）
-    float acc_x = (float)(rand() % 21 - 10);
-    float acc_y = (float)(rand() % 21 - 10);
-    float acc_z = (float)(rand() % 21 - 10);
+    float randomTilt = (float)(rand() % 21 - 10) * 0.1f;  // ±1度のランダム傾き
+    float tiltAngle = -45.0f + randomTilt;                // -45度 + ランダム
+    float tiltRad = tiltAngle * DEG_TO_RAD;               // ラジアン変換
+    float acc_x = 9800.0f * sin(tiltRad);                 // 傾きによるX軸成分
+    float acc_y = 0.0f;                                   // Y軸成分なし
+    float acc_z = 9800.0f * cos(tiltRad);                 // 傾きによるZ軸成分
 
     // RotationMatrixクラスを使用して補正行列を計算
     float expectedCorrectionMatrix[3][3];
     RotationMatrix::calculateCorrectionMatrix(acc_x, acc_y, acc_z, expectedCorrectionMatrix);
 
-    // 現在の角速度値を取得して補正済み値を計算
-    float current_x = (float)(rand() % 21 - 10);
-    float current_y = (float)(rand() % 21 - 10);
-    float current_z = (float)(rand() % 21 - 10);
+    // 現在の角速度値を取得（静止状態）
+    float current_z = (float)(rand() % 3 - 1) * 0.1f;  // 1番目
+    float current_x = (float)(rand() % 3 - 1) * 0.1f;  // 2番目
+    float current_y = (float)(rand() % 3 - 1) * 0.1f;  // 3番目
 
-    // 期待される補正済みZ軸角速度（IMUController.cpp:35-36と同じ計算）
+    // 期待される補正済みZ軸角速度
     double expectedCorrected = expectedCorrectionMatrix[0][2] * (current_x - expectedOffsetX)
                                + expectedCorrectionMatrix[1][2] * (current_y - expectedOffsetY)
                                + expectedCorrectionMatrix[2][2] * (current_z - expectedOffsetZ);
