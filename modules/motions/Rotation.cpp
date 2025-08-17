@@ -19,8 +19,8 @@ void Rotation::run()
   MotorController& motorController = robot.getMotorControllerInstance();
   spikeapi::Clock& clock = robot.getClockInstance();
 
-  prepare();
   if(!isMetPreCondition()) return;
+  prepare();
 
   while(isMetContinuationCondition()) {
     // 動的モーター制御
@@ -31,5 +31,4 @@ void Rotation::run()
   motorController.stopWheelsMotor();
   motorController.setLeftMotorPower(0);
   motorController.setRightMotorPower(0);
-
 }
