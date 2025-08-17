@@ -29,6 +29,17 @@ void RotationMatrix::calculateCorrectionMatrix(float acc_x, float acc_y, float a
 
   // 回転軸を正規化
   float v_norm = std::sqrt(vx * vx + vy * vy + vz * vz);
+
+  // 回転が不要な場合（重力方向が既に正しい）は単位行列
+  if(v_norm < 0.000001f) {
+    for(int i = 0; i < 3; i++) {
+      for(int j = 0; j < 3; j++) {
+        matrix[i][j] = (i == j) ? 1.0f : 0.0f;
+      }
+    }
+    return;
+  }
+
   vx /= v_norm;
   vy /= v_norm;
   vz /= v_norm;

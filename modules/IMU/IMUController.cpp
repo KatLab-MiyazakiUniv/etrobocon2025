@@ -15,6 +15,12 @@ IMUController::IMUController()
     lastAngularVelocity(0.0),
     isCalculating(false)
 {
+  // 補正行列を単位行列で初期化
+  for(int i = 0; i < 3; i++) {
+    for(int j = 0; j < 3; j++) {
+      correctionMatrix[i][j] = (i == j) ? 1.0f : 0.0f;
+    }
+  }
 }
 
 void IMUController::getRawAngularVelocity(float angv[3])
