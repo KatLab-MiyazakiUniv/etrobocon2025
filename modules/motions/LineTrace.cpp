@@ -5,6 +5,8 @@
  */
 
 #include "LineTrace.h"
+#include <thread>
+#include <chrono>
 
 LineTrace::LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness,
                      const PidGain& _pidGain)

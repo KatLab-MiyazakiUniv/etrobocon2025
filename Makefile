@@ -30,7 +30,7 @@ help:
 
 ## 実行関連 ##
 build:
-	cd $(MAKEFILE_PATH)../ && make img=etrobocon2025
+	cd $(MAKEFILE_PATH)../ && make img=etrobocon2025 -j5
 
 # 実機の場合、走行を開始する
 start:

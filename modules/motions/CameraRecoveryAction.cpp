@@ -5,51 +5,57 @@
  */
 
 #include "CameraRecoveryAction.h"
+#include <thread>
+#include <chrono>
+#include <iostream>
 
 CameraRecoveryAction::CameraRecoveryAction(
     Robot& _robot, int _angle, double _speed, bool _isClockwise,
-    std::unique_ptr<BoundingBoxDetector> _boundingBoxDetector)
+    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
   : CompositeMotion(_robot),
     recoveryAngle(_angle),
     speed(_speed),
     isClockwise(_isClockwise),
-    boundingBoxDetector(std::move(_boundingBoxDetector))
+    detectionRequest(_detectionRequest)
 {
 }
 
 void CameraRecoveryAction::run()
 {
-  cv::Mat frame;
-  // 初期検出確認
-  std::this_thread::sleep_for(
-      std::chrono::milliseconds(33));  // フレームを確実に取得するためのスリープ
-  if(!robot.getCameraCaptureInstance().getFrame(frame)) {
-    std::cout << "フレーム取得失敗のため終了\n" << std::endl;
+  // Get SocketClient from Robot
+  SocketClient& client = robot.getSocketClient();
+
+  // Initial detection request
+  CameraServer::BoundingBoxDetectorResponse response;
+  bool success = client.executeLineDetection(detectionRequest, response);
+
+  if(!success) {
+    std::cerr << "Failed to get detection response from server." << std::endl;
     return;
   }
 
-  // 複数フレームから現在の写真を1枚取得する
-  for(int i = 0; i < FRAME_NUMBER; i++) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(33));  // フレーム間の待機(33ミリ秒)
-    robot.getCameraCaptureInstance().getFrame(frame);
-  }
-
-  boundingBoxDetector->detect(frame, result);
-
-  // 既に検出できた場合、復帰動作を行わない
-  if(result.wasDetected) {
-    std::cout << "復帰動作は行わない\n" << std::endl;
+  // If already detected, do not perform recovery action
+  if(response.result.wasDetected) {
+    std::cout << "Detection already successful, no recovery action needed." << std::endl;
     return;
   }
-  // 指定された角度・スピード・方向で回頭復帰
+
+  // Perform rotation
   AngleRotation rotation(robot, recoveryAngle, speed, isClockwise);
   rotation.run();
-  std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒待機
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));  // Small delay after rotation
 
-  boundingBoxDetector->detect(frame, result);
-  if(result.wasDetected) {
-    std::cout << "復帰動作完了\n" << std::endl;
-    return;  // 検出成功
+  // Re-detect after rotation
+  success = client.executeLineDetection(detectionRequest, response);
+
+  if(!success) {
+    std::cerr << "Failed to get detection response from server after rotation." << std::endl;
+    return;
   }
-  std::cout << "復帰動作失敗\n" << std::endl;
+
+  if(response.result.wasDetected) {
+    std::cout << "Recovery action complete, detection successful." << std::endl;
+  } else {
+    std::cout << "Recovery action failed, detection still unsuccessful." << std::endl;
+  }
 }

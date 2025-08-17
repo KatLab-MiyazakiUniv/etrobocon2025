@@ -5,6 +5,8 @@
  */
 
 #include "Straight.h"
+#include <thread>
+#include <chrono>
 
 Straight::Straight(Robot& _robot, double _targetSpeed) : Motion(_robot), targetSpeed(_targetSpeed)
 {

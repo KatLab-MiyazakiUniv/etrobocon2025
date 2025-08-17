@@ -6,13 +6,11 @@
 
 #include "DistanceCameraLineTrace.h"
 
-DistanceCameraLineTrace::DistanceCameraLineTrace(Robot& _robot, double _targetDistance,
-                                                 double _targetSpeed, int _targetXCoordinate,
-                                                 const PidGain& _pidGain,
-                                                 std::unique_ptr<BoundingBoxDetector> _detector)
-  : CameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, *_detector),
-    targetDistance(_targetDistance),
-    detector(std::move(_detector))
+DistanceCameraLineTrace::DistanceCameraLineTrace(
+    Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate,
+    const PidGain& _pidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+  : CameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest),
+    targetDistance(_targetDistance)
 {
 }
 

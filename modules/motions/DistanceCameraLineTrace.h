@@ -8,6 +8,7 @@
 #define DISTANCE_CAMERA_LINE_TRACE_H
 
 #include "CameraPidTracking.h"
+#include "SocketProtocol.h"
 
 class DistanceCameraLineTrace : public CameraPidTracking {
  public:
@@ -17,11 +18,11 @@ class DistanceCameraLineTrace : public CameraPidTracking {
    * @param _targetSpeed 目標速度
    * @param _targetXCoordinate 目標x座標
    * @param _pidGain PIDゲイン
-   * @param _detector 画像処理クラスのポインタ
+   * @param _detectionRequest 検出リクエスト
    */
   DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
                           int _targetXCoordinate, const PidGain& _pidGain,
-                          std::unique_ptr<BoundingBoxDetector> _detector);
+                          const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
 
   /**
    * @brief 指定距離だけカメラライントレースする
@@ -49,7 +50,7 @@ class DistanceCameraLineTrace : public CameraPidTracking {
  private:
   double targetDistance;                          // 目標距離
   double initDistance;                            // 実行前の走行距離
-  std::unique_ptr<BoundingBoxDetector> detector;  // 画像処理クラスのポインタ
+  CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
 };
 
 #endif

@@ -1,0 +1,47 @@
+# Makefile for the Camera Server for Debian/arm64
+
+# Compiler
+CXX := g++
+
+# Directories
+SRCDIR := modules
+INCLUDEDIR := modules
+OBJDIR := obj
+TARGET_DIR := bin
+TARGET := $(TARGET_DIR)/camera_server
+
+# Compiler and Linker Flags
+CXXFLAGS := -std=c++17 -Wall -Wextra -O2 -pthread
+
+# Use pkg-config to get OpenCV flags, which is standard on Linux
+OPENCV_CFLAGS := $(shell pkg-config --cflags opencv4)
+OPENCV_LIBS := $(shell pkg-config --libs opencv4)
+
+INCLUDES := $(shell find $(INCLUDEDIR) -type d -printf '-I%p ') -I../common
+CXXFLAGS += $(OPENCV_CFLAGS)
+LIBS := $(OPENCV_LIBS)
+
+# --- Build Rules ---
+
+# Find all .cpp files
+SOURCES := main.cpp $(shell find $(SRCDIR) -name '*.cpp') $(shell find ../common -name '*.cpp')
+OBJS := $(addprefix $(OBJDIR)/,$(SOURCES:.cpp=.o))
+
+# Default target
+all: $(TARGET)
+
+# Rule to link the executable
+$(TARGET): $(OBJS)
+	@mkdir -p $(TARGET_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+
+# Generic rule to compile any .cpp file to its corresponding .o file in obj
+$(OBJDIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+# Clean rule
+clean:
+	rm -rf $(OBJDIR) $(TARGET_DIR)
+
+.PHONY: all clean

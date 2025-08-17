@@ -8,11 +8,11 @@
 #define CAMERA_PID_TRACKING_H
 
 #include "Motion.h"
-#include "BoundingBoxDetector.h"
 #include "Pid.h"
 #include "SpeedCalculator.h"
 #include "Mileage.h"
 #include <algorithm>
+#include "SocketProtocol.h"
 
 class CameraPidTracking : public Motion {
  public:
@@ -23,10 +23,10 @@ class CameraPidTracking : public Motion {
    * @param _targetSpeed 目標速度
    * @param _targetXCoordinate 目標x座標
    * @param _pidGain PIDゲイン
-   * @param _boundingBoxDetector 画像処理クラスのポインタ
+   * @param _detectionRequest 検出リクエスト
    */
   CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
-                    const PidGain& _pidGain, BoundingBoxDetector& _boundingBoxDetector);
+                    const PidGain& _pidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
 
   /**
    * @brief カメラ走行を実行する
@@ -50,7 +50,7 @@ class CameraPidTracking : public Motion {
   virtual bool isMetContinuationCondition() = 0;
 
  protected:
-  BoundingBoxDetector& boundingBoxDetector;  // 画像処理クラスの参照
+  CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
   BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
   double targetSpeed;                 // 目標速度
   int targetXCoordinate;              // 目標X座標

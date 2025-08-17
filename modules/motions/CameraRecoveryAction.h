@@ -8,8 +8,8 @@
 #define CAMERA_RECOVERY_ACTION_H
 
 #include "CompositeMotion.h"
-#include "BoundingBoxDetector.h"
 #include "AngleRotation.h"
+#include "SocketProtocol.h"
 
 class CameraRecoveryAction : public CompositeMotion {
  public:
@@ -22,7 +22,7 @@ class CameraRecoveryAction : public CompositeMotion {
    * @param _boundingBoxDetector 画像処理クラスのポインタ
    */
   CameraRecoveryAction(Robot& _robot, int _angle, double _speed, bool _isClockwise,
-                       std::unique_ptr<BoundingBoxDetector> _boundingBoxDetector);
+                       const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
 
   /**
    * @brief カメラフレーム復帰動作を実行する
@@ -30,7 +30,7 @@ class CameraRecoveryAction : public CompositeMotion {
   void run() override;
 
  private:
-  std::unique_ptr<BoundingBoxDetector> boundingBoxDetector;  // 画像処理クラスのポインタ
+  CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
   BoundingBoxDetectionResult result;                         // 検出結果
   int recoveryAngle;                                         // 復帰回頭角度
   double speed;                                              // 回頭スピード

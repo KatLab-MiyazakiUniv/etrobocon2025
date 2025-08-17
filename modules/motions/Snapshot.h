@@ -1,6 +1,6 @@
 /**
  * @file   Snapshot.h
- * @brief  写真を撮影して保存するクラス
+ * @brief  サーバーに写真撮影を依頼するクラス
  * @author takuchi17
  */
 
@@ -8,25 +8,24 @@
 #define SNAPSHOT_H
 
 #include "Motion.h"
-#include "FrameSave.h"
+#include <string>
 
 class Snapshot : public Motion {
  public:
   /**
    * コンストラクタ
    * @param _robot ロボットインスタンス
-   * @param _fileName ファイル名 (デフォルト: snapshot.JPEG)
+   * @param _fileName ファイル名 (デフォルト: snapshot.jpeg)
    */
   Snapshot(Robot& _robot, const std::string& _fileName = "snapshot");
 
   /**
-   * @brief カメラ撮影を行い、画像を保存する
+   * @brief サーバーに撮影を依頼する
    */
   void run() override;
 
  private:
-  std::string fileName;           // 保存するファイル名
-  static const std::string path;  // 保存するパス
+  std::string fileName;  // 保存するファイル名
 };
 
 #endif

@@ -5,6 +5,8 @@
  */
 
 #include "Sleeping.h"
+#include <thread>
+#include <chrono>
 
 Sleeping::Sleeping(Robot& _robot, int _milliSec) : Motion(_robot), milliSec(_milliSec) {}
 

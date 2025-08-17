@@ -5,6 +5,7 @@
  */
 
 #include "AngleRotation.h"
+#include <iostream>
 
 AngleRotation::AngleRotation(Robot& _robot, int _targetAngle, double _speed, bool _isClockwise)
   : Rotation(_robot, _speed, _isClockwise),

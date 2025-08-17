@@ -8,27 +8,21 @@
 
 Robot::Robot()
   : motorController(),
-    defaultCameraCapture(),
-    cameraCapture(defaultCameraCapture),
+    socketClient(),
     colorSensor(EPort::PORT_E),
     clock(),
     button(),
     forceSensor(EPort::PORT_D),
-    display()
+    display(),
+    miniFigDirectionResult(),
+    backgroundDirectionResult()
 {
+  socketClient.connectToServer();
 }
 
-// DI(依存性注入)用コンストラクタ
-Robot::Robot(ICameraCapture& cam)
-  : motorController(),
-    defaultCameraCapture(),
-    cameraCapture(cam),
-    colorSensor(EPort::PORT_E),
-    clock(),
-    button(),
-    forceSensor(EPort::PORT_D),
-    display()
+Robot::~Robot()
 {
+  socketClient.disconnectFromServer();
 }
 
 MotorController& Robot::getMotorControllerInstance()
@@ -36,9 +30,9 @@ MotorController& Robot::getMotorControllerInstance()
   return motorController;
 }
 
-ICameraCapture& Robot::getCameraCaptureInstance()
+SocketClient& Robot::getSocketClient()
 {
-  return cameraCapture;
+  return socketClient;
 }
 
 spikeapi::ColorSensor& Robot::getColorSensorInstance()
@@ -68,7 +62,7 @@ spikeapi::Display& Robot::getDisplayInstance()
 
 MiniFigDirectionResult& Robot::getMiniFigDirectionResult()
 {
-  return miniFigDirectionResult;  // ミニフィグの向き検出結果を返す
+  return miniFigDirectionResult;
 }
 
 BackgroundDirectionResult& Robot::getBackgroundDirectionResult()
