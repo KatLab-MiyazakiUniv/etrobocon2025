@@ -50,8 +50,8 @@ class IMURotation : public Rotation {
 
  private:
   static constexpr float TOLERANCE = 1.0f;              // 許容誤差
-  static constexpr double ANGULAR_VELOCITY_K_P = 0.5;   // 角速度比例ゲイン
-  static constexpr double ANGULAR_VELOCITY_K_I = 0.01;  // 角速度積分ゲイン
+  static constexpr double ANGULAR_VELOCITY_K_P = 1.24;   // 角速度比例ゲイン
+  static constexpr double ANGULAR_VELOCITY_K_I = 1.0;  // 角速度積分ゲイン
   static constexpr double ANGULAR_VELOCITY_K_D = 0.0;   // 角速度微分ゲイン
   static constexpr double MIN_MOTOR_POWER = 25.0;       // 最低モータパワー
   int targetAngle;                                      // 目標回転角度(deg) 0~360
