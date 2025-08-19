@@ -89,9 +89,9 @@ void IMURotation::updateMotorControl()
     }
   }
 
-  // モータパワーを適用
-  robot.getMotorControllerInstance().setLeftMotorPower(motorPower * leftSign);
-  robot.getMotorControllerInstance().setRightMotorPower(motorPower * rightSign);
+  // モータパワーを適用（IMUの出力特性に合わせてモータパワーの符号を反転）
+  robot.getMotorControllerInstance().setLeftMotorPower(-motorPower * leftSign);
+  robot.getMotorControllerInstance().setRightMotorPower(-motorPower * rightSign);
 
   // 10ms待機（これがないと通信バッファオーバーフローになる）
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
