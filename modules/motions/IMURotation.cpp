@@ -80,15 +80,6 @@ void IMURotation::updateMotorControl()
       targetAngularVelocity - robot.getIMUControllerInstance().getCorrectedZAxisAngularVelocity(),
       0.01);
 
-  // 停止条件以外で走行体が停止しないように最低モータパワーを適用
-  if(std::abs(motorPower) > 0.0) {
-    if(motorPower > 0) {
-      motorPower = std::max(motorPower, MIN_MOTOR_POWER);
-    } else {
-      motorPower = std::min(motorPower, -MIN_MOTOR_POWER);
-    }
-  }
-
   // モータパワーを適用（IMUの出力特性に合わせてモータパワーの符号を反転）
   robot.getMotorControllerInstance().setLeftMotorPower(-motorPower * leftSign);
   robot.getMotorControllerInstance().setRightMotorPower(-motorPower * rightSign);
