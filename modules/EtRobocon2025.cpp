@@ -24,14 +24,18 @@ void EtRobocon2025::start()
   }
 
   Calibrator calibrator(robot);
-  calibrator.selectAndSetCourse();
-  calibrator.measureAndSetTargetBrightness();
-  bool isLeftCourse = calibrator.getIsLeftCourse();
-  int targetBrightness = calibrator.getTargetBrightness();
+  // calibrator.selectAndSetCourse();
+  // calibrator.measureAndSetTargetBrightness();
+  bool isLeftCourse = true;
+  int targetBrightness = 51;
   calibrator.getAngleCheckFrame();
   calibrator.waitForStart();
 
-  Area lineTraceArea = Area::LineTrace;
-  AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
-  lineTraceAreaMaster.run();
+  // Area lineTraceArea = Area::LineTrace;
+  // AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
+  // lineTraceAreaMaster.run();
+
+  Area smartCarryArea = Area::SmartCarry;
+  AreaMaster smartCarryAreaMaster(robot, smartCarryArea, isLeftCourse, targetBrightness);
+  smartCarryAreaMaster.run();
 }
