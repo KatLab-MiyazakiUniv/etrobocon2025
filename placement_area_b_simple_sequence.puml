@@ -1,0 +1,107 @@
+@startuml 配置エリアB攻略シーケンス図（簡易版）
+
+title 配置エリアB攻略シーケンス図（簡易版）\n(風景・プラレール撮影システム)
+
+actor "競技開始" as Start
+participant "ETロボコン2025" as Main
+participant "攻略システム" as AM
+participant "コマンド解析" as MP
+participant "風景プラレールカメラ動作" as BCA
+participant "プラレールカメラ動作" as PCA
+participant "角度指定回頭" as AR
+participant "風景方向検出" as BDD
+participant "動体検出" as MD
+participant "フレーム保存" as FS
+participant "ロボット" as Robot
+
+== システム開始 ==
+Start -> Main: システム開始
+Main -> Robot: ロボット初期化
+Main -> AM: run(ダブルループ)
+activate AM
+
+AM -> MP: createMotions(コマンドファイル)
+MP --> AM: 動作オブジェクト群
+
+== 配置エリアB攻略 ==
+AM -> BCA: run()
+activate BCA
+
+loop 4つの撮影位置 (position = 0,1,2,3)
+    
+    BCA -> BCA: 事前条件判定
+    note right: 撮影が必要かチェック
+    
+    == 撮影準備 ==
+    BCA -> AR: run() [風景方向へ回頭]
+    AR -> Robot: モーター制御
+    
+    == 風景判定 ==
+    BCA -> Robot: getFrame() [5回フレーム取得]
+    Robot --> BCA: カメラ画像
+    
+    alt position == 0 (初回)
+        BCA -> BDD: detect(frame)
+        BDD -> BDD: CNN推論処理
+        BDD --> Robot: 風景方向判定結果更新
+        
+        alt 検出成功 && 正面向き
+            BCA -> PCA: run() [プラレール撮影]
+            activate PCA
+            PCA -> PCA: 背景フレーム取得
+            
+            == 動体検出・撮影 ==
+            loop 動体検出待ち
+                PCA -> Robot: getFrame()
+                PCA -> MD: detect(frame)
+                MD --> PCA: 動体検出結果
+                alt 動体検出
+                    note over PCA: 撮影開始
+                    break
+                end
+            end
+            
+            loop 動体退出検出
+                PCA -> Robot: getFrame()
+                PCA -> MD: detect(frame)
+                MD --> PCA: 動体検出結果
+                alt 動体未検出が継続
+                    note over PCA: 撮影終了
+                    break
+                end
+            end
+            
+            PCA -> FS: save("bestframe")
+            deactivate PCA
+        end
+        
+    else position != 0 && 前回検出成功
+        note over BCA: 確実に正面方向
+        BCA -> PCA: run() [プラレール撮影]
+        activate PCA
+        PCA -> PCA: 動体検出・撮影処理
+        PCA -> FS: save("bestframe")
+        deactivate PCA
+        
+    else 前回検出失敗
+        BCA -> PCA: run() [判定用撮影]
+        activate PCA
+        PCA -> FS: save("bestframe_" + position)
+        deactivate PCA
+        note right: 位置別保存
+    end
+    
+    == 元位置復帰 ==
+    BCA -> AR: run() [元方向へ回頭]
+    AR -> Robot: モーター制御
+    
+end
+
+BCA -> BCA: 画像アップロード処理
+deactivate BCA
+
+== エリア攻略継続 ==
+AM -> AM: 他の動作を継続実行
+deactivate AM
+
+@enduml

@@ -1,0 +1,79 @@
+@startuml 配置エリアA攻略シーケンス図（簡易版）
+
+title 配置エリアA攻略シーケンス図（簡易版）\n(ミニフィグ撮影システム)
+
+actor "競技開始" as Start
+participant "ETロボコン2025" as Main
+participant "攻略システム" as AM
+participant "コマンド解析" as MP
+participant "ミニフィグカメラ動作" as MCA
+participant "角度指定回頭" as AR
+participant "距離指定直進" as DS
+participant "ミニフィグの向き検出" as MDD
+participant "フレーム保存" as FS
+participant "ロボット" as Robot
+
+== システム開始 ==
+Start -> Main: システム開始
+Main -> Robot: ロボット初期化
+Main -> AM: run(ダブルループ)
+activate AM
+
+AM -> MP: createMotions(コマンドファイル)
+MP --> AM: 動作オブジェクト群
+
+== 配置エリアA攻略 ==
+AM -> MCA: run()
+activate MCA
+
+loop 4つの撮影位置 (position = 0,1,2,3)
+    
+    MCA -> MCA: 事前条件判定
+    note right: 撮影が必要かチェック
+    
+    == 撮影準備 ==
+    MCA -> AR: run() [ミニフィグ方向へ回頭]
+    AR -> Robot: モーター制御
+    
+    MCA -> DS: run() [撮影距離まで後退]
+    DS -> Robot: モーター制御
+    
+    == 撮影・判定 ==
+    MCA -> Robot: getFrame() [5回フレーム取得]
+    Robot --> MCA: カメラ画像
+    
+    alt position == 0 (初回)
+        MCA -> MDD: detect(frame)
+        MDD -> MDD: CNN推論処理
+        MDD --> Robot: 向き判定結果更新
+        
+        alt 検出成功 && 正面向き
+            MCA -> FS: save("upload_front_fig")
+        end
+        
+    else position != 0 && 前回検出成功
+        note over MCA: 確実に正面方向
+        MCA -> FS: save("upload_front_fig")
+        
+    else 前回検出失敗
+        MCA -> FS: save("Fig_" + position)
+        note right: 位置別保存
+    end
+    
+    == 元位置復帰 ==
+    MCA -> DS: run() [元位置まで前進]
+    DS -> Robot: モーター制御
+    
+    MCA -> AR: run() [元方向へ回頭]
+    AR -> Robot: モーター制御
+    
+end
+
+MCA -> MCA: 画像アップロード処理
+deactivate MCA
+
+== エリア攻略継続 ==
+AM -> AM: 他の動作を継続実行
+deactivate AM
+
+@enduml
