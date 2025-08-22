@@ -36,4 +36,12 @@ void EtRobocon2025::start()
   Area lineTraceArea = Area::LineTrace;
   AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
   lineTraceAreaMaster.run();
+
+  Area doubleLoopArea = Area::DoubleLoop;
+  AreaMaster doubleLoopAreaMaster(robot, doubleLoopArea, isLeftCourse, targetBrightness);
+  doubleLoopAreaMaster.run();
+
+  Area smartCarryArea = Area::SmartCarry;
+  AreaMaster smartCarryAreaMaster(robot, smartCarryArea, isLeftCourse, targetBrightness);
+  smartCarryAreaMaster.run();
 }

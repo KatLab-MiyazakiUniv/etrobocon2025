@@ -238,24 +238,23 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [1]:bool isClockwise（"clockwise"/"anticlockwise"）
         // [2]:int preTargetAngle
         // [3]:int postTargetAngle
-        // [4]:double 回頭速度
-        // [5]:double threshold（動体検出用）
-        // [6]:double minArea（動体矩形とみなす最小面積）
-        // [7]:int ROIの左上X座標
-        // [8]:int ROIの左上Y座標
-        // [9]:int ROIの幅
-        // [10]:int ROIの高さ
-        // [11]:int position（0=初期位置）
+        // [4]:double threshold（動体検出用）
+        // [5]:double minArea（動体矩形とみなす最小面積）
+        // [6]:int ROIの左上X座標
+        // [7]:int ROIの左上Y座標
+        // [8]:int ROIの幅
+        // [9]:int ROIの高さ
+        // [10]:int position（0=初期位置）
 
       case COMMAND::BCA: {
         cv::Rect roi;
 
         bool isClockwise = convertBool("BCA", params[1]);
-        roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
+        roi = cv::Rect(stoi(params[6]), stoi(params[7]), stoi(params[8]), stoi(params[9]));
 
         auto bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]),
-                                                 stoi(params[3]), stod(params[4]), stod(params[5]),
-                                                 stod(params[6]), roi, stoi(params[11]));
+                                                 stoi(params[3]), stod(params[4]),
+                                                 stod(params[5]), roi, stoi(params[10]));
 
         motionList.push_back(bca);
         break;
