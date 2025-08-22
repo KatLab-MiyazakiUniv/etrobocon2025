@@ -10,14 +10,15 @@
 using namespace std;
 
 MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
-                                         int _postTargetAngle, double _targetRotationSpeed,
+                                         int _postTargetAngle, double _basePower, const PidGain& _anglePidGain,
                                          double _backTargetDistance, double _forwardTargetDistance,
                                          double _backSpeed, double _forwardSpeed, int _position)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
     postTargetAngle(_postTargetAngle),
-    targetRotationSpeed(_targetRotationSpeed),
+    basePower(_basePower),
+    anglePidGain(_anglePidGain),
     backTargetDistance(_backTargetDistance),
     forwardTargetDistance(_forwardTargetDistance),
     backSpeed(_backSpeed),
@@ -76,8 +77,8 @@ void MiniFigCameraAction::run()
   }
 
   // 撮影のための回頭をする
-  AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
-  preAR.run();
+  IMURotation preIMUR(robot, preTargetAngle, basePower, isClockwise, anglePidGain);
+  preIMUR.run();
 
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));
@@ -149,6 +150,6 @@ void MiniFigCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
-  postAR.run();
+  IMURotation postIMUR(robot, postTargetAngle, basePower, !isClockwise, anglePidGain);
+  postIMUR.run();
 }

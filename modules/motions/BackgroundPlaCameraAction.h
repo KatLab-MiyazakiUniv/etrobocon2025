@@ -9,18 +9,13 @@
 
 #include "PlaCameraAction.h"
 #include "BackgroundDirectionDetector.h"
-#include "AngleRotation.h"
+#include "IMURotation.h"
 #include "Robot.h"
 #include "FrameSave.h"
 #include "ImageUploader.h"
 #include <thread>
 #include <iostream>
 #include "CompositeMotion.h"
-#include "IMURotation.h"
-
-#define P_GAIN 0.036
-#define I_GAIN 0.012
-#define D_GAIN 0.03
 
 class BackgroundPlaCameraAction : public CompositeMotion {
  public:
@@ -30,15 +25,16 @@ class BackgroundPlaCameraAction : public CompositeMotion {
    * @param _isClockwise 時計回りかどうか
    * @param _preTargetAngle カメラを風景に向けるための回頭角度
    * @param _postTargetAngle 黒線復帰のための回頭角度
-   * @param _targetRotationSpeed 目標回頭速度
+   * @param _basePower 基準パワー値
+   * @param _anglePidGain 角度制御PIDゲイン
    * @param _threshold 風景検出のしきい値
    * @param _minArea 最小面積
    * @param _roi 動体検出用の注目領域
    * @param _position 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
    */
   BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
-                            int _postTargetAngle, double _threshold,
-                            double _minArea, const cv::Rect roi, int _position);
+                            int _postTargetAngle, double _basePower, const PidGain& _anglePidGain,
+                            double _threshold, double _minArea, const cv::Rect roi, int _position);
 
   /**
    * @brief 撮影動作を実行する
@@ -49,6 +45,8 @@ class BackgroundPlaCameraAction : public CompositeMotion {
   bool isClockwise = false;            // 回頭方向
   int preTargetAngle = 90;             // カメラを風景に向けるための回頭角度
   int postTargetAngle = 90;            // 黒線復帰のための回頭角度
+  double basePower = 30.0;                      // 基準パワー値
+  PidGain anglePidGain = { 0.7, 0.05, 0.05 };   // 角度制御PIDゲイン
   double threshold = 30.0;             // 風景検出のしきい値
   double minArea = 400.0;              // 最小面積
   int position = 0;                    // 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
