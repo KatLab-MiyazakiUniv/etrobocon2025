@@ -6,12 +6,12 @@
 
 #include "IMURotation.h"
 
-IMURotation::IMURotation(Robot& _robot, int _targetAngle, bool _isClockwise,
+IMURotation::IMURotation(Robot& _robot, int _targetAngle, double _basePower, bool _isClockwise,
                          const PidGain& _anglePidGain)
   : Rotation(_robot, _isClockwise),
     targetAngle(_targetAngle),
-    anglePid(_anglePidGain.kp, _anglePidGain.ki, _anglePidGain.kd, 0.0),
-    angularVelocityPid(ANGULAR_VELOCITY_K_P, ANGULAR_VELOCITY_K_I, ANGULAR_VELOCITY_K_D, 0.0)
+    basePower(_basePower),
+    anglePid(_anglePidGain.kp, _anglePidGain.ki, _anglePidGain.kd, 0.0)
 {
 }
 
@@ -46,14 +46,15 @@ bool IMURotation::isMetContinuationCondition()
   // 現在の角度を取得してメンバ変数に格納
   currentAngle = robot.getIMUControllerInstance().getAngle();
 
-  float error = targetAngle - currentAngle;
+  // 角度誤差を計算
+  angleError = targetAngle - currentAngle;
 
-  // 誤差計算（±180範囲に正規化）
-  if(error > 180.0f) error -= 360.0f;
-  if(error < -180.0f) error += 360.0f;
+  // 誤差を±180範囲に正規化
+  if(angleError > 180.0) angleError -= 360.0;
+  if(angleError < -180.0) angleError += 360.0;
 
   // 誤差の絶対値が許容値より大きい間は継続
-  bool shouldContinue = std::abs(error) > TOLERANCE;
+  bool shouldContinue = std::abs(angleError) > TOLERANCE;
 
   // 継続しない場合（終了する場合）はIMU角度計算を停止
   if(!shouldContinue) {
@@ -65,33 +66,15 @@ bool IMURotation::isMetContinuationCondition()
 
 void IMURotation::updateMotorControl()
 {
-  // 目標角度に達するまでの残りの角度を計算
-  double angleError = targetAngle - currentAngle;
+  // PID制御により角度誤差から補正値を計算
+  double pidCorrection = anglePid.calculatePid(angleError, 0.01);
 
-  // 誤差を±180範囲に正規化
-  if(angleError > 180.0) angleError -= 360.0;
-  if(angleError < -180.0) angleError += 360.0;
-
-  // PID制御により角度から目標角速度を決定
-  double targetAngularVelocity = anglePid.calculatePid(angleError, 0.01);
-
-  // PID制御により目標角速度からモータパワーを決定
-  double motorPower = angularVelocityPid.calculatePid(
-      targetAngularVelocity - robot.getIMUControllerInstance().getCorrectedZAxisAngularVelocity(),
-      0.01);
-
-  // 停止条件以外で走行体が停止しないように最低モータパワーを適用
-  if(std::abs(motorPower) > 0.0) {
-    if(motorPower > 0) {
-      motorPower = std::max(motorPower, MIN_MOTOR_POWER);
-    } else {
-      motorPower = std::min(motorPower, -MIN_MOTOR_POWER);
-    }
-  }
+  // 基準パワー値にPID補正を適用
+  double motorPower = basePower + pidCorrection;
 
   // モータパワーを適用（IMUの出力特性に合わせてモータパワーの符号を反転）
-  robot.getMotorControllerInstance().setLeftMotorPower(-motorPower * leftSign);
-  robot.getMotorControllerInstance().setRightMotorPower(-motorPower * rightSign);
+  robot.getMotorControllerInstance().setLeftMotorPower(motorPower * leftSign);
+  robot.getMotorControllerInstance().setRightMotorPower(motorPower * rightSign);
 
   // 10ms待機（これがないと通信バッファオーバーフローになる）
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
