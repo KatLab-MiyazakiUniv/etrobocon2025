@@ -25,10 +25,8 @@ class MiniFigDirectionDetector {
  public:
   /**
    * コンストラクタ
-   * @param YOLOモデルのパス
    */
-  MiniFigDirectionDetector(const std::string& modelPath
-                           = "../datafiles/models/11n_100epoch_&_650imgsz_fig.onnx");
+  MiniFigDirectionDetector();
 
   /**
    * @brief 入力画像からミニフィグの向きを判定し、結果を result に格納する
@@ -40,6 +38,8 @@ class MiniFigDirectionDetector {
   Ort::Session session;                  // 推論セッション
   std::vector<std::string> inputNames;   // モデルの入力名
   std::vector<std::string> outputNames;  // モデルの出力名
+  int yoloVersion;                       // YOLOバージョン (5 または 11)
+  std::string modelPath;                 // モデルファイルパス
   const std::string inputImagePath = "../datafiles/detection_target/fig.JPEG";  // 判定用画像のパス
   const std::string outputImagePath
       = "../datafiles/processed_images/"
@@ -58,7 +58,7 @@ class MiniFigDirectionDetector {
   cv::Mat preprocess(const cv::Mat& frame, float scale, int padX, int padY);
 
   /**
-   * @brief         出力結果を後処理して検出結果を生成する関数
+   * @brief         YOLO11用後処理関数
    * @param outputs ネットワークの出力結果
    * @param frame   入力画像フレーム
    * @param scale   スケール係数
@@ -67,6 +67,17 @@ class MiniFigDirectionDetector {
    */
   void postprocess(const std::vector<std::vector<float>>& outputs, const cv::Mat& frame,
                    float scale, int padX, int padY);
+
+  /**
+   * @brief         YOLOv5用後処理関数
+   * @param outputs ネットワークの出力結果
+   * @param frame   入力画像フレーム
+   * @param scale   スケール係数
+   * @param padX    X方向のパディング量
+   * @param padY    Y方向のパディング量
+   */
+  void postprocessV5(const std::vector<std::vector<float>>& outputs, const cv::Mat& frame,
+                     float scale, int padX, int padY);
 
   /**
    * @brief             推論を実行する

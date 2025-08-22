@@ -11,14 +11,27 @@ using namespace dnn;
 using namespace std;
 using json = nlohmann::json;
 
-MiniFigDirectionDetector::MiniFigDirectionDetector(const string& modelPath)
+MiniFigDirectionDetector::MiniFigDirectionDetector()
   : env(ORT_LOGGING_LEVEL_WARNING, "MiniFigDirectionDetector"), session(nullptr)
 {
+  // 設定ファイルから設定を読み取り
+  string modelPath = "../datafiles/models/11n_100epoch_&_650imgsz_fig.onnx";  // デフォルト
+  yoloVersion = 11;  // デフォルト
+  
+  ifstream configFile("yolo_config.txt");
+  if (configFile.is_open()) {
+    configFile >> yoloVersion;
+    configFile >> modelPath;
+    configFile.close();
+  }
+
   // セッション設定
   Ort::SessionOptions sessionOptions;
   sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
 
   // モデル読み込み
+  cout << "使用モデル: " << modelPath << endl;
+  cout << "YOLOバージョン: v" << yoloVersion << endl;
   session = Ort::Session(env, modelPath.c_str(), sessionOptions);
 
   // 入出力名を取得
@@ -57,8 +70,12 @@ void MiniFigDirectionDetector::detect()
   // 推論
   auto outputs = infer(blob);
 
-  // 出力結果の後処理
-  postprocess(outputs, frame, scale, padX, padY);
+  // バージョンに応じて後処理を選択
+  if (yoloVersion == 5) {
+    postprocessV5(outputs, frame, scale, padX, padY);
+  } else {
+    postprocess(outputs, frame, scale, padX, padY);  // v11
+  }
 }
 
 // 入力画像の前処理を行う関数
@@ -187,6 +204,115 @@ void MiniFigDirectionDetector::postprocess(const vector<vector<float>>& outputs,
     // リストに追加
     boxes.emplace_back(left, top, width, height);
     confidences.push_back(maxScore);
+    classIds.push_back(bestClass);
+  }
+
+  // 信頼度を超えるバウンディングボックスがなかった時の処理
+  if(boxes.empty()) {
+    outputError();
+    return;
+  }
+
+  // Non-Maximum Suppression (NMS) を実行し、重複する検出ボックスを削減する
+  vector<int> indices;
+  NMSBoxes(boxes, confidences, CONFIDENCE_THRESHOLD, NMS_THRESHOLD, indices);
+
+  // NMS の結果、検出がなければ処理を終了
+  if(indices.empty()) {
+    outputError();
+    return;
+  }
+
+  // NMS 後の最良の検出ボックスのインデックスを取得
+  int bestIdx = indices[0];
+  string direction;
+
+  // 最良検出ボックスのクラスIDに応じて方向を設定
+  if(classIds[bestIdx] == 0) {
+    direction = "FRONT";
+  } else if(classIds[bestIdx] == 1) {
+    direction = "BACK";
+  } else if(classIds[bestIdx] == 2) {
+    direction = "RIGHT";
+  } else if(classIds[bestIdx] == 3) {
+    direction = "LEFT";
+  }
+
+  // JSON出力
+  json j;
+  j["wasDetected"] = true;
+  j["direction"] = direction;
+  ofstream(outputJsonPath) << j.dump(4);
+
+  // デバッグ用: 検出結果を画像に描画して保存
+  Mat outputImage = frame.clone();
+  for(size_t i = 0; i < indices.size(); ++i) {
+    int idx = indices[i];
+    rectangle(outputImage, boxes[idx], Scalar(0, 255, 0), 2);
+    string label = to_string(classIds[idx]);
+    putText(outputImage, label, boxes[idx].tl(), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 1);
+  }
+  imwrite(outputImagePath, outputImage);
+
+  // 検出された方向クラスIDを表示
+  cout << "検出された方向クラスID: " << classIds[bestIdx] << endl;
+}
+
+// YOLOv5用の後処理関数
+void MiniFigDirectionDetector::postprocessV5(const vector<vector<float>>& outputs, const Mat& frame,
+                                              float scale, int padX, int padY)
+{
+  vector<int> classIds;       // 最も高いスコアを持つクラスIDを格納するリスト
+  vector<float> confidences;  // 信頼度を格納するリスト
+  vector<Rect> boxes;         // バウンディングボックスを格納するリスト
+
+  if(outputs.empty()) {
+    outputError();
+    return;
+  }
+
+  const vector<float>& data = outputs[0];
+
+  int numClasses = 8;               // モデル上のクラス数
+  int attributes = 5 + numClasses;  // x, y, w, h, objectness + クラススコア
+  int numBoxes = data.size() / attributes;
+
+  auto sigmoid = [](float x) { return 1.0f / (1.0f + exp(-x)); };
+
+  for(int i = 0; i < numBoxes; i++) {
+    // クラススコアの最大値とクラスIDを取得
+    float objectness = sigmoid(data[i * attributes + 4]);
+    float maxScore = -1.0f;
+    int bestClass = -1;
+    for(int j = 0; j < 4; j++) {  // 方向クラスのみ対象（0: FRONT, 1: BACK, 2: RIGHT, 3: LEFT）
+      float score = sigmoid(data[i * attributes + 5 + j]);
+      if(score > maxScore) {
+        maxScore = score;
+        bestClass = j;
+      }
+    }
+
+    // 最大クラススコアが閾値を超えているかチェック（YOLOv5はobjectness * maxScore）
+    float confidence = objectness * maxScore;
+    if(confidence < CONFIDENCE_THRESHOLD) continue;
+
+    float cx = data[i * attributes + 0];
+    float cy = data[i * attributes + 1];
+    float w = data[i * attributes + 2];
+    float h = data[i * attributes + 3];
+
+    int centerX = static_cast<int>((cx - padX) / scale);
+    int centerY = static_cast<int>((cy - padY) / scale);
+    int width = static_cast<int>(w / scale);
+    int height = static_cast<int>(h / scale);
+
+    int left = max(0, min(centerX - width / 2, frame.cols - 1));
+    int top = max(0, min(centerY - height / 2, frame.rows - 1));
+    width = min(width, frame.cols - left);
+    height = min(height, frame.rows - top);
+
+    boxes.emplace_back(left, top, width, height);
+    confidences.push_back(confidence);
     classIds.push_back(bestClass);
   }
 
