@@ -16,7 +16,7 @@ UltraSonic::UltraSonic() {}
 double UltraSonic::getDistance()
 {
   // 超音波センサーの距離を取得
-  return static_cast<double>(ultraSonic.getDistance()) * 10.0;  // cm to mm
+  return static_cast<double>(ultraSonic.getDistance());
 }
 
 // void UltraSonic::init() {
