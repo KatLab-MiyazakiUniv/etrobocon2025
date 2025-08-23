@@ -32,9 +32,8 @@ class MiniFigCameraAction : public CompositeMotion {
    * @param _position 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
    */
   MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle,
-                      double _basePower, const PidGain& _anglePidGain, double _backTargetDistance,
-                      double _forwardTargetDistance, double _backSpeed, double _forwardSpeed,
-                      int _position);
+                      double _basePower, double _backTargetDistance, double _forwardTargetDistance,
+                      double _backSpeed, double _forwardSpeed, int _position);
 
   /**
    * @brief ミニフィグの向きを判定し、必要なら撮影動作をスキップする準備処理
@@ -46,7 +45,6 @@ class MiniFigCameraAction : public CompositeMotion {
   int preTargetAngle = 90;           // カメラをミニフィグに向けるための回頭角度
   int postTargetAngle = 90;          // 黒線復帰のための目標角度
   double basePower = 30.0;                      // 撮影前後の回頭のための基準パワー
-  PidGain anglePidGain = { 0.7, 0.05, 0.05 };   // 角度制御PIDゲイン
   double backTargetDistance = 150;   // 撮影前の後退距離
   double forwardTargetDistance = 150;  // 撮影後の前進距離
   double backSpeed = 200;              // 撮影後の後退速度

@@ -10,15 +10,14 @@ using namespace std;
 
 BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise,
                                                      int _preTargetAngle, int _postTargetAngle,
-                                                     double _basePower, const PidGain& _anglePidGain,
-                                                     double _threshold, double _minArea, const cv::Rect _roi,
+                                                     double _basePower, double _threshold,
+                                                     double _minArea, const cv::Rect _roi,
                                                      int _position)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
     postTargetAngle(_postTargetAngle),
     basePower(_basePower),
-    anglePidGain(_anglePidGain),
     threshold(_threshold),
     minArea(_minArea),
     roi(_roi),
@@ -79,7 +78,8 @@ void BackgroundPlaCameraAction::run()
   if(!isMetPreCondition()) return;
 
   // 撮影のため回頭
-  IMURotation preRotation(robot, preTargetAngle, basePower, isClockwise, anglePidGain);
+  IMURotation preRotation(robot, preTargetAngle, basePower, isClockwise,
+                          PidGain(0.036, 0.012, 0.03));
   preRotation.run();
 
   // 動作安定のためのスリープ
@@ -146,6 +146,7 @@ void BackgroundPlaCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  IMURotation postRotation(robot, postTargetAngle, basePower, !isClockwise, anglePidGain);
+  IMURotation postRotation(robot, postTargetAngle, basePower, !isClockwise,
+                           PidGain(0.036, 0.012, 0.03));
   postRotation.run();
 }
