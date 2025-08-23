@@ -1,2 +1,0 @@
-11 # YOLOバージョン(5または11) 値の後スペース必須 パスにスペース不可
-../datafiles/models/11n_100epoch_&_650imgsz_fig.onnx # モデルファイルのパス
