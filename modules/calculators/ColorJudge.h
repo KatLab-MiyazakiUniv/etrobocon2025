@@ -45,6 +45,14 @@ class ColorJudge {
 
  private:
   ColorJudge();
+  static constexpr int SATURATION_BORDER = 27;    // 無彩色かどうかの彩度の境界
+  static constexpr int BLACK_LIMIT_BORDER = 10;   // 黒の明度の境界
+  static constexpr int WHITE_LIMIT_BORDER = 250;  // 白の明度の境界
+  static constexpr int BLACK_BORDER = 110;        // 無彩色の黒の明度の境界
+  static constexpr int RED_BORDER = 25;           // 赤の色相の境界
+  static constexpr int YELLOW_BORDER = 50;        // 黄の色相の境界
+  static constexpr int GREEN_BORDER = 170;        // 緑の色相の境界
+  static constexpr int BLUE_BORDER = 300;         // 青の色相の境界
 };
 
 #endif

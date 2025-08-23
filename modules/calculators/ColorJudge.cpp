@@ -39,26 +39,22 @@ const char* ColorJudge::convertColorToString(const COLOR& color)
 
 COLOR ColorJudge::convertHsvToColor(const spikeapi::ColorSensor::HSV& hsv)
 {
-  // HSV値がすべて0のときは黒
-  if(hsv.h == 0 && hsv.s == 0 && hsv.v == 0) {
-    return COLOR::BLACK;
-  }
-  // S値(彩度)が0のときは白
-  if(hsv.s == 0) {
+  // 明度が極端に低ければ、黒を返す
+  if(hsv.v < BLACK_LIMIT_BORDER) return COLOR::BLACK;
+  // 明度が極端に高ければ、白を返す
+  if(hsv.v > WHITE_LIMIT_BORDER) return COLOR::WHITE;
+  // 彩度が低い場合
+  if(hsv.s < SATURATION_BORDER) {
+    // 明度が低ければ、黒を返す
+    if(hsv.v < BLACK_BORDER) return COLOR::BLACK;
+    // 明度が高ければ、白を返す
     return COLOR::WHITE;
   }
-  // 定数定義されている色の判定はH値(色相)で行う
-  switch(hsv.h) {
-    case PBIO_COLOR_HUE_RED:
-      return COLOR::RED;
-    case PBIO_COLOR_HUE_YELLOW:
-      return COLOR::YELLOW;
-    case PBIO_COLOR_HUE_GREEN:
-      return COLOR::GREEN;
-    case PBIO_COLOR_HUE_BLUE:
-      return COLOR::BLUE;
-    default:
-      break;
-  }
-  return COLOR::NONE;
+
+  // 各色相の境界によって、色を判別する
+  if(hsv.h < RED_BORDER) return COLOR::RED;
+  if(hsv.h < YELLOW_BORDER) return COLOR::YELLOW;
+  if(hsv.h < GREEN_BORDER) return COLOR::GREEN;
+  if(hsv.h < BLUE_BORDER) return COLOR::BLUE;
+  return COLOR::RED;
 }

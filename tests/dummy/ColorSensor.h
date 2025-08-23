@@ -74,6 +74,12 @@ namespace spikeapi {
       }
     }
 
+    void getHSV(HSV& hsv, bool surface = true)
+    {
+      // getColorと同じ挙動をする
+      getColor(hsv, surface);
+    }
+
     /**
      * 反射率を取得
      * @return ダミーの反射率（黒か白の輝度どれか）
