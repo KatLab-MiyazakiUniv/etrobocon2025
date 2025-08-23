@@ -9,6 +9,7 @@
 
 #include "spikeapi.h"
 #include "MotorController.h"
+#include "UltraSonic.h"
 #include "CameraCapture.h"
 #include "ColorSensor.h"
 #include "Clock.h"
@@ -35,6 +36,12 @@ class Robot {
    * @return メンバ変数motorController(MotorControllerのインスタンス)の参照
    */
   MotorController& getMotorControllerInstance();
+
+  /**
+   * @brief UltraSonicのインスタンスの参照を返す
+   * @return メンバ変数ultraSonic(UltraSonicのインスタンス)の参照
+   */
+  UltraSonic& getUltraSonicInstance();
 
   /**
    * @brief ICameraCaptureのインスタンスの参照を返す
@@ -103,6 +110,7 @@ class Robot {
 
  private:
   MotorController motorController;                // MotorControllerインスタンス
+  UltraSonic ultraSonic;
   CameraCapture defaultCameraCapture;             // 実機用のCameraCaptureインスタンス
   ICameraCapture& cameraCapture;                  // 実際に使うカメラ（参照）
   spikeapi::ColorSensor colorSensor;              // ColorSensorインスタンス

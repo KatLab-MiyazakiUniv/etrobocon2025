@@ -1,7 +1,7 @@
 MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 # サーバーのIPアドレス
-SERVER_IP = IPアドレス
+SERVER_IP = 172.20.1.219 
 
 # 使い方
 help:

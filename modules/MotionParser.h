@@ -29,6 +29,7 @@
 #include "MiniFigCameraAction.h"
 #include "BackgroundPlaCameraAction.h"
 #include "ColorDistanceCameraLineTrace.h"
+#include "UltrasonicDistanceCameraLineTrace.h"
 #include "CameraRecoveryAction.h"
 
 enum class COMMAND {
@@ -39,6 +40,7 @@ enum class COMMAND {
   DL,    // 指定距離ライントレース
   DCL,   // 指定距離カメラライントレース
   CDCL,  // 色距離指定カメラライントレース
+  UDCL,  // 超音波距離指定カメラライントレース
   CL,    // 指定色ライントレース
   CDL,   // 色距離指定ライントレース
   EC,    // エッジ切り替え

@@ -8,6 +8,7 @@
 
 Robot::Robot()
   : motorController(),
+    ultraSonic(),
     defaultCameraCapture(),
     cameraCapture(defaultCameraCapture),
     colorSensor(EPort::PORT_E),
@@ -22,6 +23,7 @@ Robot::Robot()
 // DI(依存性注入)用コンストラクタ
 Robot::Robot(ICameraCapture& cam)
   : motorController(),
+    ultraSonic(),
     defaultCameraCapture(),
     cameraCapture(cam),
     colorSensor(EPort::PORT_E),
@@ -36,6 +38,11 @@ Robot::Robot(ICameraCapture& cam)
 MotorController& Robot::getMotorControllerInstance()
 {
   return motorController;
+}
+
+UltraSonic& Robot::getUltraSonicInstance()
+{
+  return ultraSonic;
 }
 
 ICameraCapture& Robot::getCameraCaptureInstance()
