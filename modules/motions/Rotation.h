@@ -14,10 +14,9 @@ class Rotation : public Motion {
   /**
    * コンストラクタ
    * @param _robot       ロボット制御クラスへの参照
-   * @param _speed       指定する速度（mm/秒）
    * @param _isClockwise 回頭方向 true:時計回り, false:反時計回り
    */
-  Rotation(Robot& _robot, double _speed, bool _isClockwise);
+  Rotation(Robot& _robot, bool _isClockwise);
 
   /**
    * @brief 回頭する
@@ -44,8 +43,13 @@ class Rotation : public Motion {
    */
   virtual bool isMetContinuationCondition() = 0;
 
+  /**
+   * @brief 継続中にモーターを動的制御する
+   * @note オーバーライド必須
+   */
+  virtual void updateMotorControl() {}
+
  protected:
-  double speed;      // 指定する速度（mm/秒）
   bool isClockwise;  // 回頭方向 true:時計回り, false:反時計回り
   int leftSign;      // leftSign  = +1 のとき左モーターは順回転、 -1 のとき逆回転
   int rightSign;     // rightSign = +1 のとき右モーターは順回転、 -1 のとき逆回転

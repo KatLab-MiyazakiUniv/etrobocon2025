@@ -44,7 +44,13 @@ class AngleRotation : public Rotation {
    */
   bool isMetContinuationCondition() override;
 
+  /**
+   * @brief 継続中にモーターを動的制御する
+   */
+  void updateMotorControl() override;
+
  private:
+  double speed;                // 指定する速度（mm/秒）
   double targetLeftDistance;   // 左モーターの目標移動距離
   double targetRightDistance;  // 右モーターの目標移動距離
   int targetAngle;             // 目標回転角度(deg) 0~360
