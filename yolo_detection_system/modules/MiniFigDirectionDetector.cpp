@@ -11,27 +11,14 @@ using namespace dnn;
 using namespace std;
 using json = nlohmann::json;
 
-MiniFigDirectionDetector::MiniFigDirectionDetector()
+MiniFigDirectionDetector::MiniFigDirectionDetector(const string& modelPath)
   : env(ORT_LOGGING_LEVEL_WARNING, "MiniFigDirectionDetector"), session(nullptr)
 {
-  // 設定ファイルから設定を読み取り
-  string modelPath = "../datafiles/models/11n_100epoch_&_650imgsz_fig.onnx";  // デフォルト
-  yoloVersion = 11;  // デフォルト
-  
-  ifstream configFile("yolo_config.txt");
-  if (configFile.is_open()) {
-    configFile >> yoloVersion;
-    configFile >> modelPath;
-    configFile.close();
-  }
-
   // セッション設定
   Ort::SessionOptions sessionOptions;
   sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
 
   // モデル読み込み
-  cout << "使用モデル: " << modelPath << endl;
-  cout << "YOLOバージョン: v" << yoloVersion << endl;
   session = Ort::Session(env, modelPath.c_str(), sessionOptions);
 
   // 入出力名を取得
@@ -70,12 +57,8 @@ void MiniFigDirectionDetector::detect()
   // 推論
   auto outputs = infer(blob);
 
-  // バージョンに応じて後処理を選択
-  if (yoloVersion == 5) {
-    postprocessV5(outputs, frame, scale, padX, padY);
-  } else {
-    postprocess(outputs, frame, scale, padX, padY);  // v11
-  }
+  // 出力結果の後処理
+  postprocess(outputs, frame, scale, padX, padY);
 }
 
 // 入力画像の前処理を行う関数
@@ -260,7 +243,7 @@ void MiniFigDirectionDetector::postprocess(const vector<vector<float>>& outputs,
 
 // YOLOv5用の後処理関数
 void MiniFigDirectionDetector::postprocessV5(const vector<vector<float>>& outputs, const Mat& frame,
-                                              float scale, int padX, int padY)
+                                             float scale, int padX, int padY)
 {
   vector<int> classIds;       // 最も高いスコアを持つクラスIDを格納するリスト
   vector<float> confidences;  // 信頼度を格納するリスト
