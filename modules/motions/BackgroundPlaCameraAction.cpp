@@ -83,7 +83,7 @@ void BackgroundPlaCameraAction::run()
   preRotation.run();
 
   // 動作安定のためのスリープ
-  this_thread::sleep_for(chrono::milliseconds(10));
+  this_thread::sleep_for(chrono::milliseconds(100));
 
   PlaCameraAction plaCameraAction(robot, threshold, minArea, roi);
 

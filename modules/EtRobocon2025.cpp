@@ -33,15 +33,15 @@ void EtRobocon2025::start()
   calibrator.getAngleCheckFrame();
   calibrator.waitForStart();
 
-  Area lineTraceArea = Area::LineTrace;
-  AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
-  lineTraceAreaMaster.run();
+  // Area lineTraceArea = Area::LineTrace;
+  // AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
+  // lineTraceAreaMaster.run();
 
   Area doubleLoopArea = Area::DoubleLoop;
   AreaMaster doubleLoopAreaMaster(robot, doubleLoopArea, isLeftCourse, targetBrightness);
   doubleLoopAreaMaster.run();
 
-  Area smartCarryArea = Area::SmartCarry;
-  AreaMaster smartCarryAreaMaster(robot, smartCarryArea, isLeftCourse, targetBrightness);
-  smartCarryAreaMaster.run();
+  // Area smartCarryArea = Area::SmartCarry;
+  // AreaMaster smartCarryAreaMaster(robot, smartCarryArea, isLeftCourse, targetBrightness);
+  // smartCarryAreaMaster.run();
 }
