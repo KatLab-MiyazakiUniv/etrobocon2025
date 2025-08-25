@@ -53,11 +53,12 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       }
 
       // IMUR: IMU角度指定回頭
-      // [1]:int 角度[deg], [2]:string 方向(clockwise or anticlockwise),
-      // [3-5]:double 角度PIDゲイン(kp, ki, kd)
+      // [1]:int 角度[deg], [2]:double 基準パワー, [3]:string 方向(clockwise or anticlockwise),
+      // [4-6]:double 角度PIDゲイン(kp, ki, kd)
       case COMMAND::IMUR: {
-        auto imur = new IMURotation(robot, stoi(params[1]), convertBool(params[0], params[2]),
-                                    PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
+        auto imur = new IMURotation(robot, stoi(params[1]), stod(params[2]),
+                                    convertBool(params[0], params[3]),
+                                    PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
         motionList.push_back(imur);
         break;
       }
@@ -215,20 +216,20 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       }
 
         // MCA: ミニフィグのカメラ撮影動作
-        // [1]:int フロントカメラをミニフィグに向けるための回頭角度[deg],
-        // [2]:int 黒線復帰のための回頭角度[deg],
-        // [3]:double 撮影前後の回頭のための目標速度[mm/s],
-        // [4]:double 撮影前の後退距離[mm],
-        // [5]:double 撮影後の前進距離[mm],
-        // [6]:double 撮影前の後退速度の絶対値[mm/s],
-        // [7]:double 撮影後の前進速度の絶対値[mm/s],
-        // [8]:string 回頭の方向(clockwise or anticlockwise),
-        // [9]:int 撮影位置(0が初期位置)
+        //[1]: :string 回頭の方向(clockwise or anticlockwise),
+        //[2]:int preTargetAngle
+        //[3]:int postTargetAngle
+        //[4]:パワー値
+        //[5]:後進距離
+        //[6]:前進距離
+        //[7]:後進スピード
+        //[8]:前進スピード
+        //[9]:ポジション
       case COMMAND::MCA: {
-        auto mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]),
-                                           stoi(params[1]), stoi(params[2]), stod(params[3]),
-                                           stod(params[4]), stod(params[5]), stod(params[6]),
-                                           stod(params[7]), stoi(params[9]));
+        auto mca = new MiniFigCameraAction(robot, convertBool(params[0], params[1]),
+                                           stoi(params[2]), stoi(params[3]), stod(params[4]),
+                                           stod(params[5]), stod(params[6]), stod(params[7]),
+                                           stod(params[8]), stoi(params[9]));
         motionList.push_back(mca);
 
         break;
@@ -238,9 +239,9 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [1]:bool isClockwise（"clockwise"/"anticlockwise"）
         // [2]:int preTargetAngle
         // [3]:int postTargetAngle
-        // [4]:double 回頭速度
-        // [5]:double threshold（動体検出用）
-        // [6]:double minArea（動体矩形とみなす最小面積）
+        // [4]:basepawer
+        // [5]: 風景検出のしきい値
+        // [6]: 最小面積
         // [7]:int ROIの左上X座標
         // [8]:int ROIの左上Y座標
         // [9]:int ROIの幅
@@ -250,12 +251,11 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       case COMMAND::BCA: {
         cv::Rect roi;
 
-        bool isClockwise = convertBool("BCA", params[1]);
         roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
 
-        auto bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]),
-                                                 stoi(params[3]), stod(params[4]), stod(params[5]),
-                                                 stod(params[6]), roi, stoi(params[11]));
+        auto bca = new BackgroundPlaCameraAction(
+            robot, convertBool(params[0], params[1]), stoi(params[2]), stoi(params[3]),
+            stod(params[4]), stod(params[5]), stod(params[6]), roi, stoi(params[11]));
 
         motionList.push_back(bca);
         break;
