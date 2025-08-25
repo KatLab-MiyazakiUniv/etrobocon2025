@@ -43,7 +43,7 @@ void MiniFigCameraAction::detectDirection(cv::Mat& frame)
   MiniFigDirectionDetector detector;
   // ミニフィグの向きを判定
   FrameSave::save(frame, detectionTargetPath, detectionTargetName);
-  detector.detect(robot.getMiniFigDirectionResult());
+  detector.detect(frame, robot.getMiniFigDirectionResult());
 
   // 検出結果を取得
   MiniFigDirectionResult& result = robot.getMiniFigDirectionResult();
@@ -85,6 +85,9 @@ void MiniFigCameraAction::run()
   // 後退
   DistanceStraight back(robot, backTargetDistance, -backSpeed);
   back.run();
+
+  // 動作安定のためのスリープ
+  this_thread::sleep_for(chrono::milliseconds(100));
 
   // 判定用の写真を撮影
   cv::Mat frame;
