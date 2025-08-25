@@ -17,10 +17,11 @@ namespace etrobocon2025_test {
     Robot robot;
 
     int angle = 15;
+    double basePower = 50.0;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMURotation imuRotation(robot, angle, isClockwise, anglePidGain);
+    IMURotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -55,10 +56,11 @@ namespace etrobocon2025_test {
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = 20;
+    double basePower = 50.0;
     bool isClockwise = false;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMURotation imuRotation(robot, angle, isClockwise, anglePidGain);
+    IMURotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -93,10 +95,11 @@ namespace etrobocon2025_test {
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = 185;
+    double basePower = 50.0;
     bool isClockwise = false;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMURotation imuRotation(robot, angle, isClockwise, anglePidGain);
+    IMURotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -131,10 +134,11 @@ namespace etrobocon2025_test {
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = 0;
+    double basePower = 50.0;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMURotation imuRotation(robot, angle, isClockwise, anglePidGain);
+    IMURotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -166,10 +170,11 @@ namespace etrobocon2025_test {
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = -1;
+    double basePower = 50.0;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMURotation imuRotation(robot, angle, isClockwise, anglePidGain);
+    IMURotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -201,10 +206,11 @@ namespace etrobocon2025_test {
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = 360;
+    double basePower = 50.0;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };  // より保守的な値
 
-    IMURotation imuRotation(robot, angle, isClockwise, anglePidGain);
+    IMURotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -234,10 +240,11 @@ namespace etrobocon2025_test {
   {
     Robot robot;
     int angle = 30;
+    double basePower = 50.0;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMURotation imuRotation(robot, angle, isClockwise, anglePidGain);
+    IMURotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
