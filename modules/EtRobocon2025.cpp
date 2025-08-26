@@ -12,36 +12,13 @@ Robot EtRobocon2025::robot;  // Robotインスタンス
 void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
-  robot.getIMUControllerInstance().calculateOffset();
-  robot.getIMUControllerInstance().calculateCorrectionMatrix();
-
-  if(!robot.getCameraCaptureInstance().setCameraID(
-         robot.getCameraCaptureInstance().findAvailableCameraID()))
-    return;
-  if(!robot.getCameraCaptureInstance().openCamera()) return;
-
-  cv::Mat frame;
-  while(!robot.getCameraCaptureInstance().getFrame(frame)) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  spikeapi::ColorSensor::HSV hsv;
+  spikeapi::ColorSensor& colorSensor = robot.getColorSensorInstance();
+  while(1) {
+    colorSensor.getHSV(hsv);
+    std::cout << "h: " << hsv.h << ", s: " << (int)hsv.s << ", v: " << (int)hsv.v << std::endl;
+    COLOR color = ColorJudge::convertHsvToColor(hsv);
+    std::cout << "color: " << ColorJudge::convertColorToString(color) << std::endl;
+    tslp_tsk(1000000);
   }
-
-  Calibrator calibrator(robot);
-  calibrator.selectAndSetCourse();
-  calibrator.measureAndSetTargetBrightness();
-  bool isLeftCourse = calibrator.getIsLeftCourse();
-  int targetBrightness = calibrator.getTargetBrightness();
-  calibrator.getAngleCheckFrame();
-  calibrator.waitForStart();
-
-  Area lineTraceArea = Area::LineTrace;
-  AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
-  lineTraceAreaMaster.run();
-
-  Area doubleLoopArea = Area::DoubleLoop;
-  AreaMaster doubleLoopAreaMaster(robot, doubleLoopArea, isLeftCourse, targetBrightness);
-  doubleLoopAreaMaster.run();
-
-  Area smartCarryArea = Area::SmartCarry;
-  AreaMaster smartCarryAreaMaster(robot, smartCarryArea, isLeftCourse, targetBrightness);
-  smartCarryAreaMaster.run();
 }

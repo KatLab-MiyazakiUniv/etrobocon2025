@@ -50,7 +50,6 @@ COLOR ColorJudge::convertHsvToColor(const spikeapi::ColorSensor::HSV& hsv)
     // 明度が高ければ、白を返す
     return COLOR::WHITE;
   }
-
   // 各色相の境界によって、色を判別する
   if(hsv.h < RED_BORDER) return COLOR::RED;
   if(hsv.h < YELLOW_BORDER) return COLOR::YELLOW;
