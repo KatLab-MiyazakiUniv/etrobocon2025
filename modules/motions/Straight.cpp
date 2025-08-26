@@ -20,17 +20,19 @@ void Straight::run()
   // 事前準備
   prepare();
 
-  SpeedCalculator speedCalculator(robot, targetSpeed);
+  // SpeedCalculator speedCalculator(robot, targetSpeed);
 
   // 継続条件を満たしている間繰り返す
   while(isMetContinuationCondition()) {
-    // Power値を計算
-    double currentRightPower = speedCalculator.calculateRightMotorPower();
-    double currentLeftPower = speedCalculator.calculateLeftMotorPower();
+    // // Power値を計算
+    // double currentRightPower = speedCalculator.calculateRightMotorPower();
+    // double currentLeftPower = speedCalculator.calculateLeftMotorPower();
 
-    // モーターにPower値をセット
-    robot.getMotorControllerInstance().setRightMotorPower(currentRightPower);
-    robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower);
+    // // モーターにPower値をセット
+    // robot.getMotorControllerInstance().setRightMotorPower(currentRightPower);
+    // robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower);
+    robot.getMotorControllerInstance().setRightMotorSpeed(targetSpeed);
+    robot.getMotorControllerInstance().setLeftMotorSpeed(targetSpeed);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10000マイクロ秒(10ミリ秒)待機
   }
