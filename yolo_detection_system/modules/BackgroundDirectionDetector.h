@@ -56,7 +56,7 @@ class BackgroundDirectionDetector {
    * @param padY    Y方向のパディング量
    * @return        パディング後の画像
    */
-  cv::Mat preprocess(const cv::Mat& frame, float scale, int padX, int padY);
+  cv::Mat prepareInputFrame(const cv::Mat& frame, float scale, int padX, int padY);
 
   /**
    * @brief         出力結果を後処理して検出結果を生成する関数
@@ -66,8 +66,8 @@ class BackgroundDirectionDetector {
    * @param padX    X方向のパディング量
    * @param padY    Y方向のパディング量
    */
-  void postprocess(const std::vector<std::vector<float>>& outputs, const cv::Mat& frame,
-                   float scale, int padX, int padY);
+  void analyzeDetections(const std::vector<std::vector<float>>& outputs, const cv::Mat& frame,
+                         float scale, int padX, int padY);
 
   /**
    * @brief             推論を実行する

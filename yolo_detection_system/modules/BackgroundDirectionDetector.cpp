@@ -52,16 +52,17 @@ void BackgroundDirectionDetector::detect()
   const int padY = (MODEL_INPUT_SIZE - static_cast<int>(frame.rows * scale)) / 2;
 
   // 前処理で入力画像を640x640にリサイズ＆パディングする
-  Mat inputBlob = preprocess(frame, scale, padX, padY);
+  Mat inputBlob = prepareInputFrame(frame, scale, padX, padY);
 
   // 推論
   auto outputs = infer(inputBlob);
 
   // 後処理
-  postprocess(outputs, frame, scale, padX, padY);
+  analyzeDetections(outputs, frame, scale, padX, padY);
 }
 
-Mat BackgroundDirectionDetector::preprocess(const Mat& frame, float scale, int padX, int padY)
+Mat BackgroundDirectionDetector::prepareInputFrame(const Mat& frame, float scale, int padX,
+                                                   int padY)
 {
   // リサイズ後のサイズ
   int newWidth = static_cast<int>(frame.cols * scale);
@@ -126,8 +127,9 @@ vector<vector<float>> BackgroundDirectionDetector::infer(const Mat& inputImage)
   return results;
 }
 
-void BackgroundDirectionDetector::postprocess(const vector<vector<float>>& outputs,
-                                              const Mat& frame, float scale, int padX, int padY)
+void BackgroundDirectionDetector::analyzeDetections(const vector<vector<float>>& outputs,
+                                                    const Mat& frame, float scale, int padX,
+                                                    int padY)
 {
   vector<int> classIds;       // 最も高いスコアを持つクラスIDを格納するリスト
   vector<float> confidences;  // 信頼度を格納するリスト

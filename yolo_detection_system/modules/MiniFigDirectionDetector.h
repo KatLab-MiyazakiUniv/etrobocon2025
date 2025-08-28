@@ -36,10 +36,10 @@ class MiniFigDirectionDetector {
   void detect();
 
  private:
-  Ort::Env env;                          // ONNX Runtime 環境
-  Ort::Session session;                  // 推論セッション
-  std::vector<std::string> inputNames;   // モデルの入力名
-  std::vector<std::string> outputNames;  // モデルの出力名
+  Ort::Env env;                                                                 // ONNX Runtime 環境
+  Ort::Session session;                                                         // 推論セッション
+  std::vector<std::string> inputNames;                                          // モデルの入力名
+  std::vector<std::string> outputNames;                                         // モデルの出力名
   const std::string inputImagePath = "../datafiles/detection_target/fig.JPEG";  // 判定用画像のパス
   const std::string outputImagePath
       = "../datafiles/processed_images/"
@@ -55,7 +55,7 @@ class MiniFigDirectionDetector {
    * @param padY    Y方向のパディング量
    * @return        パディング後の画像
    */
-  cv::Mat preprocess(const cv::Mat& frame, float scale, int padX, int padY);
+  cv::Mat prepareInputFrame(const cv::Mat& frame, float scale, int padX, int padY);
 
   /**
    * @brief         出力結果を後処理して検出結果を生成する関数
@@ -65,8 +65,8 @@ class MiniFigDirectionDetector {
    * @param padX    X方向のパディング量
    * @param padY    Y方向のパディング量
    */
-  void postprocess(const std::vector<std::vector<float>>& outputs, const cv::Mat& frame,
-                   float scale, int padX, int padY);
+  void analyzeDetections(const std::vector<std::vector<float>>& outputs, const cv::Mat& frame,
+                         float scale, int padX, int padY);
 
   /**
    * @brief             推論を実行する

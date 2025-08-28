@@ -52,18 +52,18 @@ void MiniFigDirectionDetector::detect()
   const int padY = (MODEL_INPUT_SIZE - static_cast<int>(frame.rows * scale)) / 2;
 
   // 入力画像の前処理
-  Mat blob = preprocess(frame, scale, padX, padY);
+  Mat blob = prepareInputFrame(frame, scale, padX, padY);
 
   // 推論
   auto outputs = infer(blob);
 
   // 出力結果の後処理
-  postprocess(outputs, frame, scale, padX, padY);
+  analyzeDetections(outputs, frame, scale, padX, padY);
 }
 
 // 入力画像の前処理を行う関数
 // 画像をモデルに合うサイズ(640x640）にリサイズし、画素値を0~1に正規化する
-Mat MiniFigDirectionDetector::preprocess(const Mat& frame, float scale, int padX, int padY)
+Mat MiniFigDirectionDetector::prepareInputFrame(const Mat& frame, float scale, int padX, int padY)
 {
   // リサイズ後のサイズ
   int newWidth = static_cast<int>(frame.cols * scale);
@@ -129,8 +129,8 @@ vector<vector<float>> MiniFigDirectionDetector::infer(const Mat& inputImage)
 }
 
 // 出力結果を後処理して検出結果を生成する関数
-void MiniFigDirectionDetector::postprocess(const vector<vector<float>>& outputs, const Mat& frame,
-                                           float scale, int padX, int padY)
+void MiniFigDirectionDetector::analyzeDetections(const vector<vector<float>>& outputs,
+                                                 const Mat& frame, float scale, int padX, int padY)
 {
   vector<int> classIds;       // 最も高いスコアを持つクラスIDを格納するリスト
   vector<float> confidences;  // 信頼度を格納するリスト
