@@ -60,7 +60,7 @@ namespace etrobocon2025_test {
     srand(12345);
 
     // オフセット計算を実行
-    imuController.calculateOffset();
+    imuController.initializeOffset();
 
     // 補正行列を計算
     imuController.calculateCorrectionMatrix();
@@ -135,7 +135,7 @@ namespace etrobocon2025_test {
     IMUController imuController;
 
     // オフセット計算と補正行列計算を実行
-    imuController.calculateOffset();
+    imuController.initializeOffset();
     imuController.calculateCorrectionMatrix();
 
     // 角度計算を開始

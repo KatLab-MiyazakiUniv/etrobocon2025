@@ -17,7 +17,7 @@ namespace etrobocon2025_test {
     Robot robot;
 
     int angle = 15;
-    double basePower = 50.0;
+    int basePower = 50;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
@@ -27,7 +27,7 @@ namespace etrobocon2025_test {
     IMUTestControl::rotationStateRef() = 0;
 
     // オフセット計算と補正行列計算を事前実行
-    robot.getIMUControllerInstance().calculateOffset();
+    robot.getIMUControllerInstance().initializeOffset();
     robot.getIMUControllerInstance().calculateCorrectionMatrix();
 
     // ダミーIMUの回転状態を右回頭に設定
@@ -56,7 +56,7 @@ namespace etrobocon2025_test {
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = 20;
-    double basePower = 50.0;
+    int basePower = 50;
     bool isClockwise = false;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
@@ -66,7 +66,7 @@ namespace etrobocon2025_test {
     IMUTestControl::rotationStateRef() = 0;
 
     // オフセット計算と補正行列計算を事前実行（静止状態で実行）
-    robot.getIMUControllerInstance().calculateOffset();
+    robot.getIMUControllerInstance().initializeOffset();
     robot.getIMUControllerInstance().calculateCorrectionMatrix();
 
     // ダミーIMUの回転状態を左回頭に設定
@@ -95,7 +95,7 @@ namespace etrobocon2025_test {
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = 185;
-    double basePower = 50.0;
+    int basePower = 50;
     bool isClockwise = false;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
@@ -105,7 +105,7 @@ namespace etrobocon2025_test {
     IMUTestControl::rotationStateRef() = 0;
 
     // オフセット計算と補正行列計算を事前実行（静止状態で実行）
-    robot.getIMUControllerInstance().calculateOffset();
+    robot.getIMUControllerInstance().initializeOffset();
     robot.getIMUControllerInstance().calculateCorrectionMatrix();
 
     // ダミーIMUの回転状態を左回頭に設定
@@ -134,7 +134,7 @@ namespace etrobocon2025_test {
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = 0;
-    double basePower = 50.0;
+    int basePower = 50;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
@@ -144,7 +144,7 @@ namespace etrobocon2025_test {
     IMUTestControl::rotationStateRef() = 0;
 
     // オフセット計算と補正行列計算を事前実行
-    robot.getIMUControllerInstance().calculateOffset();
+    robot.getIMUControllerInstance().initializeOffset();
     robot.getIMUControllerInstance().calculateCorrectionMatrix();
 
     // ダミーIMUの回転状態を右回頭に設定
@@ -170,7 +170,7 @@ namespace etrobocon2025_test {
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = -1;
-    double basePower = 50.0;
+    int basePower = 50;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
@@ -180,7 +180,7 @@ namespace etrobocon2025_test {
     IMUTestControl::rotationStateRef() = 0;
 
     // オフセット計算と補正行列計算を事前実行
-    robot.getIMUControllerInstance().calculateOffset();
+    robot.getIMUControllerInstance().initializeOffset();
     robot.getIMUControllerInstance().calculateCorrectionMatrix();
 
     // ダミーIMUの回転状態を右回頭に設定
@@ -206,7 +206,7 @@ namespace etrobocon2025_test {
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = 360;
-    double basePower = 50.0;
+    int basePower = 50;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };  // より保守的な値
 
@@ -216,7 +216,7 @@ namespace etrobocon2025_test {
     IMUTestControl::rotationStateRef() = 0;
 
     // オフセット計算と補正行列計算を事前実行
-    robot.getIMUControllerInstance().calculateOffset();
+    robot.getIMUControllerInstance().initializeOffset();
     robot.getIMUControllerInstance().calculateCorrectionMatrix();
 
     // ダミーIMUの回転状態を右回頭に設定
@@ -240,7 +240,7 @@ namespace etrobocon2025_test {
   {
     Robot robot;
     int angle = 30;
-    double basePower = 50.0;
+    int basePower = 50;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
@@ -250,7 +250,7 @@ namespace etrobocon2025_test {
     IMUTestControl::rotationStateRef() = 0;
 
     // オフセット計算と補正行列計算を事前実行
-    robot.getIMUControllerInstance().calculateOffset();
+    robot.getIMUControllerInstance().initializeOffset();
     robot.getIMUControllerInstance().calculateCorrectionMatrix();
 
     // 手動でIMU角度計算を開始（既に計算中の状態を作る）

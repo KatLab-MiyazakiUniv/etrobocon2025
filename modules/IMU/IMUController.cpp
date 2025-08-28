@@ -51,7 +51,7 @@ void IMUController::calculateCorrectionMatrix()
   RotationMatrix::calculateCorrectionMatrix(acc.x, acc.y, acc.z, correctionMatrix);
 }
 
-void IMUController::calculateOffset()
+void IMUController::initializeOffset()
 {
   float tempAngularVelocity[3];  // 角速度取得用の一時配列
 
@@ -98,10 +98,13 @@ void IMUController::startAngleCalculation()
 {
   std::lock_guard<std::mutex> lock(imuMutex);
   // 既に計算中の場合は二重実行を防止
-  if(isCalculating) return;
+  if(isCalculating) {
+    std::cerr << "Warning: 角度計算は既に開始されています。" << std::endl;
+    return;
+  }
   isCalculating = true;
 
-  // 角度を初期化（resetAngle()は呼ばず直接初期化）
+  // 角度を初期化（resetAngle()内での同一mutex再ロックを避けるため直接初 期化）
   currentAngle = 0.0f;
   lastAngularVelocity = 0.0;
 
@@ -114,9 +117,13 @@ void IMUController::startAngleCalculation()
 
 void IMUController::stopAngleCalculation()
 {
+  // スコープを限定してjoin()前にmutexを解放
   {
     std::lock_guard<std::mutex> lock(imuMutex);
-    if(!isCalculating) return;
+    if(!isCalculating) {
+      std::cerr << "Warning: 角度計算は既に停止されています。" << std::endl;
+      return;
+    }
     isCalculating = false;
   }
 

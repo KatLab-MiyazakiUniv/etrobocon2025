@@ -6,7 +6,7 @@
 
 #include "IMURotation.h"
 
-IMURotation::IMURotation(Robot& _robot, int _targetAngle, double _basePower, bool _isClockwise,
+IMURotation::IMURotation(Robot& _robot, int _targetAngle, int _basePower, bool _isClockwise,
                          const PidGain& _anglePidGain)
   : Rotation(_robot, _isClockwise),
     targetAngle(_targetAngle),
@@ -72,7 +72,7 @@ void IMURotation::updateMotorControl()
   // 基準パワー値にPID補正を適用
   double motorPower = basePower + pidCorrection;
 
-  // モータパワーを適用（IMUの出力特性に合わせてモータパワーの符号を反転）
+  // モータパワーを適用
   robot.getMotorControllerInstance().setLeftMotorPower(motorPower * leftSign);
   robot.getMotorControllerInstance().setRightMotorPower(motorPower * rightSign);
 

@@ -4,8 +4,8 @@
  * @author Hara1274 takuchi17
  */
 
-#ifndef IMUCONTROLLER_H
-#define IMUCONTROLLER_H
+#ifndef IMU_CONTROLLER_H
+#define IMU_CONTROLLER_H
 
 #include "IMU.h"
 #include "RotationMatrix.h"
@@ -36,7 +36,7 @@ class IMUController {
   /**
    * @brief オフセットを計算して設定する
    */
-  void calculateOffset();
+  void initializeOffset();
 
   /**
    * @brief 補正済みZ軸角速度を取得する（傾き補正+オフセット補正）
