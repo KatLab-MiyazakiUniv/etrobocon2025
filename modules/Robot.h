@@ -15,8 +15,23 @@
 #include "Button.h"
 #include "ForceSensor.h"
 #include "Display.h"
-#include "MiniFigDirectionDetector.h"
-#include "BackgroundDirectionDetector.h"
+
+// ミニフィグの向きを表す列挙体
+enum class MiniFigDirection { FRONT, RIGHT, BACK, LEFT };
+
+struct MiniFigDirectionResult {
+  bool wasDetected = false;    // 検出が成功したかどうか
+  MiniFigDirection direction;  // ミニフィグの向きを表す列挙体
+};
+
+// 風景の向きを表す列挙体
+enum class BackgroundDirection { FRONT, RIGHT, BACK, LEFT };
+
+// 結果格納用の構造体
+struct BackgroundDirectionResult {
+  bool wasDetected = false;       // 検出が成功したかどうか
+  BackgroundDirection direction;  // 風景の向きを表す列挙体
+};
 
 class Robot {
  public:
@@ -95,15 +110,15 @@ class Robot {
   bool getIsLeftEdge() const;
 
  private:
-  MotorController motorController;                // MotorControllerインスタンス
-  CameraCapture defaultCameraCapture;             // 実機用のCameraCaptureインスタンス
-  ICameraCapture& cameraCapture;                  // 実際に使うカメラ（参照）
-  spikeapi::ColorSensor colorSensor;              // ColorSensorインスタンス
-  spikeapi::Clock clock;                          // Clockインスタンス
-  spikeapi::Button button;                        // Buttonインスタンス
-  spikeapi::ForceSensor forceSensor;              // ForceSensorインスタンス
-  spikeapi::Display display;                      // Displayインスタンス
-  MiniFigDirectionResult miniFigDirectionResult;  // ミニフィグの向き検出結果
+  MotorController motorController;                      // MotorControllerインスタンス
+  CameraCapture defaultCameraCapture;                   // 実機用のCameraCaptureインスタンス
+  ICameraCapture& cameraCapture;                        // 実際に使うカメラ（参照）
+  spikeapi::ColorSensor colorSensor;                    // ColorSensorインスタンス
+  spikeapi::Clock clock;                                // Clockインスタンス
+  spikeapi::Button button;                              // Buttonインスタンス
+  spikeapi::ForceSensor forceSensor;                    // ForceSensorインスタンス
+  spikeapi::Display display;                            // Displayインスタンス
+  MiniFigDirectionResult miniFigDirectionResult;        // ミニフィグの向き検出結果
   BackgroundDirectionResult backgroundDirectionResult;  // 風景の向き検出結果
   // formatチェックをパスするためのコメント
   bool isLeftEdge = true;  // 左エッジを走行するかの真偽値
