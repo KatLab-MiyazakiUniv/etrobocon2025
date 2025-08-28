@@ -34,8 +34,7 @@ build:
 
 # 実機の場合、走行を開始する
 start:
-	rm -rf  datafiles/detection_target yolo_detection_system/result
-	mkdir -p datafiles/detection_target yolo_detection_system/result
+	rm -f datafiles/detection_target/* yolo_detection_system/result/*
 	cd $(MAKEFILE_PATH)../ && make start
 
 ## テスト関連 ##
