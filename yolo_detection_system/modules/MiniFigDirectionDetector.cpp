@@ -161,7 +161,7 @@ void MiniFigDirectionDetector::analyzeDetections(const vector<vector<float>>& ou
       }
     }
 
-    // 最大クラススコアが閾値を超えているかチェック
+    // 最大クラススコアが閾値を超えている場合のみ処理を行う
     if(maxScore < CONFIDENCE_THRESHOLD) continue;
 
     float cx = data[i];

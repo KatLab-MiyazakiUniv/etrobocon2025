@@ -160,7 +160,7 @@ void BackgroundDirectionDetector::analyzeDetections(const vector<vector<float>>&
       }
     }
 
-    // 最大クラススコアが閾値を超えているかチェック
+    // 最大クラススコアが閾値を超えているる場合のみ処理を行う
     if(maxScore < CONFIDENCE_THRESHOLD) continue;
 
     float cx = data[i];

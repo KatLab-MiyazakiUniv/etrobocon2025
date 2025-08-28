@@ -17,7 +17,7 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 
-#define MODEL_INPUT_SIZE 640       // モデルの入力サイズ（640x640）
+#define MODEL_INPUT_SIZE 640       // モデルの入力画像サイズ（640x640）
 #define CONFIDENCE_THRESHOLD 0.5f  // 検出結果を採用する最低信頼度の閾値
 #define NMS_THRESHOLD 0.5f         // 検出ボックス同士の重なりを判断する閾値
 
