@@ -36,10 +36,10 @@ class MiniFigDirectionDetector {
   void detect();
 
  private:
-  Ort::Env env;                                                                 // ONNX Runtime 環境
-  Ort::Session session;                                                         // 推論セッション
-  std::vector<std::string> inputNames;                                          // モデルの入力名
-  std::vector<std::string> outputNames;                                         // モデルの出力名
+  Ort::Env env;                          // ONNX Runtime 環境
+  Ort::Session session;                  // 推論セッション
+  std::vector<std::string> inputNames;   // モデルの入力名
+  std::vector<std::string> outputNames;  // モデルの出力名
   const std::string inputImagePath = "../datafiles/detection_target/fig.JPEG";  // 判定用画像のパス
   const std::string outputImagePath
       = "../datafiles/processed_images/"
