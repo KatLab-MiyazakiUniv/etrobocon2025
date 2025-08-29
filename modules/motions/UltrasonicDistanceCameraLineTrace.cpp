@@ -20,7 +20,7 @@ UltrasonicDistanceCameraLineTrace::UltrasonicDistanceCameraLineTrace(
 // 超音波距離指定カメラライントレースの事前条件
 bool UltrasonicDistanceCameraLineTrace::isMetPreCondition()
 {
-  // 目標の超音波がNoneのとき終了する
+  // 目標の超音波距離が0.0以下のとき終了する
   if(targetUltrasonicDistance <= 0.0) {
     return false;
   }
@@ -52,18 +52,27 @@ void UltrasonicDistanceCameraLineTrace::prepare()
 // 超音波距離指定カメラライントレースの継続条件
 bool UltrasonicDistanceCameraLineTrace::isMetContinuationCondition()
 {
-    // 超音波センサーの距離を取得
-    double ultrasonicDistance = robot.getUltraSonicInstance().getDistance();
+  // 超音波センサーの距離を取得
+  double ultrasonicDistance = robot.getUltraSonicInstance().getDistance();
 
-  // 現在の色が目標色と一致していればカウント増加、違えばリセット
-  if(ultrasonicDistance <= targetUltrasonicDistance && 
-     ultrasonicDistance > 0.0) {
-    ultrasonicCount++;
+  // 現在の超音波距離が指定した超音波距離と一致していればカウント増加、違えばリセット
+  if(targetSpeed > 0.0) {
+    // 前進時、指定距離以下かつ正常値のときカウント増加
+    if(ultrasonicDistance <= targetUltrasonicDistance && ultrasonicDistance > 0.0) {
+      ultrasonicCount++;
+    } else {
+      ultrasonicCount = 0;
+    }
   } else {
-    ultrasonicCount = 0;
+    // 後退時、指定距離以上かつ正常値のときカウント増加
+    if(ultrasonicDistance >= targetUltrasonicDistance && ultrasonicDistance > 0.0) {
+      ultrasonicCount++;
+    } else {
+      ultrasonicCount = 0;
+    }
   }
 
-  // (走行距離が目標距離に到達)||(指定された色をJUDGE_COUNT回連続で取得したとき)モータが止まる
+  // (走行距離が目標距離に到達)||(指定された距離をJUDGE_COUNT回連続で取得したとき)モータが止まる
   if((fabs(Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
                                      robot.getMotorControllerInstance().getLeftMotorCount())
            - initDistance)
