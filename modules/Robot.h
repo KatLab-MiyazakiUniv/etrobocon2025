@@ -9,6 +9,7 @@
 
 #include "spikeapi.h"
 #include "MotorController.h"
+#include "UltraSonic.h"
 #include "CameraCapture.h"
 #include "ColorSensor.h"
 #include "Clock.h"
@@ -34,6 +35,12 @@ class Robot {
    * @return メンバ変数motorController(MotorControllerのインスタンス)の参照
    */
   MotorController& getMotorControllerInstance();
+
+  /**
+   * @brief UltraSonicのインスタンスの参照を返す
+   * @return メンバ変数ultraSonic(UltraSonicのインスタンス)の参照
+   */
+  UltraSonic& getUltraSonicInstance();
 
   /**
    * @brief ICameraCaptureのインスタンスの参照を返す
@@ -95,15 +102,16 @@ class Robot {
   bool getIsLeftEdge() const;
 
  private:
-  MotorController motorController;                // MotorControllerインスタンス
-  CameraCapture defaultCameraCapture;             // 実機用のCameraCaptureインスタンス
-  ICameraCapture& cameraCapture;                  // 実際に使うカメラ（参照）
-  spikeapi::ColorSensor colorSensor;              // ColorSensorインスタンス
-  spikeapi::Clock clock;                          // Clockインスタンス
-  spikeapi::Button button;                        // Buttonインスタンス
-  spikeapi::ForceSensor forceSensor;              // ForceSensorインスタンス
-  spikeapi::Display display;                      // Displayインスタンス
-  MiniFigDirectionResult miniFigDirectionResult;  // ミニフィグの向き検出結果
+  MotorController motorController;                      // MotorControllerインスタンス
+  UltraSonic ultraSonic;                                // 超音波センサーのインスタンス
+  CameraCapture defaultCameraCapture;                   // 実機用のCameraCaptureインスタンス
+  ICameraCapture& cameraCapture;                        // 実際に使うカメラ（参照）
+  spikeapi::ColorSensor colorSensor;                    // ColorSensorインスタンス
+  spikeapi::Clock clock;                                // Clockインスタンス
+  spikeapi::Button button;                              // Buttonインスタンス
+  spikeapi::ForceSensor forceSensor;                    // ForceSensorインスタンス
+  spikeapi::Display display;                            // Displayインスタンス
+  MiniFigDirectionResult miniFigDirectionResult;        // ミニフィグの向き検出結果
   BackgroundDirectionResult backgroundDirectionResult;  // 風景の向き検出結果
   // formatチェックをパスするためのコメント
   bool isLeftEdge = true;  // 左エッジを走行するかの真偽値
