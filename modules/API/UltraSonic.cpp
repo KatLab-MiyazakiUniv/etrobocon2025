@@ -18,9 +18,3 @@ double UltraSonic::getDistance()
   // 超音波センサーの距離を取得
   return static_cast<double>(ultraSonic.getDistance());
 }
-
-// void UltraSonic::init() {
-//   // 超音波センサーの初期化
-//   UltrasonicSensor sensor(EPort::PORT_1); // 適切なポートを指定
-//   sensor.init();
-// }
