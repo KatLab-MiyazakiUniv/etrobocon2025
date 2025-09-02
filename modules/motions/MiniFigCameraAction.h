@@ -13,6 +13,7 @@
 #include "DistanceStraight.h"
 #include "MiniFigDirectionDetector.h"
 #include "FrameSave.h"
+#include "ImageUploader.h"
 
 class MiniFigCameraAction : public CompositeMotion {
  public:
