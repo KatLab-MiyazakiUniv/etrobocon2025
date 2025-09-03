@@ -50,11 +50,11 @@ class UltrasonicDistanceCameraLineTrace : public CameraPidTracking {
   bool isMetContinuationCondition() override;
 
  private:
-  static constexpr int JUDGE_COUNT = 2;           // 超音波取得の決定に必要な連続回数
-  int ultrasonicCount;                            // 超音波距離取得した回数
-  double targetUltrasonicDistance;                // 指定超音波距離
-  double targetDistance;                          // 目標距離
-  double initDistance;                            // 実行前の走行距離
+  static constexpr int JUDGE_COUNT = 2;  // 超音波取得の決定に必要な連続回数
+  int ultrasonicCount;                   // 超音波距離取得した回数
+  double targetUltrasonicDistance;       // 指定超音波距離
+  double targetDistance;                 // 目標距離
+  double initDistance;                   // 実行前の走行距離
   std::unique_ptr<BoundingBoxDetector> detector;  // 画像処理クラスのポインタ
 };
 
