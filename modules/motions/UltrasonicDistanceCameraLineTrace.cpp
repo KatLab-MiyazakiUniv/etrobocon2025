@@ -53,7 +53,7 @@ void UltrasonicDistanceCameraLineTrace::prepare()
 bool UltrasonicDistanceCameraLineTrace::isMetContinuationCondition()
 {
   // 超音波センサーの距離を取得
-  double ultrasonicDistance = robot.getUltraSonicInstance().getDistance();
+  double ultrasonicDistance = robot.getUltrasonicSensorInstance().getDistance();
 
   // 現在の超音波距離が指定した超音波距離と一致していればカウント増加、違えばリセット
   if(targetSpeed > 0.0) {

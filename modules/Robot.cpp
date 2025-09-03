@@ -8,28 +8,30 @@
 
 Robot::Robot()
   : motorController(),
-    ultraSonic(),
+    // ultraSonic(),
     defaultCameraCapture(),
     cameraCapture(defaultCameraCapture),
     colorSensor(EPort::PORT_E),
     clock(),
     button(),
     forceSensor(EPort::PORT_D),
-    display()
+    display(),
+    ultrasonicSensor(EPort::PORT_F)
 {
 }
 
 // DI(依存性注入)用コンストラクタ
 Robot::Robot(ICameraCapture& cam)
   : motorController(),
-    ultraSonic(),
+    // ultraSonic(),
     defaultCameraCapture(),
     cameraCapture(cam),
     colorSensor(EPort::PORT_E),
     clock(),
     button(),
     forceSensor(EPort::PORT_D),
-    display()
+    display(),
+    ultrasonicSensor(EPort::PORT_F)
 {
 }
 
@@ -38,10 +40,10 @@ MotorController& Robot::getMotorControllerInstance()
   return motorController;
 }
 
-UltraSonic& Robot::getUltraSonicInstance()
-{
-  return ultraSonic;
-}
+// UltraSonic& Robot::getUltraSonicInstance()
+// {
+//   return ultraSonic;
+// }
 
 ICameraCapture& Robot::getCameraCaptureInstance()
 {
@@ -71,6 +73,11 @@ spikeapi::ForceSensor& Robot::getForceSensorInstance()
 spikeapi::Display& Robot::getDisplayInstance()
 {
   return display;
+}
+
+spikeapi::UltrasonicSensor& Robot::getUltrasonicSensorInstance()
+{
+  return ultrasonicSensor;
 }
 
 MiniFigDirectionResult& Robot::getMiniFigDirectionResult()
