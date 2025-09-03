@@ -173,13 +173,6 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
           roi = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
           resolution = cv::Size(stoi(params[18]), stoi(params[19]));
           detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi, resolution);
-        } else if(params.size() > 17) {
-          // ROIのみ
-          roi = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
-          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi);
-        } else {
-          // HSVのみ
-          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV);
         }
 
         auto udcl = new UltrasonicDistanceCameraLineTrace(
