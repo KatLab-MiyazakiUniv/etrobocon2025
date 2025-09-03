@@ -44,7 +44,7 @@ namespace etrobocon2025_test {
     EXPECT_LT(actual, targetDistance);  // 目標距離までに停止している
   }
 
-  // 負のtargetSpeed値で走行しつつ指定距離を取得し、かつ目標距離に到達しない場合、初期値より後退し、目標距離未満で停止することを確認するテストケース
+  // 負のtargetSpeed値で走行しつつ超音波指定距離を取得し、かつ目標距離に到達しない場合、初期値より後退し、目標距離未満で停止することを確認するテストケース
   TEST(UltrasonicDistanceCameraLineTraceTest, RunBackToGetUltrasonicDistance)
   {
     DummyCameraCapture cameraCapture;
@@ -75,7 +75,7 @@ namespace etrobocon2025_test {
     EXPECT_LT(actual, targetDistance);  // 目標距離までに停止している
   }
 
-  // 指定距離を取得できないまま目標距離に到達した場合、実際の走行距離が目標距離の許容誤差以内であることを確認するテストケース
+  // 超音波指定距離を取得できないまま目標距離に到達した場合、実際の走行距離が目標距離の許容誤差以内であることを確認するテストケース
   TEST(UltrasonicDistanceCameraLineTraceTest, DistanceRunNoGetUltrasonicDistance)
   {
     DummyCameraCapture cameraCapture;
@@ -131,7 +131,7 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // 正確に終了している
   }
 
-  // 指定距離が0以下の場合、停止することを確認するテストケース
+  // 超音波指定距離が0以下の場合、停止することを確認するテストケース
   TEST(UltrasonicDistanceCameraLineTraceTest, RunZeroDistance)
   {
     DummyCameraCapture cameraCapture;
