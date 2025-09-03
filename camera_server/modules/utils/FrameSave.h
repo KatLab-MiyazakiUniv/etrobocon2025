@@ -7,8 +7,7 @@
 #ifndef FRAME_SAVE_H
 #define FRAME_SAVE_H
 
-#include "Robot.h"
-#include "CameraCapture.h"
+
 #include <opencv2/opencv.hpp>
 #include <filesystem>  // std::filesystemを使用するために追加
 #include <string>

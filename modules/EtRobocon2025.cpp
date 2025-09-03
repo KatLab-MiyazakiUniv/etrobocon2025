@@ -6,22 +6,14 @@
 
 #include "EtRobocon2025.h"
 #include "AreaMaster.h"
+#include <thread>
+#include <chrono>
 
 Robot EtRobocon2025::robot;  // Robotインスタンス
 
 void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
-
-  if(!robot.getCameraCaptureInstance().setCameraID(
-         robot.getCameraCaptureInstance().findAvailableCameraID()))
-    return;
-  if(!robot.getCameraCaptureInstance().openCamera()) return;
-
-  cv::Mat frame;
-  while(!robot.getCameraCaptureInstance().getFrame(frame)) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-  }
 
   Calibrator calibrator(robot);
   calibrator.selectAndSetCourse();

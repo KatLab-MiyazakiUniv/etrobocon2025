@@ -9,14 +9,13 @@
 
 #include "spikeapi.h"
 #include "MotorController.h"
-#include "CameraCapture.h"
 #include "ColorSensor.h"
 #include "Clock.h"
 #include "Button.h"
 #include "ForceSensor.h"
 #include "Display.h"
-#include "MiniFigDirectionDetector.h"
-#include "BackgroundDirectionDetector.h"
+#include "ImageRecognitionResults.h"
+#include "SocketClient.h"
 
 class Robot {
  public:
@@ -26,8 +25,7 @@ class Robot {
    */
   Robot();
 
-  // DI用（カメラを差し替えたいテストで使用）
-  Robot(ICameraCapture& cam);
+  ~Robot();
 
   /**
    * @brief MotorControllerのインスタンスの参照を返す
@@ -36,10 +34,10 @@ class Robot {
   MotorController& getMotorControllerInstance();
 
   /**
-   * @brief ICameraCaptureのインスタンスの参照を返す
-   * @return メンバ変数cameraCapture(ICameraCaptureの実装インスタンス)への参照
+   * @brief SocketClientのインスタンスの参照を返す
+   * @return メンバ変数socketClient(SocketClientのインスタンス)の参照
    */
-  ICameraCapture& getCameraCaptureInstance();
+  SocketClient& getSocketClient();
 
   /**
    * @brief ColorSensorのインスタンスの参照を返す
@@ -95,15 +93,14 @@ class Robot {
   bool getIsLeftEdge() const;
 
  private:
-  MotorController motorController;                // MotorControllerインスタンス
-  CameraCapture defaultCameraCapture;             // 実機用のCameraCaptureインスタンス
-  ICameraCapture& cameraCapture;                  // 実際に使うカメラ（参照）
-  spikeapi::ColorSensor colorSensor;              // ColorSensorインスタンス
-  spikeapi::Clock clock;                          // Clockインスタンス
-  spikeapi::Button button;                        // Buttonインスタンス
-  spikeapi::ForceSensor forceSensor;              // ForceSensorインスタンス
-  spikeapi::Display display;                      // Displayインスタンス
-  MiniFigDirectionResult miniFigDirectionResult;  // ミニフィグの向き検出結果
+  SocketClient socketClient;                            // SocketClientインスタンス
+  MotorController motorController;                      // MotorControllerインスタンス
+  spikeapi::ColorSensor colorSensor;                    // ColorSensorインスタンス
+  spikeapi::Clock clock;                                // Clockインスタンス
+  spikeapi::Button button;                              // Buttonインスタンス
+  spikeapi::ForceSensor forceSensor;                    // ForceSensorインスタンス
+  spikeapi::Display display;                            // Displayインスタンス
+  MiniFigDirectionResult miniFigDirectionResult;        // ミニフィグの向き検出結果
   BackgroundDirectionResult backgroundDirectionResult;  // 風景の向き検出結果
   // formatチェックをパスするためのコメント
   bool isLeftEdge = true;  // 左エッジを走行するかの真偽値
