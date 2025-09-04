@@ -11,9 +11,10 @@
 #include "CompositeMotion.h"
 #include "AngleRotation.h"
 #include "DistanceStraight.h"
-#include "MiniFigDirectionDetector.h"
 #include "FrameSave.h"
 #include "ImageUploader.h"
+#include <nlohmann/json.hpp>
+#include <thread>
 
 class MiniFigCameraAction : public CompositeMotion {
  public:
@@ -50,9 +51,16 @@ class MiniFigCameraAction : public CompositeMotion {
   double backSpeed = 200;              // 撮影後の後退速度
   double forwardSpeed = 200;           // 撮影前の前進速度
   int position = 0;  // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
+  const std::string detectionTargetPath
+      = "etrobocon2025/datafiles/detection_target";  // 判定用画像ディレクトリのパス
+  const std::string detectionTargetName = "fig";  // ミニフィグ向き判定用画像ファイル名
   static constexpr const char* filePath
       = "etrobocon2025/datafiles/figures/";  // ミニフィグ画像保存先のディレクトリパス
   static constexpr const char* uploadFileName = "upload_front_fig";  // アップロード用の画像名
+  const std::string command
+      = "make -C etrobocon2025/yolo_detection_system/ fig-detection";  // ミニフィグ推論用コマンド
+  const std::string resultFilePath
+      = "etrobocon2025/yolo_detection_system/result/fig_result.json";  // ミニフィグの向きを判定した結果が出力されるファイルパス
 
   /**
    * @brief ミニフィグ撮影動作をする際の事前条件判定をする
