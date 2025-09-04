@@ -169,7 +169,7 @@ namespace etrobocon2025_test {
     Robot robot;
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
-    int angle = -1;
+    int angle = -90;
     int basePower = 50;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };

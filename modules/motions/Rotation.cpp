@@ -29,6 +29,5 @@ void Rotation::run()
 
   // モーターを停止
   motorController.stopWheelsMotor();
-  motorController.setLeftMotorPower(0);
-  motorController.setRightMotorPower(0);
+  motorController.resetWheelsMotorPower();
 }

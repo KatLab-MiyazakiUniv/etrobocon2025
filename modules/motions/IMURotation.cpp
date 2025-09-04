@@ -27,7 +27,7 @@ void IMURotation::prepare()
 bool IMURotation::isMetPreCondition()
 {
   // 絶対値で角度をチェック（変換後の値は負になる可能性があるため）
-  if(std::abs(targetAngle) <= 0 || std::abs(targetAngle) >= 360) {
+  if((targetAngle) <= 0 || (targetAngle) >= 360) {
     std::cerr << "targetAngle=" << targetAngle << " は範囲外です。" << std::endl;
     return false;
   }
