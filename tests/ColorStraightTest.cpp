@@ -51,7 +51,7 @@ namespace etrobocon2025_test {
 
     double expected = 0.0;
 
-    srand(9037);  // 3回連続して緑を取得する乱数シード
+    srand(9000);  // 3回連続して緑を取得する乱数シード
 
     cs.run();  // 緑までライントレースを実行
 
