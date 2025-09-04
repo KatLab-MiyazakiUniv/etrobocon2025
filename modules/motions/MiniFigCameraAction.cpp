@@ -5,9 +5,9 @@
  */
 
 #include "MiniFigCameraAction.h"
-#include <thread>
 
 using namespace std;
+using json = nlohmann::json;
 
 MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
                                          int _postTargetAngle, double _targetRotationSpeed,
@@ -40,12 +40,66 @@ bool MiniFigCameraAction::isMetPreCondition()
 // 判定動作を行う関数
 void MiniFigCameraAction::detectDirection(cv::Mat& frame)
 {
-  MiniFigDirectionDetector detector;
   // ミニフィグの向きを判定
-  detector.detect(frame, robot.getMiniFigDirectionResult());
+  FrameSave::save(frame, detectionTargetPath, detectionTargetName);
 
-  // 検出結果を取得
   MiniFigDirectionResult& result = robot.getMiniFigDirectionResult();
+
+  // ミニフィグ推論用コマンドの実行
+  int commandResult = CommandExecutor::exec(command);
+  if(commandResult != 0) {
+    std::cerr << "コマンド実行に失敗しました" << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
+  // ファイル存在チェック
+  std::ifstream file(resultFilePath);
+  if(!file.good()) {
+    std::cerr << "JSONファイルが存在しません: " << resultFilePath << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
+  json jsonFile;
+  try {
+    file >> jsonFile;
+  } catch(const std::exception& e) {
+    std::cerr << "JSONパースエラー: " << e.what() << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
+  // wasDetected を設定
+  if(jsonFile.contains("wasDetected") && jsonFile["wasDetected"].is_boolean()) {
+    result.wasDetected = jsonFile["wasDetected"].get<bool>();
+  } else {
+    std::cerr << "wasDetectedが見つからない、または型が不正です" << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
+  // direction を設定
+  if(jsonFile.contains("direction") && jsonFile["direction"].is_string()) {
+    std::string dirStr = jsonFile["direction"].get<std::string>();
+    if(dirStr == "FRONT")
+      result.direction = MiniFigDirection::FRONT;
+    else if(dirStr == "RIGHT")
+      result.direction = MiniFigDirection::RIGHT;
+    else if(dirStr == "BACK")
+      result.direction = MiniFigDirection::BACK;
+    else if(dirStr == "LEFT")
+      result.direction = MiniFigDirection::LEFT;
+    else {
+      result.wasDetected = false;
+    }
+  } else {
+    std::cerr << "directionが見つからない、または型が不正です" << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
+  cout << "ミニフィグの向きの判定正常終了" << endl;
 
   // デバッグ出力
   if(!result.wasDetected) {

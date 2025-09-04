@@ -15,8 +15,23 @@
 #include "Button.h"
 #include "ForceSensor.h"
 #include "Display.h"
-#include "MiniFigDirectionDetector.h"
-#include "BackgroundDirectionDetector.h"
+
+// ミニフィグの向きを表す列挙体
+enum class MiniFigDirection { FRONT, RIGHT, BACK, LEFT };
+
+struct MiniFigDirectionResult {
+  bool wasDetected = false;    // 検出が成功したかどうか
+  MiniFigDirection direction;  // ミニフィグの向きを表す列挙体
+};
+
+// 風景の向きを表す列挙体
+enum class BackgroundDirection { FRONT, RIGHT, BACK, LEFT };
+
+// 結果格納用の構造体
+struct BackgroundDirectionResult {
+  bool wasDetected = false;       // 検出が成功したかどうか
+  BackgroundDirection direction;  // 風景の向きを表す列挙体
+};
 
 class Robot {
  public:
