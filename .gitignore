@@ -4,7 +4,11 @@ datafiles/snapshots
 datafiles/processed_images
 datafiles/models
 datafiles/figures
+datafiles/detection_target
 tests/test_images
+third_party
+yolo_detection_system/result
+yolo_detection_system/build
 
 # yoloモデル
 *.onnx
