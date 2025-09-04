@@ -104,7 +104,7 @@ void IMUController::startAngleCalculation()
   }
   isCalculating = true;
 
-  // 角度を初期化（resetAngle()内での同一mutex再ロックを避けるため直接初 期化）
+  // 角度を初期化（resetAngle()内での同一mutex再ロックを避けるため直接初期化）
   currentAngle = 0.0f;
   lastAngularVelocity = 0.0;
 

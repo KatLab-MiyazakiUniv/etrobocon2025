@@ -15,7 +15,7 @@
 #include "StringOperator.h"
 #include "Motion.h"
 #include "AngleRotation.h"
-#include "IMURotation.h"
+#include "IMUAngleRotation.h"
 #include "DistanceStraight.h"
 #include "DistanceCameraLineTrace.h"
 #include "LineBoundingBoxDetector.h"

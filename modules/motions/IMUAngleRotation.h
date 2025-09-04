@@ -1,5 +1,5 @@
 /**
- * @file   IMURotation.h
+ * @file   IMUAngleRotation.h
  * @brief  IMU角度指定回頭動作
  * @author Hara1274
  */
@@ -10,7 +10,7 @@
 #include "Rotation.h"
 #include "Pid.h"
 
-class IMURotation : public Rotation {
+class IMUAngleRotation : public Rotation {
  public:
   /**
    * コンストラクタ
@@ -20,7 +20,7 @@ class IMURotation : public Rotation {
    * @param _isClockwise  回頭方向 true:時計回り, false:反時計回り
    * @param _anglePidGain 角度制御PIDゲイン
    */
-  IMURotation(Robot& _robot, int _targetAngle, int _basePower, bool _isClockwise,
+  IMUAngleRotation(Robot& _robot, int _targetAngle, int _basePower, bool _isClockwise,
               const PidGain& _anglePidGain);
   /**
    * @brief 回頭する

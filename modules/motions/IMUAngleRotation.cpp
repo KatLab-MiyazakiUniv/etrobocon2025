@@ -1,12 +1,12 @@
 /**
- * @file   IMURotation.cpp
+ * @file   IMUAngleRotation.cpp
  * @brief  IMU角度指定回頭動作
  * @author Hara1274
  */
 
-#include "IMURotation.h"
+#include "IMUAngleRotation.h"
 
-IMURotation::IMURotation(Robot& _robot, int _targetAngle, int _basePower, bool _isClockwise,
+IMUAngleRotation::IMUAngleRotation(Robot& _robot, int _targetAngle, int _basePower, bool _isClockwise,
                          const PidGain& _anglePidGain)
   : Rotation(_robot, _isClockwise),
     targetAngle(_targetAngle),
@@ -15,7 +15,7 @@ IMURotation::IMURotation(Robot& _robot, int _targetAngle, int _basePower, bool _
 {
 }
 
-void IMURotation::prepare()
+void IMUAngleRotation::prepare()
 {
   // IMUの出力特性に合わせて目標角度を変換(IMUは時計回りをマイナス、反時計回りをプラスで出力)
   targetAngle = isClockwise ? -targetAngle : targetAngle;
@@ -24,7 +24,7 @@ void IMURotation::prepare()
   robot.getIMUControllerInstance().startAngleCalculation();
 }
 
-bool IMURotation::isMetPreCondition()
+bool IMUAngleRotation::isMetPreCondition()
 {
   // 絶対値で角度をチェック（変換後の値は負になる可能性があるため）
   if((targetAngle) <= 0 || (targetAngle) >= 360) {
@@ -41,7 +41,7 @@ bool IMURotation::isMetPreCondition()
   return true;
 }
 
-bool IMURotation::isMetContinuationCondition()
+bool IMUAngleRotation::isMetContinuationCondition()
 {
   // 現在の角度を取得してメンバ変数に格納
   currentAngle = robot.getIMUControllerInstance().getAngle();
@@ -64,7 +64,7 @@ bool IMURotation::isMetContinuationCondition()
   return shouldContinue;
 }
 
-void IMURotation::updateMotorControl()
+void IMUAngleRotation::updateMotorControl()
 {
   // PID制御により角度誤差から補正値を計算
   double pidCorrection = anglePid.calculatePid(angleError, 0.01);
