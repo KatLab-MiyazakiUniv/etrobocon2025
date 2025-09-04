@@ -21,7 +21,7 @@ class IMUAngleRotation : public Rotation {
    * @param _anglePidGain 角度制御PIDゲイン
    */
   IMUAngleRotation(Robot& _robot, int _targetAngle, int _basePower, bool _isClockwise,
-              const PidGain& _anglePidGain);
+                   const PidGain& _anglePidGain);
   /**
    * @brief 回頭する
    * @note run() メソッドは Rotation クラスの実装をそのまま使用する

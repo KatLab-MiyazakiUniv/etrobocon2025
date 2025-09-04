@@ -6,8 +6,8 @@
 
 #include "IMUAngleRotation.h"
 
-IMUAngleRotation::IMUAngleRotation(Robot& _robot, int _targetAngle, int _basePower, bool _isClockwise,
-                         const PidGain& _anglePidGain)
+IMUAngleRotation::IMUAngleRotation(Robot& _robot, int _targetAngle, int _basePower,
+                                   bool _isClockwise, const PidGain& _anglePidGain)
   : Rotation(_robot, _isClockwise),
     targetAngle(_targetAngle),
     basePower(_basePower),
