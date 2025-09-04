@@ -11,12 +11,6 @@
 #include <stdlib.h>
 #include <cstdint>
 
-// ダミーのカラーID定数定義
-#define PBIO_COLOR_HUE_RED 0
-#define PBIO_COLOR_HUE_YELLOW 60
-#define PBIO_COLOR_HUE_GREEN 120
-#define PBIO_COLOR_HUE_BLUE 240
-
 #define REFLECTION_BLACK 20  // ダミーの黒の反射率
 #define REFLECTION_WHITE 90  // ダミーの白の反射率
 
@@ -46,30 +40,27 @@ namespace spikeapi {
      * @param hsv HSV値を代入する変数（参照渡し）
      * @return HSVを保持するクラス
      */
-    void getColor(HSV& hsv, bool surface = true)
+    void getHSV(HSV& hsv, bool surface = true)
     {
       int index = rand() % 6;
       switch(index) {
         case 0:
-          hsv = { 0, 0, 100 };  // white
+          hsv = { 0, 0, 5 };  // black
           break;
         case 1:
-          hsv = { PBIO_COLOR_HUE_RED, 100, 100 };  // red
+          hsv = { 0, 0, 255 };  // white
           break;
         case 2:
-          hsv = { PBIO_COLOR_HUE_YELLOW, 100, 100 };  // yellow
+          hsv = { 10, 100, 150 };  // red
           break;
         case 3:
-          hsv = { PBIO_COLOR_HUE_GREEN, 100, 100 };  // green
+          hsv = { 40, 100, 150 };  // yellow
           break;
         case 4:
-          hsv = { PBIO_COLOR_HUE_BLUE, 100, 100 };  // blue
+          hsv = { 100, 100, 150 };  // green
           break;
         case 5:
-          hsv = { 0, 0, 0 };  // black
-          break;
-        default:
-          hsv = { 123, 0, 0 };  // none (hsv.hは未定義の値(例:123))
+          hsv = { 200, 100, 150 };  // blue
           break;
       }
     }
