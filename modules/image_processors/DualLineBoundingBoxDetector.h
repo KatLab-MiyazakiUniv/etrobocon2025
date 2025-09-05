@@ -10,6 +10,8 @@
 #include "BoundingBoxDetector.h"
 #include "SystemInfo.h"
 #include "Robot.h"
+#include "Snapshot.h"
+#include <iostream>
 
 class DualLineBoundingBoxDetector : public BoundingBoxDetector {
  public:

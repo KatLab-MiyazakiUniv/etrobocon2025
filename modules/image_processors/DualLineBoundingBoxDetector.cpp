@@ -108,6 +108,7 @@ cv::Rect DualLineBoundingBoxDetector::detectColorBox(const cv::Mat& hsvFrame,
     if(area > MIN_LINE_CONTOUR_AREA && area > maxArea) {
       maxArea = area;
       maxRect = cv::boundingRect(contour);
+      std::cout << "debug" << std::endl;
     }
   }
   return maxRect;
@@ -151,6 +152,10 @@ void DualLineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetect
   cv::Rect box1 = detectColorBox(hsvFrame, lowerHSV, upperHSV, area1);
   cv::Rect box2 = detectColorBox(hsvFrame, lowerHSV2, upperHSV2, area2);
 
+  // Robot robot;
+  // for(int i = 0; i < 5; i++){
+  //   Snapshot(robot, "PreChangeColor");
+  // }
   // 切り替え判定
   if(currentTargetColor == 1 && area2 >= switchAreaThreshold) {
     currentTargetColor = 2;
