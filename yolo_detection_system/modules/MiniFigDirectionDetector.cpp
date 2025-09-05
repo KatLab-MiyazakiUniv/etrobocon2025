@@ -242,113 +242,113 @@ void MiniFigDirectionDetector::postprocess(const vector<vector<float>>& outputs,
 }
 
 // YOLOv5用の後処理関数
-void MiniFigDirectionDetector::postprocessV5(const vector<vector<float>>& outputs, const Mat& frame,
-                                             float scale, int padX, int padY)
-{
-  vector<int> classIds;       // 最も高いスコアを持つクラスIDを格納するリスト
-  vector<float> confidences;  // 信頼度を格納するリスト
-  vector<Rect> boxes;         // バウンディングボックスを格納するリスト
+// void MiniFigDirectionDetector::postprocessV5(const vector<vector<float>>& outputs, const Mat& frame,
+//                                              float scale, int padX, int padY)
+// {
+//   vector<int> classIds;       // 最も高いスコアを持つクラスIDを格納するリスト
+//   vector<float> confidences;  // 信頼度を格納するリスト
+//   vector<Rect> boxes;         // バウンディングボックスを格納するリスト
 
-  if(outputs.empty()) {
-    outputError();
-    return;
-  }
+//   if(outputs.empty()) {
+//     outputError();
+//     return;
+//   }
 
-  const vector<float>& data = outputs[0];
+//   const vector<float>& data = outputs[0];
 
-  int numClasses = 8;               // モデル上のクラス数
-  int attributes = 5 + numClasses;  // x, y, w, h, objectness + クラススコア
-  int numBoxes = data.size() / attributes;
+//   int numClasses = 8;               // モデル上のクラス数
+//   int attributes = 5 + numClasses;  // x, y, w, h, objectness + クラススコア
+//   int numBoxes = data.size() / attributes;
 
-  auto sigmoid = [](float x) { return 1.0f / (1.0f + exp(-x)); };
+//   auto sigmoid = [](float x) { return 1.0f / (1.0f + exp(-x)); };
 
-  for(int i = 0; i < numBoxes; i++) {
-    // クラススコアの最大値とクラスIDを取得
-    float objectness = sigmoid(data[i * attributes + 4]);
-    float maxScore = -1.0f;
-    int bestClass = -1;
-    for(int j = 0; j < 4; j++) {  // 方向クラスのみ対象（0: FRONT, 1: BACK, 2: RIGHT, 3: LEFT）
-      float score = sigmoid(data[i * attributes + 5 + j]);
-      if(score > maxScore) {
-        maxScore = score;
-        bestClass = j;
-      }
-    }
+//   for(int i = 0; i < numBoxes; i++) {
+//     // クラススコアの最大値とクラスIDを取得
+//     float objectness = sigmoid(data[i * attributes + 4]);
+//     float maxScore = -1.0f;
+//     int bestClass = -1;
+//     for(int j = 0; j < 4; j++) {  // 方向クラスのみ対象（0: FRONT, 1: BACK, 2: RIGHT, 3: LEFT）
+//       float score = sigmoid(data[i * attributes + 5 + j]);
+//       if(score > maxScore) {
+//         maxScore = score;
+//         bestClass = j;
+//       }
+//     }
 
-    // 最大クラススコアが閾値を超えているかチェック（YOLOv5はobjectness * maxScore）
-    float confidence = objectness * maxScore;
-    if(confidence < CONFIDENCE_THRESHOLD) continue;
+//     // 最大クラススコアが閾値を超えているかチェック（YOLOv5はobjectness * maxScore）
+//     float confidence = objectness * maxScore;
+//     if(confidence < CONFIDENCE_THRESHOLD) continue;
 
-    float cx = data[i * attributes + 0];
-    float cy = data[i * attributes + 1];
-    float w = data[i * attributes + 2];
-    float h = data[i * attributes + 3];
+//     float cx = data[i * attributes + 0];
+//     float cy = data[i * attributes + 1];
+//     float w = data[i * attributes + 2];
+//     float h = data[i * attributes + 3];
 
-    int centerX = static_cast<int>((cx - padX) / scale);
-    int centerY = static_cast<int>((cy - padY) / scale);
-    int width = static_cast<int>(w / scale);
-    int height = static_cast<int>(h / scale);
+//     int centerX = static_cast<int>((cx - padX) / scale);
+//     int centerY = static_cast<int>((cy - padY) / scale);
+//     int width = static_cast<int>(w / scale);
+//     int height = static_cast<int>(h / scale);
 
-    int left = max(0, min(centerX - width / 2, frame.cols - 1));
-    int top = max(0, min(centerY - height / 2, frame.rows - 1));
-    width = min(width, frame.cols - left);
-    height = min(height, frame.rows - top);
+//     int left = max(0, min(centerX - width / 2, frame.cols - 1));
+//     int top = max(0, min(centerY - height / 2, frame.rows - 1));
+//     width = min(width, frame.cols - left);
+//     height = min(height, frame.rows - top);
 
-    boxes.emplace_back(left, top, width, height);
-    confidences.push_back(confidence);
-    classIds.push_back(bestClass);
-  }
+//     boxes.emplace_back(left, top, width, height);
+//     confidences.push_back(confidence);
+//     classIds.push_back(bestClass);
+//   }
 
-  // 信頼度を超えるバウンディングボックスがなかった時の処理
-  if(boxes.empty()) {
-    outputError();
-    return;
-  }
+//   // 信頼度を超えるバウンディングボックスがなかった時の処理
+//   if(boxes.empty()) {
+//     outputError();
+//     return;
+//   }
 
-  // Non-Maximum Suppression (NMS) を実行し、重複する検出ボックスを削減する
-  vector<int> indices;
-  NMSBoxes(boxes, confidences, CONFIDENCE_THRESHOLD, NMS_THRESHOLD, indices);
+//   // Non-Maximum Suppression (NMS) を実行し、重複する検出ボックスを削減する
+//   vector<int> indices;
+//   NMSBoxes(boxes, confidences, CONFIDENCE_THRESHOLD, NMS_THRESHOLD, indices);
 
-  // NMS の結果、検出がなければ処理を終了
-  if(indices.empty()) {
-    outputError();
-    return;
-  }
+//   // NMS の結果、検出がなければ処理を終了
+//   if(indices.empty()) {
+//     outputError();
+//     return;
+//   }
 
-  // NMS 後の最良の検出ボックスのインデックスを取得
-  int bestIdx = indices[0];
-  string direction;
+//   // NMS 後の最良の検出ボックスのインデックスを取得
+//   int bestIdx = indices[0];
+//   string direction;
 
-  // 最良検出ボックスのクラスIDに応じて方向を設定
-  if(classIds[bestIdx] == 0) {
-    direction = "FRONT";
-  } else if(classIds[bestIdx] == 1) {
-    direction = "BACK";
-  } else if(classIds[bestIdx] == 2) {
-    direction = "RIGHT";
-  } else if(classIds[bestIdx] == 3) {
-    direction = "LEFT";
-  }
+//   // 最良検出ボックスのクラスIDに応じて方向を設定
+//   if(classIds[bestIdx] == 0) {
+//     direction = "FRONT";
+//   } else if(classIds[bestIdx] == 1) {
+//     direction = "BACK";
+//   } else if(classIds[bestIdx] == 2) {
+//     direction = "RIGHT";
+//   } else if(classIds[bestIdx] == 3) {
+//     direction = "LEFT";
+//   }
 
-  // JSON出力
-  json j;
-  j["wasDetected"] = true;
-  j["direction"] = direction;
-  ofstream(outputJsonPath) << j.dump(4);
+//   // JSON出力
+//   json j;
+//   j["wasDetected"] = true;
+//   j["direction"] = direction;
+//   ofstream(outputJsonPath) << j.dump(4);
 
-  // デバッグ用: 検出結果を画像に描画して保存
-  Mat outputImage = frame.clone();
-  for(size_t i = 0; i < indices.size(); ++i) {
-    int idx = indices[i];
-    rectangle(outputImage, boxes[idx], Scalar(0, 255, 0), 2);
-    string label = to_string(classIds[idx]);
-    putText(outputImage, label, boxes[idx].tl(), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 1);
-  }
-  imwrite(outputImagePath, outputImage);
+//   // デバッグ用: 検出結果を画像に描画して保存
+//   Mat outputImage = frame.clone();
+//   for(size_t i = 0; i < indices.size(); ++i) {
+//     int idx = indices[i];
+//     rectangle(outputImage, boxes[idx], Scalar(0, 255, 0), 2);
+//     string label = to_string(classIds[idx]);
+//     putText(outputImage, label, boxes[idx].tl(), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 1);
+//   }
+//   imwrite(outputImagePath, outputImage);
 
-  // 検出された方向クラスIDを表示
-  cout << "検出された方向クラスID: " << classIds[bestIdx] << endl;
-}
+//   // 検出された方向クラスIDを表示
+//   cout << "検出された方向クラスID: " << classIds[bestIdx] << endl;
+// }
 
 void MiniFigDirectionDetector::outputError()
 {

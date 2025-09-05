@@ -50,7 +50,7 @@ class ColorDistanceCameraLineTrace : public CameraPidTracking {
   bool isMetContinuationCondition() override;
 
  private:
-  static constexpr int JUDGE_COUNT = 5;           // 色取得の決定に必要な連続回数
+  static constexpr int JUDGE_COUNT = 2;           // 色取得の決定に必要な連続回数
   int colorCount;                                 // 指定色を取得した回数
   COLOR targetColor;                              // 指定色
   double targetDistance;                          // 目標距離
