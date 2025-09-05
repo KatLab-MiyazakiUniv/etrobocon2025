@@ -19,6 +19,7 @@
 #include "DistanceStraight.h"
 #include "DistanceCameraLineTrace.h"
 #include "LineBoundingBoxDetector.h"
+#include "DualLineBoundingBoxDetector.h"
 #include "ColorStraight.h"
 #include "ColorLineTrace.h"
 #include "DistanceLineTrace.h"
@@ -29,6 +30,7 @@
 #include "MiniFigCameraAction.h"
 #include "BackgroundPlaCameraAction.h"
 #include "ColorDistanceCameraLineTrace.h"
+#include "DualColorCameraLineTrace.h"
 #include "UltrasonicDistanceCameraLineTrace.h"
 #include "CameraRecoveryAction.h"
 
@@ -40,15 +42,16 @@ enum class COMMAND {
   DL,    // 指定距離ライントレース
   DCL,   // 指定距離カメラライントレース
   CDCL,  // 色距離指定カメラライントレース
+  DCCL,  // 色切り替え色距離指定カメラライントレース
   UDCL,  // 超音波距離指定カメラライントレース
   CL,    // 指定色ライントレース
   CDL,   // 色距離指定ライントレース
   EC,    // エッジ切り替え
   SL,    // 自タスクスリープ
   SS,    // カメラ撮影動作
-  MCA,   // ミニフィグのカメラ撮影動作
-  BCA,   // 背景のカメラ撮影動作
-  CRA,   // カメラ復帰動作
+  // MCA,   // ミニフィグのカメラ撮影動作
+  // BCA,   // 背景のカメラ撮影動作
+  CRA,  // カメラ復帰動作
   NONE
 };
 

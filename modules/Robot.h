@@ -79,17 +79,17 @@ class Robot {
    */
   spikeapi::Display& getDisplayInstance();
 
-  /**
-   * @brief ミニフィグの向き検出結果を取得する
-   * @return ミニフィグの向き検出結果の参照
-   */
-  MiniFigDirectionResult& getMiniFigDirectionResult();
+  //   /**
+  //    * @brief ミニフィグの向き検出結果を取得する
+  //    * @return ミニフィグの向き検出結果の参照
+  //    */
+  //   MiniFigDirectionResult& getMiniFigDirectionResult();
 
-  /**
-   * @brief 風景の向き検出結果を取得する
-   * @return 風景の向き検出結果の参照
-   */
-  BackgroundDirectionResult& getBackgroundDirectionResult();
+  //   /**
+  //    * @brief 風景の向き検出結果を取得する
+  //    * @return 風景の向き検出結果の参照
+  //    */
+  //   BackgroundDirectionResult& getBackgroundDirectionResult();
 
   /**
    * @brief IMUControllerのインスタンスの参照を返す
@@ -109,18 +109,18 @@ class Robot {
   bool getIsLeftEdge() const;
 
  private:
-  MotorController motorController;                // MotorControllerインスタンス
+  MotorController motorController;  // MotorControllerインスタンス
   UltraSonic ultraSonic;
-  CameraCapture defaultCameraCapture;             // 実機用のCameraCaptureインスタンス
-  ICameraCapture& cameraCapture;                  // 実際に使うカメラ（参照）
-  spikeapi::ColorSensor colorSensor;              // ColorSensorインスタンス
-  spikeapi::Clock clock;                          // Clockインスタンス
-  spikeapi::Button button;                        // Buttonインスタンス
-  spikeapi::ForceSensor forceSensor;              // ForceSensorインスタンス
-  spikeapi::Display display;                      // Displayインスタンス
-  IMUController imuController;                    // IMUControllerインスタンス
-  MiniFigDirectionResult miniFigDirectionResult;  // ミニフィグの向き検出結果
-  BackgroundDirectionResult backgroundDirectionResult;  // 風景の向き検出結果
+  CameraCapture defaultCameraCapture;  // 実機用のCameraCaptureインスタンス
+  ICameraCapture& cameraCapture;       // 実際に使うカメラ（参照）
+  spikeapi::ColorSensor colorSensor;   // ColorSensorインスタンス
+  spikeapi::Clock clock;               // Clockインスタンス
+  spikeapi::Button button;             // Buttonインスタンス
+  spikeapi::ForceSensor forceSensor;   // ForceSensorインスタンス
+  spikeapi::Display display;           // Displayインスタンス
+  IMUController imuController;         // IMUControllerインスタンス
+  //   MiniFigDirectionResult miniFigDirectionResult;  // ミニフィグの向き検出結果
+  //   BackgroundDirectionResult backgroundDirectionResult;  // 風景の向き検出結果
   // formatチェックをパスするためのコメント
   bool isLeftEdge = true;  // 左エッジを走行するかの真偽値
                            // （true: 左エッジ、false: 右エッジ）、初期値は左エッジ

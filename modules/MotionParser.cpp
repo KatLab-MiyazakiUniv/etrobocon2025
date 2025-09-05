@@ -164,6 +164,52 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // DCCL: 色切り替え色距離指定カメラライントレース
+      // [1]:string 色, [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int X座標[px], [5]: int
+      // 2色目のX座標[px] [6-8]:double PIDゲイン, [9-11]int lowerHSV, [12-14]int upperHSV,
+      // [15-17]int lowerHSV2, [18-20]int upperHSV2, [21]double switchAreaThreshold, [22-24]int
+      // ROI座標[px]
+      // ([22]左上隅のx座標, [23]左上隅のy座標, [24]幅, [25]高さ), [26-27]int 解像度[px] ([26]幅,
+      // [27]高さ)
+      case COMMAND::DCCL: {
+        cv::Scalar lowerHSV, upperHSV, lowerHSV2, upperHSV2;
+        double switchAreaThreshold;  // 色切り替えの面積閾値
+        cv::Rect roi;
+        cv::Size resolution;
+        std::unique_ptr<DualLineBoundingBoxDetector> detector;
+
+        lowerHSV = cv::Scalar(stoi(params[9]), stoi(params[10]), stoi(params[11]));
+        upperHSV = cv::Scalar(stoi(params[12]), stoi(params[13]), stoi(params[14]));
+        lowerHSV2 = cv::Scalar(stoi(params[15]), stoi(params[16]), stoi(params[17]));
+        upperHSV2 = cv::Scalar(stoi(params[18]), stoi(params[19]), stoi(params[20]));
+        switchAreaThreshold = stod(params[21]);
+
+        // パラメータ配列のサイズによってコンストラクタを切り替え
+        if(params.size() > 27) {
+          // ROI + 解像度
+          roi = cv::Rect(stoi(params[22]), stoi(params[23]), stoi(params[24]), stoi(params[25]));
+          resolution = cv::Size(stoi(params[26]), stoi(params[27]));
+          detector = std::make_unique<DualLineBoundingBoxDetector>(
+              lowerHSV, upperHSV, lowerHSV2, upperHSV2, switchAreaThreshold, roi, resolution);
+        } else if(params.size() > 25) {
+          // ROIのみ
+          roi = cv::Rect(stoi(params[22]), stoi(params[23]), stoi(params[24]), stoi(params[25]));
+          detector = std::make_unique<DualLineBoundingBoxDetector>(
+              lowerHSV, upperHSV, lowerHSV2, upperHSV2, switchAreaThreshold, roi);
+        } else {
+          // HSVのみ
+          detector = std::make_unique<DualLineBoundingBoxDetector>(lowerHSV, upperHSV, lowerHSV2,
+                                                                   upperHSV2, switchAreaThreshold);
+        }
+
+        auto dccl = new DualColorCameraLineTrace(
+            robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
+            stoi(params[4]), stoi(params[5]),
+            PidGain(stoi(params[6]), stoi(params[7]), stoi(params[8])), std::move(detector));
+        motionList.push_back(dccl);
+        break;
+      }
+
       // UDCL: 超音波距離指定カメラライントレース
       // [1]:double 超音波距離[mm], [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int X座標[px],
       // [5-7]:double PIDゲイン, [8-10]int lowerHSV, [11-13]int upperHSV, [14-17]int ROI座標[px]
@@ -194,9 +240,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         }
 
         auto udcl = new UltrasonicDistanceCameraLineTrace(
-            robot, stod(params[1]), stod(params[2]), stod(params[3]),
-            stoi(params[4]), PidGain(stod(params[5]), stod(params[6]), stod(params[7])),
-            std::move(detector));
+            robot, stod(params[1]), stod(params[2]), stod(params[3]), stoi(params[4]),
+            PidGain(stod(params[5]), stod(params[6]), stod(params[7])), std::move(detector));
         motionList.push_back(udcl);
         break;
       }
@@ -252,51 +297,51 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-        // MCA: ミニフィグのカメラ撮影動作
-        //[1]: :string 回頭の方向(clockwise or anticlockwise),
-        //[2]:int preTargetAngle
-        //[3]:int postTargetAngle
-        //[4]:パワー値
-        //[5]:後進距離
-        //[6]:前進距離
-        //[7]:後進スピード
-        //[8]:前進スピード
-        //[9]:ポジション
-      case COMMAND::MCA: {
-        auto mca = new MiniFigCameraAction(robot, convertBool(params[0], params[1]),
-                                           stoi(params[2]), stoi(params[3]), stod(params[4]),
-                                           stod(params[5]), stod(params[6]), stod(params[7]),
-                                           stod(params[8]), stoi(params[9]));
-        motionList.push_back(mca);
+      //   // MCA: ミニフィグのカメラ撮影動作
+      //   //[1]: :string 回頭の方向(clockwise or anticlockwise),
+      //   //[2]:int preTargetAngle
+      //   //[3]:int postTargetAngle
+      //   //[4]:パワー値
+      //   //[5]:後進距離
+      //   //[6]:前進距離
+      //   //[7]:後進スピード
+      //   //[8]:前進スピード
+      //   //[9]:ポジション
+      // case COMMAND::MCA: {
+      //   auto mca = new MiniFigCameraAction(robot, convertBool(params[0], params[1]),
+      //                                      stoi(params[2]), stoi(params[3]), stod(params[4]),
+      //                                      stod(params[5]), stod(params[6]), stod(params[7]),
+      //                                      stod(params[8]), stoi(params[9]));
+      //   motionList.push_back(mca);
 
-        break;
-      }
+      //   break;
+      // }
 
-        // BCA: 風景・プラレールのカメラ撮影動作
-        // [1]:bool isClockwise（"clockwise"/"anticlockwise"）
-        // [2]:int preTargetAngle
-        // [3]:int postTargetAngle
-        // [4]:basepawer
-        // [5]: 風景検出のしきい値
-        // [6]: 最小面積
-        // [7]:int ROIの左上X座標
-        // [8]:int ROIの左上Y座標
-        // [9]:int ROIの幅
-        // [10]:int ROIの高さ
-        // [11]:int position（0=初期位置）
+      //   // BCA: 風景・プラレールのカメラ撮影動作
+      //   // [1]:bool isClockwise（"clockwise"/"anticlockwise"）
+      //   // [2]:int preTargetAngle
+      //   // [3]:int postTargetAngle
+      //   // [4]:basepawer
+      //   // [5]: 風景検出のしきい値
+      //   // [6]: 最小面積
+      //   // [7]:int ROIの左上X座標
+      //   // [8]:int ROIの左上Y座標
+      //   // [9]:int ROIの幅
+      //   // [10]:int ROIの高さ
+      //   // [11]:int position（0=初期位置）
 
-      case COMMAND::BCA: {
-        cv::Rect roi;
+      // case COMMAND::BCA: {
+      //   cv::Rect roi;
 
-        roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
+      //   roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
 
-        auto bca = new BackgroundPlaCameraAction(
-            robot, convertBool(params[0], params[1]), stoi(params[2]), stoi(params[3]),
-            stod(params[4]), stod(params[5]), stod(params[6]), roi, stoi(params[11]));
+      //   auto bca = new BackgroundPlaCameraAction(
+      //       robot, convertBool(params[0], params[1]), stoi(params[2]), stoi(params[3]),
+      //       stod(params[4]), stod(params[5]), stod(params[6]), roi, stoi(params[11]));
 
-        motionList.push_back(bca);
-        break;
-      }
+      //   motionList.push_back(bca);
+      //   break;
+      // }
 
       // CRA: カメラ復帰動作
       // [1]:int 回頭角度[deg], [2]:double 回頭スピード[mm/s], [3]:string 回頭の方向(clockwise or
@@ -362,15 +407,16 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "DL", COMMAND::DL },      // 指定距離ライントレース
     { "DCL", COMMAND::DCL },    // 指定距離カメラライントレース
     { "CDCL", COMMAND::CDCL },  // 色距離指定カメラライントレース
-    { "UDCL", COMMAND::UDCL }, //超音波距離指定カメラライントレース
+    { "DCCL", COMMAND::DCCL },  // 色切り替え色距離指定カメラライントレース
+    { "UDCL", COMMAND::UDCL },  // 超音波距離指定カメラライントレース
     { "CL", COMMAND::CL },      // 指定色ライントレース
     { "CDL", COMMAND::CDL },    // 色距離指定ライントレース
     { "EC", COMMAND::EC },      // エッジ切り替え
     { "SL", COMMAND::SL },      // スリープ
     { "SS", COMMAND::SS },      // カメラ撮影動作
-    { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
-    { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
-    { "CRA", COMMAND::CRA }     // カメラ復帰動作
+    // { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
+    // { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
+    { "CRA", COMMAND::CRA }  // カメラ復帰動作
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
@@ -388,8 +434,8 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   string param = StringOperator::removeEOL(stringParameter);
 
   // 回転動作(AR,IMUR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-  if(command == "AR" || command == "IMUR" || command == "MCA" || command == "BCA"
-     || command == "CRA") {
+  if(command == "AR" || command == "IMUR" || /*command == "MCA" || command == "BCA"
+     || */ command == "CRA") {
     if(param == "clockwise") {
       return true;
     } else if(param == "anticlockwise") {

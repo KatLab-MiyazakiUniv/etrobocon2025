@@ -75,15 +75,15 @@ spikeapi::Display& Robot::getDisplayInstance()
   return display;
 }
 
-MiniFigDirectionResult& Robot::getMiniFigDirectionResult()
-{
-  return miniFigDirectionResult;  // ミニフィグの向き検出結果を返す
-}
+// MiniFigDirectionResult& Robot::getMiniFigDirectionResult()
+// {
+//   return miniFigDirectionResult;  // ミニフィグの向き検出結果を返す
+// }
 
-BackgroundDirectionResult& Robot::getBackgroundDirectionResult()
-{
-  return backgroundDirectionResult;  // 背景の向き検出結果を返す
-}
+// BackgroundDirectionResult& Robot::getBackgroundDirectionResult()
+// {
+//   return backgroundDirectionResult;  // 背景の向き検出結果を返す
+// }
 
 void Robot::setIsLeftEdge(bool isLeft)
 {
