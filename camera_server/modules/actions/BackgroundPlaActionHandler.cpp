@@ -1,3 +1,9 @@
+/**
+ * @file BackgroundPlaActionHandler.cpp
+ * @brief 風景・プラレール撮影をするクラス
+ * @author miyahara046 takuchi17
+ */
+
 #include "BackgroundPlaActionHandler.h"
 #include "FrameSave.h"
 #include "ImageUploader.h"
@@ -6,7 +12,7 @@
 
 using namespace std;
 
-constexpr int MAX_NO_MOTION = 5;
+constexpr int MAX_NO_MOTION = 5;  // 動きなしと判定する連続フレーム数
 
 BackgroundPlaActionHandler::BackgroundPlaActionHandler(CameraCapture& _camera) : camera(_camera)
 {
@@ -73,7 +79,7 @@ void BackgroundPlaActionHandler::runPlaCameraAction(
   // Save the best frame and upload
   if(!capturedFrames.empty()) {
     cv::Mat bestFrame = capturedFrames.at(capturedFrames.size() / 2);
-    string fileName = "PlaRail.jpg";
+    string fileName = "PlaRail";
     FrameSave::save(bestFrame, filePath, fileName);
     thread([path = string(filePath), name = fileName] {
       ImageUploader::uploadImage(path, name, 3);
@@ -97,8 +103,8 @@ void BackgroundPlaActionHandler::execute(const CameraServer::BackgroundPlaAction
     return;
   }
 
-  if(request.position == 0) {
-    cout << "First attempt (position 0). Detecting background direction." << endl;
+  if(shot_count == 0) {
+    cout << "First attempt (shot_count 0). Detecting background direction." << endl;
     directionDetector.detect(frame, this->firstAttemptResult);
 
     if(this->firstAttemptResult.wasDetected
@@ -106,29 +112,14 @@ void BackgroundPlaActionHandler::execute(const CameraServer::BackgroundPlaAction
       cout << "Direction is FRONT. Running PlaCameraAction." << endl;
       runPlaCameraAction(request);
     } else if(!this->firstAttemptResult.wasDetected) {
-      cout << "Direction not detected. Saving frame for analysis." << endl;
-      string fileName = "bestframe_" + to_string(request.position) + ".jpg";
-      FrameSave::save(frame, filePath, fileName);
+      cout << "Direction not detected. Running PlaCameraAction." << endl;
+      runPlaCameraAction(request);
     }
     response.result.wasDetected = this->firstAttemptResult.wasDetected;
     response.result.direction = this->firstAttemptResult.direction;
-
   } else if(this->firstAttemptResult.wasDetected) {
-    cout << "Subsequent attempt (position " << request.position << "). Assuming FRONT." << endl;
+    cout << "Subsequent attempt (shot_count " << shot_count << "). Assuming FRONT." << endl;
     runPlaCameraAction(request);
-    response.result.wasDetected = true;  // We assume this is the correct one
-    response.result.direction = BackgroundDirection::FRONT;
-
-  } else {
-    cout << "Subsequent attempt (position " << request.position << ") after failed detection."
-         << endl;
-    string fileName = "bestframe_" + to_string(request.position) + ".jpg";
-    FrameSave::save(frame, filePath, fileName);
-    if(request.position == 3) {
-      thread([path = string(filePath), name = fileName] {
-        ImageUploader::uploadImage(path, name, 3);
-      }).detach();
-    }
-    response.result.wasDetected = false;
   }
+  shot_count++;
 }

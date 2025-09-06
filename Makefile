@@ -1,6 +1,6 @@
 MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-# サーバーのIPアドレス
+# 無線通信デバイスのIPアドレス
 SERVER_IP = IPアドレス
 
 # 使い方
@@ -29,7 +29,9 @@ help:
 	@echo " $$ make upload-image"
 
 ## 実行関連 ##
-build:
+build-all: build-client build-camera
+
+build-client:
 	cd $(MAKEFILE_PATH)../ && make img=etrobocon2025 -j5
 
 build-camera:
@@ -38,6 +40,12 @@ build-camera:
 # 実機の場合、走行を開始する
 start:
 	cd $(MAKEFILE_PATH)../ && make start
+
+start-client:
+	cd $(MAKEFILE_PATH)../ && make start
+
+start-camera:
+	cd $(MAKEFILE_PATH)/camera_server && ./camera_app
 
 ## テスト関連 ##
 # テストのビルドディレクトリが存在しない場合は作成する

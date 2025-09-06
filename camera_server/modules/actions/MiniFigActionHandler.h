@@ -1,3 +1,9 @@
+/**
+ * @file MiniFigActionHandler.h
+ * @brief ミニフィグ撮影をするクラス
+ * @author nishijima515 takuchi17
+ */
+
 #ifndef MINIFIG_ACTION_HANDLER_H
 #define MINIFIG_ACTION_HANDLER_H
 
@@ -7,23 +13,33 @@
 
 class MiniFigActionHandler {
  public:
+  /**
+   * @brief コンストラクタ
+   * @param camera カメラキャプチャのインスタンス
+   */
   MiniFigActionHandler(CameraCapture& camera);
 
   /**
-   * @brief Executes the minifig detection sequence.
-   * @param position The current position/attempt number (0-3).
-   * @param response The response to be sent back to the client.
+   * @brief ミニフィグ撮影シーケンスを実行する
+   * @param request クライアントからのリクエスト
+   * @param response クライアントへのレスポンス
    */
-  void execute(int position, CameraServer::MiniFigActionResponse& response);
+  void execute(const CameraServer::MiniFigActionRequest& request,
+               CameraServer::MiniFigActionResponse& response);
 
  private:
   CameraCapture& camera;
   MiniFigDirectionDetector detector;
-  MiniFigDirectionResult
-      firstAttemptResult;  // Stores the result of the first detection (at position 0)
-  const char* filePath = "etrobocon2025/datafiles/snapshots/";
-  const char* uploadFileName = "Fig_FRONT.jpg";
+  MiniFigDirectionResult firstAttemptResult;  // 1回目の撮影結果を保持する
+  int shot_count = 0;                         // 撮影回数カウンター
+  const char* filePath = "datafiles/snapshots/";
+  const char* uploadFileName = "Fig_FRONT";
 
+  /**
+   * @brief 画像からミニフィグの向きを検出する
+   * @param frame 入力画像
+   * @param result 検出結果
+   */
   void detectDirection(cv::Mat& frame, MiniFigDirectionResult& result);
 };
 

@@ -14,7 +14,7 @@
 class MotionDetector : public BoundingBoxDetector {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
    * @param _threshold 差分画像の二値化に用いる閾値
    * @param _minArea 検出対象とする輪郭の最小面積
    * @param _roi 動体検知を行う範囲（Region of Interest）
@@ -22,20 +22,22 @@ class MotionDetector : public BoundingBoxDetector {
   MotionDetector(double _threshold, double _minArea, const cv::Rect& _roi);
 
   /**
-   * 背景画像の設定
+   * @brief 背景画像の設定
    * @param background 背景として使用する画像
+   * @return true 成功した場合
+   * @return false 失敗した場合
    */
   bool setBackground(const cv::Mat& background);
 
   /**
-   * 現在のフレームと背景画像を比較して動体を検出
+   * @brief 現在のフレームと背景画像を比較して動体を検出
    * @param frame 現在のフレーム
    * @param result 検出結果(バウンディングボックス)を格納する構造体
    */
   void detect(const cv::Mat& frame, BoundingBoxDetectionResult& result) override;
 
   /**
-   * 2枚のフレームを比較して差分の最大輪郭を取得する
+   * @brief 2枚のフレームを比較して差分の最大輪郭を取得する
    * @param firstFrame 最初のフレーム
    * @param secondFrame 比較対象のフレーム
    * @return 差分の最大輪郭
@@ -43,10 +45,10 @@ class MotionDetector : public BoundingBoxDetector {
   std::vector<cv::Point> compareTwoFrames(const cv::Mat& firstFrame, const cv::Mat& secondFrame);
 
  private:
-  double threshold;
-  double minArea;
-  cv::Rect roi;
-  cv::Mat bgFrame;
+  double threshold;  // 差分画像の二値化に用いる閾値
+  double minArea;    // 検出対象とする輪郭の最小面積
+  cv::Rect roi;      // 動体検知を行う範囲（Region of Interest）
+  cv::Mat bgFrame;   // 背景画像
 };
 
 #endif

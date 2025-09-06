@@ -10,3 +10,6 @@ tests/test_images
 # yoloモデル
 *.onnx
 *.o
+
+# 実行ファイル
+camera_app

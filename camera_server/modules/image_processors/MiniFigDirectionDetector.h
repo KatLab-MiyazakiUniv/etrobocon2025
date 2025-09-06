@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include "ImageRecognitionResults.h"
+#include "FrameSave.h"
 
 #define MODEL_INPUT_SIZE 640       // モデルの入力サイズ（640x640）
 #define CONFIDENCE_THRESHOLD 0.5f  // 検出結果を採用する最低信頼度の閾値
@@ -21,9 +22,11 @@
 
 class MiniFigDirectionDetector {
  public:
-  // コンストラクタ
-  MiniFigDirectionDetector(const std::string& modelPath
-                           = "etrobocon2025/datafiles/models/yolo_optimized.onnx");
+  /**
+   * @brief コンストラクタ
+   * @param modelPath ONNXモデルのパス (デフォルト値あり)
+   */
+  MiniFigDirectionDetector(const std::string& modelPath = "datafiles/models/yolo_optimized.onnx");
 
   /**
    * @brief         入力画像からミニフィグの向きを判定し、結果を result に格納する
@@ -36,8 +39,9 @@ class MiniFigDirectionDetector {
   cv::dnn::Net net;             // DNNモデルを格納する変数
   const std::string modelPath;  // モデルのパス
   const std::string outputImagePath
-      = "etrobocon2025/datafiles/processed_images/"
-        "fig_detected_result.jpg";  // バウンディングボックス付きの画像のパス
+      = "datafiles/processed_images/";  // バウンディングボックス付きの画像保存先ディレクトリ
+  const std::string outputImageName
+      = "minifig_detected_result";  // バウンディングボックス付きの画像保存名
 
   /**
    * @brief         入力画像を640x640にリサイズ＆パディングする前処理関数

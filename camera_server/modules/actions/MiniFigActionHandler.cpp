@@ -1,3 +1,9 @@
+/**
+ * @file MiniFigActionHandler.cpp
+ * @brief ミニフィグ撮影をするクラス
+ * @author nishijima515 takuchi17
+ */
+
 #include "MiniFigActionHandler.h"
 #include "FrameSave.h"
 #include "ImageUploader.h"
@@ -8,7 +14,7 @@ using namespace std;
 
 MiniFigActionHandler::MiniFigActionHandler(CameraCapture& _camera) : camera(_camera)
 {
-  firstAttemptResult.wasDetected = false;  // Initialize state
+  firstAttemptResult.wasDetected = false;
 }
 
 void MiniFigActionHandler::detectDirection(cv::Mat& frame, MiniFigDirectionResult& result)
@@ -38,7 +44,8 @@ void MiniFigActionHandler::detectDirection(cv::Mat& frame, MiniFigDirectionResul
   }
 }
 
-void MiniFigActionHandler::execute(int position, CameraServer::MiniFigActionResponse& response)
+void MiniFigActionHandler::execute(const CameraServer::MiniFigActionRequest& request,
+                                   CameraServer::MiniFigActionResponse& response)
 {
   // 1. Take a picture
   cv::Mat frame;
@@ -52,10 +59,10 @@ void MiniFigActionHandler::execute(int position, CameraServer::MiniFigActionResp
     return;
   }
 
-  // 2. Execute logic based on position
-  if(position == 0) {
+  // 2. Execute logic based on shot_count
+  if(shot_count == 0) {
     // This is the first attempt. Detect and store the result.
-    cout << "First attempt (position 0)." << endl;
+    cout << "First attempt (shot_count 0)." << endl;
     detectDirection(frame, this->firstAttemptResult);
 
     if(this->firstAttemptResult.wasDetected
@@ -73,27 +80,24 @@ void MiniFigActionHandler::execute(int position, CameraServer::MiniFigActionResp
   } else if(this->firstAttemptResult.wasDetected) {
     // This is a subsequent attempt, and the first one was successful (but not FRONT).
     // This attempt must be the FRONT-facing one.
-    cout << "Subsequent attempt (position " << position << "). Assuming FRONT." << endl;
+    cout << "Subsequent attempt (shot_count " << shot_count << "). Assuming FRONT." << endl;
     FrameSave::save(frame, filePath, uploadFileName);
     thread([path = string(filePath), name = string(uploadFileName)] {
       ImageUploader::uploadImage(path, name, 3);
     }).detach();
-    response.result.wasDetected = true;
-    response.result.direction = MiniFigDirection::FRONT;
-
   } else {
     // This is a subsequent attempt, but the first one failed to detect anything.
-    cout << "Subsequent attempt (position " << position
+    cout << "Subsequent attempt (shot_count " << shot_count
          << ") after failed detection. Saving for debug." << endl;
-    string positionImageName = "Fig_" + to_string(position) + ".jpg";
+    string positionImageName = "Fig_" + to_string(shot_count);
     FrameSave::save(frame, filePath, positionImageName);
 
     // Upload only on the last attempt if the first one failed.
-    if(position == 3) {
+    if(shot_count == 3) {
       thread([path = string(filePath), name = positionImageName] {
         ImageUploader::uploadImage(path, name, 3);
       }).detach();
     }
-    response.result.wasDetected = false;  // Still not considered a successful "FRONT" detection
   }
+  shot_count++;
 }

@@ -17,7 +17,14 @@
 
 class CameraCapture : public ICameraCapture {
  public:
+  /**
+   * @brief コンストラクタ
+   */
   CameraCapture();
+
+  /**
+   * @brief デストラクタ
+   */
   ~CameraCapture();
 
   /**
@@ -70,8 +77,8 @@ class CameraCapture : public ICameraCapture {
   bool getFrames(std::vector<cv::Mat>& frames, int numFrames, int millisecondInterval) override;
 
  private:
-  cv::VideoCapture cap;
-  int cameraID;
+  cv::VideoCapture cap;  // カメラデバイス
+  int cameraID;         // カメラID
 };
 
 #endif

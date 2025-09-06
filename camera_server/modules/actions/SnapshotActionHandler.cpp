@@ -1,10 +1,14 @@
+/**
+ * @file SnapshotActionHandler.cpp
+ * @brief スナップショット撮影をするクラス
+ * @author takuchi17
+ */
+
 #include "SnapshotActionHandler.h"
 #include "FrameSave.h"
 #include <iostream>
 
-SnapshotActionHandler::SnapshotActionHandler(CameraCapture& _camera) : camera(_camera)
-{
-}
+SnapshotActionHandler::SnapshotActionHandler(CameraCapture& _camera) : camera(_camera) {}
 
 void SnapshotActionHandler::execute(const CameraServer::SnapshotActionRequest& request,
                                     CameraServer::SnapshotActionResponse& response)

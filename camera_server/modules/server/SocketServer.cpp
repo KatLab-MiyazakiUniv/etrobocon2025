@@ -1,7 +1,13 @@
+/**
+ * @file SocketServer.cpp
+ * @brief 接続を待ち、クライアントからのリクエストを処理するクラス
+ * @author takuchi17
+ */
+
 #include "SocketServer.h"
 #include <iostream>
-#include <string.h>  // For memset
-#include <unistd.h>  // For close
+#include <string.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
@@ -96,62 +102,66 @@ void SocketServer::handle_connection(int clientSocket)
       if(static_cast<size_t>(iResult) >= sizeof(CameraServer::Command)) {
         CameraServer::Command cmd = *reinterpret_cast<CameraServer::Command*>(recvbuf);
 
-        if(cmd == CameraServer::Command::MINIFIG_CAMERA_ACTION) {
-          if(static_cast<size_t>(iResult) == sizeof(CameraServer::MiniFigActionRequest)) {
-            auto* request = reinterpret_cast<CameraServer::MiniFigActionRequest*>(recvbuf);
-            std::cout << "Executing MINIFIG_CAMERA_ACTION for position " << request->position
-                      << std::endl;
+        switch(cmd) {
+          case CameraServer::Command::MINIFIG_CAMERA_ACTION:
+            if(static_cast<size_t>(iResult) == sizeof(CameraServer::MiniFigActionRequest)) {
+              auto* request = reinterpret_cast<CameraServer::MiniFigActionRequest*>(recvbuf);
+              std::cout << "Executing MINIFIG_CAMERA_ACTION" << std::endl;
 
-            CameraServer::MiniFigActionResponse response;
-            minifigHandler.execute(request->position, response);
+              CameraServer::MiniFigActionResponse response;
+              minifigHandler.execute(*request, response);
 
-            send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
-          } else {
-            std::cerr << "Invalid request size for MINIFIG_CAMERA_ACTION." << std::endl;
-          }
-        } else if(cmd == CameraServer::Command::BACKGROUND_PLA_CAMERA_ACTION) {
-          if(static_cast<size_t>(iResult) == sizeof(CameraServer::BackgroundPlaActionRequest)) {
-            auto* request = reinterpret_cast<CameraServer::BackgroundPlaActionRequest*>(recvbuf);
-            std::cout << "Executing BACKGROUND_PLA_CAMERA_ACTION for position " << request->position
-                      << std::endl;
+              send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
+            } else {
+              std::cerr << "Invalid request size for MINIFIG_CAMERA_ACTION." << std::endl;
+            }
+            break;
+          case CameraServer::Command::BACKGROUND_PLA_CAMERA_ACTION:
+            if(static_cast<size_t>(iResult) == sizeof(CameraServer::BackgroundPlaActionRequest)) {
+              auto* request = reinterpret_cast<CameraServer::BackgroundPlaActionRequest*>(recvbuf);
+              std::cout << "Executing BACKGROUND_PLA_CAMERA_ACTION" << std::endl;
 
-            CameraServer::BackgroundPlaActionResponse response;
-            bgPlaHandler.execute(*request, response);
+              CameraServer::BackgroundPlaActionResponse response;
+              bgPlaHandler.execute(*request, response);
 
-            send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
-          } else {
-            std::cerr << "Invalid request size for BACKGROUND_PLA_CAMERA_ACTION." << std::endl;
-          }
-        } else if(cmd == CameraServer::Command::TAKE_SNAPSHOT) {
-          if(static_cast<size_t>(iResult) == sizeof(CameraServer::SnapshotActionRequest)) {
-            auto* request = reinterpret_cast<CameraServer::SnapshotActionRequest*>(recvbuf);
-            std::cout << "Executing TAKE_SNAPSHOT for file " << request->fileName << std::endl;
+              send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
+            } else {
+              std::cerr << "Invalid request size for BACKGROUND_PLA_CAMERA_ACTION." << std::endl;
+            }
+            break;
+          case CameraServer::Command::TAKE_SNAPSHOT:
+            if(static_cast<size_t>(iResult) == sizeof(CameraServer::SnapshotActionRequest)) {
+              auto* request = reinterpret_cast<CameraServer::SnapshotActionRequest*>(recvbuf);
+              std::cout << "Executing TAKE_SNAPSHOT for file " << request->fileName << std::endl;
 
-            CameraServer::SnapshotActionResponse response;
-            snapshotHandler.execute(*request, response);
+              CameraServer::SnapshotActionResponse response;
+              snapshotHandler.execute(*request, response);
 
-            send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
-          } else {
-            std::cerr << "Invalid request size for TAKE_SNAPSHOT." << std::endl;
-          }
-        } else if(cmd == CameraServer::Command::LINE_DETECTION) {
-          if(static_cast<size_t>(iResult) == sizeof(CameraServer::BoundingBoxDetectorRequest)) {
-            auto* request = reinterpret_cast<CameraServer::BoundingBoxDetectorRequest*>(recvbuf);
-            std::cout << "Executing LINE_DETECTION command." << std::endl;
+              send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
+            } else {
+              std::cerr << "Invalid request size for TAKE_SNAPSHOT." << std::endl;
+            }
+            break;
+          case CameraServer::Command::LINE_DETECTION:
+            if(static_cast<size_t>(iResult) == sizeof(CameraServer::BoundingBoxDetectorRequest)) {
+              auto* request = reinterpret_cast<CameraServer::BoundingBoxDetectorRequest*>(recvbuf);
+              std::cout << "Executing LINE_DETECTION command." << std::endl;
 
-            CameraServer::BoundingBoxDetectorResponse response;
-            lineDetectionHandler.execute(*request, response);
+              CameraServer::BoundingBoxDetectorResponse response;
+              lineDetectionHandler.execute(*request, response);
 
-            send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
-          } else {
-            std::cerr << "Invalid request size for LINE_DETECTION." << std::endl;
-          }
-        } else if(cmd == CameraServer::Command::SHUTDOWN) {
-          std::cout << "Received SHUTDOWN command." << std::endl;
-          shutdown();
-          break;
-        } else {
-          std::cerr << "Received unknown command." << std::endl;
+              send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
+            } else {
+              std::cerr << "Invalid request size for LINE_DETECTION." << std::endl;
+            }
+            break;
+          case CameraServer::Command::SHUTDOWN:
+            std::cout << "Received SHUTDOWN command." << std::endl;
+            shutdown();
+            break;
+          default:
+            std::cerr << "Received unknown command." << std::endl;
+            break;
         }
       } else {
         std::cerr << "Received unexpected data size: " << iResult << std::endl;

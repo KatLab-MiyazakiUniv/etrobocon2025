@@ -6,9 +6,9 @@ CXX := g++
 # Directories
 SRCDIR := modules
 INCLUDEDIR := modules
-OBJDIR := obj
 TARGET_DIR := bin
-TARGET := $(TARGET_DIR)/camera_server
+OBJ := $(TARGET_DIR)/obj
+TARGET := camera_app
 
 # Compiler and Linker Flags
 CXXFLAGS := -std=c++17 -Wall -Wextra -O2 -pthread

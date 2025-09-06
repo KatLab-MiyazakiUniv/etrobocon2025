@@ -8,7 +8,7 @@
 #define BACKGROUND_DIRECTION_DETECTOR_H
 
 #include "ImageRecognitionResults.h"
-
+#include "FrameSave.h"
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
 #include <algorithm>
@@ -23,10 +23,11 @@
 class BackgroundDirectionDetector {
  public:
   /**
-   * コンストラクタ
+   * @brief コンストラクタ
+   * @param _modelPath ONNXモデルのパス (デフォルト値あり)
    */
   BackgroundDirectionDetector(const std::string& _modelPath
-                              = "etrobocon2025/datafiles/models/BackgroundDetector.onnx");
+                              = "datafiles/models/BackgroundDetector.onnx");
 
   /**
    * @brief         入力画像から風景の向きを判定し、結果を result に格納する
@@ -39,8 +40,9 @@ class BackgroundDirectionDetector {
   cv::dnn::Net net;             // DNNモデルを格納する変数
   const std::string modelPath;  // モデルのパス
   const std::string outputImagePath
-      = "etrobocon2025/datafiles/processed_images/"
-        "background_detected_result.jpg";  // バウンディングボックス付きの画像パス
+      = "datafiles/processed_images/";  // バウンディングボックス付きの画像保存先ディレクトリ
+  const std::string outputImageName
+      = "background_detected_result";  // バウンディングボックス付きの画像保存名
 
   /**
    * @brief         入力画像を640x640にリサイズ＆パディングする前処理関数

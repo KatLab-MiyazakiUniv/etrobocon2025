@@ -51,7 +51,7 @@ class LineBoundingBoxDetector : public BoundingBoxDetector {
   cv::Scalar lowerHSV;  // ライントレース対象の色の下限HSV値
   cv::Scalar upperHSV;  // ライントレース対象の色の上限HSV値
   cv::Rect roi;         // 注目領域
-  cv::Size resolution;  // 解像度
+  cv::Size resolution;  // 画像処理に用いる解像度
 
   /**
    * @brief 入力で受け取ったROIと解像度の検証を行う関数

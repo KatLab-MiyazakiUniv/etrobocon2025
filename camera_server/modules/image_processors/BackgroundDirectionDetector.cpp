@@ -170,7 +170,7 @@ void BackgroundDirectionDetector::postprocess(const vector<Mat>& outputs, const 
     string label = to_string(classIds[idx]);
     putText(outputImage, label, boxes[idx].tl(), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 1);
   }
-  imwrite(outputImagePath, outputImage);
+  FrameSave::save(outputImage, outputImagePath, outputImageName);
 
   // 検出された方向クラスIDを表示
   cout << "検出された方向クラスID: " << classIds[bestIdx] << endl;
