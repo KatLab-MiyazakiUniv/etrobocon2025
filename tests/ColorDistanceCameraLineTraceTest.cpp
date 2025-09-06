@@ -25,6 +25,14 @@ namespace etrobocon2025_test {
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    successResponse.result.x = 320;
+    successResponse.result.y = 240;
+    successResponse.result.width = 100;
+    successResponse.result.height = 100;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
+
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
                                       gain, dummyRequest);
@@ -54,6 +62,14 @@ namespace etrobocon2025_test {
     double targetSpeed = 500.0;
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
+
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    successResponse.result.x = 320;
+    successResponse.result.y = 240;
+    successResponse.result.width = 100;
+    successResponse.result.height = 100;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
@@ -85,6 +101,14 @@ namespace etrobocon2025_test {
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    successResponse.result.x = 320;
+    successResponse.result.y = 240;
+    successResponse.result.width = 100;
+    successResponse.result.height = 100;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
+
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
                                       gain, dummyRequest);
@@ -115,6 +139,14 @@ namespace etrobocon2025_test {
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    successResponse.result.x = 320;
+    successResponse.result.y = 240;
+    successResponse.result.width = 100;
+    successResponse.result.height = 100;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
+
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
                                       gain, dummyRequest);
@@ -144,6 +176,14 @@ namespace etrobocon2025_test {
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    successResponse.result.x = 320;
+    successResponse.result.y = 240;
+    successResponse.result.width = 100;
+    successResponse.result.height = 100;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
+
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
                                       gain, dummyRequest);
@@ -172,6 +212,14 @@ namespace etrobocon2025_test {
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    successResponse.result.x = 320;
+    successResponse.result.y = 240;
+    successResponse.result.width = 100;
+    successResponse.result.height = 100;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
+
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
                                       gain, dummyRequest);
@@ -198,6 +246,14 @@ namespace etrobocon2025_test {
     double targetSpeed = 500.0;
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
+
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    successResponse.result.x = 320;
+    successResponse.result.y = 240;
+    successResponse.result.width = 100;
+    successResponse.result.height = 100;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,

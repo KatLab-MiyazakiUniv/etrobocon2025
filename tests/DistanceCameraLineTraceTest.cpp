@@ -12,7 +12,7 @@
 #define ERROR 1.01  // 許容誤差の倍率
 namespace etrobocon2025_test {
   // 目標距離までカメラライントレースを行うテストケース
-  TEST(DistanceCameraLineTraceTest, RunDetectCalled)
+    TEST(DistanceCameraLineTraceTest, RunDetectCalled)
   {
     MockSocketClient mockSocketClient;
     Robot robot(mockSocketClient);
@@ -21,8 +21,17 @@ namespace etrobocon2025_test {
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    successResponse.result.x = 320;
+    successResponse.result.y = 240;
+    successResponse.result.width = 100;
+    successResponse.result.height = 100;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
+
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, dummyRequest);
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
+                                dummyRequest);
 
     double expected = targetDistance;
 
@@ -47,8 +56,17 @@ namespace etrobocon2025_test {
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    successResponse.result.x = 320;
+    successResponse.result.y = 240;
+    successResponse.result.width = 100;
+    successResponse.result.height = 100;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
+
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, dummyRequest);
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
+                                dummyRequest);
 
     double expected = 0.0;
     dcl.run();  // ライントレースを実行
@@ -71,8 +89,17 @@ namespace etrobocon2025_test {
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    successResponse.result.x = 320;
+    successResponse.result.y = 240;
+    successResponse.result.width = 100;
+    successResponse.result.height = 100;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
+
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, dummyRequest);
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
+                                dummyRequest);
 
     double expected = 0.0;
 
@@ -96,8 +123,17 @@ namespace etrobocon2025_test {
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    successResponse.result.x = 320;
+    successResponse.result.y = 240;
+    successResponse.result.width = 100;
+    successResponse.result.height = 100;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
+
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, dummyRequest);
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
+                                dummyRequest);
 
     double expected = 0.0;
 
@@ -111,4 +147,3 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // ライントレース前後で走行距離に変化はない
   }
 }  // namespace etrobocon2025_test
-
