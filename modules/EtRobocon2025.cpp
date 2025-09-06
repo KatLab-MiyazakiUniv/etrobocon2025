@@ -12,7 +12,7 @@
 void EtRobocon2025::start()
 {
   SocketClient socketClient;  // SocketClientインスタンスを生成
-  Robot robot(socketClient);    // RobotインスタンスにSocketClientを渡す
+  Robot robot(socketClient);  // RobotインスタンスにSocketClientを渡す
 
   std::cout << "Hello KATLAB" << std::endl;
 

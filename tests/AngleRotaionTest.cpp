@@ -237,4 +237,3 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 }  // namespace etrobocon2025_test
-

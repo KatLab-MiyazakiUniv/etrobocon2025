@@ -48,8 +48,8 @@ class DistanceCameraLineTrace : public CameraPidTracking {
   bool isMetContinuationCondition() override;
 
  private:
-  double targetDistance;                          // 目標距離
-  double initDistance;                            // 実行前の走行距離
+  double targetDistance;                                      // 目標距離
+  double initDistance;                                        // 実行前の走行距離
   CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
 };
 

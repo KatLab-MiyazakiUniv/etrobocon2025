@@ -78,7 +78,7 @@ class CameraCapture : public ICameraCapture {
 
  private:
   cv::VideoCapture cap;  // カメラデバイス
-  int cameraID;         // カメラID
+  int cameraID;          // カメラID
 };
 
 #endif
