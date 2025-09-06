@@ -187,8 +187,15 @@ namespace etrobocon2025_test {
     imuController.startAngleCalculation();
     EXPECT_TRUE(imuController.isAngleCalculating());
 
+    // 標準エラー出力をキャプチャ
+    testing::internal::CaptureStderr();
+
     // 再度開始を試行
     imuController.startAngleCalculation();
+
+    // 警告メッセージが出力されたことを確認
+    std::string error_output = testing::internal::GetCapturedStderr();
+    EXPECT_NE(error_output.find("Warning: 角度計算は既に開始されています。"), std::string::npos);
 
     // 動作していることを確認
     EXPECT_TRUE(imuController.isAngleCalculating());
