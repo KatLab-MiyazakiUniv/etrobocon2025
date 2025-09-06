@@ -14,8 +14,8 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-        
-      # イメージのビルドは時間がかかるため，事前にビルドしたものをpullしてくる 
+
+      # イメージのビルドは時間がかかるため，事前にビルドしたものをpullしてくる
       # https://hub.docker.com/r/chihayataku/kat_etrobo2025
       - name: Pull Docker image
         run: |
@@ -24,4 +24,4 @@ jobs:
       - name: Run build in container
         run: |
           docker run --rm -v $(pwd):/RasPike-ART/sdk/workspace/etrobocon2025 chihayataku/kat_etrobo2025:arm64 \
-          bash -c "cd /RasPike-ART/sdk/workspace/etrobocon2025 && make build"
+          bash -c "cd /RasPike-ART/sdk/workspace/etrobocon2025 && make build-camera"
