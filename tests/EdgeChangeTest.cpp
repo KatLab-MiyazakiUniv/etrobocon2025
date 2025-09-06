@@ -6,13 +6,15 @@
 
 #include "EdgeChange.h"
 #include <gtest/gtest.h>
+#include "MockSocketClient.h"
 
 namespace etrobocon2025_test {
 
   // 初期値が左エッジかのテスト
   TEST(EdgeChangeTest, FirstEdgeIsTrue)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
 
     bool expected = true;
 
@@ -26,7 +28,8 @@ namespace etrobocon2025_test {
   // 右エッジへの切り替えのテスト
   TEST(EdgeChangeTest, RunToFalse)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
 
     // 右エッジへ変更
     bool nextEdge = false;

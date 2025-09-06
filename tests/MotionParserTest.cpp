@@ -7,6 +7,7 @@
 #include "MotionParser.h"
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-port.h>
+#include "MockSocketClient.h"
 
 using namespace std;
 
@@ -14,7 +15,8 @@ namespace etrobocon2025_test {
   // ファイルパスが存在しない場合のテスト
   TEST(MotionParserTest, NotCreateMotions)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     string csvPath = "../../tests/test_data/NonExistent.csv";  // 存在しないファイルパス
     int targetBrightness = 45;
 
@@ -27,7 +29,8 @@ namespace etrobocon2025_test {
   // 複数の異なるモーションタイプを正しく作成するテスト
   TEST(MotionParserTest, CreateMotions)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     string csvPath = "../../tests/test_data/MotionParserTestData.csv";
     int targetBrightness = 45;
 
@@ -53,7 +56,8 @@ namespace etrobocon2025_test {
   // 無効なコマンドを含む行がスキップされることをテスト
   TEST(MotionParserTest, SkipsInvalidCommand)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     string csvPath = "../../tests/test_data/MotionParserInvalidCommandTestData.csv";
     int targetBrightness = 45;
 
@@ -75,7 +79,8 @@ namespace etrobocon2025_test {
   // 実際のLineTraceLeftファイルで実行できるかのテスト
   TEST(MotionParserTest, ParseLineTraceLeftFile)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     string csvPath = "../../datafiles/commands/LineTraceLeft.csv";
     int targetBrightness = 45;
 
@@ -103,7 +108,8 @@ namespace etrobocon2025_test {
   // 実際のLineTraceRightファイルで実行できるかのテスト
   TEST(MotionParserTest, ParseLineTraceRightFile)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     string csvPath = "../../datafiles/commands/LineTraceRight.csv";
     int targetBrightness = 45;
 

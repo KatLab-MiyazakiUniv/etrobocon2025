@@ -6,9 +6,9 @@
 
 #include "Robot.h"
 
-Robot::Robot()
-  : motorController(),
-    socketClient(),
+Robot::Robot(SocketClient& client)
+  : socketClient(client),
+    motorController(),
     colorSensor(EPort::PORT_E),
     clock(),
     button(),

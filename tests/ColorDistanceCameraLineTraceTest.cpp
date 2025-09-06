@@ -5,8 +5,7 @@
  */
 
 #include "ColorDistanceCameraLineTrace.h"
-#include "DummyBoundingBoxDetector.h"
-#include "DummyCameraCapture.h"
+#include "MockSocketClient.h"
 #include <gtest/gtest.h>
 
 #define ERROR 1.01  // 許容誤差の倍率
@@ -18,18 +17,17 @@ namespace etrobocon2025_test {
   // 走行直後に指定色を3回連続取得し、かつ目標距離に到達しない場合、走行距離が初期値より少し進み、目標距離未満で停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunToGetColorImmediate)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::BLUE;
     double targetDistance = 1000.0;
     double targetSpeed = 500.0;
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    auto detector = make_unique<DummyBoundingBoxDetector>();
-
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
-                                      gain, move(detector));
+                                      gain, dummyRequest);
 
     double expected = 0.0;  // 走行していない時の走行距離
 
@@ -49,18 +47,17 @@ namespace etrobocon2025_test {
   // 少し走行後に指定色を取得し、かつ目標距離に到達しない場合、走行距離が初期値より進み、目標距離未満で停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunToGetColorDelayed)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::BLUE;
     double targetDistance = 1000.0;
     double targetSpeed = 500.0;
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    auto detector = make_unique<DummyBoundingBoxDetector>();
-
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
-                                      gain, move(detector));
+                                      gain, dummyRequest);
 
     double expected = 0.0;  // 走行していない時の走行距離
 
@@ -80,18 +77,17 @@ namespace etrobocon2025_test {
   // 負のtargetSpeed値で走行しつつ指定色を取得し、かつ目標距離に到達しない場合、初期値より後退し、目標距離未満で停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunBackToGetColor)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::BLUE;
     double targetDistance = 1000.0;
     double targetSpeed = -500.0;
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    auto detector = make_unique<DummyBoundingBoxDetector>();
-
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
-                                      gain, move(detector));
+                                      gain, dummyRequest);
 
     double expected = 0.0;  // 走行していない時の走行距離
 
@@ -111,18 +107,17 @@ namespace etrobocon2025_test {
   // 指定色を取得できないまま目標距離に到達した場合、実際の走行距離が目標距離の許容誤差以内であることを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, DistanceRunNoGetColor)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::BLUE;
     double targetDistance = 100.0;
     double targetSpeed = 500.0;
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    auto detector = make_unique<DummyBoundingBoxDetector>();
-
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
-                                      gain, move(detector));
+                                      gain, dummyRequest);
 
     double expected = targetDistance;
 
@@ -141,18 +136,17 @@ namespace etrobocon2025_test {
   // targetSpeed値が0の場合、停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunZeroSpeed)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::BLUE;
     double targetDistance = 1000.0;
     double targetSpeed = 0.0;
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    auto detector = make_unique<DummyBoundingBoxDetector>();
-
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
-                                      gain, move(detector));
+                                      gain, dummyRequest);
     double expected = 0.0;
 
     srand(0);  // 最初に識別する色が青ではない乱数シード
@@ -170,18 +164,17 @@ namespace etrobocon2025_test {
   // 指定色がNONEの場合、停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunNoneColor)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::NONE;
     double targetDistance = 1000.0;
     double targetSpeed = 500.0;
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    auto detector = make_unique<DummyBoundingBoxDetector>();
-
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
-                                      gain, move(detector));
+                                      gain, dummyRequest);
 
     double expected = 0.0;
 
@@ -198,18 +191,17 @@ namespace etrobocon2025_test {
   // targetDistance値が0以下の場合、停止することを確認するテストケース
   TEST(ColorDistanceCameraLineTraceTest, RunMinusDistance)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::BLUE;
     double targetDistance = 0.0;
     double targetSpeed = 500.0;
     int targetPoint = 400;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    auto detector = make_unique<DummyBoundingBoxDetector>();
-
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
     ColorDistanceCameraLineTrace cdcl(robot, targetColor, targetDistance, targetSpeed, targetPoint,
-                                      gain, move(detector));
+                                      gain, dummyRequest);
     double expected = 0.0;
 
     srand(0);  // 最初に識別する色が青ではない乱数シード

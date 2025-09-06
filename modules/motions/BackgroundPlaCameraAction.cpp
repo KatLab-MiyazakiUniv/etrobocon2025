@@ -53,7 +53,6 @@ void BackgroundPlaCameraAction::run()
   // サーバーに撮影と判定を依頼
   CameraServer::BackgroundPlaActionRequest request;
   request.command = CameraServer::Command::BACKGROUND_PLA_CAMERA_ACTION;
-  request.position = position;
   request.threshold = threshold;
   request.minArea = minArea;
   request.roi = roi;

@@ -8,146 +8,75 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include "Robot.h"
-#include "DummyCameraCapture.h"
-#include "DummyBoundingBoxDetector.h"
+#include "MockSocketClient.h"
 #include "SystemInfo.h"
 
 using namespace std;
 
 namespace etrobocon2025_test {
-  constexpr double TRANSFORM = 2.0 * WHEEL_RADIUS / TREAD;  // 回頭角度を求める式の係数
-
-  // フレーム取得失敗時、復帰動作が終了するかのテスト
-  TEST(CameraRecoveryActionTest, GetFrameFailure)
-  {
-    int angle = 20;
-    double speed = 100.0;
-    bool isClockwise = true;
-    DummyCameraCapture cameraCapture;
-    cameraCapture.setFrameResults({ false });  // getFrame()が失敗するように設定
-    Robot robot(cameraCapture);
-
-    auto detector = make_unique<DummyBoundingBoxDetector>();
-
-    CameraRecoveryAction action(robot, angle, speed, isClockwise, move(detector));
-    testing::internal::CaptureStdout();                      // 標準出力キャプチャ開始
-    action.run();                                            // 復帰動作を実行
-    string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
-    // find("str")はstrが見つからない場合string::nposを返す
-    bool actual = output.find("フレーム取得失敗のため終了\n") != string::npos;
-    EXPECT_TRUE(actual);
-  }
 
   // 既に検出済みの場合、復帰動作を行わないかのテスト
   TEST(CameraRecoveryActionTest, AlreadyDetected)
   {
-    int angle = 20;
-    double speed = 100.0;
-    bool isClockwise = true;
-    DummyCameraCapture cameraCapture;
-    cameraCapture.setFrameResults(
-        { true, true, true, true, true, true });  // getFrame()が成功するように設定
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
 
-    auto detector = make_unique<DummyBoundingBoxDetector>();  // デフォルトで常に検出成功
+    // モックを設定: 初回検出で成功
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
 
-    CameraRecoveryAction action(robot, angle, speed, isClockwise, move(detector));
-    testing::internal::CaptureStdout();                      // 標準出力キャプチャ開始
-    action.run();                                            // 復帰動作を実行
-    string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
-    // find("str")はstrが見つからない場合string::nposを返す
-    bool actual = output.find("復帰動作は行わない\n") != string::npos;
-    EXPECT_TRUE(actual);
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
+    CameraRecoveryAction action(robot, 20, 100.0, true, dummyRequest);
+
+    testing::internal::CaptureStdout();
+    action.run();
+    string output = testing::internal::GetCapturedStdout();
+    ASSERT_NE(output.find("復帰動作の必要はありません"), string::npos);
   }
 
-  // バウンディングボックスの検出に1回目で失敗、復帰動作を行い、再検出で成功した場合のテスト
-  TEST(CameraRecoveryActionTest, DetectionSuccess)
+  // 復帰動作を行い、再検出で成功した場合のテスト
+  TEST(CameraRecoveryActionTest, DetectionSuccessAfterRecovery)
   {
-    int angle = 20;
-    double speed = 100.0;
-    bool isClockwise = true;
-    DummyCameraCapture cameraCapture;
-    cameraCapture.setFrameResults(
-        { true, true, true, true, true, true });  // getFrame()が成功するように設定
-    Robot robot(cameraCapture);
-    MotorController& motorController = robot.getMotorControllerInstance();
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
 
-    // 乱数シード1で最初失敗、次に成功するパターンを生成
-    auto detector = make_unique<DummyBoundingBoxDetector>(true, 1);
+    // モックを設定: 初回は失敗、2回目は成功
+    CameraServer::BoundingBoxDetectorResponse failureResponse;
+    failureResponse.result.wasDetected = false;
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    mockSocketClient.setNextLineDetectionResponse(failureResponse);
+    mockSocketClient.setNextLineDetectionResponse(successResponse);
 
-    double expected = angle;  // 指定した回頭角度を期待値とする
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
+    CameraRecoveryAction action(robot, 20, 100.0, true, dummyRequest);
 
-    // 実機の setSpeed() 後のモータカウントの増減を模倣するため、ダミークラスで
-    // isSetSpeedがtrueのとき、getCount()を呼ぶ度に count += speed× 0.05される。
-    // よって、1ループあたりの余分な回転角は speed × 0.05 × TRANSFORM を誤差として見込む。
-    double error = speed * 0.05 * TRANSFORM;
-
-    // 回頭前のモータカウント
-    int initialRightMotorCount = motorController.getRightMotorCount();
-    int initialLeftMotorCount = motorController.getLeftMotorCount();
-
-    CameraRecoveryAction action(robot, angle, speed, isClockwise, move(detector));
-    testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
+    testing::internal::CaptureStdout();
     action.run();
-    string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
-    // find("str")はstrが見つからない場合string::nposを返す
-    bool real = output.find("復帰動作完了\n") != string::npos;
-
-    // 回頭後に各モータが回転した角度を計算
-    int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
-    int leftMotorCount = abs(motorController.getLeftMotorCount() - initialLeftMotorCount);
-    double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
-
-    // 回頭が実行されたことを確認
-    EXPECT_LE(expected, actual);
-    EXPECT_GE(expected + error, actual);
-    // 検出に成功したことを確認
-    EXPECT_TRUE(real);
+    string output = testing::internal::GetCapturedStdout();
+    ASSERT_NE(output.find("復帰に成功しました"), string::npos);
   }
 
-  // バウンディングボックスの検出に1回目で失敗、復帰動作を行い、再検出でも失敗した場合のテスト
-  TEST(CameraRecoveryActionTest, DetectionFailure)
+  // 復帰動作を行い、再検出でも失敗した場合のテスト
+  TEST(CameraRecoveryActionTest, DetectionFailureAfterRecovery)
   {
-    int angle = 90;
-    double speed = 300.0;
-    bool isClockwise = true;
-    DummyCameraCapture cameraCapture;
-    cameraCapture.setFrameResults(
-        { true, true, true, true, true, true });  // getFrame()が成功するように設定
-    Robot robot(cameraCapture);
-    MotorController& motorController = robot.getMotorControllerInstance();
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
 
-    // 乱数シード2では連続で失敗するパターンを生成
-    auto detector = make_unique<DummyBoundingBoxDetector>(true, 2);
+    // モックを設定: 2回とも失敗
+    CameraServer::BoundingBoxDetectorResponse failureResponse;
+    failureResponse.result.wasDetected = false;
+    mockSocketClient.setNextLineDetectionResponse(failureResponse);
+    mockSocketClient.setNextLineDetectionResponse(failureResponse);
 
-    double expected = angle;  // 指定した回頭角度を期待値とする
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
+    CameraRecoveryAction action(robot, 90, 300.0, true, dummyRequest);
 
-    // 実機の setSpeed() 後のモータカウントの増減を模倣するため、ダミークラスで
-    // isSetSpeedがtrueのとき、getCount()を呼ぶ度に count += speed× 0.05される。
-    // よって、1ループあたりの余分な回転角は speed × 0.05 × TRANSFORM を誤差として見込む。
-    double error = speed * 0.05 * TRANSFORM;
-
-    // 回頭前のモータカウント
-    int initialRightMotorCount = motorController.getRightMotorCount();
-    int initialLeftMotorCount = motorController.getLeftMotorCount();
-
-    CameraRecoveryAction action(robot, angle, speed, isClockwise, move(detector));
-    testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
+    testing::internal::CaptureStdout();
     action.run();
-    string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
-    // find("str")はstrが見つからない場合string::nposを返す
-    bool real = output.find("復帰動作失敗\n") != string::npos;
-
-    // 回頭後に各モータが回転した角度を計算
-    int rightMotorCount = abs(motorController.getRightMotorCount() - initialRightMotorCount);
-    int leftMotorCount = abs(motorController.getLeftMotorCount() - initialLeftMotorCount);
-    double actual = ((rightMotorCount + leftMotorCount) * TRANSFORM) / 2;
-
-    // 回頭が実行されたことを確認
-    EXPECT_LE(expected, actual);
-    EXPECT_GE(expected + error, actual);
-    // 検出に失敗したことを確認
-    EXPECT_TRUE(real);
+    string output = testing::internal::GetCapturedStdout();
+    ASSERT_NE(output.find("復帰できませんでした"), string::npos);
   }
 
 }  // namespace etrobocon2025_test

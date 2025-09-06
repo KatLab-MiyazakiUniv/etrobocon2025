@@ -6,16 +6,18 @@
 
 #include <gtest/gtest.h>
 #include "Snapshot.h"
+#include "MockSocketClient.h"
 
 namespace etrobocon2025_test {
 
   // Snapshotのrun()メソッドが実行できるか確認するテスト
-  TEST(SnapshotTest, SnapshotInit)
+  TEST(SnapshotTest, SnapshotRun)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     Snapshot snapshot(robot, "test_snapshot");
 
-    // Snapshotのインスタンスが正常に作成されたか確認
+    // Snapshotのインスタンスが正常に作成され、run()が例外なく実行されるか確認
     EXPECT_NO_THROW(snapshot.run());
   }
 }  // namespace etrobocon2025_test

@@ -62,7 +62,6 @@ void MiniFigCameraAction::run()
   // サーバーに撮影と判定を依頼
   CameraServer::MiniFigActionRequest request;
   request.command = CameraServer::Command::MINIFIG_CAMERA_ACTION;
-  request.position = position;
 
   CameraServer::MiniFigActionResponse response;
   cout << "サーバーにミニフィグカメラ撮影を依頼: " << position << endl;

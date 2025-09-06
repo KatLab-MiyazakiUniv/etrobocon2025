@@ -7,8 +7,7 @@
 #include "BackgroundPlaCameraAction.h"
 #include <gtest/gtest.h>
 #include <iostream>
-#include "DummyCameraCapture.h"
-#include "DummyPlaCameraCapture.h"
+#include "MockSocketClient.h"
 
 using namespace std;
 
@@ -16,79 +15,58 @@ namespace etrobocon2025_test {
   // 事前条件判定がfalseで撮影動作を行わない場合のテスト
   TEST(BackgroundPlaCameraActionTest, NoCameraAction)
   {
-    DummyPlaCameraCapture dummyPlaCameraCapture;
-    dummyPlaCameraCapture.setMotionLikeFrames();
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
 
-    Robot robot(dummyPlaCameraCapture);
     robot.getBackgroundDirectionResult().wasDetected = true;
     robot.getBackgroundDirectionResult().direction = BackgroundDirection::BACK;
     bool isClockwise = false;
     int preTargetAngle = 90;
     int postTargetAngle = 90;
     double targetRotationSpeed = 200.0;
-    int position = 1;
-    cv::Rect roi(0, 0, 800, 600);  // ROI領域を設定
-
-    PlaCameraAction plaCameraAction(robot, 30.0, 1000.0, roi);
+    int position = 1;  // isMetPreConditionがfalseになるように設定
+    cv::Rect roi(0, 0, 800, 600);
 
     BackgroundPlaCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
                                      targetRotationSpeed, 30.0, 500.0, roi, position);
-    testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
+    testing::internal::CaptureStdout();
     action.run();
-    string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
-    // find("str")はstrが見つからない場合string::nposを返す
-    bool actual = output.find("風景の撮影動作は行わない。\n") != string::npos;
-    EXPECT_TRUE(actual);
+    string output = testing::internal::GetCapturedStdout();
+    // isMetPreConditionがfalseの時に特定の文字列が出力されるかチェック
+    ASSERT_NE(output.find("プラレール撮影位置ではありません"), string::npos);
   }
 
   // 2回目の撮影で風景の正面の画像を取得する場合のテスト
   TEST(BackgroundPlaCameraActionTest, PositionIsNotZeroCameraAction)
   {
-    DummyPlaCameraCapture dummyPlaCameraCapture;
-    dummyPlaCameraCapture.setMotionLikeFrames();
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
 
-    Robot robot(dummyPlaCameraCapture);
+    // モックのレスポンスを設定
+    CameraServer::BackgroundPlaActionResponse dummyResponse;
+    dummyResponse.result.wasDetected = true;
+    dummyResponse.result.direction = BackgroundDirection::FRONT;
+    mockSocketClient.setNextBackgroundPlaResponse(dummyResponse);
+
     robot.getBackgroundDirectionResult().wasDetected = true;
-    robot.getBackgroundDirectionResult().direction = BackgroundDirection::BACK;
+    int position = 2;
+    // isMetPreConditionがtrueになるように設定
+    robot.getBackgroundDirectionResult().direction = static_cast<BackgroundDirection>(position);
+
     bool isClockwise = false;
     int preTargetAngle = 90;
     int postTargetAngle = 90;
     double targetRotationSpeed = 200.0;
-    int position = 2;
-    cv::Rect roi(0, 0, 800, 600);  // ROI領域を設定
+    cv::Rect roi(0, 0, 800, 600);
 
     BackgroundPlaCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
                                      targetRotationSpeed, 30.0, 500.0, roi, position);
-    testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
+    testing::internal::CaptureStdout();
     action.run();
-    string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
-    // find("str")はstrが見つからない場合string::nposを返す
-    bool actual = output.find("正面での撮影\n") != string::npos;
-    EXPECT_TRUE(actual);
+    string output = testing::internal::GetCapturedStdout();
+    // runが実行され、特定の文字列が出力されるかチェック
+    ASSERT_NE(output.find("サーバーに風景・プラレールカメラ撮影を依頼"), string::npos);
+    ASSERT_NE(output.find("風景・プラレール撮影結果: 1"), string::npos);
   }
 
-  //   // position = 0(1回目の撮影)の場合のテスト(モデルがないためコメントアウト)
-  //   TEST(BackgroundPlaCameraActionTest, PositionIsZeroCameraAction)
-  //   {
-  //       DummyPlaCameraCapture dummyPlaCameraCapture;
-  //      dummyPlaCameraCapture.setMotionLikeFrames();
-  //     Robot robot(dummyPlaCameraCapture);
-  //     robot.getBackgroundDirectionResult().wasDetected = true;
-  //     robot.getBackgroundDirectionResult().direction = BackgroundDirection::BACK;
-  //     bool isClockwise = false;
-  //     int preTargetAngle = 90;
-  //     int postTargetAngle = 90;
-  //     double targetRotationSpeed = 200.0;
-  //     int position = 0;
-  //     cv::Rect roi(0, 0, 800, 600);  // ROI領域を設定
-
-  //     BackgroundPlaCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
-  //                                   targetRotationSpeed, 30.0, 500.0, roi, position);
-  //     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
-  //     action.run();
-  //     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
-  //     // find("str")はstrが見つからない場合string::nposを返す
-  //     bool actual = output.find("判定動作実施\n") != string::npos;
-  //     EXPECT_TRUE(actual);
-  //   }
 }  // namespace etrobocon2025_test

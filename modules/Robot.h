@@ -23,7 +23,7 @@ class Robot {
    * コンストラクタ
    * @brief 外部リソースのインスタンスを初期化する
    */
-  Robot();
+  Robot(SocketClient& client);
 
   /**
    * @brief MotorControllerのインスタンスの参照を返す
@@ -91,7 +91,7 @@ class Robot {
   bool getIsLeftEdge() const;
 
  private:
-  SocketClient socketClient;                            // SocketClientインスタンス
+  SocketClient& socketClient;                           // SocketClientインスタンス
   MotorController motorController;                      // MotorControllerインスタンス
   spikeapi::ColorSensor colorSensor;                    // ColorSensorインスタンス
   spikeapi::Clock clock;                                // Clockインスタンス

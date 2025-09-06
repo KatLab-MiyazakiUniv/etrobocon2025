@@ -7,6 +7,7 @@
 #include "ColorStraight.h"
 #include "Mileage.h"
 #include <gtest/gtest.h>
+#include "MockSocketClient.h"
 
 using namespace std;
 
@@ -15,7 +16,8 @@ namespace etrobocon2025_test {
   // 最初の色取得で指定色を取得し、停止するテスト
   TEST(ColorStraightTest, RunToGetFirst)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::GREEN;
     double targetSpeed = 300.0;
     double basePower = 100.0;
@@ -44,7 +46,8 @@ namespace etrobocon2025_test {
   // 最初3回の色取得で連続して指定色を取得するテスト
   TEST(ColorStraightTest, RunToGetThreeConsecutive)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::GREEN;
     double targetSpeed = 500.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
@@ -65,7 +68,8 @@ namespace etrobocon2025_test {
   // 少し直進して指定色を取得するテスト
   TEST(ColorStraightTest, RunToGetLater)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::GREEN;
     double targetSpeed = 500.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
@@ -89,7 +93,8 @@ namespace etrobocon2025_test {
   // 少し後退して指定色を取得するテストケース
   TEST(ColorStraightTest, RunBackToGetLater)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::GREEN;
     double targetSpeed = -500.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
@@ -113,7 +118,8 @@ namespace etrobocon2025_test {
   // 目標速度が0で停止するかのテスト
   TEST(ColorStraightTest, RunZeroPower)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::YELLOW;
     double targetSpeed = 0.0;
     ColorStraight cs(robot, targetColor, targetSpeed);
@@ -135,7 +141,8 @@ namespace etrobocon2025_test {
   // 目標色がなしで停止するかのテスト
   TEST(ColorStraightTest, RunNoneColor)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::NONE;
     double targetSpeed = 100.0;
     ColorStraight cs(robot, targetColor, targetSpeed);

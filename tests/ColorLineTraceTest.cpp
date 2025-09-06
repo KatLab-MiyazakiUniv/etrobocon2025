@@ -7,6 +7,7 @@
 #include "ColorLineTrace.h"
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-port.h>
+#include "MockSocketClient.h"
 
 using namespace std;
 
@@ -14,7 +15,8 @@ namespace etrobocon2025_test {
   // 最初3回の色取得で連続して指定色を取得するテストケース
   TEST(ColorLineTraceTest, RunToGetFirst)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::GREEN;
     double targetSpeed = 500.0;
     double targetBrightness = 50.0;
@@ -37,7 +39,8 @@ namespace etrobocon2025_test {
   // 目標色が最初から取得され、停止するテストケース
   TEST(ColorLineTraceTest, runImmediatelyStopsIfTargetColorDetected)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::GREEN;
     double targetSpeed = 100.0;
     double targetBrightness = 50.0;
@@ -66,7 +69,8 @@ namespace etrobocon2025_test {
   // 指定色を取得し、後退するテストケース
   TEST(ColorLineTraceTest, RunBack)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::BLUE;
     double targetSpeed = -500.0;
     double targetBrightness = 50.0;
@@ -89,7 +93,8 @@ namespace etrobocon2025_test {
   // targetSpeedが0の時に走行しないテストケース
   TEST(ColorLineTraceTest, RunZeroSpeed)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::BLUE;
     double targetSpeed = 0.0;
     double targetBrightness = 45.0;
@@ -113,7 +118,8 @@ namespace etrobocon2025_test {
   // targetColorがNONEの時に走行しないテストケース
   TEST(ColorLineTraceTest, RunNoneColor)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::NONE;
     double targetSpeed = 100.0;
     double targetBrightness = 45.0;

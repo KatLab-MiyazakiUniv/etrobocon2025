@@ -6,13 +6,15 @@
 
 #include "SpeedCalculator.h"
 #include <gtest/gtest.h>
+#include "MockSocketClient.h"
 
 namespace etrobocon2025_test {
 
   // 左右のモーターに少しでもPower値が入っているかのテスト
   TEST(SpeedCalculatorTest, CalculateMotorPower)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     // Powerの初期化
     robot.getMotorControllerInstance().setRightMotorPower(0.0);
     robot.getMotorControllerInstance().setLeftMotorPower(0.0);
@@ -27,7 +29,8 @@ namespace etrobocon2025_test {
   // 左右のモーターに少しでも負のPower値が入っているかのテスト
   TEST(SpeedCalculatorTest, CalculateMotorPoewerFromMinusSpeed)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     // Powerの初期化
     robot.getMotorControllerInstance().setRightMotorPower(0.0);
     robot.getMotorControllerInstance().setLeftMotorPower(0.0);
@@ -42,7 +45,8 @@ namespace etrobocon2025_test {
   // 左右のモータ―にPower値が入っていないかのテスト
   TEST(SpeedCalculatorTest, CalculateMotorPowerFromZeroSpeed)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     // Powerの初期化
     robot.getMotorControllerInstance().setRightMotorPower(0.0);
     robot.getMotorControllerInstance().setLeftMotorPower(0.0);

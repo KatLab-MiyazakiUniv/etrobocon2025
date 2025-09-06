@@ -7,6 +7,7 @@
 #include "Calibrator.h"
 #include <gtest/gtest.h>
 #include <iostream>
+#include "MockSocketClient.h"
 
 using namespace std;
 
@@ -14,7 +15,8 @@ namespace etrobocon2025_test {
   // waitForStart()において期待した出力がされており，WarningやErrorが出ていないかテスト
   TEST(CalibratorTest, WaitForStart)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     Calibrator calibrator(robot);
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     calibrator.waitForStart();
@@ -27,7 +29,8 @@ namespace etrobocon2025_test {
   // 左右ボタンでLRコースを選択できるかのテスト
   TEST(CalibratorTest, GetIsLeftCourse)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     Calibrator calibrator(robot);
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     calibrator.selectAndSetCourse();
@@ -52,7 +55,8 @@ namespace etrobocon2025_test {
   // 目標輝度値を取得できるかのテスト
   TEST(CalibratorTest, getTargetBrightness)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     Calibrator calibrator(robot);
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     calibrator.measureAndSetTargetBrightness();

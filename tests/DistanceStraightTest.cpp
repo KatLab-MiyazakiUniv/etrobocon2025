@@ -7,6 +7,7 @@
 #include "DistanceStraight.h"
 #include <gtest/gtest.h>
 #include <iostream>
+#include "MockSocketClient.h"
 
 using namespace std;
 
@@ -15,7 +16,8 @@ namespace etrobocon2025_test {
   // 通常速度での直進テスト
   TEST(DistanceStraightTest, RunNomalSpeed)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
@@ -64,7 +66,8 @@ namespace etrobocon2025_test {
   // 十分大きい速度での直進テスト
   TEST(DistanceStraightTest, RunFullPower)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
@@ -113,7 +116,8 @@ namespace etrobocon2025_test {
   // 後退テスト
   TEST(DistanceStraightTest, RunBack)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
@@ -162,7 +166,8 @@ namespace etrobocon2025_test {
   // 十分大きい速度での後退テスト
   TEST(DistanceStraightTest, RunBackFullPower)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
@@ -211,7 +216,8 @@ namespace etrobocon2025_test {
   // 目標距離が負のとき停止するかのテスト
   TEST(DistanceStraightTest, RunMinusDistance)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = -1000.0;
@@ -238,7 +244,8 @@ namespace etrobocon2025_test {
   // 目標距離が0のとき停止するかのテスト
   TEST(DistanceStraightTest, RunZeroDistance)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 0.0;
@@ -265,7 +272,8 @@ namespace etrobocon2025_test {
   // 目標速度が0のとき停止するかのテスト
   TEST(DistanceStraightTest, RunZeroPower)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = 1000.0;
@@ -292,7 +300,8 @@ namespace etrobocon2025_test {
   // 距離・速度共に異常時の動作確認テスト
   TEST(DistanceStraightTest, RunMinusDistanceZeroPower)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     // Power値の初期化
     robot.getMotorControllerInstance().resetWheelsMotorPower();
     double targetDistance = -1000.0;

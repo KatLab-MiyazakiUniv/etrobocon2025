@@ -7,7 +7,7 @@
 #include "AreaMaster.h"
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-port.h>
-#include "DummyCameraCapture.h"
+#include "MockSocketClient.h"
 
 using namespace std;
 
@@ -16,8 +16,8 @@ namespace etrobocon2025_test {
   // 左コースでライントレースを行う場合のテスト
   TEST(AreaMasterTest, RunLineTraceLeft)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     Area area = Area::LineTrace;
     bool isLeftCourse = true;
     int targetBrightness = 45;
@@ -42,8 +42,8 @@ namespace etrobocon2025_test {
   // 右コースでライントレースを行う場合のテスト
   TEST(AreaMasterTest, RunLineTraceRight)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     Area area = Area::LineTrace;
     bool isLeftCourse = false;
     int targetBrightness = 45;

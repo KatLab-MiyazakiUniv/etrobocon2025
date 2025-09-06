@@ -6,33 +6,26 @@
 
 #include <gtest/gtest.h>
 #include "Robot.h"
+#include "MockSocketClient.h"
 
 namespace etrobocon2025_test {
 
   // ゲッターで取得したMotorControllerインスタンスが等しいか確認するテスト
   TEST(RobotTest, GetMotorControllerInstanceReturnsReference)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     MotorController& motorRef1 = robot.getMotorControllerInstance();
     MotorController& motorRef2 = robot.getMotorControllerInstance();
 
     EXPECT_EQ(&motorRef1, &motorRef2);
   }
 
-  // ゲッターで取得したCameraCaptureインスタンスが等しいか確認するテスト
-  TEST(RobotTest, GetCameraCaptureInstanceReturnsReference)
-  {
-    Robot robot;
-    ICameraCapture& cameraRef1 = robot.getCameraCaptureInstance();
-    ICameraCapture& cameraRef2 = robot.getCameraCaptureInstance();
-
-    EXPECT_EQ(&cameraRef1, &cameraRef2);
-  }
-
   // ゲッターで取得したColorSensorインスタンスが等しいか確認するテスト
   TEST(RobotTest, GetColorSensorInstanceReturnsReference)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     spikeapi::ColorSensor& colorSensorRef1 = robot.getColorSensorInstance();
     spikeapi::ColorSensor& colorSensorRef2 = robot.getColorSensorInstance();
 

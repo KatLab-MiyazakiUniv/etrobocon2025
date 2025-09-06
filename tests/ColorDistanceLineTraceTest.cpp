@@ -7,6 +7,7 @@
 #include "ColorDistanceLineTrace.h"
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-port.h>
+#include "MockSocketClient.h"
 
 using namespace std;
 
@@ -15,7 +16,8 @@ namespace etrobocon2025_test {
   // 最初3回の色取得で連続して指定色を取得し、かつ目標距離に到達しない時のテストケース
   TEST(ColorDistanceLineTraceTest, RunToGetFirst)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::GREEN;
     double targetDistance = 1000.0;
     double targetSpeed = 500.0;
@@ -42,7 +44,8 @@ namespace etrobocon2025_test {
   // 少し走ってから指定色を取得し、かつ、目標距離に到達しない時のテストケース
   TEST(ColorDistanceLineTraceTest, ColorRunLeftEdge)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::BLUE;
     double targetDistance = 1000.0;
     double targetSpeed = 500.0;
@@ -69,7 +72,8 @@ namespace etrobocon2025_test {
   // 負のtargetSpeed値で走行し、指定色を取得し、かつ、目標距離に到達しない時のテストケース
   TEST(ColorDistanceLineTraceTest, ColorRunBackLeftEdge)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::YELLOW;
     double targetDistance = 1000.0;
     double targetSpeed = -500.0;
@@ -95,7 +99,8 @@ namespace etrobocon2025_test {
   // targetSpeed値が0の時に終了するテストケース
   TEST(ColorDistanceLineTraceTest, RunZeroSpeed)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::BLUE;
     double targetDistance = 1000.0;
     double targetSpeed = 0.0;
@@ -120,7 +125,8 @@ namespace etrobocon2025_test {
   // 目標の色がNONEの時に終了するテストケース
   TEST(ColorDistanceLineTraceTest, RunNoneColorDistance)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::NONE;
     double targetDistance = 1000.0;
     double targetSpeed = 500.0;
@@ -144,7 +150,8 @@ namespace etrobocon2025_test {
   // 目標距離までライントレースを行い、かつ、指定色を取得できていない時のテストケース
   TEST(ColorDistanceLineTraceTest, DistanceRunLeftEdge)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::RED;
     double targetDistance = 100.0;  // カラーをランダムで取得するため短い距離を設定
     double targetSpeed = 500.0;
@@ -170,7 +177,8 @@ namespace etrobocon2025_test {
   // targetDistance値が0以下の時に終了するテストケース
   TEST(ColorDistanceLineTraceTest, RunMinusDistance)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     COLOR targetColor = COLOR::RED;
     double targetDistance = -1000.0;
     double targetSpeed = 500.0;

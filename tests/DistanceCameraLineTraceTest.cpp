@@ -7,25 +7,22 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include "DistanceCameraLineTrace.h"
-#include "DummyBoundingBoxDetector.h"
-#include "DummyCameraCapture.h"
+#include "MockSocketClient.h"
 
 #define ERROR 1.01  // 許容誤差の倍率
 namespace etrobocon2025_test {
   // 目標距離までカメラライントレースを行うテストケース
   TEST(DistanceCameraLineTraceTest, RunDetectCalled)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     double targetDistance = 1000.0;
     double targetSpeed = 500.0;
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    auto detector = std::make_unique<DummyBoundingBoxDetector>();
-
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
-                                std::move(detector));
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, dummyRequest);
 
     double expected = targetDistance;
 
@@ -43,17 +40,15 @@ namespace etrobocon2025_test {
   // targetSpeed値が0の時に終了するテストケース
   TEST(DistanceCameraLineTraceTest, RunZeroSpeed)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     double targetDistance = 1000.0;
     double targetSpeed = 0.0;
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    auto detector = std::make_unique<DummyBoundingBoxDetector>();
-
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
-                                std::move(detector));
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, dummyRequest);
 
     double expected = 0.0;
     dcl.run();  // ライントレースを実行
@@ -69,17 +64,15 @@ namespace etrobocon2025_test {
   // targetDistance値が負の時に終了するテストケース
   TEST(DistanceCameraLineTraceTest, RunMinusDistance)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     double targetDistance = -1000.0;
     double targetSpeed = 500.0;
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    auto detector = std::make_unique<DummyBoundingBoxDetector>();
-
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
-                                std::move(detector));
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, dummyRequest);
 
     double expected = 0.0;
 
@@ -96,17 +89,15 @@ namespace etrobocon2025_test {
   // targetDistance値が0のとき終了するテストケース
   TEST(DistanceCameraLineTraceTest, RunZeroDistance)
   {
-    DummyCameraCapture cameraCapture;
-    Robot robot(cameraCapture);
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     double targetDistance = 0.0;
     double targetSpeed = 500.0;
     int targetPoint = 320;
     PidGain gain = { 0.1, 0.05, 0.05 };
 
-    auto detector = std::make_unique<DummyBoundingBoxDetector>();
-
-    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain,
-                                std::move(detector));
+    CameraServer::BoundingBoxDetectorRequest dummyRequest;
+    DistanceCameraLineTrace dcl(robot, targetDistance, targetSpeed, targetPoint, gain, dummyRequest);
 
     double expected = 0.0;
 
@@ -120,3 +111,4 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);  // ライントレース前後で走行距離に変化はない
   }
 }  // namespace etrobocon2025_test
+

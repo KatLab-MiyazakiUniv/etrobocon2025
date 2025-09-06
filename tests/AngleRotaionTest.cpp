@@ -9,6 +9,7 @@
 #include <gtest/internal/gtest-port.h>
 #include "Robot.h"
 #include "SystemInfo.h"
+#include "MockSocketClient.h"
 
 namespace etrobocon2025_test {
 
@@ -18,7 +19,8 @@ namespace etrobocon2025_test {
   // 右回頭のテスト
   TEST(AngleRotationTest, RunRight)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     MotorController& motorController = robot.getMotorControllerInstance();
 
     int angle = 90;
@@ -52,7 +54,8 @@ namespace etrobocon2025_test {
   // 左回頭のテスト
   TEST(AngleRotationTest, RunLeft)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     MotorController& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
@@ -87,7 +90,8 @@ namespace etrobocon2025_test {
   // speedを0に設定したときに回頭をせずに終了するかのテスト
   TEST(AngleRotationTest, RunZeroSpeed)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     MotorController& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
@@ -116,7 +120,8 @@ namespace etrobocon2025_test {
   // speedをマイナスに設定したときに回頭をせずに終了するかのテスト
   TEST(AngleRotationTest, RunMinusSpeed)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     MotorController& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
@@ -145,7 +150,8 @@ namespace etrobocon2025_test {
   // 回頭角度を0に設定したときに回頭をせずに終了するかのテスト
   TEST(AngleRotationTest, RunZeroAngle)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     MotorController& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
@@ -174,7 +180,8 @@ namespace etrobocon2025_test {
   // 回頭角度をマイナスに設定したときに回頭をせずに終了するかのテスト
   TEST(AngleRotationTest, RunMinusAngle)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     MotorController& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
@@ -203,7 +210,8 @@ namespace etrobocon2025_test {
   // 回頭角度を360度以上に設定したときに回頭をせずに終了するかのテスト
   TEST(AngleRotationTest, RunOverAngle)
   {
-    Robot robot;
+    MockSocketClient mockSocketClient;
+    Robot robot(mockSocketClient);
     MotorController& motorController = robot.getMotorControllerInstance();
     motorController.resetWheelsMotorPower();
 
@@ -229,3 +237,4 @@ namespace etrobocon2025_test {
     EXPECT_EQ(expected, actual);
   }
 }  // namespace etrobocon2025_test
+
