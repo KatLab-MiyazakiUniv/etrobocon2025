@@ -8,6 +8,7 @@
 #define MOCK_SOCKET_CLIENT_H
 
 #include "SocketClient.h"
+#include <queue>
 #include <optional>
 
 class MockSocketClient : public SocketClient {
@@ -61,8 +62,9 @@ class MockSocketClient : public SocketClient {
   bool executeLineDetection(const CameraServer::BoundingBoxDetectorRequest& request,
                             CameraServer::BoundingBoxDetectorResponse& response) override
   {
-    if(lineDetectionResponse.has_value()) {
-      response = lineDetectionResponse.value();
+    if(!lineDetectionResponses.empty()) {
+      response = lineDetectionResponses.front();
+      lineDetectionResponses.pop();
       return true;
     }
     return false;
@@ -86,14 +88,14 @@ class MockSocketClient : public SocketClient {
 
   void setNextLineDetectionResponse(const CameraServer::BoundingBoxDetectorResponse& resp)
   {
-    lineDetectionResponse = resp;
+    lineDetectionResponses.push(resp);
   }
 
  private:
   std::optional<CameraServer::MiniFigActionResponse> miniFigResponse;
   std::optional<CameraServer::BackgroundPlaActionResponse> backgroundPlaResponse;
   std::optional<CameraServer::SnapshotActionResponse> snapshotResponse;
-  std::optional<CameraServer::BoundingBoxDetectorResponse> lineDetectionResponse;
+  std::queue<CameraServer::BoundingBoxDetectorResponse> lineDetectionResponses;
 };
 
 #endif  // MOCK_SOCKET_CLIENT_H
