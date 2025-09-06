@@ -1,7 +1,7 @@
 /**
  * @file   BackgroundPlaCameraAction.cpp
  * @brief  風景・プラレール撮影動作クラス
- * @author miyahara046
+ * @author miyahara046 takuchi17
  */
 
 #include "BackgroundPlaCameraAction.h"
@@ -33,7 +33,7 @@ bool BackgroundPlaCameraAction::isMetPreCondition()
   if(position != 0 && robot.getBackgroundDirectionResult().wasDetected
      && robot.getBackgroundDirectionResult().direction
             != static_cast<BackgroundDirection>(position)) {
-    cout << "This is not the correct location for this background direction. Skipping." << endl;
+    cout << "プラレール撮影位置ではありません" << endl;
     return false;
   }
   return true;
@@ -51,19 +51,19 @@ void BackgroundPlaCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // サーバーに撮影と判定を依頼
-  cout << "Requesting BackgroundPla action from server for position: " << position << endl;
   CameraServer::BackgroundPlaActionRequest request;
   request.command = CameraServer::Command::BACKGROUND_PLA_CAMERA_ACTION;
   request.position = position;
   request.threshold = threshold;
   request.minArea = minArea;
-  request.roi = roi;  // Directly assign cv::Rect
+  request.roi = roi;
 
   CameraServer::BackgroundPlaActionResponse response;
+  cout << "サーバーに風景・プラレールカメラ撮影を依頼: " << position << endl;
   bool success = robot.getSocketClient().executeBackgroundPlaAction(request, response);
 
   if(success) {
-    cout << "Server response: wasDetected=" << response.result.wasDetected
+    cout << "風景・プラレール撮影結果: " << response.result.wasDetected
          << ", direction=" << static_cast<int>(response.result.direction) << endl;
     // 1回目の撮影結果だった場合、Robotの状態を更新する
     if(position == 0) {
@@ -72,7 +72,7 @@ void BackgroundPlaCameraAction::run()
       result.direction = response.result.direction;
     }
   } else {
-    cout << "Failed to get response from server." << endl;
+    cout << "サーバーでの撮影に失敗しました。" << endl;
   }
 
   // 動作安定のためのスリープ

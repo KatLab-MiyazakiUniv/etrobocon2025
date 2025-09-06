@@ -1,7 +1,7 @@
 /**
  * @file   CameraPidTracking.cpp
  * @brief  カメラを使ったPID走行の親クラス
- * @author miyahara046 HaruArima08
+ * @author miyahara046 HaruArima08 takuchi17
  */
 
 #include "CameraPidTracking.h"
@@ -35,7 +35,6 @@ void CameraPidTracking::run()
 
   SpeedCalculator speedCalculator(robot, targetSpeed);
 
-  // Get SocketClient from Robot
   SocketClient& client = robot.getSocketClient();
 
   // 継続条件を満たしている間ループ
@@ -44,11 +43,11 @@ void CameraPidTracking::run()
     double baseRightPower = speedCalculator.calculateRightMotorPower();
     double baseLeftPower = speedCalculator.calculateLeftMotorPower();
 
-    // Execute line detection on server
+    // ライン検出をサーバーに依頼
     CameraServer::BoundingBoxDetectorResponse response;
     bool success = client.executeLineDetection(detectionRequest, response);
 
-    // If detection failed, skip this iteration
+    // 通信失敗、または検出できなかった場合
     if(!success || !response.result.wasDetected) {
       continue;
     }

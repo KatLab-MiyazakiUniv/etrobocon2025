@@ -1,7 +1,7 @@
 /**
  * @file   MotionParser.cpp
  * @brief  動作コマンドファイルを解析するクラス
- * @author Hara1274
+ * @author Hara1274 takuchi17
  */
 
 #include "MotionParser.h"
@@ -88,32 +88,20 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       case COMMAND::DCL: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
-        detectionRequest.command = CameraServer::Command::LINE_DETECTION;  // Set the command type
+        detectionRequest.command
+            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
         detectionRequest.lowerHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
         detectionRequest.upperHSV
             = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
 
-        // パラメータ配列のサイズによってROIと解像度を設定
-        if(params.size() > 18) {  // If resolution parameters are present
-          detectionRequest.roi
-              = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
-          detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
-        } else if(params.size() > 16) {  // If only ROI parameters are present
-          detectionRequest.roi
-              = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
-          // Default resolution if not provided
-          detectionRequest.resolution = cv::Size(640, 480);  // Assuming a default resolution
-        } else {
-          // Default ROI and resolution if not provided
-          detectionRequest.roi = cv::Rect(50, 240, 540, 240);  // Assuming a default ROI
-          detectionRequest.resolution = cv::Size(640, 480);    // Assuming a default resolution
-        }
+        detectionRequest.roi
+            = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
+        detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
 
         auto dcl = new DistanceCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stoi(params[3]),
-            PidGain(stod(params[4]), stod(params[5]), stod(params[6])),
-            detectionRequest);  // Pass the struct
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest);
         motionList.push_back(dcl);
         break;
       }
@@ -126,32 +114,21 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       case COMMAND::CDCL: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
-        detectionRequest.command = CameraServer::Command::LINE_DETECTION;  // Set the command type
+        detectionRequest.command
+            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
         detectionRequest.lowerHSV = cv::Scalar(stoi(params[8]), stoi(params[9]), stoi(params[10]));
         detectionRequest.upperHSV
             = cv::Scalar(stoi(params[11]), stoi(params[12]), stoi(params[13]));
 
-        // パラメータ配列のサイズによってROIと解像度を設定
-        if(params.size() > 19) {  // If resolution parameters are present
-          detectionRequest.roi
-              = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
-          detectionRequest.resolution = cv::Size(stoi(params[18]), stoi(params[19]));
-        } else if(params.size() > 17) {  // If only ROI parameters are present
-          detectionRequest.roi
-              = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
-          // Default resolution if not provided
-          detectionRequest.resolution = cv::Size(640, 480);  // Assuming a default resolution
-        } else {
-          // Default ROI and resolution if not provided
-          detectionRequest.roi = cv::Rect(50, 240, 540, 240);  // Assuming a default ROI
-          detectionRequest.resolution = cv::Size(640, 480);    // Assuming a default resolution
-        }
+        detectionRequest.roi
+            = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
+        detectionRequest.resolution = cv::Size(stoi(params[18]), stoi(params[19]));
 
         auto cdcl = new ColorDistanceCameraLineTrace(
             robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
             stoi(params[4]), PidGain(stod(params[5]), stod(params[6]), stod(params[7])),
-            detectionRequest);  // Pass the struct
+            detectionRequest);
         motionList.push_back(cdcl);
         break;
       }
@@ -264,30 +241,28 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       case COMMAND::CRA: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
-        detectionRequest.command = CameraServer::Command::LINE_DETECTION;  // Set the command type
+        detectionRequest.command
+            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
         detectionRequest.lowerHSV = cv::Scalar(stoi(params[4]), stoi(params[5]), stoi(params[6]));
         detectionRequest.upperHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
 
         // パラメータ配列のサイズによってROIと解像度を設定
-        if(params.size() > 15) {  // If resolution parameters are present
+        if(params.size() > 15) {
           detectionRequest.roi
               = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
           detectionRequest.resolution = cv::Size(stoi(params[14]), stoi(params[15]));
-        } else if(params.size() > 13) {  // If only ROI parameters are present
+        } else if(params.size() > 13) {
           detectionRequest.roi
               = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
-          // Default resolution if not provided
-          detectionRequest.resolution = cv::Size(640, 480);  // Assuming a default resolution
+          detectionRequest.resolution = cv::Size(640, 480);
         } else {
-          // Default ROI and resolution if not provided
-          detectionRequest.roi = cv::Rect(50, 240, 540, 240);  // Assuming a default ROI
-          detectionRequest.resolution = cv::Size(640, 480);    // Assuming a default resolution
+          detectionRequest.roi = cv::Rect(50, 240, 540, 240);
+          detectionRequest.resolution = cv::Size(640, 480);
         }
 
         auto cra = new CameraRecoveryAction(robot, stoi(params[1]), stod(params[2]),
-                                            convertBool(params[0], params[3]),
-                                            detectionRequest);  // Pass the struct
+                                            convertBool(params[0], params[3]), detectionRequest);
         motionList.push_back(cra);
         break;
       }

@@ -1,7 +1,7 @@
 /**
  * @file   CameraPidTracking.h
  * @brief  カメラを使ったPID走行の親クラス
- * @author miyahara046 HaruArima08
+ * @author miyahara046 HaruArima08 takuchi17
  */
 
 #ifndef CAMERA_PID_TRACKING_H
@@ -26,7 +26,8 @@ class CameraPidTracking : public Motion {
    * @param _detectionRequest 検出リクエスト
    */
   CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
-                    const PidGain& _pidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
+                    const PidGain& _pidGain,
+                    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
 
   /**
    * @brief カメラ走行を実行する

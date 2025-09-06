@@ -19,7 +19,7 @@ class CameraRecoveryAction : public CompositeMotion {
    * @param _angle 回頭角度 (dig) 0~180
    * @param _speed 回頭速度（mm/秒）
    * @param _isClockwise 回頭方向（true: 右回り, false: 左回り）
-   * @param _boundingBoxDetector 画像処理クラスのポインタ
+   * @param _detectionRequest 検出リクエスト
    */
   CameraRecoveryAction(Robot& _robot, int _angle, double _speed, bool _isClockwise,
                        const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
@@ -31,11 +31,11 @@ class CameraRecoveryAction : public CompositeMotion {
 
  private:
   CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
-  BoundingBoxDetectionResult result;                         // 検出結果
-  int recoveryAngle;                                         // 復帰回頭角度
-  double speed;                                              // 回頭スピード
-  bool isClockwise;                                          // 回頭方向
-  static constexpr int FRAME_NUMBER = 5;                     // フレーム取得回数
+  BoundingBoxDetectionResult result;                          // 検出結果
+  int recoveryAngle;                                          // 復帰回頭角度
+  double speed;                                               // 回頭スピード
+  bool isClockwise;                                           // 回頭方向
+  static constexpr int FRAME_NUMBER = 5;                      // フレーム取得回数
 };
 
 #endif

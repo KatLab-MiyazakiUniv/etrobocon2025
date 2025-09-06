@@ -1,11 +1,15 @@
+/**
+ * @file   SocketClient.cpp
+ * @brief  カメラサーバーと通信するクラス
+ * @author takuchi17
+ */
+
 #include "SocketClient.h"
 #include <iostream>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
-
-#define PORT 27015
 
 SocketClient::SocketClient() : sock(-1), isConnected(false) {}
 
@@ -68,100 +72,43 @@ void SocketClient::disconnectFromServer()
 bool SocketClient::executeMiniFigAction(const CameraServer::MiniFigActionRequest& request,
                                         CameraServer::MiniFigActionResponse& response)
 {
-  if(!isConnected) {
-    std::cerr << "Not connected to server." << std::endl;
-    return false;
-  }
-
-  // 1. Send the request
-  if(send(sock, reinterpret_cast<const char*>(&request), sizeof(request), 0) < 0) {
-    perror("Client: send failed");
-    return false;
-  }
-
-  // 2. Wait for and receive the response
-  ssize_t bytesRead = recv(sock, reinterpret_cast<char*>(&response), sizeof(response), 0);
-  if(bytesRead < 0) {
-    perror("Client: recv failed");
-    return false;
-  } else if(bytesRead != sizeof(response)) {
-    std::cerr << "Client: received incomplete response." << std::endl;
-    return false;
-  }
-
-  return true;
+  return executeAction(request, response);
 }
 
 bool SocketClient::executeBackgroundPlaAction(
     const CameraServer::BackgroundPlaActionRequest& request,
     CameraServer::BackgroundPlaActionResponse& response)
 {
-  if(!isConnected) {
-    std::cerr << "Not connected to server." << std::endl;
-    return false;
-  }
-
-  // 1. Send the request
-  if(send(sock, reinterpret_cast<const char*>(&request), sizeof(request), 0) < 0) {
-    perror("Client: send failed");
-    return false;
-  }
-
-  // 2. Wait for and receive the response
-  ssize_t bytesRead = recv(sock, reinterpret_cast<char*>(&response), sizeof(response), 0);
-  if(bytesRead < 0) {
-    perror("Client: recv failed");
-    return false;
-  } else if(bytesRead != sizeof(response)) {
-    std::cerr << "Client: received incomplete response." << std::endl;
-    return false;
-  }
-
-  return true;
+  return executeAction(request, response);
 }
 
 bool SocketClient::executeSnapshotAction(const CameraServer::SnapshotActionRequest& request,
                                          CameraServer::SnapshotActionResponse& response)
 {
-  if(!isConnected) {
-    std::cerr << "Not connected to server." << std::endl;
-    return false;
-  }
-
-  // 1. Send the request
-  if(send(sock, reinterpret_cast<const char*>(&request), sizeof(request), 0) < 0) {
-    perror("Client: send failed");
-    return false;
-  }
-
-  // 2. Wait for and receive the response
-  ssize_t bytesRead = recv(sock, reinterpret_cast<char*>(&response), sizeof(response), 0);
-  if(bytesRead < 0) {
-    perror("Client: recv failed");
-    return false;
-  } else if(bytesRead != sizeof(response)) {
-    std::cerr << "Client: received incomplete response." << std::endl;
-    return false;
-  }
-
-  return true;
+  return executeAction(request, response);
 }
 
 bool SocketClient::executeLineDetection(const CameraServer::BoundingBoxDetectorRequest& request,
                                         CameraServer::BoundingBoxDetectorResponse& response)
+{
+  return executeAction(request, response);
+}
+
+template <typename Req, typename Res>
+bool SocketClient::executeAction(const Req& request, Res& response)
 {
   if(!isConnected) {
     std::cerr << "Not connected to server." << std::endl;
     return false;
   }
 
-  // 1. Send the request
+  // リクエストを送信する
   if(send(sock, reinterpret_cast<const char*>(&request), sizeof(request), 0) < 0) {
     perror("Client: send failed");
     return false;
   }
 
-  // 2. Wait for and receive the response
+  // 結果を受信する
   ssize_t bytesRead = recv(sock, reinterpret_cast<char*>(&response), sizeof(response), 0);
   if(bytesRead < 0) {
     perror("Client: recv failed");

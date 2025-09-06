@@ -1,3 +1,9 @@
+/**
+ * @file   ImageRecognitionResults.h
+ * @brief  画像認識結果のデータ構造定義
+ * @author takuchi17
+ */
+
 #ifndef IMAGE_RECOGNITION_RESULTS_H
 #define IMAGE_RECOGNITION_RESULTS_H
 

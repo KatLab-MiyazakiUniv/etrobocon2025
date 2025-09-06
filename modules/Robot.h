@@ -25,8 +25,6 @@ class Robot {
    */
   Robot();
 
-  ~Robot();
-
   /**
    * @brief MotorControllerのインスタンスの参照を返す
    * @return メンバ変数motorController(MotorControllerのインスタンス)の参照

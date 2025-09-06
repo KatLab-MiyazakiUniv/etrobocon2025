@@ -17,12 +17,6 @@ Robot::Robot()
     miniFigDirectionResult(),
     backgroundDirectionResult()
 {
-  socketClient.connectToServer();
-}
-
-Robot::~Robot()
-{
-  socketClient.disconnectFromServer();
 }
 
 MotorController& Robot::getMotorControllerInstance()
