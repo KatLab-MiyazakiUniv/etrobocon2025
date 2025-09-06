@@ -67,7 +67,13 @@ class MockSocketClient : public SocketClient {
       lineDetectionResponses.pop();
       return true;
     }
-    return false;
+    // If the queue is empty, provide a default successful response for continuous line detection
+    response.result.wasDetected = true;
+    response.result.topLeft = cv::Point(270, 190);
+    response.result.topRight = cv::Point(370, 190);
+    response.result.bottomLeft = cv::Point(270, 290);
+    response.result.bottomRight = cv::Point(370, 290);
+    return true;
   }
 
   // --- テスト制御用のメソッド ---
