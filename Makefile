@@ -29,7 +29,7 @@ help:
 	@echo " $$ make upload-image"
 
 ## 実行関連 ##
-build-all: build-client build-camera
+build: build-client build-camera
 
 build-client:
 	cd $(MAKEFILE_PATH)../ && make img=etrobocon2025 -j5
