@@ -55,7 +55,7 @@ namespace etrobocon2025_test {
     testing::internal::CaptureStdout();
     action.run();
     string output = testing::internal::GetCapturedStdout();
-    ASSERT_NE(output.find("復帰に成功しました"), string::npos);
+    ASSERT_NE(output.find("復帰に成功しました。"), string::npos);
   }
 
   // 復帰動作を行い、再検出でも失敗した場合のテスト
