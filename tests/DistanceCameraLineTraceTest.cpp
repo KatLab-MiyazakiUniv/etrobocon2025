@@ -23,10 +23,10 @@ namespace etrobocon2025_test {
 
     CameraServer::BoundingBoxDetectorResponse successResponse;
     successResponse.result.wasDetected = true;
-    successResponse.result.x = 320;
-    successResponse.result.y = 240;
-    successResponse.result.width = 100;
-    successResponse.result.height = 100;
+    successResponse.result.topLeft = cv::Point(270, 190);
+    successResponse.result.topRight = cv::Point(370, 190);
+    successResponse.result.bottomLeft = cv::Point(270, 290);
+    successResponse.result.bottomRight = cv::Point(370, 290);
     mockSocketClient.setNextLineDetectionResponse(successResponse);
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
@@ -58,10 +58,10 @@ namespace etrobocon2025_test {
 
     CameraServer::BoundingBoxDetectorResponse successResponse;
     successResponse.result.wasDetected = true;
-    successResponse.result.x = 320;
-    successResponse.result.y = 240;
-    successResponse.result.width = 100;
-    successResponse.result.height = 100;
+    successResponse.result.topLeft = cv::Point(270, 190);
+    successResponse.result.topRight = cv::Point(370, 190);
+    successResponse.result.bottomLeft = cv::Point(270, 290);
+    successResponse.result.bottomRight = cv::Point(370, 290);
     mockSocketClient.setNextLineDetectionResponse(successResponse);
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
@@ -91,10 +91,10 @@ namespace etrobocon2025_test {
 
     CameraServer::BoundingBoxDetectorResponse successResponse;
     successResponse.result.wasDetected = true;
-    successResponse.result.x = 320;
-    successResponse.result.y = 240;
-    successResponse.result.width = 100;
-    successResponse.result.height = 100;
+    successResponse.result.topLeft = cv::Point(270, 190);
+    successResponse.result.topRight = cv::Point(370, 190);
+    successResponse.result.bottomLeft = cv::Point(270, 290);
+    successResponse.result.bottomRight = cv::Point(370, 290);
     mockSocketClient.setNextLineDetectionResponse(successResponse);
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
@@ -125,10 +125,10 @@ namespace etrobocon2025_test {
 
     CameraServer::BoundingBoxDetectorResponse successResponse;
     successResponse.result.wasDetected = true;
-    successResponse.result.x = 320;
-    successResponse.result.y = 240;
-    successResponse.result.width = 100;
-    successResponse.result.height = 100;
+    successResponse.result.topLeft = cv::Point(270, 190);
+    successResponse.result.topRight = cv::Point(370, 190);
+    successResponse.result.bottomLeft = cv::Point(270, 290);
+    successResponse.result.bottomRight = cv::Point(370, 290);
     mockSocketClient.setNextLineDetectionResponse(successResponse);
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
