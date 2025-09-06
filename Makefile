@@ -38,8 +38,7 @@ build-camera:
 	cd $(MAKEFILE_PATH)/camera_server && make -f Makefile.camera -j5
 
 # 実機の場合、走行を開始する
-start:
-	cd $(MAKEFILE_PATH)../ && make start
+start: start-camera start-client
 
 start-client:
 	cd $(MAKEFILE_PATH)../ && make start
