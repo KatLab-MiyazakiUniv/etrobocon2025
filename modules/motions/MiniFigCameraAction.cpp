@@ -159,6 +159,13 @@ void MiniFigCameraAction::run()
       thread([filePath, uploadFileName] {
         ImageUploader::uploadImage(filePath, uploadFileName, 3);
       }).detach();
+    } else if(!robot.getMiniFigDirectionResult().wasDetected) {
+      // 判定失敗時用のエンドポイントに１枚目をアップロード
+      string positionImageName = "Fig_" + to_string(position);
+      FrameSave::save(frame, filePath, positionImageName);
+      thread([filePath, positionImageName] {
+        ImageUploader::uploadImage(filePath, positionImageName, 3);
+      }).detach();
     }
 
   } else if(robot.getMiniFigDirectionResult().wasDetected) {
@@ -170,17 +177,13 @@ void MiniFigCameraAction::run()
       ImageUploader::uploadImage(filePath, uploadFileName, 3);
     }).detach();
   } else {
-    // 一回目検出falseなら、残り、3回の撮影は確定する。
-    // 一回目の撮影でミニフィグが検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
+    // 一回目検出falseなら、残り、2~4枚目を判定失敗時用のエンドポイントにアップロード。
     cout << "ミニフィグ向き判定用写真の撮影" << endl;
     string positionImageName = "Fig_" + to_string(position);
     FrameSave::save(frame, filePath, positionImageName);
-    // 最後のポジションの撮影時のみ非同期で画像をアップロード
-    if(position == 3) {
-      thread([filePath, positionImageName] {
-        ImageUploader::uploadImage(filePath, positionImageName, 3);
-      }).detach();
-    }
+    thread([filePath, positionImageName] {
+      ImageUploader::uploadImage(filePath, positionImageName, 3);
+    }).detach();
   }
 
   // 動作安定のためのスリープ
