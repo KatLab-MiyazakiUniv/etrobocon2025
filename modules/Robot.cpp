@@ -15,7 +15,8 @@ Robot::Robot()
     button(),
     forceSensor(EPort::PORT_D),
     display(),
-    ultrasonicSensor(EPort::PORT_F)
+    ultrasonicSensor(EPort::PORT_F),
+    imuController()
 {
 }
 
@@ -29,7 +30,8 @@ Robot::Robot(ICameraCapture& cam)
     button(),
     forceSensor(EPort::PORT_D),
     display(),
-    ultrasonicSensor(EPort::PORT_F)
+    ultrasonicSensor(EPort::PORT_F),
+    imuController()
 {
 }
 
@@ -91,4 +93,9 @@ void Robot::setIsLeftEdge(bool isLeft)
 bool Robot::getIsLeftEdge() const
 {
   return isLeftEdge;
+}
+
+IMUController& Robot::getIMUControllerInstance()
+{
+  return imuController;
 }

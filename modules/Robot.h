@@ -16,8 +16,25 @@
 #include "ForceSensor.h"
 #include "Display.h"
 #include "UltrasonicSensor.h"
-#include "MiniFigDirectionDetector.h"
-#include "BackgroundDirectionDetector.h"
+#include "IMUController.h"
+
+// ミニフィグの向きを表す列挙体
+enum class MiniFigDirection { FRONT, RIGHT, BACK, LEFT };
+
+// ミニフィグ向き判定結果格納用の構造体
+struct MiniFigDirectionResult {
+  bool wasDetected = false;    // 検出が成功したかどうか
+  MiniFigDirection direction;  // ミニフィグの向きを表す列挙体
+};
+
+// 風景の向きを表す列挙体
+enum class BackgroundDirection { FRONT, RIGHT, BACK, LEFT };
+
+// 風景向き判定結果格納用の構造体
+struct BackgroundDirectionResult {
+  bool wasDetected = false;       // 検出が成功したかどうか
+  BackgroundDirection direction;  // 風景の向きを表す列挙体
+};
 
 class Robot {
  public:
@@ -90,6 +107,13 @@ class Robot {
    * @return 風景の向き検出結果の参照
    */
   BackgroundDirectionResult& getBackgroundDirectionResult();
+
+  /**
+   * @brief IMUControllerのインスタンスの参照を返す
+   * @return メンバ変数imuController(IMUControllerのインスタンス)の参照
+   */
+  IMUController& getIMUControllerInstance();
+  
   /**
    * @brief エッジの左右判定を設定する
    * @param isLeft true:左エッジ, false:右エッジ
@@ -112,6 +136,7 @@ class Robot {
   spikeapi::ForceSensor forceSensor;              // ForceSensorインスタンス
   spikeapi::Display display;                      // Displayインスタンス
   spikeapi::UltrasonicSensor ultrasonicSensor;    // UltrasonicSensorインスタンス
+  IMUController imuController;                    // IMUControllerインスタンス
   MiniFigDirectionResult miniFigDirectionResult;  // ミニフィグの向き検出結果
   BackgroundDirectionResult backgroundDirectionResult;  // 風景の向き検出結果
   // formatチェックをパスするためのコメント

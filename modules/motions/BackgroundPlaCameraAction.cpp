@@ -7,6 +7,7 @@
 #include "BackgroundPlaCameraAction.h"
 
 using namespace std;
+using json = nlohmann::json;
 
 BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise,
                                                      int _preTargetAngle, int _postTargetAngle,
@@ -41,12 +42,66 @@ bool BackgroundPlaCameraAction::isMetPreCondition()
 void BackgroundPlaCameraAction::detectDirection(cv::Mat& frame)
 {
   cout << "風景の向きの判定開始" << endl;
-  BackgroundDirectionDetector detector;
   // 風景の向きを判定
-  detector.detect(frame, robot.getBackgroundDirectionResult());
-  cout << "風景の向きの判定終了" << endl;
+  FrameSave::save(frame, detectionTargetPath, detectionTargetName);
   // 検出結果を取得
   BackgroundDirectionResult& result = robot.getBackgroundDirectionResult();
+
+  // 風景推論用コマンドの実行
+  int commandResult = CommandExecutor::exec(command);
+  if(commandResult != 0) {
+    std::cerr << "コマンド実行に失敗しました" << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
+  // ファイル存在チェック
+  std::ifstream file(resultFilePath);
+  if(!file.good()) {
+    std::cerr << "JSONファイルが存在しません: " << resultFilePath << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
+  json jsonFile;
+  try {
+    file >> jsonFile;
+  } catch(const std::exception& e) {
+    std::cerr << "JSONパースエラー: " << e.what() << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
+  // wasDetected を設定
+  if(jsonFile.contains("wasDetected") && jsonFile["wasDetected"].is_boolean()) {
+    result.wasDetected = jsonFile["wasDetected"].get<bool>();
+  } else {
+    std::cerr << "wasDetectedが見つからない、または型が不正です" << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
+  // direction を設定
+  if(jsonFile.contains("direction") && jsonFile["direction"].is_string()) {
+    std::string dirStr = jsonFile["direction"].get<std::string>();
+    if(dirStr == "FRONT")
+      result.direction = BackgroundDirection::FRONT;
+    else if(dirStr == "RIGHT")
+      result.direction = BackgroundDirection::RIGHT;
+    else if(dirStr == "BACK")
+      result.direction = BackgroundDirection::BACK;
+    else if(dirStr == "LEFT")
+      result.direction = BackgroundDirection::LEFT;
+    else {
+      result.wasDetected = false;
+    }
+  } else {
+    std::cerr << "directionが見つからない、または型が不正です" << std::endl;
+    result.wasDetected = false;
+    return;
+  }
+
+  cout << "風景の向きの判定正常終了" << endl;
 
   // デバッグ出力
   if(!result.wasDetected) {
