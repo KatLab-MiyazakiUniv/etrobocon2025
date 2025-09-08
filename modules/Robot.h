@@ -113,7 +113,7 @@ class Robot {
    * @return メンバ変数imuController(IMUControllerのインスタンス)の参照
    */
   IMUController& getIMUControllerInstance();
-  
+
   /**
    * @brief エッジの左右判定を設定する
    * @param isLeft true:左エッジ, false:右エッジ
