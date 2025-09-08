@@ -14,7 +14,8 @@ Robot::Robot()
     clock(),
     button(),
     forceSensor(EPort::PORT_D),
-    display()
+    display(),
+    imuController()
 {
 }
 
@@ -27,7 +28,8 @@ Robot::Robot(ICameraCapture& cam)
     clock(),
     button(),
     forceSensor(EPort::PORT_D),
-    display()
+    display(),
+    imuController()
 {
 }
 
@@ -84,4 +86,9 @@ void Robot::setIsLeftEdge(bool isLeft)
 bool Robot::getIsLeftEdge() const
 {
   return isLeftEdge;
+}
+
+IMUController& Robot::getIMUControllerInstance()
+{
+  return imuController;
 }
