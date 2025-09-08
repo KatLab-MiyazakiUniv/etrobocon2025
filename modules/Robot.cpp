@@ -15,6 +15,7 @@ Robot::Robot()
     button(),
     forceSensor(EPort::PORT_D),
     display(),
+    ultrasonicSensor(EPort::PORT_F),
     imuController()
 {
 }
@@ -29,6 +30,7 @@ Robot::Robot(ICameraCapture& cam)
     button(),
     forceSensor(EPort::PORT_D),
     display(),
+    ultrasonicSensor(EPort::PORT_F),
     imuController()
 {
 }
@@ -66,6 +68,11 @@ spikeapi::ForceSensor& Robot::getForceSensorInstance()
 spikeapi::Display& Robot::getDisplayInstance()
 {
   return display;
+}
+
+spikeapi::UltrasonicSensor& Robot::getUltrasonicSensorInstance()
+{
+  return ultrasonicSensor;
 }
 
 MiniFigDirectionResult& Robot::getMiniFigDirectionResult()
