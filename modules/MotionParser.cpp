@@ -343,6 +343,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "DL", COMMAND::DL },      // 指定距離ライントレース
     { "DCL", COMMAND::DCL },    // 指定距離カメラライントレース
     { "CDCL", COMMAND::CDCL },  // 色距離指定カメラライントレース
+    { "UDCL", COMMAND::UDCL },  // 超音波距離指定カメラライントレース
     { "CL", COMMAND::CL },      // 指定色ライントレース
     { "CDL", COMMAND::CDL },    // 色距離指定ライントレース
     { "EC", COMMAND::EC },      // エッジ切り替え
