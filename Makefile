@@ -142,3 +142,7 @@ format-check:
 # サーバーの画像をアップロードする
 upload-image:
 	curl --fail -X POST -F "file=@$(FILE_PATH)" http://$(SERVER_IP):8000/images
+
+# ミニフィグ画像をサーバーにアップロードする
+upload-minifig-image:
+	curl --fail -X POST -F "file=@$(FILE_PATH)" http://$(SERVER_IP):8000/minifig/detect
