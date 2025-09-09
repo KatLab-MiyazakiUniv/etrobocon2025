@@ -382,6 +382,45 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // CRS: カメラ復帰直線動作
+      // [1]:double 直進距離, [2]:double 目標距離 [3]:double スピード[mm/s], [4-9]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), 
+      // [10-13]int
+      // ROI座標[px]
+      // ([10]左上隅のx座標, [11]左上隅のy座標, [12]幅, [13]高さ), [14-15]int 解像度[px] ([14]幅,
+      // [15]高さ)
+      // 補足：ROI（Region of Interest: ライントレース用の画像内注目領域（四角形））
+      case COMMAND::CRS: {
+        cv::Scalar lowerHSV, upperHSV;
+        cv::Rect roi;
+        cv::Size resolution;
+        std::unique_ptr<BoundingBoxDetector> boundingBoxDetector;
+
+        lowerHSV = cv::Scalar(stoi(params[4]), stoi(params[5]), stoi(params[6]));
+        upperHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+
+        // パラメータ配列のサイズによってコンストラクタを切り替え
+        if(params.size() > 15) {
+          // ROI + 解像度
+          roi = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
+          resolution = cv::Size(stoi(params[14]), stoi(params[15]));
+          boundingBoxDetector
+              = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi, resolution);
+        } else if(params.size() > 13) {
+          // ROIのみ
+          roi = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
+          boundingBoxDetector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi);
+        } else {
+          // HSVのみ
+          boundingBoxDetector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV);
+        }
+
+        auto crs = new CameraRecoveryStraight(robot, stod(params[1]), stod(params[2]), stod(params[3]),
+                                            std::move(boundingBoxDetector));
+        motionList.push_back(crs);
+        break;
+      }
+
+
       // SCA: スマートキャリー動作
       // [1]:double 超音波距離[mm], [2]:int IMU目標角度[deg], [3]:double IMU基準パワー, [4]:string
       // 方向(clockwise or anticlockwise), [5]:double DS速度[mm/s]
@@ -390,6 +429,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
                                         convertBool(params[0], params[4]), stod(params[5]));
         motionList.push_back(sca);
         break;
+      }
 
         // 未定義コマンド
         default: {
@@ -425,7 +465,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       { "SS", COMMAND::SS },      // カメラ撮影動作
       // { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
       // { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
-      { "CRA", COMMAND::CRA }  // カメラ復帰動作
+      { "CRA", COMMAND::CRA },  // カメラ復帰動作
+      { "CRS", COMMAND::CRS },  // カメラ復帰直線動作
       { "SCA", COMMAND::SCA }  // スマートキャリー動作
     };
 

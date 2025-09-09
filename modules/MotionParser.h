@@ -33,6 +33,7 @@
 #include "DualColorCameraLineTrace.h"
 #include "UltrasonicDistanceCameraLineTrace.h"
 #include "CameraRecoveryAction.h"
+#include "CameraRecoveryStraight.h"
 #include "SmartCarryAction.h"
 
 enum class COMMAND {
@@ -53,6 +54,7 @@ enum class COMMAND {
   // MCA,   // ミニフィグのカメラ撮影動作
   // BCA,   // 背景のカメラ撮影動作
   CRA,  // カメラ復帰動作
+  CRS,  // カメラ復帰直線動作
   SCA,  // スマートキャリー動作
   NONE
 };
