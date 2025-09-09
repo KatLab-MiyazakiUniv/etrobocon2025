@@ -10,14 +10,14 @@ using namespace std;
 using json = nlohmann::json;
 
 MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
-                                         int _postTargetAngle, double _targetRotationSpeed,
+                                         int _postTargetAngle, int _basePower,
                                          double _backTargetDistance, double _forwardTargetDistance,
                                          double _backSpeed, double _forwardSpeed, int _position)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
     postTargetAngle(_postTargetAngle),
-    targetRotationSpeed(_targetRotationSpeed),
+    basePower(_basePower),
     backTargetDistance(_backTargetDistance),
     forwardTargetDistance(_forwardTargetDistance),
     backSpeed(_backSpeed),
@@ -129,7 +129,8 @@ void MiniFigCameraAction::run()
   }
 
   // 撮影のための回頭をする
-  AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
+  PidGain pidGain = { 0.036, 0.02, 0.03 };
+  IMUAngleRotation preAR(robot, preTargetAngle, basePower, isClockwise, pidGain);
   preAR.run();
 
   // 動作安定のためのスリープ
@@ -202,6 +203,7 @@ void MiniFigCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
+  PidGain postPidGain = { 0.036, 0.02, 0.03 };
+  IMUAngleRotation postAR(robot, postTargetAngle, basePower, !isClockwise, postPidGain);
   postAR.run();
 }
