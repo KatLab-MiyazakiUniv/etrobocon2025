@@ -27,8 +27,9 @@ void PlaCameraAction::run()
   BoundingBoxDetectionResult detectionResult;
 
   // 物体の入室から退出までフレームを取得
-  // 入室検出
-  while(true) {
+  // 入室検出（15秒タイムアウト）
+  auto entryTimeout = std::chrono::steady_clock::now() + std::chrono::seconds(15);
+  while(std::chrono::steady_clock::now() < entryTimeout) {
     cv::Mat frame;
     robot.getCameraCaptureInstance().getFrame(frame);
     // 約30fpsの速度を想定して33msのウェイトを入れる
@@ -44,9 +45,19 @@ void PlaCameraAction::run()
     }
   }
 
-  // 退出検出
+  // タイムアウト時は最新フレームを取得して保存
+  if(capturedFrames.empty()) {
+    std::cout << "入室検出に失敗しタイムアウトしました。" << std::endl;
+    cv::Mat frame;
+    robot.getCameraCaptureInstance().getFrame(frame);
+    FrameSave::save(frame, filePath, imageSaveName);
+    return;
+  }
+
+  // 退出検出（15秒タイムアウト）
+  auto exitTimeout = std::chrono::steady_clock::now() + std::chrono::seconds(15);
   int noMotionCounter = 0;
-  while(true) {
+  while(std::chrono::steady_clock::now() < exitTimeout) {
     cv::Mat frame;
     robot.getCameraCaptureInstance().getFrame(frame);
     // 約30fpsの速度を想定して33msのウェイトを入れる
