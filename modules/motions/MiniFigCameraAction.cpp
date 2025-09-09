@@ -140,6 +140,9 @@ void MiniFigCameraAction::run()
   DistanceStraight back(robot, backTargetDistance, -backSpeed);
   back.run();
 
+  // 綺麗な写真の撮影のためのスリープ
+  this_thread::sleep_for(chrono::milliseconds(100));
+
   // 判定用の写真を撮影
   cv::Mat frame;
   for(int i = 0; i < 5; i++) {
