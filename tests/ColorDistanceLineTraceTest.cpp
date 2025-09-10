@@ -155,8 +155,8 @@ namespace etrobocon2025_test {
 
     double expected = targetDistance;
 
-    srand(1000);  // RED が出にくいシード値にする
-    cd.run();     // ライントレースを実行
+    srand(42);  // RED が出にくいシード値にする
+    cd.run();   // ライントレースを実行
 
     // ライントレース後の走行距離
     int rightCount = robot.getMotorControllerInstance().getRightMotorCount();

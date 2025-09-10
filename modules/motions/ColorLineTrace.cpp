@@ -41,7 +41,7 @@ bool ColorLineTrace::isMetContinuationCondition()
 {
   // HSV値を取得
   spikeapi::ColorSensor::HSV hsv;
-  robot.getColorSensorInstance().getColor(hsv);
+  robot.getColorSensorInstance().getHSV(hsv);
 
   // 現在の色が目標色と一致していればカウント増加、違えばリセット
   if(ColorJudge::convertHsvToColor(hsv) == targetColor) {
