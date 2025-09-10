@@ -242,7 +242,8 @@ void MiniFigDirectionDetector::postprocess(const vector<vector<float>>& outputs,
 }
 
 // YOLOv5用の後処理関数
-// void MiniFigDirectionDetector::postprocessV5(const vector<vector<float>>& outputs, const Mat& frame,
+// void MiniFigDirectionDetector::postprocessV5(const vector<vector<float>>& outputs, const Mat&
+// frame,
 //                                              float scale, int padX, int padY)
 // {
 //   vector<int> classIds;       // 最も高いスコアを持つクラスIDを格納するリスト
@@ -342,7 +343,8 @@ void MiniFigDirectionDetector::postprocess(const vector<vector<float>>& outputs,
 //     int idx = indices[i];
 //     rectangle(outputImage, boxes[idx], Scalar(0, 255, 0), 2);
 //     string label = to_string(classIds[idx]);
-//     putText(outputImage, label, boxes[idx].tl(), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 1);
+//     putText(outputImage, label, boxes[idx].tl(), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0),
+//     1);
 //   }
 //   imwrite(outputImagePath, outputImage);
 

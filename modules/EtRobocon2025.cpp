@@ -46,8 +46,6 @@
 //   // smartCarryAreaMaster.run();
 // }
 
-
-
 /**
  * @file   EtRobocon2025.cpp
  * @brief  全体を制御するクラス
@@ -65,7 +63,7 @@ void EtRobocon2025::start()
 
   robot.getIMUControllerInstance().calculateOffset();
   robot.getIMUControllerInstance().calculateCorrectionMatrix();
-  
+
   if(!robot.getCameraCaptureInstance().setCameraID(
          robot.getCameraCaptureInstance().findAvailableCameraID()))
     return;

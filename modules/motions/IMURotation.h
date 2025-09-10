@@ -20,7 +20,8 @@ class IMURotation : public Rotation {
    * @param _isClockwise  回頭方向 true:時計回り, false:反時計回り
    * @param _anglePidGain 角度制御PIDゲイン
    */
-  IMURotation(Robot& _robot, int _targetAngle, double _basePower, bool _isClockwise, const PidGain& _anglePidGain);
+  IMURotation(Robot& _robot, int _targetAngle, double _basePower, bool _isClockwise,
+              const PidGain& _anglePidGain);
   /**
    * @brief 回頭する
    * @note run() メソッドは Rotation クラスの実装をそのまま使用する
@@ -50,12 +51,12 @@ class IMURotation : public Rotation {
   void updateMotorControl() override;
 
  private:
-  static constexpr float TOLERANCE = 1.0f;              // 許容誤差
-  int targetAngle;                                      // 目標回転角度(deg) 0~360
-  double basePower;                                     // 基準パワー値
-  Pid anglePid;                                         // 角度PID制御クラス
-  float currentAngle;                                   // 現在の回頭角度
-  double angleError;                                    // 角度誤差
+  static constexpr float TOLERANCE = 1.0f;  // 許容誤差
+  int targetAngle;                          // 目標回転角度(deg) 0~360
+  double basePower;                         // 基準パワー値
+  Pid anglePid;                             // 角度PID制御クラス
+  float currentAngle;                       // 現在の回頭角度
+  double angleError;                        // 角度誤差
 };
 
 #endif

@@ -52,11 +52,11 @@ class DualColorCameraLineTrace : public DualCameraPidTracking {
   bool isMetContinuationCondition() override;
 
  private:
-  static constexpr int JUDGE_COUNT = 5;                   // 色取得の決定に必要な連続回数
-  int colorCount;                                         // 指定色を取得した回数
-  COLOR targetColor;                                      // 指定色
-  double targetDistance;                                  // 目標距離
-  double initDistance;                                    // 実行前の走行距離
+  static constexpr int JUDGE_COUNT = 5;  // 色取得の決定に必要な連続回数
+  int colorCount;                        // 指定色を取得した回数
+  COLOR targetColor;                     // 指定色
+  double targetDistance;                 // 目標距離
+  double initDistance;                   // 実行前の走行距離
   std::unique_ptr<DualLineBoundingBoxDetector> detector;  // 画像処理クラスのポインタ
 };
 

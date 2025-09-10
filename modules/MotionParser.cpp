@@ -382,83 +382,93 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-      // 未定義コマンド
-      default: {
-        cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
-             << endl;
+      // SCA: スマートキャリー動作
+      // [1]:double 超音波距離[mm], [2]:int IMU目標角度[deg], [3]:double IMU基準パワー, [4]:string
+      // 方向(clockwise or anticlockwise), [5]:double DS速度[mm/s]
+      case COMMAND::SCA: {
+        auto sca = new SmartCarryAction(robot, stod(params[1]), stoi(params[2]), stod(params[3]),
+                                        convertBool(params[0], params[4]), stod(params[5]));
+        motionList.push_back(sca);
         break;
+
+        // 未定義コマンド
+        default: {
+          cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
+               << endl;
+          break;
+        }
+      }
+
+        lineNum++;  // 行番号をインクリメントする
+    }
+
+    return motionList;
+  }
+
+  COMMAND MotionParser::convertCommand(const string& str)
+  {
+    // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
+    static const unordered_map<string, COMMAND> commandMap = {
+      { "AR", COMMAND::AR },      // 角度指定回頭
+      { "IMUR", COMMAND::IMUR },  // IMU角度指定回頭
+      { "DS", COMMAND::DS },      // 指定距離直進
+      { "CS", COMMAND::CS },      // 指定色直進
+      { "DL", COMMAND::DL },      // 指定距離ライントレース
+      { "DCL", COMMAND::DCL },    // 指定距離カメラライントレース
+      { "CDCL", COMMAND::CDCL },  // 色距離指定カメラライントレース
+      { "DCCL", COMMAND::DCCL },  // 色切り替え色距離指定カメラライントレース
+      { "UDCL", COMMAND::UDCL },  // 超音波距離指定カメラライントレース
+      { "CL", COMMAND::CL },      // 指定色ライントレース
+      { "CDL", COMMAND::CDL },    // 色距離指定ライントレース
+      { "EC", COMMAND::EC },      // エッジ切り替え
+      { "SL", COMMAND::SL },      // スリープ
+      { "SS", COMMAND::SS },      // カメラ撮影動作
+      // { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
+      // { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
+      { "CRA", COMMAND::CRA }  // カメラ復帰動作
+      { "SCA", COMMAND::SCA }  // スマートキャリー動作
+    };
+
+    // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
+    auto it = commandMap.find(str);
+    if(it != commandMap.end()) {
+      return it->second;
+    } else {
+      return COMMAND::NONE;
+    }
+  }
+
+  bool MotionParser::convertBool(const string& command, const string& stringParameter)
+  {
+    // 末尾の改行を削除
+    string param = StringOperator::removeEOL(stringParameter);
+
+    // 回転動作(AR,IMUR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+    if(command == "AR" || command == "IMUR" || /*command == "MCA" || command == "BCA"
+       || */ command == "CRA" || command == "SCA") {
+      if(param == "clockwise") {
+        return true;
+      } else if(param == "anticlockwise") {
+        return false;
+      } else {
+        cout << "'clockwise' か 'anticlockwise'を入力してください" << endl;
+        return true;
       }
     }
 
-    lineNum++;  // 行番号をインクリメントする
-  }
-
-  return motionList;
-}
-
-COMMAND MotionParser::convertCommand(const string& str)
-{
-  // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
-  static const unordered_map<string, COMMAND> commandMap = {
-    { "AR", COMMAND::AR },      // 角度指定回頭
-    { "IMUR", COMMAND::IMUR },  // IMU角度指定回頭
-    { "DS", COMMAND::DS },      // 指定距離直進
-    { "CS", COMMAND::CS },      // 指定色直進
-    { "DL", COMMAND::DL },      // 指定距離ライントレース
-    { "DCL", COMMAND::DCL },    // 指定距離カメラライントレース
-    { "CDCL", COMMAND::CDCL },  // 色距離指定カメラライントレース
-    { "DCCL", COMMAND::DCCL },  // 色切り替え色距離指定カメラライントレース
-    { "UDCL", COMMAND::UDCL },  // 超音波距離指定カメラライントレース
-    { "CL", COMMAND::CL },      // 指定色ライントレース
-    { "CDL", COMMAND::CDL },    // 色距離指定ライントレース
-    { "EC", COMMAND::EC },      // エッジ切り替え
-    { "SL", COMMAND::SL },      // スリープ
-    { "SS", COMMAND::SS },      // カメラ撮影動作
-    // { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
-    // { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
-    { "CRA", COMMAND::CRA }  // カメラ復帰動作
-  };
-
-  // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
-  auto it = commandMap.find(str);
-  if(it != commandMap.end()) {
-    return it->second;
-  } else {
-    return COMMAND::NONE;
-  }
-}
-
-bool MotionParser::convertBool(const string& command, const string& stringParameter)
-{
-  // 末尾の改行を削除
-  string param = StringOperator::removeEOL(stringParameter);
-
-  // 回転動作(AR,IMUR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-  if(command == "AR" || command == "IMUR" || /*command == "MCA" || command == "BCA"
-     || */ command == "CRA") {
-    if(param == "clockwise") {
-      return true;
-    } else if(param == "anticlockwise") {
-      return false;
-    } else {
-      cout << "'clockwise' か 'anticlockwise'を入力してください" << endl;
-      return true;
+    // エッジ切り替え(EC)の場合、"left"ならtrue（左エッジ）、"right"ならfalse（右エッジ)に変換
+    if(command == "EC") {
+      if(param == "left") {
+        return true;
+      } else if(param == "right") {
+        return false;
+      } else {
+        cout << "'left' か 'right'を入力してください" << endl;
+        return true;
+      }
     }
-  }
 
-  // エッジ切り替え(EC)の場合、"left"ならtrue（左エッジ）、"right"ならfalse（右エッジ)に変換
-  if(command == "EC") {
-    if(param == "left") {
-      return true;
-    } else if(param == "right") {
-      return false;
-    } else {
-      cout << "'left' か 'right'を入力してください" << endl;
-      return true;
-    }
+    // ここまでに条件を満たしていなかった場合は、デフォルト値としてtrueを返す
+    cout << "convertBool関数の処理の対象外です: '" << command << endl;
+    return true;
   }
-
-  // ここまでに条件を満たしていなかった場合は、デフォルト値としてtrueを返す
-  cout << "convertBool関数の処理の対象外です: '" << command << endl;
-  return true;
-}

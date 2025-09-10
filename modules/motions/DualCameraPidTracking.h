@@ -52,11 +52,11 @@ class DualCameraPidTracking : public Motion {
 
  protected:
   DualLineBoundingBoxDetector& boundingBoxDetector;  // 画像処理クラスの参照
-  BoundingBoxDetectionResult result;                 // バウンディングボックスの座標を格納する構造体
-  double targetSpeed;                                // 目標速度
-  int targetXCoordinate;                             // 目標X座標
-  int targetXCoordinate2;                            // 2色目の目標X座標
-  PidGain pidGain;                                   // PIDゲイン
+  BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
+  double targetSpeed;                 // 目標速度
+  int targetXCoordinate;              // 目標X座標
+  int targetXCoordinate2;             // 2色目の目標X座標
+  PidGain pidGain;                    // PIDゲイン
 };
 
 #endif
