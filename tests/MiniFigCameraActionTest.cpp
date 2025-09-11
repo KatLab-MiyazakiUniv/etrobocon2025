@@ -17,21 +17,33 @@ namespace etrobocon2025_test {
   {
     DummyCameraCapture cameraCapture;
     Robot robot(cameraCapture);
+    robot.getMotorControllerInstance().resetWheelsMotorPower();
+
+    // オフセット計算前に静止状態に設定
+    IMUTestControl::rotationStateRef() = 0;
+
+    // オフセット計算と補正行列計算を事前実行
+    robot.getIMUControllerInstance().initializeOffset();
+    robot.getIMUControllerInstance().calculateCorrectionMatrix();
+
+    // 回頭動作用に左回頭状態に設定
+    IMUTestControl::rotationStateRef() = -1;
+
     robot.getMiniFigDirectionResult().wasDetected = true;
     robot.getMiniFigDirectionResult().direction = MiniFigDirection::BACK;
     bool isClockwise = false;
-    int preTargetAngle = 90;
-    int postTargetAngle = 90;
-    double targetRotationSpeed = 200;
+    int preTargetAngle = 10;
+    int postTargetAngle = 1;
+    int basePower = 50;
     double backTargetDistance = 150;
     double forwardTargetDistance = 150;
     double backSpeed = 200;
     double forwardSpeed = 200;
     int position = 1;
 
-    MiniFigCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
-                               targetRotationSpeed, backTargetDistance, forwardTargetDistance,
-                               backSpeed, forwardSpeed, position);
+    MiniFigCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle, basePower,
+                               backTargetDistance, forwardTargetDistance, backSpeed, forwardSpeed,
+                               position);
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     action.run();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
@@ -45,21 +57,33 @@ namespace etrobocon2025_test {
   {
     DummyCameraCapture cameraCapture;
     Robot robot(cameraCapture);
+    robot.getMotorControllerInstance().resetWheelsMotorPower();
+
+    // オフセット計算前に静止状態に設定
+    IMUTestControl::rotationStateRef() = 0;
+
+    // オフセット計算と補正行列計算を事前実行
+    robot.getIMUControllerInstance().initializeOffset();
+    robot.getIMUControllerInstance().calculateCorrectionMatrix();
+
+    // 回頭動作用に左回頭状態に設定
+    IMUTestControl::rotationStateRef() = -1;
+
     robot.getMiniFigDirectionResult().wasDetected = true;
     robot.getMiniFigDirectionResult().direction = MiniFigDirection::BACK;
     bool isClockwise = false;
-    int preTargetAngle = 90;
-    int postTargetAngle = 90;
-    double targetRotationSpeed = 200;
+    int preTargetAngle = 10;
+    int postTargetAngle = 1;
+    int basePower = 50;
     double backTargetDistance = 150;
     double forwardTargetDistance = 150;
     double backSpeed = 200;
     double forwardSpeed = 200;
     int position = 2;
 
-    MiniFigCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
-                               targetRotationSpeed, backTargetDistance, forwardTargetDistance,
-                               backSpeed, forwardSpeed, position);
+    MiniFigCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle, basePower,
+                               backTargetDistance, forwardTargetDistance, backSpeed, forwardSpeed,
+                               position);
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     action.run();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了
@@ -73,20 +97,33 @@ namespace etrobocon2025_test {
   {
     DummyCameraCapture cameraCapture;
     Robot robot(cameraCapture);
+    robot.getMotorControllerInstance().resetWheelsMotorPower();
+
+    // オフセット計算前に静止状態に設定
+    IMUTestControl::rotationStateRef() = 0;
+
+    // オフセット計算と補正行列計算を事前実行
+    robot.getIMUControllerInstance().initializeOffset();
+    robot.getIMUControllerInstance().calculateCorrectionMatrix();
+
+    // 回頭動作用に右回頭状態に設定
+    IMUTestControl::rotationStateRef() = 1;
+
     robot.getMiniFigDirectionResult().wasDetected = false;
     bool isClockwise = false;
-    int preTargetAngle = 90;
-    int postTargetAngle = 90;
-    double targetRotationSpeed = 200;
+    int preTargetAngle = 1;
+    int postTargetAngle = 10;
+    int basePower = 50;
     double backTargetDistance = 150;
     double forwardTargetDistance = 150;
     double backSpeed = 200;
     double forwardSpeed = 200;
     int position = 3;
 
-    MiniFigCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle,
-                               targetRotationSpeed, backTargetDistance, forwardTargetDistance,
-                               backSpeed, forwardSpeed, position);
+    MiniFigCameraAction action(robot, isClockwise, preTargetAngle, postTargetAngle, basePower,
+                               backTargetDistance, forwardTargetDistance, backSpeed, forwardSpeed,
+                               position);
+
     testing::internal::CaptureStdout();  // 標準出力キャプチャ開始
     action.run();
     string output = testing::internal::GetCapturedStdout();  // キャプチャ終了

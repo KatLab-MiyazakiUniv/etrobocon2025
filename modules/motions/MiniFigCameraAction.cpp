@@ -10,14 +10,14 @@ using namespace std;
 using json = nlohmann::json;
 
 MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
-                                         int _postTargetAngle, double _targetRotationSpeed,
+                                         int _postTargetAngle, int _basePower,
                                          double _backTargetDistance, double _forwardTargetDistance,
                                          double _backSpeed, double _forwardSpeed, int _position)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
     postTargetAngle(_postTargetAngle),
-    targetRotationSpeed(_targetRotationSpeed),
+    basePower(_basePower),
     backTargetDistance(_backTargetDistance),
     forwardTargetDistance(_forwardTargetDistance),
     backSpeed(_backSpeed),
@@ -129,7 +129,8 @@ void MiniFigCameraAction::run()
   }
 
   // 撮影のための回頭をする
-  AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
+  PidGain pidGain = { 0.036, 0.02, 0.03 };
+  IMUAngleRotation preAR(robot, preTargetAngle, basePower, isClockwise, pidGain);
   preAR.run();
 
   // 動作安定のためのスリープ
@@ -138,6 +139,9 @@ void MiniFigCameraAction::run()
   // 後退
   DistanceStraight back(robot, backTargetDistance, -backSpeed);
   back.run();
+
+  // 綺麗な写真の撮影のためのスリープ
+  this_thread::sleep_for(chrono::milliseconds(100));
 
   // 判定用の写真を撮影
   cv::Mat frame;
@@ -159,6 +163,13 @@ void MiniFigCameraAction::run()
       thread([filePath, uploadFileName] {
         ImageUploader::uploadImage(filePath, uploadFileName, 3);
       }).detach();
+    } else if(!robot.getMiniFigDirectionResult().wasDetected) {
+      // 判定失敗時用のエンドポイントに１枚目をアップロード
+      string positionImageName = "Fig_" + to_string(position);
+      FrameSave::save(frame, filePath, positionImageName);
+      thread([filePath, positionImageName] {
+        ImageUploader::uploadMiniFigImage(filePath, positionImageName, 3);
+      }).detach();
     }
 
   } else if(robot.getMiniFigDirectionResult().wasDetected) {
@@ -170,17 +181,13 @@ void MiniFigCameraAction::run()
       ImageUploader::uploadImage(filePath, uploadFileName, 3);
     }).detach();
   } else {
-    // 一回目検出falseなら、残り、3回の撮影は確定する。
-    // 一回目の撮影でミニフィグが検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
+    // 一回目検出falseなら、残り、2~4枚目を判定失敗時用のエンドポイントにアップロード。
     cout << "ミニフィグ向き判定用写真の撮影" << endl;
     string positionImageName = "Fig_" + to_string(position);
     FrameSave::save(frame, filePath, positionImageName);
-    // 最後のポジションの撮影時のみ非同期で画像をアップロード
-    if(position == 3) {
-      thread([filePath, positionImageName] {
-        ImageUploader::uploadImage(filePath, positionImageName, 3);
-      }).detach();
-    }
+    thread([filePath, positionImageName] {
+      ImageUploader::uploadMiniFigImage(filePath, positionImageName, 3);
+    }).detach();
   }
 
   // 動作安定のためのスリープ
@@ -202,6 +209,7 @@ void MiniFigCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
+  PidGain postPidGain = { 0.036, 0.02, 0.03 };
+  IMUAngleRotation postAR(robot, postTargetAngle, basePower, !isClockwise, postPidGain);
   postAR.run();
 }
