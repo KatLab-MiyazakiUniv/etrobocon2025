@@ -11,14 +11,14 @@ using json = nlohmann::json;
 
 BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise,
                                                      int _preTargetAngle, int _postTargetAngle,
-                                                     double _targetRotationSpeed, double _threshold,
+                                                     int _basePower, double _threshold,
                                                      double _minArea, const cv::Rect _roi,
                                                      int _position)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
     postTargetAngle(_postTargetAngle),
-    targetRotationSpeed(_targetRotationSpeed),
+    basePower(_basePower),
     threshold(_threshold),
     minArea(_minArea),
     roi(_roi),
@@ -132,11 +132,12 @@ void BackgroundPlaCameraAction::run()
   if(!isMetPreCondition()) return;
 
   // 撮影のため回頭
-  AngleRotation preRotation(robot, preTargetAngle, targetRotationSpeed, isClockwise);
+  PidGain prePidGain = { 0.036, 0.02, 0.03 };
+  IMUAngleRotation preRotation(robot, preTargetAngle, basePower, isClockwise, prePidGain);
   preRotation.run();
 
-  // 動作安定のためのスリープ
-  this_thread::sleep_for(chrono::milliseconds(10));
+  // 綺麗な写真の撮影のためのスリープ
+  this_thread::sleep_for(chrono::milliseconds(100));
 
   PlaCameraAction plaCameraAction(robot, threshold, minArea, roi);
 
@@ -199,6 +200,7 @@ void BackgroundPlaCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  AngleRotation postRotation(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
+  PidGain postPidGain = { 0.036, 0.02, 0.03 };
+  IMUAngleRotation postRotation(robot, postTargetAngle, basePower, !isClockwise, postPidGain);
   postRotation.run();
 }

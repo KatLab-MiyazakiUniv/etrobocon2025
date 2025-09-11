@@ -8,7 +8,7 @@
 #define BACKGROUND_PLACAMERA_ACTION_H
 
 #include "PlaCameraAction.h"
-#include "AngleRotation.h"
+#include "IMUAngleRotation.h"
 #include "Robot.h"
 #include "FrameSave.h"
 #include "ImageUploader.h"
@@ -25,14 +25,14 @@ class BackgroundPlaCameraAction : public CompositeMotion {
    * @param _isClockwise 時計回りかどうか
    * @param _preTargetAngle カメラを風景に向けるための回頭角度
    * @param _postTargetAngle 黒線復帰のための回頭角度
-   * @param _targetRotationSpeed 目標回頭速度
+   * @param _basePower 回頭基準パワー値
    * @param _threshold 風景検出のしきい値
    * @param _minArea 最小面積
    * @param _roi 動体検出用の注目領域
    * @param _position 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
    */
   BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
-                            int _postTargetAngle, double _targetRotationSpeed, double _threshold,
+                            int _postTargetAngle, int _basePower, double _threshold,
                             double _minArea, const cv::Rect roi, int _position);
 
   /**
@@ -41,14 +41,14 @@ class BackgroundPlaCameraAction : public CompositeMotion {
   void run() override;
 
  private:
-  bool isClockwise = false;            // 回頭方向
-  int preTargetAngle = 90;             // カメラを風景に向けるための回頭角度
-  int postTargetAngle = 90;            // 黒線復帰のための回頭角度
-  double targetRotationSpeed = 200.0;  // 目標回頭速度
-  double threshold = 30.0;             // 風景検出のしきい値
-  double minArea = 400.0;              // 最小面積
-  int position = 0;                    // 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
-  cv::Rect roi;                        // 動体検出用の注目領域
+  bool isClockwise = false;  // 回頭方向
+  int preTargetAngle = 90;   // カメラを風景に向けるための回頭角度
+  int postTargetAngle = 90;  // 黒線復帰のための回頭角度
+  int basePower = 50;        // 回頭基準パワー値
+  double threshold = 30.0;   // 風景検出のしきい値
+  double minArea = 400.0;    // 最小面積
+  int position = 0;          // 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
+  cv::Rect roi;              // 動体検出用の注目領域
   const std::string detectionTargetPath
       = "etrobocon2025/datafiles/detection_target";  // 判定用画像ディレクトリのパス
   const std::string detectionTargetName = "background";  // 風景向き判定用画像ファイル名

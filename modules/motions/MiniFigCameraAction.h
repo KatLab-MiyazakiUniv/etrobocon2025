@@ -9,7 +9,7 @@
 
 #include "SystemInfo.h"
 #include "CompositeMotion.h"
-#include "AngleRotation.h"
+#include "IMUAngleRotation.h"
 #include "DistanceStraight.h"
 #include "FrameSave.h"
 #include "ImageUploader.h"
@@ -24,7 +24,7 @@ class MiniFigCameraAction : public CompositeMotion {
    * カメラをミニフィグに向けるための回頭方向　true:時計回り, false:反時計回り
    * @param _preTargetAngle カメラをミニフィグに向けるための回頭角度
    * @param _postTargetAngle 黒線復帰のための回頭角度
-   * @param _targetRotationSpeed 撮影前後の回頭のための目標速度
+   * @param _basePower 撮影前後の回頭のための基準パワー値
    * @param _backTargetDistance 撮影前の後退距離
    * @param _forwardTargetDistance 撮影後の前進距離
    * @param _backSpeed 撮影前の後退速度の絶対値
@@ -32,9 +32,8 @@ class MiniFigCameraAction : public CompositeMotion {
    * @param _position 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
    */
   MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle,
-                      double _targetRotationSpeed, double _backTargetDistance,
-                      double _forwardTargetDistance, double _backSpeed, double _forwardSpeed,
-                      int _position);
+                      int _basePower, double _backTargetDistance, double _forwardTargetDistance,
+                      double _backSpeed, double _forwardSpeed, int _position);
 
   /**
    * @brief ミニフィグの向きを判定し、必要なら撮影動作をスキップする準備処理
@@ -42,11 +41,11 @@ class MiniFigCameraAction : public CompositeMotion {
   void run() override;
 
  private:
-  bool isClockwise = false;          // カメラをミニフィグに向けるための回頭方向
-  int preTargetAngle = 90;           // カメラをミニフィグに向けるための回頭角度
-  int postTargetAngle = 90;          // 黒線復帰のための目標角度
-  double targetRotationSpeed = 200;  // 撮影前後の回頭のための目標速度
-  double backTargetDistance = 150;   // 撮影前の後退距離
+  bool isClockwise = false;         // カメラをミニフィグに向けるための回頭方向
+  int preTargetAngle = 90;          // カメラをミニフィグに向けるための回頭角度
+  int postTargetAngle = 90;         // 黒線復帰のための目標角度
+  int basePower = 50;               // 撮影前後の回頭のための基準パワー値
+  double backTargetDistance = 150;  // 撮影前の後退距離
   double forwardTargetDistance = 150;  // 撮影後の前進距離
   double backSpeed = 200;              // 撮影後の後退速度
   double forwardSpeed = 200;           // 撮影前の前進速度

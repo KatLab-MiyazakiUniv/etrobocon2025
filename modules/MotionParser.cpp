@@ -247,7 +247,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // MCA: ミニフィグのカメラ撮影動作
         // [1]:int フロントカメラをミニフィグに向けるための回頭角度[deg],
         // [2]:int 黒線復帰のための回頭角度[deg],
-        // [3]:double 撮影前後の回頭のための目標速度[mm/s],
+        // [3]:int 撮影前後の回頭のための基準パワー値,
         // [4]:double 撮影前の後退距離[mm],
         // [5]:double 撮影後の前進距離[mm],
         // [6]:double 撮影前の後退速度の絶対値[mm/s],
@@ -256,7 +256,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [9]:int 撮影位置(0が初期位置)
       case COMMAND::MCA: {
         auto mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]),
-                                           stoi(params[1]), stoi(params[2]), stod(params[3]),
+                                           stoi(params[1]), stoi(params[2]), stoi(params[3]),
                                            stod(params[4]), stod(params[5]), stod(params[6]),
                                            stod(params[7]), stoi(params[9]));
         motionList.push_back(mca);
@@ -268,7 +268,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [1]:bool isClockwise（"clockwise"/"anticlockwise"）
         // [2]:int preTargetAngle
         // [3]:int postTargetAngle
-        // [4]:double 回頭速度
+        // [4]:int 回頭基準パワー値
         // [5]:double threshold（動体検出用）
         // [6]:double minArea（動体矩形とみなす最小面積）
         // [7]:int ROIの左上X座標
@@ -284,7 +284,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
 
         auto bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]),
-                                                 stoi(params[3]), stod(params[4]), stod(params[5]),
+                                                 stoi(params[3]), stoi(params[4]), stod(params[5]),
                                                  stod(params[6]), roi, stoi(params[11]));
 
         motionList.push_back(bca);
