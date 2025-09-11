@@ -114,6 +114,7 @@ bool ImageUploader::uploadMiniFigImage(const std::string& filePath,
     attempts++;
   }
 
-  std::cerr << "ミニフィグ画像のアップロードが" << maxAttempts << "回の試行後に失敗しました" << std::endl;
+  std::cerr << "ミニフィグ画像のアップロードが" << maxAttempts << "回の試行後に失敗しました"
+            << std::endl;
   return false;
 }
