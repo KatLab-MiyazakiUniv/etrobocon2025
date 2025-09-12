@@ -5,6 +5,10 @@
  */
 
 #include "Pid.h"
+#include <fstream>
+#include <chrono>
+
+std::ofstream globalLogFile("../../control_log.txt", std::ios::app);
 
 PidGain::PidGain(double _kp, double _ki, double _kd)
   // pidゲインが負の値にならないようにする
@@ -67,6 +71,14 @@ double Pid::calculatePid(double currentValue, double delta)
   double i = pidGain.ki * integral;
   // D制御の計算を行う
   double d = pidGain.kd * filteredDerivative;
+
+  // PIDログ出力
+  if(globalLogFile.is_open()) {
+    auto now = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+    globalLogFile << "[PID] 時刻=" << duration.count() << " 目標=" << targetValue
+                  << " 現在=" << currentValue << " P=" << p << " I=" << i << " D=" << d << "\n";
+  }
 
   // 操作量 = P制御 + I制御 + D制御
   return (p + i + d);
