@@ -7,8 +7,9 @@
 #include "AngleRotation.h"
 
 AngleRotation::AngleRotation(Robot& _robot, int _targetAngle, double _speed, bool _isClockwise)
-  : Rotation(_robot, _speed, _isClockwise),
+  : Rotation(_robot, _isClockwise),
     targetAngle(_targetAngle),
+    speed(_speed),
     targetLeftDistance(0.0),
     targetRightDistance(0.0)
 {
@@ -28,6 +29,10 @@ void AngleRotation::prepare()
   // 目標走行距離を方向に応じて設定
   targetLeftDistance = initLeftMileage + targetDistance * leftSign;
   targetRightDistance = initRightMileage + targetDistance * rightSign;
+
+  // モーター速度を設定
+  motorController.setLeftMotorSpeed(speed * leftSign);
+  motorController.setRightMotorSpeed(speed * rightSign);
 }
 
 bool AngleRotation::isMetPreCondition()
@@ -62,4 +67,9 @@ bool AngleRotation::isMetContinuationCondition()
     return false;
   }
   return true;
+}
+
+void AngleRotation::updateMotorControl()
+{
+  // 固定制御のため何もしない
 }
