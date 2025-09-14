@@ -254,11 +254,25 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [7]:double 撮影後の前進速度の絶対値[mm/s],
         // [8]:string 回頭の方向(clockwise or anticlockwise),
         // [9]:int 撮影位置(0が初期位置)
+        // [10]:double kp（回頭PIDのP値）[オプション]
+        // [11]:double ki（回頭PIDのI値）[オプション]
+        // [12]:double kd（回頭PIDのD値）[オプション]
       case COMMAND::MCA: {
-        auto mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]),
-                                           stoi(params[1]), stoi(params[2]), stoi(params[3]),
-                                           stod(params[4]), stod(params[5]), stod(params[6]),
-                                           stod(params[7]), stoi(params[9]));
+        MiniFigCameraAction* mca;
+        if (params.size() >= 13) {
+          // PID値が指定されている場合
+          mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]),
+                                        stoi(params[1]), stoi(params[2]), stoi(params[3]),
+                                        stod(params[4]), stod(params[5]), stod(params[6]),
+                                        stod(params[7]), stoi(params[9]),
+                                        stod(params[10]), stod(params[11]), stod(params[12]));
+        } else {
+          // PID値が指定されていない場合、デフォルト値を使用
+          mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]),
+                                        stoi(params[1]), stoi(params[2]), stoi(params[3]),
+                                        stod(params[4]), stod(params[5]), stod(params[6]),
+                                        stod(params[7]), stoi(params[9]));
+        }
         motionList.push_back(mca);
 
         break;
@@ -276,6 +290,9 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [9]:int ROIの幅
         // [10]:int ROIの高さ
         // [11]:int position（0=初期位置）
+        // [12]:double kp（回頭PIDのP値）[オプション]
+        // [13]:double ki（回頭PIDのI値）[オプション]
+        // [14]:double kd（回頭PIDのD値）[オプション]
 
       case COMMAND::BCA: {
         cv::Rect roi;
@@ -283,9 +300,19 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         bool isClockwise = convertBool("BCA", params[1]);
         roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
 
-        auto bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]),
-                                                 stoi(params[3]), stoi(params[4]), stod(params[5]),
-                                                 stod(params[6]), roi, stoi(params[11]));
+        BackgroundPlaCameraAction* bca;
+        if (params.size() >= 15) {
+          // PID値が指定されている場合
+          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]),
+                                              stoi(params[3]), stoi(params[4]), stod(params[5]),
+                                              stod(params[6]), roi, stoi(params[11]),
+                                              stod(params[12]), stod(params[13]), stod(params[14]));
+        } else {
+          // PID値が指定されていない場合、デフォルト値を使用
+          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]),
+                                              stoi(params[3]), stoi(params[4]), stod(params[5]),
+                                              stod(params[6]), roi, stoi(params[11]));
+        }
 
         motionList.push_back(bca);
         break;

@@ -12,7 +12,8 @@ using json = nlohmann::json;
 MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
                                          int _postTargetAngle, int _basePower,
                                          double _backTargetDistance, double _forwardTargetDistance,
-                                         double _backSpeed, double _forwardSpeed, int _position)
+                                         double _backSpeed, double _forwardSpeed, int _position,
+                                         double _kp, double _ki, double _kd)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
@@ -22,7 +23,10 @@ MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _
     forwardTargetDistance(_forwardTargetDistance),
     backSpeed(_backSpeed),
     forwardSpeed(_forwardSpeed),
-    position(_position)
+    position(_position),
+    kp(_kp),
+    ki(_ki),
+    kd(_kd)
 {
 }
 
@@ -129,7 +133,7 @@ void MiniFigCameraAction::run()
   }
 
   // 撮影のための回頭をする
-  PidGain pidGain = { 0.036, 0.02, 0.03 };
+  PidGain pidGain = { kp, ki, kd };
   IMUAngleRotation preAR(robot, preTargetAngle, basePower, isClockwise, pidGain);
   preAR.run();
 
@@ -209,7 +213,7 @@ void MiniFigCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  PidGain postPidGain = { 0.036, 0.02, 0.03 };
+  PidGain postPidGain = { kp, ki, kd };
   IMUAngleRotation postAR(robot, postTargetAngle, basePower, !isClockwise, postPidGain);
   postAR.run();
 }

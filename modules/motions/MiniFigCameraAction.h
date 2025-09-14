@@ -30,10 +30,14 @@ class MiniFigCameraAction : public CompositeMotion {
    * @param _backSpeed 撮影前の後退速度の絶対値
    * @param _forwardSpeed 撮影後の前進速度の絶対値
    * @param _position 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
+   * @param _kp 回頭PIDのP値
+   * @param _ki 回頭PIDのI値
+   * @param _kd 回頭PIDのD値
    */
   MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle,
                       int _basePower, double _backTargetDistance, double _forwardTargetDistance,
-                      double _backSpeed, double _forwardSpeed, int _position);
+                      double _backSpeed, double _forwardSpeed, int _position,
+                      double _kp = 0.036, double _ki = 0.02, double _kd = 0.03);
 
   /**
    * @brief ミニフィグの向きを判定し、必要なら撮影動作をスキップする準備処理
@@ -50,6 +54,9 @@ class MiniFigCameraAction : public CompositeMotion {
   double backSpeed = 200;              // 撮影後の後退速度
   double forwardSpeed = 200;           // 撮影前の前進速度
   int position = 0;  // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
+  double kp = 0.036;  // 回頭PIDのP値
+  double ki = 0.02;   // 回頭PIDのI値
+  double kd = 0.03;   // 回頭PIDのD値
   const std::string detectionTargetPath
       = "etrobocon2025/datafiles/detection_target";  // 判定用画像ディレクトリのパス
   const std::string detectionTargetName = "fig";  // ミニフィグ向き判定用画像ファイル名

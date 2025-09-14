@@ -13,7 +13,7 @@ BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isCloc
                                                      int _preTargetAngle, int _postTargetAngle,
                                                      int _basePower, double _threshold,
                                                      double _minArea, const cv::Rect _roi,
-                                                     int _position)
+                                                     int _position, double _kp, double _ki, double _kd)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
@@ -22,7 +22,10 @@ BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isCloc
     threshold(_threshold),
     minArea(_minArea),
     roi(_roi),
-    position(_position)
+    position(_position),
+    kp(_kp),
+    ki(_ki),
+    kd(_kd)
 {
 }
 
@@ -143,7 +146,7 @@ void BackgroundPlaCameraAction::run()
   if(!isMetPreCondition()) return;
 
   // 撮影のため回頭
-  PidGain prePidGain = { 0.036, 0.02, 0.03 };
+  PidGain prePidGain = { kp, ki, kd };
   IMUAngleRotation preRotation(robot, preTargetAngle, basePower, isClockwise, prePidGain);
   preRotation.run();
 
@@ -199,7 +202,7 @@ void BackgroundPlaCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  PidGain postPidGain = { 0.036, 0.02, 0.03 };
+  PidGain postPidGain = { kp, ki, kd };
   IMUAngleRotation postRotation(robot, postTargetAngle, basePower, !isClockwise, postPidGain);
   postRotation.run();
 }

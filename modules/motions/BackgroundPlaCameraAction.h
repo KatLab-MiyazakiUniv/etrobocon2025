@@ -30,10 +30,14 @@ class BackgroundPlaCameraAction : public CompositeMotion {
    * @param _minArea 最小面積
    * @param _roi 動体検出用の注目領域
    * @param _position 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
+   * @param _kp 回頭PIDのP値
+   * @param _ki 回頭PIDのI値
+   * @param _kd 回頭PIDのD値
    */
   BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
                             int _postTargetAngle, int _basePower, double _threshold,
-                            double _minArea, const cv::Rect roi, int _position);
+                            double _minArea, const cv::Rect roi, int _position,
+                            double _kp = 0.036, double _ki = 0.02, double _kd = 0.03);
 
   /**
    * @brief 撮影動作を実行する
@@ -49,6 +53,9 @@ class BackgroundPlaCameraAction : public CompositeMotion {
   double minArea = 400.0;    // 最小面積
   int position = 0;          // 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
   cv::Rect roi;              // 動体検出用の注目領域
+  double kp = 0.036;         // 回頭PIDのP値
+  double ki = 0.02;          // 回頭PIDのI値
+  double kd = 0.03;          // 回頭PIDのD値
   const std::string detectionTargetPath
       = "etrobocon2025/datafiles/detection_target";  // 判定用画像ディレクトリのパス
   const std::string detectionTargetName = "background";  // 風景向き判定用画像ファイル名
