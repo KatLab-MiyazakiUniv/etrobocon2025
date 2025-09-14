@@ -13,7 +13,8 @@ BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isCloc
                                                      int _preTargetAngle, int _postTargetAngle,
                                                      int _basePower, double _threshold,
                                                      double _minArea, const cv::Rect _roi,
-                                                     int _position, double _kp, double _ki, double _kd)
+                                                     int _position, double _kp, double _ki,
+                                                     double _kd)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),

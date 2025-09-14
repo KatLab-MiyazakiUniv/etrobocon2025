@@ -259,19 +259,18 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [12]:double kd（回頭PIDのD値）[オプション]
       case COMMAND::MCA: {
         MiniFigCameraAction* mca;
-        if (params.size() >= 13) {
+        if(params.size() >= 13) {
           // PID値が指定されている場合
-          mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]),
-                                        stoi(params[1]), stoi(params[2]), stoi(params[3]),
-                                        stod(params[4]), stod(params[5]), stod(params[6]),
-                                        stod(params[7]), stoi(params[9]),
-                                        stod(params[10]), stod(params[11]), stod(params[12]));
+          mca = new MiniFigCameraAction(
+              robot, convertBool(params[0], params[8]), stoi(params[1]), stoi(params[2]),
+              stoi(params[3]), stod(params[4]), stod(params[5]), stod(params[6]), stod(params[7]),
+              stoi(params[9]), stod(params[10]), stod(params[11]), stod(params[12]));
         } else {
           // PID値が指定されていない場合、デフォルト値を使用
-          mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]),
-                                        stoi(params[1]), stoi(params[2]), stoi(params[3]),
-                                        stod(params[4]), stod(params[5]), stod(params[6]),
-                                        stod(params[7]), stoi(params[9]));
+          mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]), stoi(params[1]),
+                                        stoi(params[2]), stoi(params[3]), stod(params[4]),
+                                        stod(params[5]), stod(params[6]), stod(params[7]),
+                                        stoi(params[9]));
         }
         motionList.push_back(mca);
 
@@ -301,17 +300,17 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
 
         BackgroundPlaCameraAction* bca;
-        if (params.size() >= 15) {
+        if(params.size() >= 15) {
           // PID値が指定されている場合
-          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]),
-                                              stoi(params[3]), stoi(params[4]), stod(params[5]),
-                                              stod(params[6]), roi, stoi(params[11]),
-                                              stod(params[12]), stod(params[13]), stod(params[14]));
+          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
+                                              stoi(params[4]), stod(params[5]), stod(params[6]),
+                                              roi, stoi(params[11]), stod(params[12]),
+                                              stod(params[13]), stod(params[14]));
         } else {
           // PID値が指定されていない場合、デフォルト値を使用
-          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]),
-                                              stoi(params[3]), stoi(params[4]), stod(params[5]),
-                                              stod(params[6]), roi, stoi(params[11]));
+          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
+                                              stoi(params[4]), stod(params[5]), stod(params[6]),
+                                              roi, stoi(params[11]));
         }
 
         motionList.push_back(bca);

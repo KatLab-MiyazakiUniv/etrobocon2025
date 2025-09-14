@@ -36,8 +36,8 @@ class BackgroundPlaCameraAction : public CompositeMotion {
    */
   BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
                             int _postTargetAngle, int _basePower, double _threshold,
-                            double _minArea, const cv::Rect roi, int _position,
-                            double _kp = 0.036, double _ki = 0.02, double _kd = 0.03);
+                            double _minArea, const cv::Rect roi, int _position, double _kp = 0.036,
+                            double _ki = 0.02, double _kd = 0.03);
 
   /**
    * @brief 撮影動作を実行する
