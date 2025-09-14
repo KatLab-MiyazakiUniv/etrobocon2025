@@ -5,6 +5,7 @@ datafiles/processed_images
 datafiles/models
 datafiles/figures
 datafiles/detection_target
+datafiles/plarail
 tests/test_images
 third_party
 yolo_detection_system/result
