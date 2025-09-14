@@ -33,9 +33,9 @@ bool BackgroundPlaCameraAction::isMetPreCondition()
     return true;
   }
 
-  // 初回で判定失敗した場合は動作しない
+  // 風景向き判定を失敗した場合、初回にプラレール撮影を行い、以後は動作しない
   if(!robot.getBackgroundDirectionResult().wasDetected) {
-    cout << "初回で判定を失敗したため、風景の撮影動作は行わない。" << endl;
+    cout << "風景向き判定を失敗したため、撮影動作は行わない。" << endl;
     return false;
   }
 
@@ -152,17 +152,16 @@ void BackgroundPlaCameraAction::run()
 
   PlaCameraAction plaCameraAction(robot, threshold, minArea, roi);
 
-  cv::Mat frame;
-
-  // 判定用のフレームの獲得
-  for(int i = 0; i < 5; ++i) {
-    robot.getCameraCaptureInstance().getFrame(frame);
-    this_thread::sleep_for(chrono::milliseconds(33));
-  }
-
   // もし初回で正面であればPlaCameraActionを実行、他の方向なら２回目でPlaCameraActionを実行、判定できなければ4回PlaCameraActionを実行
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は1回目(初期位置で)の撮影でしか行わない
+    // 判定用のフレームの獲得
+    cv::Mat frame;
+    for(int i = 0; i < 5; ++i) {
+      robot.getCameraCaptureInstance().getFrame(frame);
+      this_thread::sleep_for(chrono::milliseconds(33));
+    }
+    cout << "風景向き判定を開始" << endl;
     detectDirection(frame);
 
     // もし判定結果が正面であればアップロード用のプラレール画像を取得する
@@ -176,8 +175,7 @@ void BackgroundPlaCameraAction::run()
         ImageUploader::uploadImage(filePath, fileName, 3);
       }).detach();
     } else if(!robot.getBackgroundDirectionResult().wasDetected) {
-      // 判定失敗時用のエンドポイントに１枚目をアップロード
-      cout << "風景向き判定用写真の撮影" << endl;
+      // 判定失敗時もプラレール撮影を行う
       string positionImageName = "bestframe_" + to_string(position);
       plaCameraAction.setImageSaveName(positionImageName);
       plaCameraAction.run();
