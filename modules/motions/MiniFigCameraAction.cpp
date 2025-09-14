@@ -151,6 +151,8 @@ void MiniFigCameraAction::run()
   cv::Mat frame;
   for(int i = 0; i < 5; i++) {
     robot.getCameraCaptureInstance().getFrame(frame);
+    // 動作安定のためのスリープ
+    this_thread::sleep_for(chrono::milliseconds(33));
   }
 
   if(position == 0) {
