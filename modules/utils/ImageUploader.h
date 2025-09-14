@@ -8,6 +8,7 @@
 #define IMAGE_UPLOADER_H_
 
 #include "CommandExecutor.h"
+#include "SystemInfo.h"
 #include <string>
 #include <cstdlib>
 #include <iostream>
