@@ -8,7 +8,7 @@
 #include <fstream>
 #include <chrono>
 
-std::ofstream globalLogFile("../../control_log.txt", std::ios::app);
+std::ofstream globalLogFile("etrobocon2025/control_log.txt", std::ios::app);
 
 PidGain::PidGain(double _kp, double _ki, double _kd)
   // pidゲインが負の値にならないようにする

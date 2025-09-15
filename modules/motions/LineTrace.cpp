@@ -33,7 +33,7 @@ void LineTrace::run()
 
   // ログファイルを空にする
   globalLogFile.close();
-  globalLogFile.open("../../control_log.txt", std::ios::trunc);
+  globalLogFile.open("etrobocon2025/control_log.txt", std::ios::trunc);
 
   // 左右で符号を変える
   int edgeSign = robot.getIsLeftEdge() ? -1 : 1;
