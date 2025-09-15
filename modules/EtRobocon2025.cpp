@@ -6,12 +6,18 @@
 
 #include "EtRobocon2025.h"
 #include "AreaMaster.h"
+#include "Battery.h"
 
 Robot EtRobocon2025::robot;  // Robotインスタンス
 
 void EtRobocon2025::start()
 {
   std::cout << "Hello KATLAB" << std::endl;
+
+  // バッテリー情報表示
+  spikeapi::Battery battery;
+  std::cout << "バッテリー電圧: " << battery.getVoltage() << "mV" << std::endl;
+  std::cout << "バッテリー電流: " << battery.getCurrent() << "mA" << std::endl;
   robot.getIMUControllerInstance().initializeOffset();
   robot.getIMUControllerInstance().calculateCorrectionMatrix();
 
