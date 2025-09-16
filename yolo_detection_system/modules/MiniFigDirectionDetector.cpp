@@ -143,18 +143,24 @@ void MiniFigDirectionDetector::analyzeDetections(const vector<vector<float>>& ou
 
   const vector<float>& data = outputs[0];
 
-  // YOLO11 出力 shape: [1, 8, N]
-  int attributes = 8;
-  int numClasses = 8 - 4;  // 座標4つ以外はクラススコア
-  int numBoxes = data.size() / attributes;
+  // YOLOv5 出力 shape: [1, 25200, 9] (25200検出候補、各候補9属性:
+  // x,y,w,h,conf,class0,class1,class2,class3)
+  int numBoxes = 25200;  // 検出候補の総数
+  int attributes = 9;    // ボックスの属性数（座標4 + 信頼度1 + クラス4）
 
   // 検出候補の数だけループを回す
-  for(int i = 0; i < numBoxes; i++) {
+  for(int i = 0; i < numBoxes; ++i) {
+    int idx = i * attributes;
+
+    // 処理中の候補の先頭のデータ位置を計算
+    float conf = data[idx + 4];
+    if(conf < CONFIDENCE_THRESHOLD) continue;
+
     // クラススコアの最大値とクラスIDを取得
     float maxScore = -1.0f;
     int bestClass = -1;
-    for(int j = 0; j < numClasses; j++) {
-      float score = data[i + numBoxes * (4 + j)];
+    for(int j = 0; j < 4; j++) {
+      float score = data[idx + 5 + j];
       if(score > maxScore) {
         maxScore = score;
         bestClass = j;
@@ -163,11 +169,10 @@ void MiniFigDirectionDetector::analyzeDetections(const vector<vector<float>>& ou
 
     // 最大クラススコアが閾値を超えている場合のみ処理を行う
     if(maxScore < CONFIDENCE_THRESHOLD) continue;
-
-    float cx = data[i];
-    float cy = data[i + numBoxes];
-    float w = data[i + numBoxes * 2];
-    float h = data[i + numBoxes * 3];
+    float cx = data[idx + 0];
+    float cy = data[idx + 1];
+    float w = data[idx + 2];
+    float h = data[idx + 3];
 
     // バウンディングボックスの中心座標とサイズを表す値
     int centerX = static_cast<int>((cx - padX) / scale);
