@@ -18,7 +18,7 @@ void FrameSave::save(cv::Mat& frame, const std::string& filePath, const std::str
     }
   }
 
-  std::string imagePath = filePath + "/" + fileName + imgExtension;
+  std::string imagePath = filePath + "/" + fileName + JPEG_EXTENSION;
   if(!cv::imwrite(imagePath, frame)) {
     std::cerr << "画像の保存に失敗しました: " << imagePath << std::endl;
   }

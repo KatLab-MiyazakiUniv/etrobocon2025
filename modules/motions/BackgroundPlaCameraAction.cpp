@@ -13,7 +13,8 @@ BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isCloc
                                                      int _preTargetAngle, int _postTargetAngle,
                                                      int _basePower, double _threshold,
                                                      double _minArea, const cv::Rect _roi,
-                                                     int _position)
+                                                     int _position, double _kp, double _ki,
+                                                     double _kd)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
@@ -22,20 +23,34 @@ BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isCloc
     threshold(_threshold),
     minArea(_minArea),
     roi(_roi),
-    position(_position)
+    position(_position),
+    kp(_kp),
+    ki(_ki),
+    kd(_kd)
 {
 }
 
 bool BackgroundPlaCameraAction::isMetPreCondition()
 {
-  if(position != 0 && robot.getBackgroundDirectionResult().wasDetected
-     && robot.getBackgroundDirectionResult().direction
-            != static_cast<BackgroundDirection>(position)) {
-    cout << "正面の撮影位置ではないため風景の撮影動作は行わない。" << endl;
-    return false;
-  } else {
+  // 初回（position=0）は常に動作する
+  if(position == 0) {
     return true;
   }
+
+  // 風景向き判定を失敗した場合、初回にプラレール撮影を行い、以後は動作しない
+  if(!robot.getBackgroundDirectionResult().wasDetected) {
+    cout << "風景向き判定を失敗したため、撮影動作は行わない。" << endl;
+    return false;
+  }
+
+  // 判定成功したが、現在位置が正面位置ではない場合は動作しない
+  if(robot.getBackgroundDirectionResult().direction != static_cast<BackgroundDirection>(position)) {
+    cout << "現在位置が正面位置ではないため、風景の撮影動作は行わない。" << endl;
+    return false;
+  }
+
+  // 判定成功し、現在位置が正面位置の場合は動作する
+  return true;
 }
 
 // 判定動作を行う関数
@@ -132,7 +147,7 @@ void BackgroundPlaCameraAction::run()
   if(!isMetPreCondition()) return;
 
   // 撮影のため回頭
-  PidGain prePidGain = { 0.036, 0.02, 0.03 };
+  PidGain prePidGain = { kp, ki, kd };
   IMUAngleRotation preRotation(robot, preTargetAngle, basePower, isClockwise, prePidGain);
   preRotation.run();
 
@@ -141,17 +156,16 @@ void BackgroundPlaCameraAction::run()
 
   PlaCameraAction plaCameraAction(robot, threshold, minArea, roi);
 
-  cv::Mat frame;
-
-  // 判定用のフレームの獲得
-  for(int i = 0; i < 5; ++i) {
-    robot.getCameraCaptureInstance().getFrame(frame);
-    this_thread::sleep_for(chrono::milliseconds(33));
-  }
-
   // もし初回で正面であればPlaCameraActionを実行、他の方向なら２回目でPlaCameraActionを実行、判定できなければ4回PlaCameraActionを実行
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は1回目(初期位置で)の撮影でしか行わない
+    // 判定用のフレームの獲得
+    cv::Mat frame;
+    for(int i = 0; i < 5; ++i) {
+      robot.getCameraCaptureInstance().getFrame(frame);
+      this_thread::sleep_for(chrono::milliseconds(33));
+    }
+    cout << "風景向き判定を開始" << endl;
     detectDirection(frame);
 
     // もし判定結果が正面であればアップロード用のプラレール画像を取得する
@@ -165,10 +179,13 @@ void BackgroundPlaCameraAction::run()
         ImageUploader::uploadImage(filePath, fileName, 3);
       }).detach();
     } else if(!robot.getBackgroundDirectionResult().wasDetected) {
-      // 検出結果が未検出の場合は、PlaCameraActionを実行
-      cout << "風景向き判定用写真の撮影" << endl;
-      plaCameraAction.setImageSaveName("bestframe_" + to_string(position));
+      // 判定失敗時もプラレール撮影を行う
+      string positionImageName = "bestframe_" + to_string(position);
+      plaCameraAction.setImageSaveName(positionImageName);
       plaCameraAction.run();
+      thread([filePath = std::string(plaCameraAction.getFilePath()), positionImageName] {
+        ImageUploader::uploadImage(filePath, positionImageName, 3);
+      }).detach();
     }
 
   } else if(robot.getBackgroundDirectionResult().wasDetected) {
@@ -180,27 +197,13 @@ void BackgroundPlaCameraAction::run()
             fileName = plaCameraAction.getImageSaveName()] {
       ImageUploader::uploadImage(filePath, fileName, 3);
     }).detach();
-  } else {
-    // 一回目検出falseなら、残り、3回の撮影は確定する。
-    // 一回目の撮影で風景が検出されていない場合は、残り3つのすべてのpositionで撮影を行い、画像をpositionごとに保存する。
-    cout << "風景向き判定用写真の撮影" << endl;
-    string positionImageName = "bestframe_" + to_string(position);
-    plaCameraAction.setImageSaveName(positionImageName);
-    plaCameraAction.run();
-    // 最後のポジションの撮影時のみ非同期で画像をアップロード
-    if(position == 3) {
-      thread([filePath = std::string(plaCameraAction.getFilePath()),
-              fileName = plaCameraAction.getImageSaveName()] {
-        ImageUploader::uploadImage(filePath, fileName, 3);
-      }).detach();
-    }
   }
 
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  PidGain postPidGain = { 0.036, 0.02, 0.03 };
+  PidGain postPidGain = { kp, ki, kd };
   IMUAngleRotation postRotation(robot, postTargetAngle, basePower, !isClockwise, postPidGain);
   postRotation.run();
 }

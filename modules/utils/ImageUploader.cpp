@@ -23,10 +23,10 @@ bool ImageUploader::uploadImage(const std::string& filePath, const std::string& 
     return false;
   }
 
-  // 拡張子がない場合は.JPEGを追加
+  // 拡張子がない場合は拡張子を追加
   std::string processedFileName = uploadFileName;
   if(!uploadFileName.empty() && std::filesystem::path(uploadFileName).extension().empty()) {
-    processedFileName += ".JPEG";
+    processedFileName += JPEG_EXTENSION;
   }
 
   // フルパスを作成
@@ -78,10 +78,10 @@ bool ImageUploader::uploadMiniFigImage(const std::string& filePath,
     return false;
   }
 
-  // 拡張子がない場合は.JPEGを追加
+  // 拡張子がない場合は拡張子を追加
   std::string processedFileName = uploadFileName;
   if(!uploadFileName.empty() && std::filesystem::path(uploadFileName).extension().empty()) {
-    processedFileName += ".JPEG";
+    processedFileName += JPEG_EXTENSION;
   }
 
   // フルパスを作成
@@ -114,6 +114,7 @@ bool ImageUploader::uploadMiniFigImage(const std::string& filePath,
     attempts++;
   }
 
-  std::cerr << "ミニフィグ画像のアップロードが" << maxAttempts << "回の試行後に失敗しました" << std::endl;
+  std::cerr << "ミニフィグ画像のアップロードが" << maxAttempts << "回の試行後に失敗しました"
+            << std::endl;
   return false;
 }
