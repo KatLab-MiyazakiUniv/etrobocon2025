@@ -51,7 +51,7 @@ class IMUAngleRotation : public Rotation {
   void updateMotorControl() override;
 
  private:
-  static constexpr float TOLERANCE = 1.0f;  // 許容誤差
+  static constexpr float TOLERANCE = 2.0f;  // 許容誤差
   int targetAngle;                          // 目標回転角度(deg) 0~360
   int basePower;                            // 基準パワー値
   Pid anglePid;                             // 角度PID制御クラス
