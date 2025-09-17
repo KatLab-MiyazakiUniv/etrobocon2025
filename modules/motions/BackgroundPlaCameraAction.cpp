@@ -37,7 +37,7 @@ bool BackgroundPlaCameraAction::isMetPreCondition()
     return true;
   }
 
-  // 風景向き判定を失敗した場合、初回にプラレール撮影を行い、以後は動作しない
+  // 風景向き判定を失敗した場合、初回でプラレール撮影を行っているため、2回目以降は撮影動作を行わない
   if(!robot.getBackgroundDirectionResult().wasDetected) {
     cout << "風景向き判定を失敗したため、撮影動作は行わない。" << endl;
     return false;
@@ -156,7 +156,9 @@ void BackgroundPlaCameraAction::run()
 
   PlaCameraAction plaCameraAction(robot, threshold, minArea, roi);
 
-  // もし初回で正面であればPlaCameraActionを実行、他の方向なら２回目でPlaCameraActionを実行、判定できなければ4回PlaCameraActionを実行
+  // もし初回で正面であれば1回目のみPlaCameraActionを実行。他の方向なら２回目のみPlaCameraActionを実行。
+  // 判定できなければ4回PlaCameraActionを実行すべきだが、本番の大会では時間の都合上、
+  // 初回正面判定と同様、1回目のみPlaCameraActionを実行。
   if(position == 0) {
     // 向きの判定とresultの更新(detection)は1回目(初期位置で)の撮影でしか行わない
     // 判定用のフレームの獲得
