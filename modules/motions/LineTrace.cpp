@@ -5,10 +5,6 @@
  */
 
 #include "LineTrace.h"
-#include <fstream>
-#include <chrono>
-
-extern std::ofstream globalLogFile;
 
 LineTrace::LineTrace(Robot& _robot, double _targetSpeed, int _targetBrightness,
                      const PidGain& _pidGain)
@@ -31,10 +27,6 @@ void LineTrace::run()
   // 事前準備
   prepare();
 
-  // ログファイルを空にする
-  globalLogFile.close();
-  globalLogFile.open("etrobocon2025/control_log.txt", std::ios::trunc);
-
   // 左右で符号を変える
   int edgeSign = robot.getIsLeftEdge() ? -1 : 1;
 
@@ -42,50 +34,19 @@ void LineTrace::run()
 
   // 継続条件を満たしている間ループ
   while(isMetContinuationCondition()) {
-    // Speed用PID計算開始ログ
-    if(globalLogFile.is_open()) {
-      globalLogFile << "[Speed-Right-Start]";
-    }
+    // 初期Speed値を計算
     double baseRightPower = speedCalculator.calculateRightMotorPower();
-
-    if(globalLogFile.is_open()) {
-      globalLogFile << "[Speed-Left-Start]";
-    }
     double baseLeftPower = speedCalculator.calculateLeftMotorPower();
 
-    // ライントレース用PID計算開始ログ
-    if(globalLogFile.is_open()) {
-      globalLogFile << "[LineTrace-Start]";
-    }
-
     // PIDで旋回値を計算
-    // 2点移動平均でセンサー値を平滑化
-    static double prevReflection = 0.0;
-    double currentReflection = robot.getColorSensorInstance().getReflection();
-    if (prevReflection == 0.0) {
-      prevReflection = currentReflection;  // 初回は現在値をそのまま使用
-    }
-    double smoothedReflection = (currentReflection + prevReflection) / 2.0;
-    prevReflection = currentReflection;
-
-    double turningPower = pid.calculatePid(smoothedReflection) * edgeSign;
+    double turningPower
+        = pid.calculatePid(robot.getColorSensorInstance().getReflection()) * edgeSign;
 
     // モータのPower値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
     double rightPower = baseRightPower > 0.0 ? std::max(baseRightPower - turningPower, 0.0)
                                              : std::min(baseRightPower + turningPower, 0.0);
     double leftPower = baseLeftPower > 0.0 ? std::max(baseLeftPower + turningPower, 0.0)
                                            : std::min(baseLeftPower - turningPower, 0.0);
-
-    // ライントレースログ出力
-    if(globalLogFile.is_open()) {
-      auto now = std::chrono::steady_clock::now();
-      auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
-      globalLogFile << "[LineTrace] 時刻=" << duration.count()
-                    << " 反射=" << currentReflection
-                    << " 平滑=" << smoothedReflection
-                    << " 目標=" << targetBrightness << " 旋回=" << turningPower << "\n";
-    }
-
     robot.getMotorControllerInstance().setRightMotorPower(rightPower);
     robot.getMotorControllerInstance().setLeftMotorPower(leftPower);
 
