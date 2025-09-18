@@ -8,6 +8,8 @@
 #define COMMAND_EXECUTOR_H
 
 #include <string>
+#include <thread>
+#include <chrono>
 
 class CommandExecutor {
  public:

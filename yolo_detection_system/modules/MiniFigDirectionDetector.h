@@ -17,7 +17,7 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 
-#define MODEL_INPUT_SIZE 640       // モデルの入力画像サイズ（640x640）
+#define MODEL_INPUT_SIZE 672       // モデルの入力画像サイズ（640x640）
 #define CONFIDENCE_THRESHOLD 0.5f  // 検出結果を採用する最低信頼度の閾値
 #define NMS_THRESHOLD 0.5f         // 検出ボックス同士の重なりを判断する閾値
 
@@ -28,7 +28,7 @@ class MiniFigDirectionDetector {
    * @param YOLOモデルのパス
    */
   MiniFigDirectionDetector(const std::string& modelPath
-                           = "../datafiles/models/11n_100epoch_&_650imgsz_fig.onnx");
+                           = "../datafiles/models/11s_125epoch_&_660imgsz_data0919_fig.onnx");
 
   /**
    * @brief 入力画像からミニフィグの向きを判定し、結果を result に格納する
