@@ -7,7 +7,7 @@ CXX := g++
 SRCDIR := modules
 INCLUDEDIR := modules
 TARGET_DIR := bin
-OBJ := $(TARGET_DIR)/obj
+OBJDIR := $(TARGET_DIR)/obj
 TARGET := camera_app
 
 # Compiler and Linker Flags
