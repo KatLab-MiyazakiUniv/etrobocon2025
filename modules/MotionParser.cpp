@@ -148,27 +148,29 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [1]:double 超音波距離[mm], [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int X座標[px],
       // [5-7]:double PIDゲイン, [8-10]int lowerHSV, [11-13]int upperHSV, [14-17]int ROI座標[px]
       // ([14]左上隅のx座標, [15]左上隅のy座標, [16]幅, [17]高さ), [18-19]int 解像度[px] ([18]幅,
-      // [19]高さ) 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      // [19]高さ)
+      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
       case COMMAND::UDCL: {
-        cv::Scalar lowerHSV, upperHSV;
-        cv::Rect roi;
-        cv::Size resolution;
-        std::unique_ptr<BoundingBoxDetector> detector;
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
-        lowerHSV = cv::Scalar(stoi(params[8]), stoi(params[9]), stoi(params[10]));
-        upperHSV = cv::Scalar(stoi(params[11]), stoi(params[12]), stoi(params[13]));
+        detectionRequest.command
+            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
+
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[8]), stoi(params[9]), stoi(params[10]));
+        detectionRequest.upperHSV
+            = cv::Scalar(stoi(params[11]), stoi(params[12]), stoi(params[13]));
 
         // パラメータ配列のサイズによってコンストラクタを切り替え
         if(params.size() > 19) {
           // ROI + 解像度
-          roi = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
-          resolution = cv::Size(stoi(params[18]), stoi(params[19]));
-          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi, resolution);
+          detectionRequest.roi
+              = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
+          detectionRequest.resolution = cv::Size(stoi(params[18]), stoi(params[19]));
         }
 
         auto udcl = new UltrasonicDistanceCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stod(params[3]), stoi(params[4]),
-            PidGain(stod(params[5]), stod(params[6]), stod(params[7])), std::move(detector));
+            PidGain(stod(params[5]), stod(params[6]), stod(params[7])), detectionRequest);
         motionList.push_back(udcl);
         break;
       }

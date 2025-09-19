@@ -8,12 +8,13 @@
 
 UltrasonicDistanceCameraLineTrace::UltrasonicDistanceCameraLineTrace(
     Robot& _robot, double _targetUltrasonicDistance, double _targetDistance, double _targetSpeed,
-    int _targetXCoordinate, const PidGain& _pidGain, std::unique_ptr<BoundingBoxDetector> _detector)
-  : CameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, *_detector),
+    int _targetXCoordinate, const PidGain& _pidGain,
+    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+  : CameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest),
     targetUltrasonicDistance(_targetUltrasonicDistance),
     ultrasonicCount(0),
     targetDistance(_targetDistance),
-    detector(std::move(_detector))
+    detectionRequest(_detectionRequest)
 {
 }
 

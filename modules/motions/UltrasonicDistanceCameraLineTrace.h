@@ -21,10 +21,10 @@ class UltrasonicDistanceCameraLineTrace : public CameraPidTracking {
    * @param _pidGain PIDゲイン
    * @param _detector 画像処理クラスのポインタ
    */
-  UltrasonicDistanceCameraLineTrace(Robot& _robot, double _targetUltrasonicDistance,
-                                    double _targetDistance, double _targetSpeed,
-                                    int _targetXCoordinate, const PidGain& _pidGain,
-                                    std::unique_ptr<BoundingBoxDetector> _detector);
+  UltrasonicDistanceCameraLineTrace(
+      Robot& _robot, double _targetUltrasonicDistance, double _targetDistance, double _targetSpeed,
+      int _targetXCoordinate, const PidGain& _pidGain,
+      const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
 
   /**
    * @brief (指定距離まで||指定超音波距離認識する)だけカメラライントレースする
@@ -55,7 +55,7 @@ class UltrasonicDistanceCameraLineTrace : public CameraPidTracking {
   double targetUltrasonicDistance;       // 指定超音波距離
   double targetDistance;                 // 目標距離
   double initDistance;                   // 実行前の走行距離
-  std::unique_ptr<BoundingBoxDetector> detector;  // 画像処理クラスのポインタ
+  CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 画像処理リクエスト
 };
 
 #endif
