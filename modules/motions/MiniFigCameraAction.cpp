@@ -9,7 +9,6 @@
 #include <iostream>
 
 using namespace std;
-using json = nlohmann::json;
 
 MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
                                          int _postTargetAngle, int _basePower,
