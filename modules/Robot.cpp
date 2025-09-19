@@ -16,6 +16,8 @@ Robot::Robot(SocketClient& client)
     display(),
     miniFigDirectionResult(),
     backgroundDirectionResult()
+    ultrasonicSensor(EPort::PORT_F),
+    imuController()
 {
 }
 
@@ -54,6 +56,11 @@ spikeapi::Display& Robot::getDisplayInstance()
   return display;
 }
 
+spikeapi::UltrasonicSensor& Robot::getUltrasonicSensorInstance()
+{
+  return ultrasonicSensor;
+}
+
 MiniFigDirectionResult& Robot::getMiniFigDirectionResult()
 {
   return miniFigDirectionResult;
@@ -72,4 +79,9 @@ void Robot::setIsLeftEdge(bool isLeft)
 bool Robot::getIsLeftEdge() const
 {
   return isLeftEdge;
+}
+
+IMUController& Robot::getIMUControllerInstance()
+{
+  return imuController;
 }

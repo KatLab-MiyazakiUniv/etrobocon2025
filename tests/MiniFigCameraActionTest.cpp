@@ -21,9 +21,9 @@ namespace etrobocon2025_test {
     robot.getMiniFigDirectionResult().wasDetected = true;
     robot.getMiniFigDirectionResult().direction = MiniFigDirection::BACK;
     bool isClockwise = false;
-    int preTargetAngle = 90;
-    int postTargetAngle = 90;
-    double targetRotationSpeed = 200;
+    int preTargetAngle = 10;
+    int postTargetAngle = 1;
+    int basePower = 50;
     double backTargetDistance = 150;
     double forwardTargetDistance = 150;
     double backSpeed = 200;
@@ -57,9 +57,9 @@ namespace etrobocon2025_test {
     robot.getMiniFigDirectionResult().direction = static_cast<MiniFigDirection>(position);
 
     bool isClockwise = false;
-    int preTargetAngle = 90;
-    int postTargetAngle = 90;
-    double targetRotationSpeed = 200;
+    int preTargetAngle = 10;
+    int postTargetAngle = 1;
+    int basePower = 50;
     double backTargetDistance = 150;
     double forwardTargetDistance = 150;
     double backSpeed = 200;
@@ -89,9 +89,9 @@ namespace etrobocon2025_test {
     int position = 0;  // 1回目の撮影
 
     bool isClockwise = false;
-    int preTargetAngle = 90;
-    int postTargetAngle = 90;
-    double targetRotationSpeed = 200;
+    int preTargetAngle = 1;
+    int postTargetAngle = 10;
+    int basePower = 50;
     double backTargetDistance = 150;
     double forwardTargetDistance = 150;
     double backSpeed = 200;

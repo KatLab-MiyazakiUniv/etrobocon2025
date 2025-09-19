@@ -15,6 +15,7 @@
 #include "StringOperator.h"
 #include "Motion.h"
 #include "AngleRotation.h"
+#include "IMUAngleRotation.h"
 #include "DistanceStraight.h"
 #include "DistanceCameraLineTrace.h"
 #include "ColorStraight.h"
@@ -27,15 +28,18 @@
 #include "MiniFigCameraAction.h"
 #include "BackgroundPlaCameraAction.h"
 #include "ColorDistanceCameraLineTrace.h"
+#include "UltrasonicDistanceCameraLineTrace.h"
 #include "CameraRecoveryAction.h"
 
 enum class COMMAND {
   AR,    // 角度指定回頭
+  IMUR,  // IMU角度指定回頭
   DS,    // 指定距離直進
   CS,    // 指定色直進
   DL,    // 指定距離ライントレース
   DCL,   // 指定距離カメラライントレース
   CDCL,  // 色距離指定カメラライントレース
+  UDCL,  // 超音波距離指定カメラライントレース
   CL,    // 指定色ライントレース
   CDL,   // 色距離指定ライントレース
   EC,    // エッジ切り替え

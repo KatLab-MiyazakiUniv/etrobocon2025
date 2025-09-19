@@ -10,21 +10,26 @@
 #include <iostream>
 
 using namespace std;
+using json = nlohmann::json;
 
 BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise,
                                                      int _preTargetAngle, int _postTargetAngle,
-                                                     double _targetRotationSpeed, double _threshold,
+                                                     int _basePower, double _threshold,
                                                      double _minArea, const cv::Rect _roi,
-                                                     int _position)
+                                                     int _position, double _kp, double _ki,
+                                                     double _kd)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
     postTargetAngle(_postTargetAngle),
-    targetRotationSpeed(_targetRotationSpeed),
+    basePower(_basePower),
     threshold(_threshold),
     minArea(_minArea),
     roi(_roi),
-    position(_position)
+    position(_position),
+    kp(_kp),
+    ki(_ki),
+    kd(_kd)
 {
 }
 
@@ -44,11 +49,12 @@ void BackgroundPlaCameraAction::run()
   if(!isMetPreCondition()) return;
 
   // 撮影のため回頭
-  AngleRotation preRotation(robot, preTargetAngle, targetRotationSpeed, isClockwise);
+  PidGain prePidGain = { kp, ki, kd };
+  IMUAngleRotation preRotation(robot, preTargetAngle, basePower, isClockwise, prePidGain);
   preRotation.run();
 
-  // 動作安定のためのスリープ
-  this_thread::sleep_for(chrono::milliseconds(10));
+  // 綺麗な写真の撮影のためのスリープ
+  this_thread::sleep_for(chrono::milliseconds(100));
 
   // サーバーに撮影と判定を依頼
   CameraServer::BackgroundPlaActionRequest request;
@@ -78,6 +84,7 @@ void BackgroundPlaCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  AngleRotation postRotation(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
+  PidGain postPidGain = { kp, ki, kd };
+  IMUAngleRotation postRotation(robot, postTargetAngle, basePower, !isClockwise, postPidGain);
   postRotation.run();
 }

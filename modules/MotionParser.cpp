@@ -52,6 +52,17 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // IMUR: IMU角度指定回頭
+      // [1]:int 角度[deg], [2]:int 基準パワー, [3]:string 方向(clockwise or anticlockwise),
+      // [4-6]:double 角度PIDゲイン(kp, ki, kd)
+      case COMMAND::IMUR: {
+        auto imur = new IMUAngleRotation(
+            robot, stoi(params[1]), stoi(params[2]), convertBool(params[0], params[3]),
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
+        motionList.push_back(imur);
+        break;
+      }
+
       // DS: 指定距離直進
       // [1]:double 距離[mm], [2]:double 速度[mm/s]
       case COMMAND::DS: {
@@ -133,6 +144,35 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // UDCL: 超音波距離指定カメラライントレース
+      // [1]:double 超音波距離[mm], [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int X座標[px],
+      // [5-7]:double PIDゲイン, [8-10]int lowerHSV, [11-13]int upperHSV, [14-17]int ROI座標[px]
+      // ([14]左上隅のx座標, [15]左上隅のy座標, [16]幅, [17]高さ), [18-19]int 解像度[px] ([18]幅,
+      // [19]高さ) 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      case COMMAND::UDCL: {
+        cv::Scalar lowerHSV, upperHSV;
+        cv::Rect roi;
+        cv::Size resolution;
+        std::unique_ptr<BoundingBoxDetector> detector;
+
+        lowerHSV = cv::Scalar(stoi(params[8]), stoi(params[9]), stoi(params[10]));
+        upperHSV = cv::Scalar(stoi(params[11]), stoi(params[12]), stoi(params[13]));
+
+        // パラメータ配列のサイズによってコンストラクタを切り替え
+        if(params.size() > 19) {
+          // ROI + 解像度
+          roi = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
+          resolution = cv::Size(stoi(params[18]), stoi(params[19]));
+          detector = std::make_unique<LineBoundingBoxDetector>(lowerHSV, upperHSV, roi, resolution);
+        }
+
+        auto udcl = new UltrasonicDistanceCameraLineTrace(
+            robot, stod(params[1]), stod(params[2]), stod(params[3]), stoi(params[4]),
+            PidGain(stod(params[5]), stod(params[6]), stod(params[7])), std::move(detector));
+        motionList.push_back(udcl);
+        break;
+      }
+
       // CL: 指定色ライントレース
       // [1]:string 色, [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
       case COMMAND::CL: {
@@ -187,18 +227,31 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // MCA: ミニフィグのカメラ撮影動作
         // [1]:int フロントカメラをミニフィグに向けるための回頭角度[deg],
         // [2]:int 黒線復帰のための回頭角度[deg],
-        // [3]:double 撮影前後の回頭のための目標速度[mm/s],
+        // [3]:int 撮影前後の回頭のための基準パワー値,
         // [4]:double 撮影前の後退距離[mm],
         // [5]:double 撮影後の前進距離[mm],
         // [6]:double 撮影前の後退速度の絶対値[mm/s],
         // [7]:double 撮影後の前進速度の絶対値[mm/s],
         // [8]:string 回頭の方向(clockwise or anticlockwise),
         // [9]:int 撮影位置(0が初期位置)
+        // [10]:double kp（回頭PIDのP値）[オプション]
+        // [11]:double ki（回頭PIDのI値）[オプション]
+        // [12]:double kd（回頭PIDのD値）[オプション]
       case COMMAND::MCA: {
-        auto mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]),
-                                           stoi(params[1]), stoi(params[2]), stod(params[3]),
-                                           stod(params[4]), stod(params[5]), stod(params[6]),
-                                           stod(params[7]), stoi(params[9]));
+        MiniFigCameraAction* mca;
+        if(params.size() >= 13) {
+          // PID値が指定されている場合
+          mca = new MiniFigCameraAction(
+              robot, convertBool(params[0], params[8]), stoi(params[1]), stoi(params[2]),
+              stoi(params[3]), stod(params[4]), stod(params[5]), stod(params[6]), stod(params[7]),
+              stoi(params[9]), stod(params[10]), stod(params[11]), stod(params[12]));
+        } else {
+          // PID値が指定されていない場合、デフォルト値を使用
+          mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]), stoi(params[1]),
+                                        stoi(params[2]), stoi(params[3]), stod(params[4]),
+                                        stod(params[5]), stod(params[6]), stod(params[7]),
+                                        stoi(params[9]));
+        }
         motionList.push_back(mca);
 
         break;
@@ -208,7 +261,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [1]:bool isClockwise（"clockwise"/"anticlockwise"）
         // [2]:int preTargetAngle
         // [3]:int postTargetAngle
-        // [4]:double 回頭速度
+        // [4]:int 回頭基準パワー値
         // [5]:double threshold（動体検出用）
         // [6]:double minArea（動体矩形とみなす最小面積）
         // [7]:int ROIの左上X座標
@@ -216,6 +269,9 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [9]:int ROIの幅
         // [10]:int ROIの高さ
         // [11]:int position（0=初期位置）
+        // [12]:double kp（回頭PIDのP値）[オプション]
+        // [13]:double ki（回頭PIDのI値）[オプション]
+        // [14]:double kd（回頭PIDのD値）[オプション]
 
       case COMMAND::BCA: {
         cv::Rect roi;
@@ -223,9 +279,19 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         bool isClockwise = convertBool("BCA", params[1]);
         roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
 
-        auto bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]),
-                                                 stoi(params[3]), stod(params[4]), stod(params[5]),
-                                                 stod(params[6]), roi, stoi(params[11]));
+        BackgroundPlaCameraAction* bca;
+        if(params.size() >= 15) {
+          // PID値が指定されている場合
+          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
+                                              stoi(params[4]), stod(params[5]), stod(params[6]),
+                                              roi, stoi(params[11]), stod(params[12]),
+                                              stod(params[13]), stod(params[14]));
+        } else {
+          // PID値が指定されていない場合、デフォルト値を使用
+          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
+                                              stoi(params[4]), stod(params[5]), stod(params[6]),
+                                              roi, stoi(params[11]));
+        }
 
         motionList.push_back(bca);
         break;
@@ -286,11 +352,13 @@ COMMAND MotionParser::convertCommand(const string& str)
   // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
   static const unordered_map<string, COMMAND> commandMap = {
     { "AR", COMMAND::AR },      // 角度指定回頭
+    { "IMUR", COMMAND::IMUR },  // IMU角度指定回頭
     { "DS", COMMAND::DS },      // 指定距離直進
     { "CS", COMMAND::CS },      // 指定色直進
     { "DL", COMMAND::DL },      // 指定距離ライントレース
     { "DCL", COMMAND::DCL },    // 指定距離カメラライントレース
     { "CDCL", COMMAND::CDCL },  // 色距離指定カメラライントレース
+    { "UDCL", COMMAND::UDCL },  // 超音波距離指定カメラライントレース
     { "CL", COMMAND::CL },      // 指定色ライントレース
     { "CDL", COMMAND::CDL },    // 色距離指定ライントレース
     { "EC", COMMAND::EC },      // エッジ切り替え
@@ -315,8 +383,9 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   // 末尾の改行を削除
   string param = StringOperator::removeEOL(stringParameter);
 
-  // 回転動作(AR,MCA,BCA,CRA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-  if(command == "AR" || command == "MCA" || command == "BCA" || command == "CRA") {
+  // 回転動作(AR,IMUR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  if(command == "AR" || command == "IMUR" || command == "MCA" || command == "BCA"
+     || command == "CRA") {
     if(param == "clockwise") {
       return true;
     } else if(param == "anticlockwise") {

@@ -17,6 +17,10 @@
 #include "ImageRecognitionResults.h"
 #include "SocketClient.h"
 
+#include "UltrasonicSensor.h"
+#include "IMUController.h"
+
+
 class Robot {
  public:
   /**
@@ -30,6 +34,13 @@ class Robot {
    * @return メンバ変数motorController(MotorControllerのインスタンス)の参照
    */
   MotorController& getMotorControllerInstance();
+
+  /**
+   * @brief UltraSonicのインスタンスの参照を返す
+   * @return メンバ変数ultraSonic(UltraSonicのインスタンス)の参照
+   */
+
+  spikeapi::UltrasonicSensor& getUltrasonicSensorInstance();
 
   /**
    * @brief SocketClientのインスタンスの参照を返す
@@ -78,6 +89,13 @@ class Robot {
    * @return 風景の向き検出結果の参照
    */
   BackgroundDirectionResult& getBackgroundDirectionResult();
+
+  /**
+   * @brief IMUControllerのインスタンスの参照を返す
+   * @return メンバ変数imuController(IMUControllerのインスタンス)の参照
+   */
+  IMUController& getIMUControllerInstance();
+
   /**
    * @brief エッジの左右判定を設定する
    * @param isLeft true:左エッジ, false:右エッジ
@@ -98,6 +116,8 @@ class Robot {
   spikeapi::Button button;                              // Buttonインスタンス
   spikeapi::ForceSensor forceSensor;                    // ForceSensorインスタンス
   spikeapi::Display display;                            // Displayインスタンス
+  spikeapi::UltrasonicSensor ultrasonicSensor;    // UltrasonicSensorインスタンス
+  IMUController imuController;                    // IMUControllerインスタンス
   MiniFigDirectionResult miniFigDirectionResult;        // ミニフィグの向き検出結果
   BackgroundDirectionResult backgroundDirectionResult;  // 風景の向き検出結果
   // formatチェックをパスするためのコメント

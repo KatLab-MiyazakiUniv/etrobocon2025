@@ -5,27 +5,30 @@
  */
 
 #include "MiniFigCameraAction.h"
-#include "AngleRotation.h"
-#include "DistanceStraight.h"
 #include <thread>
 #include <iostream>
 
 using namespace std;
+using json = nlohmann::json;
 
 MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle,
-                                         int _postTargetAngle, double _targetRotationSpeed,
+                                         int _postTargetAngle, int _basePower,
                                          double _backTargetDistance, double _forwardTargetDistance,
-                                         double _backSpeed, double _forwardSpeed, int _position)
+                                         double _backSpeed, double _forwardSpeed, int _position,
+                                         double _kp, double _ki, double _kd)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
     postTargetAngle(_postTargetAngle),
-    targetRotationSpeed(_targetRotationSpeed),
+    basePower(_basePower),
     backTargetDistance(_backTargetDistance),
     forwardTargetDistance(_forwardTargetDistance),
     backSpeed(_backSpeed),
     forwardSpeed(_forwardSpeed),
-    position(_position)
+    position(_position),
+    kp(_kp),
+    ki(_ki),
+    kd(_kd)
 {
 }
 
@@ -49,7 +52,8 @@ void MiniFigCameraAction::run()
   }
 
   // 撮影のための回頭をする
-  AngleRotation preAR(robot, preTargetAngle, targetRotationSpeed, isClockwise);
+  PidGain pidGain = { kp, ki, kd };
+  IMUAngleRotation preAR(robot, preTargetAngle, basePower, isClockwise, pidGain);
   preAR.run();
 
   // 動作安定のためのスリープ
@@ -62,6 +66,8 @@ void MiniFigCameraAction::run()
   // サーバーに撮影と判定を依頼
   CameraServer::MiniFigActionRequest request;
   request.command = CameraServer::Command::MINIFIG_CAMERA_ACTION;
+  // 綺麗な写真の撮影のためのスリープ
+  this_thread::sleep_for(chrono::milliseconds(100));
 
   CameraServer::MiniFigActionResponse response;
   cout << "サーバーにミニフィグカメラ撮影を依頼: " << position << endl;
@@ -97,6 +103,7 @@ void MiniFigCameraAction::run()
   this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
-  AngleRotation postAR(robot, postTargetAngle, targetRotationSpeed, !isClockwise);
+  PidGain postPidGain = { kp, ki, kd };
+  IMUAngleRotation postAR(robot, postTargetAngle, basePower, !isClockwise, postPidGain);
   postAR.run();
 }

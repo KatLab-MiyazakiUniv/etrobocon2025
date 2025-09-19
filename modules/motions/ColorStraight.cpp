@@ -34,7 +34,7 @@ bool ColorStraight::isMetContinuationCondition()
 {
   // HSV値を取得
   spikeapi::ColorSensor::HSV hsv;
-  robot.getColorSensorInstance().getColor(hsv);
+  robot.getColorSensorInstance().getHSV(hsv);
   if(ColorJudge::convertHsvToColor(hsv) == targetColor) {
     colorCount++;
   } else {

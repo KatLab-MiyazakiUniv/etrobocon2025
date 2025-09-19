@@ -15,10 +15,12 @@ static constexpr double TREAD = 112.0;  // 走行体のトレッド幅（両輪�
 
 static constexpr double WHEEL_RADIUS = 28.0;  // 車輪の半径[mm]
 
-static constexpr int RESOLUTION_WIDTH = 800;   // 解像度の幅（規定値）[px]
-static constexpr int RESOLUTION_HEIGHT = 600;  // 解像度の高さ（規定値）[px]
-static constexpr int MIN_WIDTH = 320;          // 解像度の幅（最小値）[px]
-static constexpr int MIN_HEIGHT = 240;         // 解像度の高さ（最小値）[px]
-static constexpr int MAX_WIDTH = 1920;         // 解像度の幅（最大値）[px]
-static constexpr int MAX_HEIGHT = 1080;        // 解像度の高さ（最大値）[px]
+static constexpr int RESOLUTION_WIDTH = 800;            // 解像度の幅（規定値）[px]
+static constexpr int RESOLUTION_HEIGHT = 600;           // 解像度の高さ（規定値）[px]
+static constexpr int MIN_WIDTH = 320;                   // 解像度の幅（最小値）[px]
+static constexpr int MIN_HEIGHT = 240;                  // 解像度の高さ（最小値）[px]
+static constexpr int MAX_WIDTH = 1920;                  // 解像度の幅（最大値）[px]
+static constexpr int MAX_HEIGHT = 1080;                 // 解像度の高さ（最大値）[px]
+static constexpr const char* JPEG_EXTENSION = ".JPEG";  // 画像ファイル拡張子
+
 #endif

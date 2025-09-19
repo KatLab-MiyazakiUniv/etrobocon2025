@@ -1,7 +1,7 @@
 MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-# 無線通信デバイスのIPアドレス
-SERVER_IP = IPアドレス
+# サーバーのIPアドレス
+SERVER_IP = 172.20.1.219
 
 # 使い方
 help:
@@ -151,3 +151,7 @@ format-check:
 # サーバーの画像をアップロードする
 upload-image:
 	curl --fail -X POST -F "file=@$(FILE_PATH)" http://$(SERVER_IP):8000/images
+
+# ミニフィグの正面らしさ比較用画像をサーバーにアップロードする
+upload-minifig-image:
+	curl --fail -X POST -F "file=@$(FILE_PATH)" http://$(SERVER_IP):8000/minifig/detect

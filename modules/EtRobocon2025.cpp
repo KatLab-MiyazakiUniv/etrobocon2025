@@ -15,6 +15,8 @@ void EtRobocon2025::start()
   Robot robot(socketClient);  // RobotインスタンスにSocketClientを渡す
 
   std::cout << "Hello KATLAB" << std::endl;
+  robot.getIMUControllerInstance().initializeOffset();
+  robot.getIMUControllerInstance().calculateCorrectionMatrix();
 
   if(robot.getSocketClient().connectToServer()) {
     std::cout << "Connected to server." << std::endl;
@@ -24,16 +26,24 @@ void EtRobocon2025::start()
   };
 
   Calibrator calibrator(robot);
-  calibrator.selectAndSetCourse();
-  calibrator.measureAndSetTargetBrightness();
-  bool isLeftCourse = calibrator.getIsLeftCourse();
-  int targetBrightness = calibrator.getTargetBrightness();
+  // calibrator.selectAndSetCourse();
+  // calibrator.measureAndSetTargetBrightness();
+  bool isLeftCourse = true;
+  int targetBrightness = 51;
   calibrator.getAngleCheckFrame();
   calibrator.waitForStart();
 
   Area lineTraceArea = Area::LineTrace;
   AreaMaster lineTraceAreaMaster(robot, lineTraceArea, isLeftCourse, targetBrightness);
   lineTraceAreaMaster.run();
+  
+  Area doubleLoopArea = Area::DoubleLoop;
+  AreaMaster doubleLoopAreaMaster(robot, doubleLoopArea, isLeftCourse, targetBrightness);
+  doubleLoopAreaMaster.run();
+  
+  Area smartCarryArea = Area::SmartCarry;
+  AreaMaster smartCarryAreaMaster(robot, smartCarryArea, isLeftCourse, targetBrightness);
+  smartCarryAreaMaster.run();
 
   robot.getSocketClient().disconnectFromServer();
 }

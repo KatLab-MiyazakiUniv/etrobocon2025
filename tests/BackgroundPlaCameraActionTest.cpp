@@ -21,6 +21,13 @@ namespace etrobocon2025_test {
     robot.getBackgroundDirectionResult().wasDetected = true;
     robot.getBackgroundDirectionResult().direction = BackgroundDirection::BACK;
     bool isClockwise = false;
+    int preTargetAngle = 10;
+    int postTargetAngle = 1;
+    int basePower = 50;
+    int position = 1;
+    cv::Rect roi(0, 0, 800, 600);  // ROI領域を設定
+
+    PlaCameraAction plaCameraAction(robot, 30.0, 1000.0, roi);
     int preTargetAngle = 90;
     int postTargetAngle = 90;
     double targetRotationSpeed = 200.0;
@@ -54,6 +61,11 @@ namespace etrobocon2025_test {
     robot.getBackgroundDirectionResult().direction = static_cast<BackgroundDirection>(position);
 
     bool isClockwise = false;
+    int preTargetAngle = 10;
+    int postTargetAngle = 1;
+    int basePower = 50;
+    int position = 2;
+    cv::Rect roi(0, 0, 800, 600);  // ROI領域を設定
     int preTargetAngle = 90;
     int postTargetAngle = 90;
     double targetRotationSpeed = 200.0;

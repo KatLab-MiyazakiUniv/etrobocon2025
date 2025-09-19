@@ -38,7 +38,7 @@ INCLUDES += \
 	-I$(mkfile_path)modules/motions\
 	-I$(mkfile_path)modules/client \
 	-I$(mkfile_path)common\
-	-I$(mkfile_path)..\/..\/common\/library\/libcpp-spike\/include \
+	-I$(mkfile_path)../../common/library/libcpp-spike/include \
 
 
 INCLUDES += -I/usr/include/opencv4
