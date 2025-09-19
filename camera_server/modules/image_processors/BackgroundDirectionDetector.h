@@ -11,6 +11,7 @@
 #include "FrameSave.h"
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
+#include <onnxruntime_cxx_api.h>
 #include <algorithm>
 #include <iostream>
 #include <vector>
@@ -37,7 +38,10 @@ class BackgroundDirectionDetector {
   void detect(const cv::Mat& frame, BackgroundDirectionResult& result);
 
  private:
-  cv::dnn::Net net;             // DNNモデルを格納する変数
+  Ort::Env env;          // ONNX Runtime 環境
+  Ort::Session session;  // 推論セッション
+  std::vector<std::string> inputNames;
+  std::vector<std::string> outputNames;
   const std::string modelPath;  // モデルのパス
   const std::string outputImagePath
       = "datafiles/processed_images/";  // バウンディングボックス付きの画像保存先ディレクトリ
@@ -65,6 +69,11 @@ class BackgroundDirectionDetector {
    */
   void postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX,
                    int padY, BackgroundDirectionResult& result);
+
+  /**
+   * 推論を実行する
+   */
+  std::vector<std::vector<float>> infer(const cv::Mat& inputImage);
 };
 
 #endif  // BACKGROUND_DIRECTION_DETECTOR_H

@@ -17,9 +17,9 @@ CXXFLAGS := -std=c++17 -Wall -Wextra -O2 -pthread
 OPENCV_CFLAGS := $(shell pkg-config --cflags opencv4)
 OPENCV_LIBS := $(shell pkg-config --libs opencv4)
 
-INCLUDES := $(shell find $(INCLUDEDIR) -type d -printf '-I%p ') -I../common
+INCLUDES := $(shell find $(INCLUDEDIR) -type d -printf '-I%p ') -I../common -I../third_party/onnxruntime/include
 CXXFLAGS += $(OPENCV_CFLAGS)
-LIBS := $(OPENCV_LIBS)
+LIBS := $(OPENCV_LIBS) ../third_party/onnxruntime/lib
 
 # --- Build Rules ---
 
