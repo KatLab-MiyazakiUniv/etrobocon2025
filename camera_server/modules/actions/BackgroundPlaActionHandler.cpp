@@ -46,7 +46,10 @@ void BackgroundPlaActionHandler::runPlaCameraAction(
   // Detect motion start and end
   vector<cv::Mat> capturedFrames;
   BoundingBoxDetectionResult detectionResult;
-  while(true) {  // Wait for motion to start
+
+  // 入室検出（15秒タイムアウト）
+  auto entryTimeout = std::chrono::steady_clock::now() + std::chrono::seconds(15);
+  while(std::chrono::steady_clock::now() < entryTimeout) {  // Wait for motion to start
     cv::Mat frame;
     camera.getFrame(frame);
     this_thread::sleep_for(chrono::milliseconds(33));
@@ -58,8 +61,23 @@ void BackgroundPlaActionHandler::runPlaCameraAction(
   }
   cout << "Motion started." << endl;
 
+  // タイムアウト時は最新フレームを取得して保存
+  if(capturedFrames.empty()) {
+    std::cout << "入室検出に失敗しタイムアウトしました。" << std::endl;
+    cv::Mat frame;
+    camera.getFrame(frame);
+    string fileName = "PlaRail";
+    FrameSave::save(frame, filePath, fileName);
+    thread([path = string(filePath), name = fileName] {
+      ImageUploader::uploadImage(path, name, 3);
+    }).detach();
+    return;
+  }
+
+  // 退出検出（15秒タイムアウト）
+  auto exitTimeout = std::chrono::steady_clock::now() + std::chrono::seconds(15);
   int noMotionCounter = 0;
-  while(true) {  // Wait for motion to end
+  while(std::chrono::steady_clock::now() < exitTimeout) {  // Wait for motion to end
     cv::Mat frame;
     camera.getFrame(frame);
     this_thread::sleep_for(chrono::milliseconds(33));
