@@ -10,7 +10,6 @@
 #include <iostream>
 
 using namespace std;
-using json = nlohmann::json;
 
 BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise,
                                                      int _preTargetAngle, int _postTargetAngle,
