@@ -16,7 +16,6 @@
 #include "Display.h"
 #include "ImageRecognitionResults.h"
 #include "SocketClient.h"
-
 #include "UltrasonicSensor.h"
 #include "IMUController.h"
 

@@ -15,7 +15,7 @@ Robot::Robot(SocketClient& client)
     forceSensor(EPort::PORT_D),
     display(),
     miniFigDirectionResult(),
-    backgroundDirectionResult()
+    backgroundDirectionResult(),
     ultrasonicSensor(EPort::PORT_F),
     imuController()
 {
