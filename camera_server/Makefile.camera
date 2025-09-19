@@ -19,7 +19,7 @@ OPENCV_LIBS := $(shell pkg-config --libs opencv4)
 
 INCLUDES := $(shell find $(INCLUDEDIR) -type d -printf '-I%p ') -I../common -I../third_party/onnxruntime/include
 CXXFLAGS += $(OPENCV_CFLAGS)
-LIBS := $(OPENCV_LIBS) ../third_party/onnxruntime/lib
+LIBS := $(OPENCV_LIBS) -L../third_party/onnxruntime/lib -lonnxruntime
 
 # --- Build Rules ---
 

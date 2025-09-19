@@ -28,7 +28,7 @@ class BackgroundDirectionDetector {
    * @param _modelPath ONNXモデルのパス (デフォルト値あり)
    */
   BackgroundDirectionDetector(const std::string& _modelPath
-                              = "datafiles/models/BackgroundDetector.onnx");
+                              = "datafiles/models/11n_100epoch_&_640imgsz_background.onnx");
 
   /**
    * @brief         入力画像から風景の向きを判定し、結果を result に格納する
@@ -67,7 +67,7 @@ class BackgroundDirectionDetector {
    * @param padY    Y方向のパディング量
    * @param result  検出結果を格納する構造体
    */
-  void postprocess(const std::vector<cv::Mat>& outputs, const cv::Mat& frame, float scale, int padX,
+  void postprocess(const std::vector<std::vector<float>>& outputs, const cv::Mat& frame, float scale, int padX,
                    int padY, BackgroundDirectionResult& result);
 
   /**
