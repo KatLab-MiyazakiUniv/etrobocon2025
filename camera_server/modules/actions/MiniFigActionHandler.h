@@ -32,7 +32,7 @@ class MiniFigActionHandler {
   MiniFigDirectionDetector detector;
   MiniFigDirectionResult firstAttemptResult;  // 1回目の撮影結果を保持する
   int shot_count = 0;                         // 撮影回数カウンター
-  const char* filePath = "datafiles/snapshots/";
+  const char* filePath = "datafiles/snapshots";
   const char* uploadFileName = "Fig_FRONT";
 
   /**
