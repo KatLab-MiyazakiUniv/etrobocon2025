@@ -41,7 +41,7 @@ start-client:
 	cd $(MAKEFILE_PATH)../ && make start
 
 start-camera:
-	cd $(MAKEFILE_PATH)/camera_server && ./camera_app
+	cd $(MAKEFILE_PATH)camera_server && LD_LIBRARY_PATH=../third_party/onnxruntime/lib ./camera_app
 
 ## テスト関連 ##
 # テストのビルドディレクトリが存在しない場合は作成する

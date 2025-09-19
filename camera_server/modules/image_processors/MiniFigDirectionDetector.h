@@ -9,6 +9,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
+#include <onnxruntime_cxx_api.h>
 #include <algorithm>
 #include <iostream>
 #include <vector>
@@ -16,7 +17,7 @@
 #include "ImageRecognitionResults.h"
 #include "FrameSave.h"
 
-#define MODEL_INPUT_SIZE 640       // モデルの入力サイズ（640x640）
+#define MODEL_INPUT_SIZE 672       // モデルの入力サイズ（640x640）
 #define CONFIDENCE_THRESHOLD 0.5f  // 検出結果を採用する最低信頼度の閾値
 #define NMS_THRESHOLD 0.5f         // 検出ボックス同士の重なりを判断する閾値
 
@@ -26,7 +27,7 @@ class MiniFigDirectionDetector {
    * @brief コンストラクタ
    * @param modelPath ONNXモデルのパス (デフォルト値あり)
    */
-  MiniFigDirectionDetector(const std::string& modelPath = "datafiles/models/yolo_optimized.onnx");
+  MiniFigDirectionDetector(const std::string& modelPath = "datafiles/models/11s_125epoch_&_660imgsz_data0919_fig.onnx");
 
   /**
    * @brief         入力画像からミニフィグの向きを判定し、結果を result に格納する
