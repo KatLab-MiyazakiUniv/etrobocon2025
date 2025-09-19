@@ -34,12 +34,24 @@ BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isCloc
 
 bool BackgroundPlaCameraAction::isMetPreCondition()
 {
-  if(position != 0 && robot.getBackgroundDirectionResult().wasDetected
-     && robot.getBackgroundDirectionResult().direction
-            != static_cast<BackgroundDirection>(position)) {
-    cout << "プラレール撮影位置ではありません" << endl;
+  // 初回（position=0）は常に動作する
+  if(position == 0) {
+    return true;
+  }
+
+  // 風景向き判定を失敗した場合、初回でプラレール撮影を行っているため、2回目以降は撮影動作を行わない
+  if(!robot.getBackgroundDirectionResult().wasDetected) {
+    cout << "風景向き判定を失敗したため、撮影動作は行わない。" << endl;
     return false;
   }
+
+  // 判定成功したが、現在位置が正面位置ではない場合は動作しない
+  if(robot.getBackgroundDirectionResult().direction != static_cast<BackgroundDirection>(position)) {
+    cout << "現在位置が正面位置ではないため、風景の撮影動作は行わない。" << endl;
+    return false;
+  }
+
+  // 判定成功し、現在位置が正面位置の場合は動作する
   return true;
 }
 
