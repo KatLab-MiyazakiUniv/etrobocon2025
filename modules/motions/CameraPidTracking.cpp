@@ -30,9 +30,6 @@ void CameraPidTracking::run()
   // 事前準備
   prepare();
 
-  // 左右で符号を変える
-  int edgeSign = robot.getIsLeftEdge() ? -1 : 1;
-
   SpeedCalculator speedCalculator(robot, targetSpeed);
 
   SocketClient& client = robot.getSocketClient();
@@ -56,7 +53,7 @@ void CameraPidTracking::run()
     double currentX = (response.result.topLeft.x + response.result.bottomRight.x) / 2.0;
 
     // 旋回値の計算
-    double turningPower = pid.calculatePid(currentX) * edgeSign;
+    double turningPower = pid.calculatePid(currentX) * -1;
 
     // モータのPower値をセット（前進の時0を下回らないように，後進の時0を上回らないようにセット）
     double rightPower = baseRightPower > 0.0 ? std::max(baseRightPower - turningPower, 0.0)
