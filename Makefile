@@ -1,5 +1,8 @@
 MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
+# サーバーのIPアドレス
+SERVER_IP = IPアドレス
+
 # 使い方
 help:
 	@echo ビルドする

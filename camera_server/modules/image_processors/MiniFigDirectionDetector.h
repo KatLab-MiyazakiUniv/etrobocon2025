@@ -27,7 +27,8 @@ class MiniFigDirectionDetector {
    * @brief コンストラクタ
    * @param modelPath ONNXモデルのパス (デフォルト値あり)
    */
-  MiniFigDirectionDetector(const std::string& modelPath = "datafiles/models/11s_125epoch_&_660imgsz_data0919_fig.onnx");
+  MiniFigDirectionDetector(const std::string& modelPath
+                           = "../datafiles/models/11s_125epoch_&_660imgsz_data0919_fig.onnx");
 
   /**
    * @brief         入力画像からミニフィグの向きを判定し、結果を result に格納する

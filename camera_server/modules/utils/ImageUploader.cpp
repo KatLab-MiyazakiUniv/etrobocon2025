@@ -51,7 +51,7 @@ bool ImageUploader::uploadImage(const std::string& filePath, const std::string& 
   // 試行回数(attempts)が最大試行回数(maxAttempts)を超えるまで送信を試みる
   int attempts = 0;
   while(attempts < maxAttempts) {
-    std::string command = "make upload-image FILE_PATH=" + absolutePath;
+    std::string command = "make -C .. upload-image FILE_PATH=" + absolutePath;
     int result = CommandExecutor::exec(command);
     if(result == 0) {
       return true;
@@ -106,8 +106,7 @@ bool ImageUploader::uploadMiniFigImage(const std::string& filePath,
   // 試行回数(attempts)が最大試行回数(maxAttempts)を超えるまで送信を試みる
   int attempts = 0;
   while(attempts < maxAttempts) {
-    std::cout << "絶対path" <<absolutePath << std::endl;
-    std::string command = " make upload-minifig-image FILE_PATH=" + absolutePath ;
+    std::string command = "make -C .. upload-minifig-image FILE_PATH=" + absolutePath;
     int result = CommandExecutor::exec(command);
     if(result == 0) {
       return true;
