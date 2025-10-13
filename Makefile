@@ -27,6 +27,8 @@ help:
 	@echo " $$ make test"
 	@echo 画像をサーバーにアップロードする
 	@echo " $$ make upload-image"
+	@echo ライントレース画像から動画を作成する
+	@echo " $$ make create-line-trace-video"
 
 ## 実行関連 ##
 build: build-client build-camera
@@ -155,3 +157,36 @@ upload-image:
 # ミニフィグの正面らしさ比較用画像をサーバーにアップロードする
 upload-minifig-image:
 	curl --fail -X POST -F "file=@$(FILE_PATH)" http://$(SERVER_IP):8000/minifig/detect
+
+## デバッグ関連 ##
+# ライントレース画像から動画を作成（ROI描画付き）
+create-line-trace-video:
+	@if [ ! -d "$(MAKEFILE_PATH)camera_server/datafiles/line_trace" ]; then \
+		echo "Error: camera_server/datafiles/line_trace not found"; \
+		exit 1; \
+	fi
+	@mkdir -p $(MAKEFILE_PATH)camera_server/datafiles/line_trace_with_roi
+	@INDEX=0; \
+	for FILE in $$(ls $(MAKEFILE_PATH)camera_server/datafiles/line_trace/roi_*.JPEG | sort -t_ -k8 -n); do \
+		FILENAME=$${FILE##*/}; \
+		FILENAME=$${FILENAME%.JPEG}; \
+		ROI_VALUES=$$(echo $$FILENAME | sed -n 's/.*_x\([0-9]*\)_y\([0-9]*\)_w\([0-9]*\)_h\([0-9]*\)_.*/\1 \2 \3 \4/p'); \
+		set -- $$ROI_VALUES; \
+		ROI_X=$$1; \
+		ROI_Y=$$2; \
+		ROI_W=$$3; \
+		ROI_H=$$4; \
+		X2=$$((ROI_X + ROI_W)); \
+		Y2=$$((ROI_Y + ROI_H)); \
+		convert "$$FILE" -stroke red -strokewidth 2 -fill none \
+			-draw "rectangle $$ROI_X,$$ROI_Y $$X2,$$Y2" \
+			$(MAKEFILE_PATH)camera_server/datafiles/line_trace_with_roi/$$(printf "%05d" $$INDEX).JPEG; \
+		INDEX=$$((INDEX + 1)); \
+	done
+	@cd $(MAKEFILE_PATH)camera_server/datafiles/line_trace_with_roi && \
+		ffmpeg -framerate 30 -pattern_type glob -i '*.JPEG' \
+		-c:v libx264 -pix_fmt yuv420p ../../../line_trace.mp4 -y
+	@rm -rf $(MAKEFILE_PATH)camera_server/datafiles/line_trace_with_roi
+	@rm -rf $(MAKEFILE_PATH)camera_server/datafiles/line_trace
+	@echo "動画を作成しました"
+
