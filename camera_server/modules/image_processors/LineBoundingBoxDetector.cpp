@@ -60,8 +60,6 @@ void LineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionR
     return;
   }
 
-  std::cout << "aaaa" << std::endl;
-
   // 画像保存
   std::string filename
       = "roi_x" + std::to_string(roi.x) + "_y" + std::to_string(roi.y) + "_w"
