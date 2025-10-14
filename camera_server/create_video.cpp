@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
   }
 
   // 解像度を縮小
-  cv::Size frameSize(firstFrame.cols * 0.75, firstFrame.rows * 0.75);
+  cv::Size frameSize(firstFrame.cols * 0.5, firstFrame.rows * 0.5);
   std::cerr << "Original size: " << firstFrame.cols << "x" << firstFrame.rows << std::endl;
   std::cerr << "Video size: " << frameSize.width << "x" << frameSize.height << std::endl;
 
