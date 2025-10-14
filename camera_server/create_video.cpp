@@ -71,11 +71,13 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  cv::Size frameSize = firstFrame.size();
+  // 解像度を縮小
+  cv::Size frameSize(firstFrame.cols * 0.75, firstFrame.rows * 0.75);
+  std::cerr << "Original size: " << firstFrame.cols << "x" << firstFrame.rows << std::endl;
   std::cerr << "Video size: " << frameSize.width << "x" << frameSize.height << std::endl;
 
   // VideoWriterを作成
-  cv::VideoWriter writer(outputPath, cv::VideoWriter::fourcc('H', '2', '6', '4'), 30.0, frameSize);
+  cv::VideoWriter writer(outputPath, cv::VideoWriter::fourcc('H', '2', '6', '4'), 20.0, frameSize);
   if(!writer.isOpened()) {
     std::cerr << "Failed to open VideoWriter: " << outputPath << std::endl;
     return 1;
@@ -114,8 +116,12 @@ int main(int argc, char* argv[])
       cv::rectangle(frame, cv::Rect(x, y, w, h), cv::Scalar(0, 0, 255), 2);
     }
 
+    // リサイズ
+    cv::Mat resizedFrame;
+    cv::resize(frame, resizedFrame, frameSize, 0, 0, cv::INTER_AREA);
+
     // 動画に書き込み
-    writer.write(frame);
+    writer.write(resizedFrame);
   }
 
   writer.release();
