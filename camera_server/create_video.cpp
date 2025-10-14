@@ -77,14 +77,24 @@ int main(int argc, char* argv[])
   std::cerr << "Video size: " << frameSize.width << "x" << frameSize.height << std::endl;
 
   // VideoWriterを作成
-  cv::VideoWriter writer(outputPath, cv::VideoWriter::fourcc('H', '2', '6', '4'), 20.0, frameSize);
+  double fps = 15.0;
+  cv::VideoWriter writer(outputPath, cv::VideoWriter::fourcc('H', '2', '6', '4'), fps, frameSize);
   if(!writer.isOpened()) {
     std::cerr << "Failed to open VideoWriter: " << outputPath << std::endl;
     return 1;
   }
 
+  // ★ ここで「最大2分（=120秒）」の制限を設定
+  const int maxFrames = static_cast<int>(fps * 120);  // 20fps × 120秒 = 2400フレーム
+  int frameCount = 0;
+
   // 各画像を処理
   for(const auto& imagePath : imageFiles) {
+    if(frameCount >= maxFrames) {
+      std::cerr << "Reached 2-minute limit (" << maxFrames << " frames)." << std::endl;
+      break;
+    }
+
     cv::Mat frame = cv::imread(imagePath.string());
     if(frame.empty()) {
       std::cerr << "Failed to read image: " << imagePath << std::endl;
@@ -122,6 +132,7 @@ int main(int argc, char* argv[])
 
     // 動画に書き込み
     writer.write(resizedFrame);
+    frameCount++;
   }
 
   writer.release();
