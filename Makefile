@@ -165,28 +165,13 @@ create-line-trace-video:
 		echo "Error: camera_server/datafiles/line_trace not found"; \
 		exit 1; \
 	fi
-	@mkdir -p $(MAKEFILE_PATH)camera_server/datafiles/line_trace_with_roi
-	@INDEX=0; \
-	for FILE in $$(ls $(MAKEFILE_PATH)camera_server/datafiles/line_trace/roi_*.JPEG | sort -t_ -k8 -n); do \
-		FILENAME=$${FILE##*/}; \
-		FILENAME=$${FILENAME%.JPEG}; \
-		ROI_VALUES=$$(echo $$FILENAME | sed -n 's/.*_x\([0-9]*\)_y\([0-9]*\)_w\([0-9]*\)_h\([0-9]*\)_.*/\1 \2 \3 \4/p'); \
-		set -- $$ROI_VALUES; \
-		ROI_X=$$1; \
-		ROI_Y=$$2; \
-		ROI_W=$$3; \
-		ROI_H=$$4; \
-		X2=$$((ROI_X + ROI_W)); \
-		Y2=$$((ROI_Y + ROI_H)); \
-		convert "$$FILE" -stroke red -strokewidth 2 -fill none \
-			-draw "rectangle $$ROI_X,$$ROI_Y $$X2,$$Y2" \
-			$(MAKEFILE_PATH)camera_server/datafiles/line_trace_with_roi/$$(printf "%05d" $$INDEX).JPEG; \
-		INDEX=$$((INDEX + 1)); \
-	done
-	@cd $(MAKEFILE_PATH)camera_server/datafiles/line_trace_with_roi && \
-		ffmpeg -framerate 30 -pattern_type glob -i '*.JPEG' \
-		-c:v libx264 -pix_fmt yuv420p ../../../line_trace.mp4 -y
-	@rm -rf $(MAKEFILE_PATH)camera_server/datafiles/line_trace_with_roi
-	@rm -rf $(MAKEFILE_PATH)camera_server/datafiles/line_trace
-	@echo "動画を作成しました"
+	@echo "動画作成ツールをコンパイル中..."
+	@cd $(MAKEFILE_PATH)camera_server && \
+		g++ -std=c++17 -Wall -Wextra -O2 $$(pkg-config --cflags opencv4) \
+		create_video.cpp $$(pkg-config --libs opencv4) -o create_video_app
+	@echo "動画を作成中..."
+	@cd $(MAKEFILE_PATH)camera_server && \
+		./create_video_app datafiles/line_trace $(MAKEFILE_PATH)line_trace.mp4
+	@rm -f $(MAKEFILE_PATH)camera_server/create_video_app
+	@echo "動画を作成しました: $(MAKEFILE_PATH)line_trace.mp4"
 
