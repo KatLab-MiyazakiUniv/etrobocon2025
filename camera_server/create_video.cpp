@@ -72,7 +72,11 @@ int main(int argc, char* argv[])
   }
 
   // 解像度を縮小
-  cv::Size frameSize(firstFrame.cols * 0.5, firstFrame.rows * 0.5);
+  double scale = 0.5;
+  cv::Size frameSize(
+    static_cast<int>(firstFrame.cols * scale),
+    static_cast<int>(firstFrame.rows * scale)
+  );
   std::cerr << "Original size: " << firstFrame.cols << "x" << firstFrame.rows << std::endl;
   std::cerr << "Video size: " << frameSize.width << "x" << frameSize.height << std::endl;
 
@@ -85,7 +89,7 @@ int main(int argc, char* argv[])
   }
 
   // ★ ここで「最大2分（=120秒）」の制限を設定
-  const int maxFrames = static_cast<int>(fps * 120);  // 20fps × 120秒 = 2400フレーム
+  const int maxFrames = static_cast<int>(fps * 120);  // 15fps × 120秒 = 1800フレーム
   int frameCount = 0;
 
   // 各画像を処理
@@ -100,6 +104,10 @@ int main(int argc, char* argv[])
       std::cerr << "Failed to read image: " << imagePath << std::endl;
       continue;
     }
+
+    // --- ここから変更点：リサイズを先に行い、ROIはスケール後の座標で描画 ---
+    cv::Mat resizedFrame;
+    cv::resize(frame, resizedFrame, frameSize, 0, 0, cv::INTER_AREA);
 
     // ファイル名からROI情報を抽出
     std::string filename = imagePath.filename().string();
@@ -119,16 +127,37 @@ int main(int argc, char* argv[])
         h = std::stoi(filename.substr(hPos + 2));
       } catch(const std::exception& e) {
         std::cerr << "Failed to parse ROI from filename: " << filename << std::endl;
+        // リサイズ済みフレームを書き出して次へ
+        writer.write(resizedFrame);
+        frameCount++;
         continue;
       }
 
-      // ROI矩形を描画（赤色、太さ2）
-      cv::rectangle(frame, cv::Rect(x, y, w, h), cv::Scalar(0, 0, 255), 2);
-    }
+      // スケールに合わせたROI座標
+      int sx = static_cast<int>(x * scale);
+      int sy = static_cast<int>(y * scale);
+      int sw = static_cast<int>(w * scale);
+      int sh = static_cast<int>(h * scale);
 
-    // リサイズ
-    cv::Mat resizedFrame;
-    cv::resize(frame, resizedFrame, frameSize, 0, 0, cv::INTER_AREA);
+      // 範囲チェック（簡潔に調整）
+      if(sx < 0) sx = 0;
+      if(sy < 0) sy = 0;
+      if(sw < 0) sw = 0;
+      if(sh < 0) sh = 0;
+      if(sx + sw > resizedFrame.cols) sw = resizedFrame.cols - sx;
+      if(sy + sh > resizedFrame.rows) sh = resizedFrame.rows - sy;
+
+      // ROI矩形を描画（赤色、太さ2）
+      if(sw > 0 && sh > 0) {
+        cv::rectangle(resizedFrame, cv::Rect(sx, sy, sw, sh), cv::Scalar(0, 0, 255), 2);
+      }
+
+      // ROI文字情報を描画
+      std::string roiText = "ROI: x=" + std::to_string(x) + ", y=" + std::to_string(y)
+                            + ", w=" + std::to_string(w) + ", h=" + std::to_string(h);
+      cv::putText(resizedFrame, roiText, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 0.8,
+                  cv::Scalar(0, 0, 255), 2);
+    }
 
     // 動画に書き込み
     writer.write(resizedFrame);
