@@ -29,7 +29,6 @@ class BackgroundPlaCameraAction : public CompositeMotion {
                             double _minArea, const cv::Rect roi, int _position, double _kp = 0.036,
                             double _ki = 0.02, double _kd = 0.03);
 
-
  private:
   bool isClockwise = false;  // 回頭方向
   int preTargetAngle = 90;   // カメラを風景に向けるための回頭角度
