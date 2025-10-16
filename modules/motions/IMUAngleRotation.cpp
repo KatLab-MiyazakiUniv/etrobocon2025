@@ -17,11 +17,14 @@ IMUAngleRotation::IMUAngleRotation(Robot& _robot, int _targetAngle, int _basePow
 
 void IMUAngleRotation::prepare()
 {
-  // IMUの出力特性に合わせて目標角度を変換(IMUは時計回りをマイナス、反時計回りをプラスで出力)
-  targetAngle = isClockwise ? -targetAngle : targetAngle;
-
   // IMU角度計算開始
   robot.getIMUControllerInstance().startAngleCalculation();
+
+  // 目標角度をIMUの出力特性に合わせて変換
+  // 0〜360の正の値で角度を返すため、targetAngleも0〜360の正の値で設定する
+  if(!isClockwise) {  // 反時計回りの場合
+    targetAngle = 360 - targetAngle;
+  }
 }
 
 bool IMUAngleRotation::isMetPreCondition()
