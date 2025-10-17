@@ -13,7 +13,8 @@ IMUController::IMUController()
     offsetZ(0.0f),
     currentAngle(0.0f),
     lastAngularVelocity(0.0),
-    isCalculating(false)
+    isCalculating(false),
+    startedByCommand(false)
 {
   // 補正行列を単位行列で初期化
   for(int i = 0; i < 3; i++) {
@@ -21,6 +22,16 @@ IMUController::IMUController()
       correctionMatrix[i][j] = (i == j) ? 1.0f : 0.0f;
     }
   }
+}
+
+void IMUController::setStartedByCommand(bool value)
+{
+  startedByCommand = value;
+}
+
+bool IMUController::getStartedByCommand() const
+{
+  return startedByCommand;
 }
 
 void IMUController::getRawAngularVelocity(float angv[3])

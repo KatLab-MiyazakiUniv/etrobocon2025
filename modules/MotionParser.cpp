@@ -335,6 +335,14 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // IS: IMU設定
+      // [1]:string 設定 (START or STOP)
+      case COMMAND::IS: {
+        auto is = new IMUSetting(robot, convertBool(params[0], params[1]));
+        motionList.push_back(is);
+        break;
+      }
+
       // 未定義コマンド
       default: {
         cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
@@ -368,7 +376,8 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "SS", COMMAND::SS },      // カメラ撮影動作
     { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
-    { "CRA", COMMAND::CRA }     // カメラ復帰動作
+    { "CRA", COMMAND::CRA },    // カメラ復帰動作
+    { "IS", COMMAND::IS }       // IMU設定
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
@@ -406,6 +415,18 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
       return false;
     } else {
       cout << "'left' か 'right'を入力してください" << endl;
+      return true;
+    }
+  }
+
+  // IMU設定(IS)の場合、"START"ならtrue（開始）、"STOP"ならfalse（停止)に変換
+  if(command == "IS") {
+    if(param == "start") {
+      return true;
+    } else if(param == "stop") {
+      return false;
+    } else {
+      cout << "'START' か 'STOP'を入力してください" << endl;
       return true;
     }
   }

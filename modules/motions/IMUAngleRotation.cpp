@@ -17,8 +17,10 @@ IMUAngleRotation::IMUAngleRotation(Robot& _robot, int _targetAngle, int _basePow
 
 void IMUAngleRotation::prepare()
 {
-  // IMU角度計算開始
-  robot.getIMUControllerInstance().startAngleCalculation();
+  // IMU角度計算がコマンドで開始されていなければ、この動作で計算を開始する
+  if(!robot.getIMUControllerInstance().getStartedByCommand()) {
+    robot.getIMUControllerInstance().startAngleCalculation();
+  }
 
   // 目標角度をIMUの出力特性に合わせて変換
   // 0〜360の正の値で角度を返すため、targetAngleも0〜360の正の値で設定する
@@ -35,8 +37,9 @@ bool IMUAngleRotation::isMetPreCondition()
     return false;
   }
 
-  // IMU角度計算が既に開始されている場合は開始できない
-  if(robot.getIMUControllerInstance().isAngleCalculating()) {
+  // IMU角度計算が既に開始されている場合、それがコマンドによるものでなければエラー
+  if(robot.getIMUControllerInstance().isAngleCalculating()
+     && !robot.getIMUControllerInstance().getStartedByCommand()) {
     std::cerr << "IMU角度計算が既に開始されています。" << std::endl;
     return false;
   }
@@ -59,9 +62,12 @@ bool IMUAngleRotation::isMetContinuationCondition()
   // 誤差の絶対値が許容値より大きい間は継続
   bool shouldContinue = std::abs(angleError) > TOLERANCE;
 
-  // 継続しない場合（終了する場合）はIMU角度計算を停止
+  // 継続しない場合（終了する場合）
   if(!shouldContinue) {
-    robot.getIMUControllerInstance().stopAngleCalculation();
+    // この動作で角度計算を開始した場合のみ、計算を停止
+    if(!robot.getIMUControllerInstance().getStartedByCommand()) {
+      robot.getIMUControllerInstance().stopAngleCalculation();
+    }
   }
 
   return shouldContinue;
