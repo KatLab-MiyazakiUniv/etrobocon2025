@@ -29,19 +29,31 @@ void IMUAngleRotation::prepare()
   // 開始時の角度を取得
   initialAngle = robot.getIMUControllerInstance().getAngle();
 
-  // 開始角度から目標角度への差を、剰余演算で0～360°に正規化し、時計回りの角度を算出
-  double clockwiseAngle = fmod(targetAngle - initialAngle + 360.0, 360.0);
-
-  if(isClockwise) {
-    // 時計回りに回頭する場合、clockwiseAngleをそのまま総回頭角度
-    totalAngleToTurn = clockwiseAngle;
-  } else {
-    // 反時計回りの場合、clockwiseAngleが小さな値のときは総回頭角度を0にし、360度の回転を防止
-    if(clockwiseAngle < 0.01) {
-      totalAngleToTurn = 0;
+  if(!isAbsoluteMode) {
+    // 相対角度モード: targetAngleを相対角度として扱う
+    if(isClockwise) {
+      // 時計回りの場合、targetAngleをそのまま総回頭角度
+      totalAngleToTurn = targetAngle;
     } else {
-      // それ以外は、時計回り角度から360を引いて総回頭角度に変換
-      totalAngleToTurn = clockwiseAngle - 360.0;
+      // 反時計回りの場合、targetAngleを負の値にして総回頭角度に設定
+      totalAngleToTurn = -targetAngle;
+    }
+  } else {
+    // 絶対角度モード: targetAngleを絶対角度として扱う
+    // 開始角度から目標角度への差を、剰余演算で0～360°に正規化し、時計回りの角度を算出
+    double clockwiseAngle = fmod(targetAngle - initialAngle + 360.0, 360.0);
+
+    if(isClockwise) {
+      // 時計回りに回頭する場合、clockwiseAngleをそのまま総回頭角度
+      totalAngleToTurn = clockwiseAngle;
+    } else {
+      // 反時計回りの場合、clockwiseAngleが小さな値のときは総回頭角度を0にし、360度の回転を防止
+      if(clockwiseAngle < 0.01) {
+        totalAngleToTurn = 0;
+      } else {
+        // それ以外は、時計回り角度から360を引いて総回頭角度に変換
+        totalAngleToTurn = clockwiseAngle - 360.0;
+      }
     }
   }
 }

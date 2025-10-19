@@ -23,7 +23,7 @@ namespace etrobocon2025_test {
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -63,7 +63,7 @@ namespace etrobocon2025_test {
     bool isClockwise = false;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -103,7 +103,7 @@ namespace etrobocon2025_test {
     bool isClockwise = false;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -143,7 +143,7 @@ namespace etrobocon2025_test {
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -180,7 +180,7 @@ namespace etrobocon2025_test {
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -215,7 +215,7 @@ namespace etrobocon2025_test {
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };  // より保守的な値
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -250,7 +250,7 @@ namespace etrobocon2025_test {
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
