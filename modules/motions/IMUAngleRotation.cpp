@@ -61,7 +61,7 @@ void IMUAngleRotation::prepare()
 bool IMUAngleRotation::isMetPreCondition()
 {
   // 角度をチェック
-  if((targetAngle) <= 0 || (targetAngle) >= 360) {
+  if((targetAngle) < 0 || (targetAngle) >= 360) {
     std::cerr << "targetAngle=" << targetAngle << " は範囲外です。" << std::endl;
     return false;
   }
