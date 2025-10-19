@@ -83,6 +83,13 @@ class MotionParser {
    * @return bool値
    */
   static bool convertBool(const std::string& command, const std::string& stringParameter);
+
+  /**
+   * @brief 回頭方法の文字列をbool型に変換する（convertBoolは方向判定で使用済みのため専用関数化）
+   * @param stringParameter 文字列のパラメータ ("relative" or "absolute")
+   * @return false: 相対角度回頭, true: 絶対角度回頭
+   */
+  static bool convertMode(const std::string& stringParameter);
 };
 
 #endif
