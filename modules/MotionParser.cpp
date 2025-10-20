@@ -74,8 +74,9 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // IDS: IMU角度補正直進
       // [1]:double 距離[mm], [2]:double 速度[mm/s], [3-5]:double 角度PIDゲイン(kp, ki, kd)
       case COMMAND::IDS: {
-        auto ids = new IMUDistanceStraight(robot, stod(params[1]), stod(params[2]),
-                                           PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
+        auto ids
+            = new IMUDistanceStraight(robot, stod(params[1]), stod(params[2]),
+                                      PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
         motionList.push_back(ids);
         break;
       }
@@ -253,11 +254,11 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         MiniFigCameraAction* mca;
         if(params.size() >= 14) {
           // PID値が指定されている場合
-          mca = new MiniFigCameraAction(
-              robot, convertBool(params[0], params[8]), stoi(params[1]), stoi(params[2]),
-              stoi(params[3]), stod(params[4]), stod(params[5]), stod(params[6]), stod(params[7]),
-              stoi(params[9]), convertMode(params[10]), stod(params[11]), stod(params[12]),
-              stod(params[13]));
+          mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]), stoi(params[1]),
+                                        stoi(params[2]), stoi(params[3]), stod(params[4]),
+                                        stod(params[5]), stod(params[6]), stod(params[7]),
+                                        stoi(params[9]), convertMode(params[10]), stod(params[11]),
+                                        stod(params[12]), stod(params[13]));
         } else {
           // PID値が指定されていない場合、デフォルト値を使用
           mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]), stoi(params[1]),
@@ -297,14 +298,14 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         if(params.size() >= 16) {
           // PID値が指定されている場合
           bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
-                                              stoi(params[4]), stod(params[5]), stod(params[6]), roi,
-                                              stoi(params[11]), convertMode(params[12]),
+                                              stoi(params[4]), stod(params[5]), stod(params[6]),
+                                              roi, stoi(params[11]), convertMode(params[12]),
                                               stod(params[13]), stod(params[14]), stod(params[15]));
         } else {
           // PID値が指定されていない場合、デフォルト値を使用
           bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
-                                              stoi(params[4]), stod(params[5]), stod(params[6]), roi,
-                                              stoi(params[11]), convertMode(params[12]));
+                                              stoi(params[4]), stod(params[5]), stod(params[6]),
+                                              roi, stoi(params[11]), convertMode(params[12]));
         }
 
         motionList.push_back(bca);

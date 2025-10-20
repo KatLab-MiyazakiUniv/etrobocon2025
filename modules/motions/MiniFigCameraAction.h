@@ -43,11 +43,11 @@ class MiniFigCameraAction : public CompositeMotion {
   double forwardTargetDistance = 150;  // 撮影後の前進距離
   double backSpeed = 200;              // 撮影後の後退速度
   double forwardSpeed = 200;           // 撮影前の前進速度
-  int position = 0;      // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
+  int position = 0;  // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
   bool isAbsoluteMode = false;  // 回頭方法 false:相対角度回頭, true:絶対角度回頭
-  double kp = 0.036;  // 回頭PIDのP値
-  double ki = 0.02;   // 回頭PIDのI値
-  double kd = 0.03;   // 回頭PIDのD値
+  double kp = 0.036;            // 回頭PIDのP値
+  double ki = 0.02;             // 回頭PIDのI値
+  double kd = 0.03;             // 回頭PIDのD値
 
   /**
    * @brief ミニフィグ撮影動作をする際の事前条件判定をする
