@@ -19,7 +19,6 @@
 #include "UltrasonicSensor.h"
 #include "IMUController.h"
 
-
 class Robot {
  public:
   /**
@@ -115,8 +114,8 @@ class Robot {
   spikeapi::Button button;                              // Buttonインスタンス
   spikeapi::ForceSensor forceSensor;                    // ForceSensorインスタンス
   spikeapi::Display display;                            // Displayインスタンス
-  spikeapi::UltrasonicSensor ultrasonicSensor;    // UltrasonicSensorインスタンス
-  IMUController imuController;                    // IMUControllerインスタンス
+  spikeapi::UltrasonicSensor ultrasonicSensor;          // UltrasonicSensorインスタンス
+  IMUController imuController;                          // IMUControllerインスタンス
   MiniFigDirectionResult miniFigDirectionResult;        // ミニフィグの向き検出結果
   BackgroundDirectionResult backgroundDirectionResult;  // 風景の向き検出結果
   // formatチェックをパスするためのコメント
