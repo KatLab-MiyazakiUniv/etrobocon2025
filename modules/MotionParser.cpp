@@ -54,11 +54,11 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
 
       // IMUR: IMU角度指定回頭
       // [1]:int 角度[deg], [2]:int 基準パワー, [3]:string 方向(clockwise or anticlockwise),
-      // [4-6]:double 角度PIDゲイン(kp, ki, kd)
+      // [4]:string 回頭方法(relative or absolute), [5-7]:double 角度PIDゲイン(kp, ki, kd)
       case COMMAND::IMUR: {
         auto imur = new IMUAngleRotation(
             robot, stoi(params[1]), stoi(params[2]), convertBool(params[0], params[3]),
-            PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
+            PidGain(stod(params[5]), stod(params[6]), stod(params[7])), convertMode(params[4]));
         motionList.push_back(imur);
         break;
       }
@@ -68,6 +68,16 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       case COMMAND::DS: {
         auto ds = new DistanceStraight(robot, stod(params[1]), stod(params[2]));
         motionList.push_back(ds);
+        break;
+      }
+
+      // IDS: IMU角度補正直進
+      // [1]:double 距離[mm], [2]:double 速度[mm/s], [3-5]:double 角度PIDゲイン(kp, ki, kd)
+      case COMMAND::IDS: {
+        auto ids
+            = new IMUDistanceStraight(robot, stod(params[1]), stod(params[2]),
+                                      PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
+        motionList.push_back(ids);
         break;
       }
 
@@ -236,23 +246,25 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [7]:double 撮影後の前進速度の絶対値[mm/s],
         // [8]:string 回頭の方向(clockwise or anticlockwise),
         // [9]:int 撮影位置(0が初期位置)
-        // [10]:double kp（回頭PIDのP値）[オプション]
-        // [11]:double ki（回頭PIDのI値）[オプション]
-        // [12]:double kd（回頭PIDのD値）[オプション]
+        // [10]:string 回頭方法(relative or absolute)
+        // [11]:double kp（回頭PIDのP値）[オプション]
+        // [12]:double ki（回頭PIDのI値）[オプション]
+        // [13]:double kd（回頭PIDのD値）[オプション]
       case COMMAND::MCA: {
         MiniFigCameraAction* mca;
-        if(params.size() >= 13) {
+        if(params.size() >= 14) {
           // PID値が指定されている場合
-          mca = new MiniFigCameraAction(
-              robot, convertBool(params[0], params[8]), stoi(params[1]), stoi(params[2]),
-              stoi(params[3]), stod(params[4]), stod(params[5]), stod(params[6]), stod(params[7]),
-              stoi(params[9]), stod(params[10]), stod(params[11]), stod(params[12]));
+          mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]), stoi(params[1]),
+                                        stoi(params[2]), stoi(params[3]), stod(params[4]),
+                                        stod(params[5]), stod(params[6]), stod(params[7]),
+                                        stoi(params[9]), convertMode(params[10]), stod(params[11]),
+                                        stod(params[12]), stod(params[13]));
         } else {
           // PID値が指定されていない場合、デフォルト値を使用
           mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]), stoi(params[1]),
                                         stoi(params[2]), stoi(params[3]), stod(params[4]),
                                         stod(params[5]), stod(params[6]), stod(params[7]),
-                                        stoi(params[9]));
+                                        stoi(params[9]), convertMode(params[10]));
         }
         motionList.push_back(mca);
 
@@ -271,9 +283,10 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [9]:int ROIの幅
         // [10]:int ROIの高さ
         // [11]:int position（0=初期位置）
-        // [12]:double kp（回頭PIDのP値）[オプション]
-        // [13]:double ki（回頭PIDのI値）[オプション]
-        // [14]:double kd（回頭PIDのD値）[オプション]
+        // [12]:string 回頭方法(relative or absolute)
+        // [13]:double kp（回頭PIDのP値）[オプション]
+        // [14]:double ki（回頭PIDのI値）[オプション]
+        // [15]:double kd（回頭PIDのD値）[オプション]
 
       case COMMAND::BCA: {
         cv::Rect roi;
@@ -282,17 +295,17 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
 
         BackgroundPlaCameraAction* bca;
-        if(params.size() >= 15) {
+        if(params.size() >= 16) {
           // PID値が指定されている場合
           bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
                                               stoi(params[4]), stod(params[5]), stod(params[6]),
-                                              roi, stoi(params[11]), stod(params[12]),
-                                              stod(params[13]), stod(params[14]));
+                                              roi, stoi(params[11]), convertMode(params[12]),
+                                              stod(params[13]), stod(params[14]), stod(params[15]));
         } else {
           // PID値が指定されていない場合、デフォルト値を使用
           bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
                                               stoi(params[4]), stod(params[5]), stod(params[6]),
-                                              roi, stoi(params[11]));
+                                              roi, stoi(params[11]), convertMode(params[12]));
         }
 
         motionList.push_back(bca);
@@ -335,6 +348,14 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // IS: IMU設定
+      // [1]:string 設定 (start or stop)
+      case COMMAND::IS: {
+        auto is = new IMUSetting(robot, convertBool(params[0], params[1]));
+        motionList.push_back(is);
+        break;
+      }
+
       // 未定義コマンド
       default: {
         cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
@@ -356,6 +377,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "AR", COMMAND::AR },      // 角度指定回頭
     { "IMUR", COMMAND::IMUR },  // IMU角度指定回頭
     { "DS", COMMAND::DS },      // 指定距離直進
+    { "IDS", COMMAND::IDS },    // IMU角度補正直進
     { "CS", COMMAND::CS },      // 指定色直進
     { "DL", COMMAND::DL },      // 指定距離ライントレース
     { "DCL", COMMAND::DCL },    // 指定距離カメラライントレース
@@ -368,7 +390,8 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "SS", COMMAND::SS },      // カメラ撮影動作
     { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
-    { "CRA", COMMAND::CRA }     // カメラ復帰動作
+    { "CRA", COMMAND::CRA },    // カメラ復帰動作
+    { "IS", COMMAND::IS }       // IMU設定
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
@@ -410,7 +433,35 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
     }
   }
 
+  // IMU設定(IS)の場合、"START"ならtrue（開始）、"STOP"ならfalse（停止)に変換
+  if(command == "IS") {
+    if(param == "start") {
+      return true;
+    } else if(param == "stop") {
+      return false;
+    } else {
+      cout << "'START' か 'STOP'を入力してください" << endl;
+      return true;
+    }
+  }
+
   // ここまでに条件を満たしていなかった場合は、デフォルト値としてtrueを返す
   cout << "convertBool関数の処理の対象外です: '" << command << endl;
   return true;
+}
+
+bool MotionParser::convertMode(const string& stringParameter)
+{
+  // 末尾の改行を削除
+  string param = StringOperator::removeEOL(stringParameter);
+
+  // "relative"ならfalse（相対角度回頭）、"absolute"ならtrue（絶対角度回頭）に変換
+  if(param == "relative") {
+    return false;
+  } else if(param == "absolute") {
+    return true;
+  } else {
+    cout << "'relative' か 'absolute'を入力してください (入力値: " << param << ")" << endl;
+    return false;  // デフォルトは相対角度回頭
+  }
 }
