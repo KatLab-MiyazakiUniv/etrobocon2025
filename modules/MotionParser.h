@@ -17,6 +17,7 @@
 #include "AngleRotation.h"
 #include "IMUAngleRotation.h"
 #include "DistanceStraight.h"
+#include "IMUDistanceStraight.h"
 #include "DistanceCameraLineTrace.h"
 #include "ColorStraight.h"
 #include "ColorLineTrace.h"
@@ -36,6 +37,7 @@ enum class COMMAND {
   AR,    // 角度指定回頭
   IMUR,  // IMU角度指定回頭
   DS,    // 指定距離直進
+  IDS,   // IMU角度補正直進
   CS,    // 指定色直進
   DL,    // 指定距離ライントレース
   DCL,   // 指定距離カメラライントレース

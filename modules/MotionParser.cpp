@@ -71,6 +71,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // IDS: IMU角度補正直進
+      // [1]:double 距離[mm], [2]:double 速度[mm/s], [3-5]:double 角度PIDゲイン(kp, ki, kd)
+      case COMMAND::IDS: {
+        auto ids = new IMUDistanceStraight(robot, stod(params[1]), stod(params[2]),
+                                           PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
+        motionList.push_back(ids);
+        break;
+      }
+
       // CS: 指定色直進
       // [1]:string 色, [2]:double 速度[mm/s]
       case COMMAND::CS: {
@@ -367,6 +376,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "AR", COMMAND::AR },      // 角度指定回頭
     { "IMUR", COMMAND::IMUR },  // IMU角度指定回頭
     { "DS", COMMAND::DS },      // 指定距離直進
+    { "IDS", COMMAND::IDS },    // IMU角度補正直進
     { "CS", COMMAND::CS },      // 指定色直進
     { "DL", COMMAND::DL },      // 指定距離ライントレース
     { "DCL", COMMAND::DCL },    // 指定距離カメラライントレース
