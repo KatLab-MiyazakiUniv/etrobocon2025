@@ -339,7 +339,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       }
 
       // IS: IMU設定
-      // [1]:string 設定 (START or STOP)
+      // [1]:string 設定 (start or stop)
       case COMMAND::IS: {
         auto is = new IMUSetting(robot, convertBool(params[0], params[1]));
         motionList.push_back(is);
