@@ -13,7 +13,8 @@ IMUController::IMUController()
     offsetZ(0.0f),
     currentAngle(0.0f),
     lastAngularVelocity(0.0),
-    isCalculating(false)
+    isCalculating(false),
+    startedByCommand(false)
 {
   // 補正行列を単位行列で初期化
   for(int i = 0; i < 3; i++) {
@@ -21,6 +22,16 @@ IMUController::IMUController()
       correctionMatrix[i][j] = (i == j) ? 1.0f : 0.0f;
     }
   }
+}
+
+void IMUController::setStartedByCommand(bool value)
+{
+  startedByCommand = value;
+}
+
+bool IMUController::getStartedByCommand() const
+{
+  return startedByCommand;
 }
 
 void IMUController::getRawAngularVelocity(float angv[3])
@@ -164,7 +175,17 @@ void IMUController::angleCalculationLoop()
 
       // 台形積分による角度更新: θ += (ω₁ + ω₀)/2 × Δt
       // 参考: https://garchiving.com/angular-from-angular-acceleration/
-      currentAngle += (currentAngularVelocity + lastAngularVelocity) / 2.0 * deltaTime;
+      // IMUのZ軸角速度は反時計回り時に正の値になるため、角速度を減算し、時計回りで角度が増加するようにする
+      currentAngle -= (currentAngularVelocity + lastAngularVelocity) / 2.0 * deltaTime;
+
+      // 角度を 0.0 <= angle < 360.0 の範囲に正規化を行い、-360.0~360.0の範囲に収める。
+      currentAngle = fmod(currentAngle, 360.0);
+
+      // 現在角度が負であれば、360.0 を加算して0~360度の範囲に調整する。(例: -5.0 -> 355.0)
+      // ループの２週目以降は、355から値が減少し続ける
+      if(currentAngle < 0.0) {
+        currentAngle += 360.0;
+      }
 
       // 次回計算用に現在値を保存（中間時刻と角速度）
       lastAngularVelocity = currentAngularVelocity;
