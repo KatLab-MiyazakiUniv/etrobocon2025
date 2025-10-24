@@ -17,6 +17,7 @@
 #include "AngleRotation.h"
 #include "IMUAngleRotation.h"
 #include "DistanceStraight.h"
+#include "IMUDistanceStraight.h"
 #include "DistanceCameraLineTrace.h"
 #include "ColorStraight.h"
 #include "ColorLineTrace.h"
@@ -30,11 +31,13 @@
 #include "ColorDistanceCameraLineTrace.h"
 #include "UltrasonicDistanceCameraLineTrace.h"
 #include "CameraRecoveryAction.h"
+#include "IMUSetting.h"
 
 enum class COMMAND {
   AR,    // 角度指定回頭
   IMUR,  // IMU角度指定回頭
   DS,    // 指定距離直進
+  IDS,   // IMU角度補正直進
   CS,    // 指定色直進
   DL,    // 指定距離ライントレース
   DCL,   // 指定距離カメラライントレース
@@ -48,6 +51,7 @@ enum class COMMAND {
   MCA,   // ミニフィグのカメラ撮影動作
   BCA,   // 背景のカメラ撮影動作
   CRA,   // カメラ復帰動作
+  IS,    // IMUの角度計算の設定を行う動作
   NONE
 };
 
@@ -81,6 +85,13 @@ class MotionParser {
    * @return bool値
    */
   static bool convertBool(const std::string& command, const std::string& stringParameter);
+
+  /**
+   * @brief 回頭方法の文字列をbool型に変換する（convertBoolは方向判定で使用済みのため専用関数化）
+   * @param stringParameter 文字列のパラメータ ("relative" or "absolute")
+   * @return false: 相対角度回頭, true: 絶対角度回頭
+   */
+  static bool convertRotationModeToBool(const std::string& stringParameter);
 };
 
 #endif
