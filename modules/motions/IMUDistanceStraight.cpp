@@ -44,12 +44,14 @@ void IMUDistanceStraight::prepare()
   // IMU角度計算がコマンドで開始されていなければ、この動作で計算を開始する
   if(!robot.getIMUControllerInstance().getShouldContinueCalculation()) {
     robot.getIMUControllerInstance().startAngleCalculation();
+    robot.getIMUControllerInstance().startDistanceCalculation();
   }
 
   // 呼び出し時の走行距離を取得する
-  double initialRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
-  double initialLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
-  initialDistance = Mileage::calculateMileage(initialRightMotorCount, initialLeftMotorCount);
+  // double initialRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
+  // double initialLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
+  // initialDistance = Mileage::calculateMileage(initialRightMotorCount, initialLeftMotorCount);
+  initialDistance = robot.getIMUControllerInstance().getDistance();
 
   // 走行前の角度を目標角度に設定
   targetAngle = robot.getIMUControllerInstance().getAngle();
@@ -58,9 +60,11 @@ void IMUDistanceStraight::prepare()
 bool IMUDistanceStraight::isMetContinuationCondition()
 {
   // 現在の走行距離を取得する
-  double currentRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
-  double currentLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
-  double currentDistance = Mileage::calculateMileage(currentRightMotorCount, currentLeftMotorCount);
+  // double currentRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
+  // double currentLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
+  // double currentDistance = Mileage::calculateMileage(currentRightMotorCount,
+  // currentLeftMotorCount);
+  double currentDistance = robot.getIMUControllerInstance().getDistance();
 
   // 現在の走行距離が目標走行距離に達した場合falseを返す
   if((fabs(currentDistance - initialDistance) >= targetDistance)) {
@@ -120,5 +124,6 @@ void IMUDistanceStraight::run()
   // この動作で角度計算を開始した場合のみ、計算を停止
   if(!robot.getIMUControllerInstance().getShouldContinueCalculation()) {
     robot.getIMUControllerInstance().stopAngleCalculation();
+    robot.getIMUControllerInstance().stopDistanceCalculation();
   }
 }
