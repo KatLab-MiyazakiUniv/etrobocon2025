@@ -14,7 +14,7 @@ IMUController::IMUController()
     currentAngle(0.0f),
     lastAngularVelocity(0.0),
     isCalculating(false),
-    startedByCommand(false)
+    shouldContinueCalculation(false)
 {
   // 補正行列を単位行列で初期化
   for(int i = 0; i < 3; i++) {
@@ -24,14 +24,14 @@ IMUController::IMUController()
   }
 }
 
-void IMUController::setStartedByCommand(bool value)
+void IMUController::setShouldContinueCalculation(bool value)
 {
-  startedByCommand = value;
+  shouldContinueCalculation = value;
 }
 
-bool IMUController::getStartedByCommand() const
+bool IMUController::shouldContinueCalculation() const
 {
-  return startedByCommand;
+  return shouldContinueCalculation;
 }
 
 void IMUController::getRawAngularVelocity(float angv[3])
@@ -181,7 +181,7 @@ void IMUController::angleCalculationLoop()
       // 角度を 0.0 <= angle < 360.0 の範囲に正規化を行い、-360.0~360.0の範囲に収める。
       currentAngle = fmod(currentAngle, 360.0);
 
-      // 現在角度が負であれば、360.0 を加算して0~360度の範囲に調整する。(例: -5.0 -> 355.0)
+      // 現在角度が負であれば, 360.0 を加算して0~360度の範囲に調整する。(例: -5.0 -> 355.0)
       // ループの２週目以降は、355から値が減少し続ける
       if(currentAngle < 0.0) {
         currentAngle += 360.0;

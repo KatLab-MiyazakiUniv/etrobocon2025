@@ -19,11 +19,11 @@ class IMUAngleRotation : public Rotation {
    * @param _targetAngle  目標回転角度(deg) 0~360
    * @param _basePower    基準パワー値
    * @param _isClockwise  回頭方向 true:時計回り, false:反時計回り
-   * @param _anglePidGain 角度制御PIDゲイン
-   * @param _isAbsoluteMode 絶対角度で回頭 true:絶対角度, false:相対角度で回頭
+   * @param _anglePidGain 角度制御用PIDゲイン
+   * @param _isAbsoluteAngleMode 絶対角度で回頭 true:絶対角度, false:相対角度で回頭
    */
   IMUAngleRotation(Robot& _robot, int _targetAngle, int _basePower, bool _isClockwise,
-                   const PidGain& _anglePidGain, bool _isAbsoluteMode = false);
+                   const PidGain& _anglePidGain, bool _isAbsoluteAngleMode = false);
   /**
    * @brief 回頭する
    * @note run() メソッドは Rotation クラスの実装をそのまま使用する
@@ -59,7 +59,7 @@ class IMUAngleRotation : public Rotation {
   Pid anglePid;                             // 角度PID制御クラス
   float currentAngle;                       // 現在の回頭角度
   double angleError;                        // 角度誤差
-  bool isAbsoluteMode;                      // 絶対角度モードか
+  bool isAbsoluteAngleMode;                 // 絶対角度モードか
   double initialAngle;                      // 動作開始時の角度
   double totalAngleToTurn;                  // 総回頭角度
 };

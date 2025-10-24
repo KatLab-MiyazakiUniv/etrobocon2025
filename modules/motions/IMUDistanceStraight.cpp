@@ -31,7 +31,7 @@ bool IMUDistanceStraight::isMetPreCondition()
 
   // IMU角度計算が既に開始されている場合、それがコマンドによるものでなければエラー
   if(robot.getIMUControllerInstance().isAngleCalculating()
-     && !robot.getIMUControllerInstance().getStartedByCommand()) {
+     && !robot.getIMUControllerInstance().shouldContinueCalculation()) {
     std::cerr << "IMU角度計算が既に開始されています。" << std::endl;
     return false;
   }
@@ -42,7 +42,7 @@ bool IMUDistanceStraight::isMetPreCondition()
 void IMUDistanceStraight::prepare()
 {
   // IMU角度計算がコマンドで開始されていなければ、この動作で計算を開始する
-  if(!robot.getIMUControllerInstance().getStartedByCommand()) {
+  if(!robot.getIMUControllerInstance().shouldContinueCalculation()) {
     robot.getIMUControllerInstance().startAngleCalculation();
   }
 
@@ -100,16 +100,16 @@ void IMUDistanceStraight::run()
       angleError += 360.0;
     }
 
-    double turn = anglePid.calculatePid(angleError, 0.01);
+    double turningPower = anglePid.calculatePid(angleError, 0.01);
 
     // 後退時は補正方向を逆にする
     if(targetSpeed < 0) {
-      turn = -turn;
+      turningPower = -turningPower;
     }
 
     // モーターにPower値をセット
-    robot.getMotorControllerInstance().setRightMotorPower(currentRightPower + turn);
-    robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower - turn);
+    robot.getMotorControllerInstance().setRightMotorPower(currentRightPower + turningPower);
+    robot.getMotorControllerİnstance().setLeftMotorPower(currentLeftPower - turningPower);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));  // 10ミリ秒待機
   }
@@ -118,7 +118,7 @@ void IMUDistanceStraight::run()
   robot.getMotorControllerInstance().stopWheelsMotor();
 
   // この動作で角度計算を開始した場合のみ、計算を停止
-  if(!robot.getIMUControllerInstance().getStartedByCommand()) {
+  if(!robot.getIMUControllerInstance().shouldContinueCalculation()) {
     robot.getIMUControllerInstance().stopAngleCalculation();
   }
 }
