@@ -47,7 +47,8 @@ void IMUAngleRotation::prepare()
       // 時計回りに回頭する場合、clockwiseAngleをそのまま総回頭角度
       totalAngleToTurn = clockwiseAngle;
     } else {
-      // 反時計回りの場合、clockwiseAngleが小さな値のときは総回頭角度を0にし、360度の回転を防止
+      // 反時計回りの場合、目標角度と現在角度の差(clockwiseAngle)が極小だと、
+      // 360を減算した際にほぼ360度回頭してしまう。これを防ぐため、閾値未満なら回頭しない。
       if(clockwiseAngle < 0.01) {
         totalAngleToTurn = 0;
       } else {

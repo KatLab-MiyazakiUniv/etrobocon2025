@@ -26,8 +26,9 @@ class MiniFigCameraAction : public CompositeMotion {
    */
   MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle,
                       int _basePower, double _backTargetDistance, double _forwardTargetDistance,
-                      double _backSpeed, double _forwardSpeed, int _position, bool _isAbsoluteAngleMode,
-                      double _kp = 0.036, double _ki = 0.02, double _kd = 0.03);
+                      double _backSpeed, double _forwardSpeed, int _position,
+                      bool _isAbsoluteAngleMode, double _kp = 0.036, double _ki = 0.02,
+                      double _kd = 0.03);
 
   /**
    * @brief ミニフィグの向きを判定し、必要なら撮影動作をスキップする準備処理
@@ -45,9 +46,9 @@ class MiniFigCameraAction : public CompositeMotion {
   double forwardSpeed = 200;           // 撮影前の前進速度
   int position = 0;  // 撮影位置（0が1回目の撮影箇所）反時計回りに3まで
   bool isAbsoluteAngleMode = false;  // 回頭方法 false:相対角度回頭, true:絶対角度回頭
-  double kp = 0.036;            // 回頭PIDのP値
-  double ki = 0.02;             // 回頭PIDのI値
-  double kd = 0.03;             // 回頭PIDのD値
+  double kp = 0.036;                 // 回頭PIDのP値
+  double ki = 0.02;                  // 回頭PIDのI値
+  double kd = 0.03;                  // 回頭PIDのD値
 
   /**
    * @brief ミニフィグ撮影動作をする際の事前条件判定をする

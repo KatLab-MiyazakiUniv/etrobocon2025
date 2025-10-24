@@ -59,7 +59,7 @@ class IMUAngleRotation : public Rotation {
   Pid anglePid;                             // 角度PID制御クラス
   float currentAngle;                       // 現在の回頭角度
   double angleError;                        // 角度誤差
-  bool isAbsoluteAngleMode;                 // 絶対角度モードか
+  bool isAbsoluteAngleMode;                 // 絶対角度モードかどうか
   double initialAngle;                      // 動作開始時の角度
   double totalAngleToTurn;                  // 総回頭角度
 };

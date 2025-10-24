@@ -32,18 +32,18 @@ class BackgroundPlaCameraAction : public CompositeMotion {
                             double _kd = 0.03);
 
  private:
-  bool isClockwise = false;     // 回頭方向
-  int preTargetAngle = 90;      // カメラを風景に向けるための回頭角度
-  int postTargetAngle = 90;     // 黒線復帰のための回頭角度
-  int basePower = 50;           // 回頭基準パワー値
-  double threshold = 30.0;      // 風景検出のしきい値
-  double minArea = 400.0;       // 最小面積
-  int position = 0;             // 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
-  cv::Rect roi;                 // 動体検出用の注目領域
+  bool isClockwise = false;          // 回頭方向
+  int preTargetAngle = 90;           // カメラを風景に向けるための回頭角度
+  int postTargetAngle = 90;          // 黒線復帰のための回頭角度
+  int basePower = 50;                // 回頭基準パワー値
+  double threshold = 30.0;           // 風景検出のしきい値
+  double minArea = 400.0;            // 最小面積
+  int position = 0;                  // 撮影位置（0:正面, 1:右, 2:後ろ, 3:左）
+  cv::Rect roi;                      // 動体検出用の注目領域
   bool isAbsoluteAngleMode = false;  // 回頭方法 false:相対角度回頭, true:絶対角度回頭
-  double kp = 0.036;            // 回頭PIDのP値
-  double ki = 0.02;             // 回頭PIDのI値
-  double kd = 0.03;             // 回頭PIDのD値
+  double kp = 0.036;                 // 回頭PIDのP値
+  double ki = 0.02;                  // 回頭PIDのI値
+  double kd = 0.03;                  // 回頭PIDのD値
 
   /**
    * @brief 前提条件を満たしているかチェックする
