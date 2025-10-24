@@ -13,9 +13,9 @@ void IMUSetting::run()
   if(setting == true) {
     robot.getIMUControllerInstance().resetAngle();
     robot.getIMUControllerInstance().startAngleCalculation();
-    robot.getIMUControllerInstance().setStartedByCommand(true);
+    robot.getIMUControllerInstance().setShouldContinueCalculation(true);
   } else {
     robot.getIMUControllerInstance().stopAngleCalculation();
-    robot.getIMUControllerInstance().setStartedByCommand(false);
+    robot.getIMUControllerInstance().setShouldContinueCalculation(false);
   }
 }

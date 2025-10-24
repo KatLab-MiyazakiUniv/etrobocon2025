@@ -73,16 +73,16 @@ class IMUController {
 
  public:
   /**
-   * @brief 角度計算がコマンドによって開始されたかを取得する
-   * @return 開始された場合はtrue, そうでない場合はfalse
+   * @brief IMUの継続的な計測が有効になっているかを取得する
+   * @return 有効な場合はtrue, そうでない場合はfalse
    */
-  bool getStartedByCommand() const;
+  bool shouldContinueCalculation() const;
 
   /**
-   * @brief 角度計算がコマンドによって開始されたかを設定する
+   * @brief IMUの継続的な計測が有効かどうかを設定する
    * @param value 設定する値
    */
-  void setStartedByCommand(bool value);
+  void setShouldContinueCalculation(bool value);
 
  private:
   /**
@@ -104,7 +104,7 @@ class IMUController {
   mutable std::mutex imuMutex;  // IMUデータのスレッドセーフなアクセス用ミューテックス
   std::thread angleCalculationThread;  // 角度計算用のスレッド
   bool isCalculating = false;          // 角度計算実行中フラグ
-  bool startedByCommand;  // コマンドによって開始されたかを示すフラグ
+  bool shouldContinueCalculation;      // IMUの継続的な計測が有効かどうかのフラグ
 };
 
 #endif

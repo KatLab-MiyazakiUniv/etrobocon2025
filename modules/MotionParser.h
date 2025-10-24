@@ -91,7 +91,7 @@ class MotionParser {
    * @param stringParameter 文字列のパラメータ ("relative" or "absolute")
    * @return false: 相対角度回頭, true: 絶対角度回頭
    */
-  static bool convertMode(const std::string& stringParameter);
+  static bool convertRotationModeToBool(const std::string& stringParameter);
 };
 
 #endif
