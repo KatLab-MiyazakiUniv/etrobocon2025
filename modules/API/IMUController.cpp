@@ -29,9 +29,9 @@ void IMUController::setShouldContinueCalculation(bool value)
   shouldContinueCalculation = value;
 }
 
-bool IMUController::shouldContinueCalculation() const
+bool IMUController::getShouldContinueCalculation() const
 {
-  return shouldContinueCalculation;
+  return this->shouldContinueCalculation;
 }
 
 void IMUController::getRawAngularVelocity(float angv[3])

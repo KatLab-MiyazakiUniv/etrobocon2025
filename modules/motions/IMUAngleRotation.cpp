@@ -22,7 +22,7 @@ IMUAngleRotation::IMUAngleRotation(Robot& _robot, int _targetAngle, int _basePow
 void IMUAngleRotation::prepare()
 {
   // 相対角度モードで、かつIMUの角度計算が開始されていなければ、この動作で計算を開始する
-  if(!isAbsoluteAngleMode && !robot.getIMUControllerInstance().shouldContinueCalculation()) {
+  if(!isAbsoluteAngleMode && !robot.getIMUControllerInstance().getShouldContinueCalculation()) {
     robot.getIMUControllerInstance().startAngleCalculation();
   }
 
@@ -68,7 +68,7 @@ bool IMUAngleRotation::isMetPreCondition()
   }
 
   // 絶対角度モードで、かつIMUの角度計算が(ISコマンドで)開始されていなければエラー
-  if(isAbsoluteAngleMode && !robot.getIMUControllerInstance().shouldContinueCalculation()) {
+  if(isAbsoluteAngleMode && !robot.getIMUControllerInstance().getShouldContinueCalculation()) {
     std::cerr << "絶対角度モードではIS,startで角度計算を事前に開始する必要があります。"
               << std::endl;
     return false;
@@ -76,7 +76,7 @@ bool IMUAngleRotation::isMetPreCondition()
 
   // IMU角度計算が既に開始されている場合、それがコマンドによるものでなければエラー
   if(robot.getIMUControllerInstance().isAngleCalculating()
-     && !robot.getIMUControllerInstance().shouldContinueCalculation()) {
+     && !robot.getIMUControllerInstance().getShouldContinueCalculation()) {
     std::cerr << "IMU角度計算が既に開始されています。" << std::endl;
     return false;
   }
@@ -110,7 +110,7 @@ bool IMUAngleRotation::isMetContinuationCondition()
   // 継続しない場合（終了する場合）
   if(!shouldContinue) {
     // この動作で角度計算を開始した場合のみ、計算を停止
-    if(!robot.getIMUControllerInstance().shouldContinueCalculation()) {
+    if(!robot.getIMUControllerInstance().getShouldContinueCalculation()) {
       robot.getIMUControllerInstance().stopAngleCalculation();
     }
   }

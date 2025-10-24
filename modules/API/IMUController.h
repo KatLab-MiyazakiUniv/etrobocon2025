@@ -76,7 +76,7 @@ class IMUController {
    * @brief IMUの継続的な計測が有効になっているかを取得する
    * @return 有効な場合はtrue, そうでない場合はfalse
    */
-  bool shouldContinueCalculation() const;
+  bool getShouldContinueCalculation() const;
 
   /**
    * @brief IMUの継続的な計測が有効かどうかを設定する
