@@ -22,6 +22,13 @@ CameraRecoveryAction::CameraRecoveryAction(
 
 void CameraRecoveryAction::run()
 {
+  auto now = std::chrono::system_clock::now();
+  auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+  auto value = std::chrono::duration_cast<std::chrono::milliseconds>(now_ms.time_since_epoch());
+  long long milliseconds = value.count();
+
+  std::cout << "[" << milliseconds << "] [CameraRecoveryAction] run開始" << std::endl;
+
   SocketClient& client = robot.getSocketClient();
 
   // 初回検出
@@ -34,7 +41,14 @@ void CameraRecoveryAction::run()
   }
 
   if(response.result.wasDetected) {
-    std::cout << "ラインを検出できたため、復帰動作の必要はありません。" << std::endl;
+    now = std::chrono::system_clock::now();
+    now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+    value = std::chrono::duration_cast<std::chrono::milliseconds>(now_ms.time_since_epoch());
+    milliseconds = value.count();
+
+    std::cout << "[" << milliseconds
+              << "] [CameraRecoveryAction] ラインを検出できたため、復帰動作の必要はありません。"
+              << std::endl;
     return;
   }
 
