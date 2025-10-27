@@ -68,6 +68,8 @@ bool IMUDistanceStraight::isMetContinuationCondition()
 
   // 現在の走行距離が目標走行距離に達した場合falseを返す
   if((fabs(currentDistance - initialDistance) >= targetDistance)) {
+    double distance = fabs(currentDistance - initialDistance);
+    std::cout << " distance: " << distance << std::endl;
     return false;
   }
 
@@ -92,6 +94,10 @@ void IMUDistanceStraight::run()
     // Power値を計算
     double currentRightPower = speedCalculator.calculateRightMotorPower();
     double currentLeftPower = speedCalculator.calculateLeftMotorPower();
+
+    double core_acc = robot.getIMUControllerInstance().getCorrectedXAxisAcceleration();
+
+    std::cout << " core_acc: " << core_acc << std::endl;
 
     // 角度のズレを補正する
     double currentAngle = robot.getIMUControllerInstance().getAngle();
