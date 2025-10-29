@@ -67,8 +67,8 @@ class BackgroundDirectionDetector {
    * @param padY    Y方向のパディング量
    * @param result  検出結果を格納する構造体
    */
-  void postprocess(const std::vector<std::vector<float>>& outputs, const cv::Mat& frame, float scale, int padX,
-                   int padY, BackgroundDirectionResult& result);
+  void postprocess(const std::vector<std::vector<float>>& outputs, const cv::Mat& frame,
+                   float scale, int padX, int padY, BackgroundDirectionResult& result);
 
   /**
    * 推論を実行する

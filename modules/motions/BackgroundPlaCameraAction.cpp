@@ -15,8 +15,8 @@ BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isCloc
                                                      int _preTargetAngle, int _postTargetAngle,
                                                      int _basePower, double _threshold,
                                                      double _minArea, const cv::Rect _roi,
-                                                     int _position, double _kp, double _ki,
-                                                     double _kd)
+                                                     int _position, bool _isAbsoluteAngleMode,
+                                                     double _kp, double _ki, double _kd)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
@@ -26,6 +26,7 @@ BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isCloc
     minArea(_minArea),
     roi(_roi),
     position(_position),
+    isAbsoluteAngleMode(_isAbsoluteAngleMode),
     kp(_kp),
     ki(_ki),
     kd(_kd)
@@ -61,7 +62,8 @@ void BackgroundPlaCameraAction::run()
 
   // 撮影のため回頭
   PidGain prePidGain = { kp, ki, kd };
-  IMUAngleRotation preRotation(robot, preTargetAngle, basePower, isClockwise, prePidGain);
+  IMUAngleRotation preRotation(robot, preTargetAngle, basePower, isClockwise, prePidGain,
+                               isAbsoluteAngleMode);
   preRotation.run();
 
   // 綺麗な写真の撮影のためのスリープ
@@ -96,6 +98,7 @@ void BackgroundPlaCameraAction::run()
 
   // 黒線復帰のための回頭をする
   PidGain postPidGain = { kp, ki, kd };
-  IMUAngleRotation postRotation(robot, postTargetAngle, basePower, !isClockwise, postPidGain);
+  IMUAngleRotation postRotation(robot, postTargetAngle, basePower, !isClockwise, postPidGain,
+                                isAbsoluteAngleMode);
   postRotation.run();
 }

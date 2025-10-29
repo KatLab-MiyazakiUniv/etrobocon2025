@@ -14,7 +14,8 @@ MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _
                                          int _postTargetAngle, int _basePower,
                                          double _backTargetDistance, double _forwardTargetDistance,
                                          double _backSpeed, double _forwardSpeed, int _position,
-                                         double _kp, double _ki, double _kd)
+                                         bool _isAbsoluteAngleMode, double _kp, double _ki,
+                                         double _kd)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
@@ -25,6 +26,7 @@ MiniFigCameraAction::MiniFigCameraAction(Robot& _robot, bool _isClockwise, int _
     backSpeed(_backSpeed),
     forwardSpeed(_forwardSpeed),
     position(_position),
+    isAbsoluteAngleMode(_isAbsoluteAngleMode),
     kp(_kp),
     ki(_ki),
     kd(_kd)
@@ -52,7 +54,8 @@ void MiniFigCameraAction::run()
 
   // 撮影のための回頭をする
   PidGain pidGain = { kp, ki, kd };
-  IMUAngleRotation preAR(robot, preTargetAngle, basePower, isClockwise, pidGain);
+  IMUAngleRotation preAR(robot, preTargetAngle, basePower, isClockwise, pidGain,
+                         isAbsoluteAngleMode);
   preAR.run();
 
   // 動作安定のためのスリープ
@@ -103,6 +106,7 @@ void MiniFigCameraAction::run()
 
   // 黒線復帰のための回頭をする
   PidGain postPidGain = { kp, ki, kd };
-  IMUAngleRotation postAR(robot, postTargetAngle, basePower, !isClockwise, postPidGain);
+  IMUAngleRotation postAR(robot, postTargetAngle, basePower, !isClockwise, postPidGain,
+                          isAbsoluteAngleMode);
   postAR.run();
 }

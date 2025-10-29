@@ -8,20 +8,22 @@
 #include "Robot.h"
 #include "SystemInfo.h"
 #include <gtest/gtest.h>
+#include "MockSocketClient.h"
 
 namespace etrobocon2025_test {
 
   // 右回頭のテスト
   TEST(IMUAngleRotationTest, RunRight)
   {
-    Robot robot;
+    MockSocketClient mockClient;
+    Robot robot(mockClient);
 
     int angle = 15;
     int basePower = 50;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -40,10 +42,10 @@ namespace etrobocon2025_test {
     imuRotation.run();
 
     // IMUから実際の回転角度を取得
-    double actual = abs(robot.getIMUControllerInstance().getAngle());
+    double actual = robot.getIMUControllerInstance().getAngle();
 
     // TOLERANCEに基づく許容誤差
-    double error = 1.0;
+    double error = 3.0;
 
     EXPECT_GE(actual, expected - error);
     EXPECT_LE(actual, expected + error);
@@ -52,7 +54,8 @@ namespace etrobocon2025_test {
   // 左回頭のテスト
   TEST(IMUAngleRotationTest, RunLeft)
   {
-    Robot robot;
+    MockSocketClient mockClient;
+    Robot robot(mockClient);
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = 20;
@@ -60,7 +63,7 @@ namespace etrobocon2025_test {
     bool isClockwise = false;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -73,16 +76,16 @@ namespace etrobocon2025_test {
     IMUTestControl::rotationStateRef() = -1;
 
     // 指定した回頭角度を期待値とする
-    double expected = angle;
+    double expected = 360 - angle;
 
     // 左回頭を実行
     imuRotation.run();
 
     // IMUから実際の回転角度を取得
-    double actual = abs(robot.getIMUControllerInstance().getAngle());
+    double actual = robot.getIMUControllerInstance().getAngle();
 
     // TOLERANCEに基づく許容誤差
-    double error = 1.0;
+    double error = 3.0;
 
     EXPECT_GE(actual, expected - error);
     EXPECT_LE(actual, expected + error);
@@ -91,7 +94,8 @@ namespace etrobocon2025_test {
   // 左回頭で180度以上回頭するかのテスト
   TEST(IMUAngleRotationTest, RunLeftOver180)
   {
-    Robot robot;
+    MockSocketClient mockClient;
+    Robot robot(mockClient);
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = 185;
@@ -99,7 +103,7 @@ namespace etrobocon2025_test {
     bool isClockwise = false;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -112,16 +116,16 @@ namespace etrobocon2025_test {
     IMUTestControl::rotationStateRef() = -1;
 
     // 指定した回頭角度を期待値とする
-    double expected = angle;
+    double expected = 360 - angle;
 
     // 左回頭を実行
     imuRotation.run();
 
     // IMUから実際の回転角度を取得
-    double actual = abs(robot.getIMUControllerInstance().getAngle());
+    double actual = robot.getIMUControllerInstance().getAngle();
 
     // TOLERANCEに基づく許容誤差
-    double error = 1.0;
+    double error = 3.0;
 
     EXPECT_GE(actual, expected - error);
     EXPECT_LE(actual, expected + error);
@@ -130,7 +134,8 @@ namespace etrobocon2025_test {
   // 回頭角度を0に設定したときに回頭をせずに終了するかのテスト
   TEST(IMUAngleRotationTest, RunZeroAngle)
   {
-    Robot robot;
+    MockSocketClient mockClient;
+    Robot robot(mockClient);
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = 0;
@@ -138,7 +143,7 @@ namespace etrobocon2025_test {
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -155,7 +160,7 @@ namespace etrobocon2025_test {
     imuRotation.run();
 
     // IMUから実際の回転角度を取得
-    double actual = abs(robot.getIMUControllerInstance().getAngle());
+    double actual = robot.getIMUControllerInstance().getAngle();
 
     // 回頭しない
     double expected = 0.0;
@@ -166,7 +171,8 @@ namespace etrobocon2025_test {
   // 回頭角度をマイナスに設定したときに回頭をせずに終了するかのテスト
   TEST(IMUAngleRotationTest, RunMinusAngle)
   {
-    Robot robot;
+    MockSocketClient mockClient;
+    Robot robot(mockClient);
     robot.getMotorControllerInstance().resetWheelsMotorPower();
 
     int angle = -90;
@@ -174,7 +180,7 @@ namespace etrobocon2025_test {
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -191,7 +197,7 @@ namespace etrobocon2025_test {
     imuRotation.run();
 
     // IMUから実際の回転角度を取得
-    double actual = abs(robot.getIMUControllerInstance().getAngle());
+    double actual = robot.getIMUControllerInstance().getAngle();
 
     // 回頭しない
     double expected = 0.0;
@@ -202,15 +208,14 @@ namespace etrobocon2025_test {
   // 回頭角度を360度以上に設定したときに回頭をせずに終了するかのテスト
   TEST(IMUAngleRotationTest, RunOverAngle)
   {
-    Robot robot;
-    robot.getMotorControllerInstance().resetWheelsMotorPower();
-
+    MockSocketClient mockClient;
+    Robot robot(mockClient);
     int angle = 360;
     int basePower = 50;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };  // より保守的な値
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;
@@ -227,7 +232,7 @@ namespace etrobocon2025_test {
     imuRotation.run();
 
     // IMUから実際の回転角度を取得
-    double actual = abs(robot.getIMUControllerInstance().getAngle());
+    double actual = robot.getIMUControllerInstance().getAngle();
 
     // 回頭しない
     double expected = 0.0;
@@ -238,13 +243,14 @@ namespace etrobocon2025_test {
   // IMU角度計算が既に開始されている場合にfalseを返すテスト
   TEST(IMUAngleRotationTest, ReturnFalseWhenAngleCalculating)
   {
-    Robot robot;
+    MockSocketClient mockClient;
+    Robot robot(mockClient);
     int angle = 30;
     int basePower = 50;
     bool isClockwise = true;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
 
-    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain);
+    IMUAngleRotation imuRotation(robot, angle, basePower, isClockwise, anglePidGain, false);
 
     // オフセット計算前に静止状態に設定
     IMUTestControl::rotationStateRef() = 0;

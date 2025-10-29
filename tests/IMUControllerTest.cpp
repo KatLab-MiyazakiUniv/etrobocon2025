@@ -161,12 +161,22 @@ namespace etrobocon2025_test {
   {
     IMUController imuController;
 
+    // オフセット計算と補正行列計算を実行
+    imuController.initializeOffset();
+    imuController.calculateCorrectionMatrix();
+
+    // ダミーIMUが静止状態で角度が0のままになることを防ぐため、ダミーIMUを回転状態に設定する
+    IMUTestControl::rotationStateRef() = 1;  // 反時計回りに回転
+
     // 角度計算を開始して値を変化させる
     imuController.startAngleCalculation();
     std::this_thread::sleep_for(std::chrono::milliseconds(30));
 
     // 角度計算を停止
     imuController.stopAngleCalculation();
+
+    // ダミーIMUを静止状態に戻す
+    IMUTestControl::rotationStateRef() = 0;
 
     // リセット前に角度が0でないことを確認
     EXPECT_NE(0.0f, imuController.getAngle());

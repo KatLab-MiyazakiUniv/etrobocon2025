@@ -21,6 +21,14 @@ jobs:
         run: |
           docker pull chihayataku/kat_etrobo2025:arm64
 
+      # ONNX Runtime を取得
+      - name: Download ONNX Runtime
+        run: |
+          mkdir -p ./third_party/onnxruntime
+          wget -O onnxruntime.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-linux-aarch64-1.22.0.tgz
+          tar -xvzf onnxruntime.tgz -C ./third_party/onnxruntime --strip-components=1
+          rm onnxruntime.tgz
+
       - name: Run build in container
         run: |
           docker run --rm -v $(pwd):/RasPike-ART/sdk/workspace/etrobocon2025 chihayataku/kat_etrobo2025:arm64 \

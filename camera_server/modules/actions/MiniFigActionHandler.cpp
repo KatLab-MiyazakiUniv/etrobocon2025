@@ -72,10 +72,10 @@ void MiniFigActionHandler::execute(const CameraServer::MiniFigActionRequest& req
       thread([path = string(filePath), name = string(uploadFileName)] {
         ImageUploader::uploadImage(path, name, 3);
       }).detach();
-    }else if (!this->firstAttemptResult.wasDetected){
+    } else if(!this->firstAttemptResult.wasDetected) {
       // This is a subsequent attempt, but the first one failed to detect anything.
       cout << "Subsequent attempt (shot_count " << shot_count
-            << ") after failed detection. Saving for debug." << endl;
+           << ") after failed detection. Saving for debug." << endl;
       string positionImageName = "Fig_" + to_string(shot_count);
       FrameSave::save(frame, filePath, positionImageName);
       cout << "path" << filePath << "name" << positionImageName << endl;
