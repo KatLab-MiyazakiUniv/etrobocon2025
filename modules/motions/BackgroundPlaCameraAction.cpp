@@ -13,7 +13,7 @@ using namespace std;
 
 BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise,
                                                      int _preTargetAngle, int _postTargetAngle,
-                                                     int _basePower, double _threshold,
+                                                     int _basePower, double _targetDistance, double _preTargetSpeed, double _postTargetSpeed, double _threshold,
                                                      double _minArea, const cv::Rect _roi,
                                                      int _position, bool _isAbsoluteAngleMode,
                                                      double _kp, double _ki, double _kd)
@@ -22,6 +22,9 @@ BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isCloc
     preTargetAngle(_preTargetAngle),
     postTargetAngle(_postTargetAngle),
     basePower(_basePower),
+    targetDistance(_targetDistance),
+    preTargetSpeed(_preTargetSpeed),
+    postTargetSpeed(_postTargetSpeed),
     threshold(_threshold),
     minArea(_minArea),
     roi(_roi),
@@ -60,11 +63,15 @@ void BackgroundPlaCameraAction::run()
 {
   if(!isMetPreCondition()) return;
 
-  // 撮影のため回頭
   PidGain prePidGain = { kp, ki, kd };
+  // 撮影のため回頭
   IMUAngleRotation preRotation(robot, preTargetAngle, basePower, isClockwise, prePidGain,
                                isAbsoluteAngleMode);
   preRotation.run();
+
+  // 撮影のため直進
+  IMUDistanceStraight preStraight(robot, targetDistance, preTargetSpeed, prePidGain);
+  preStraight.run();
 
   // 綺麗な写真の撮影のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(100));
@@ -96,8 +103,13 @@ void BackgroundPlaCameraAction::run()
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));
 
-  // 黒線復帰のための回頭をする
   PidGain postPidGain = { kp, ki, kd };
+
+  //黒線復帰のための後退をする
+  IMUDistanceStraight postStraight(robot, targetDistance, postTargetSpeed, postPidGain);
+  postStraight.run();
+
+  // 黒線復帰のための回頭をする
   IMUAngleRotation postRotation(robot, postTargetAngle, basePower, !isClockwise, postPidGain,
                                 isAbsoluteAngleMode);
   postRotation.run();
