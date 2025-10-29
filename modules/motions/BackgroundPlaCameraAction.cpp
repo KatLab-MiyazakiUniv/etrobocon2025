@@ -11,20 +11,21 @@
 
 using namespace std;
 
-BackgroundPlaCameraAction::BackgroundPlaCameraAction(Robot& _robot, bool _isClockwise,
-                                                     int _preTargetAngle, int _postTargetAngle,
-                                                     int _basePower, double _targetDistance, double _preTargetSpeed, double _postTargetSpeed, double _threshold,
-                                                     double _minArea, const cv::Rect _roi,
-                                                     int _position, bool _isAbsoluteAngleMode,
-                                                     double _kp, double _ki, double _kd)
+BackgroundPlaCameraAction::BackgroundPlaCameraAction(
+    Robot& _robot, bool _isClockwise, int _preTargetAngle, int _postTargetAngle, int _basePower,
+    double _preTargetDistance, double _postTargetDistance, double _preTargetSpeed,
+    double _postTargetSpeed, int _armPower, double _threshold, double _minArea, const cv::Rect _roi,
+    int _position, bool _isAbsoluteAngleMode, double _kp, double _ki, double _kd)
   : CompositeMotion(_robot),
     isClockwise(_isClockwise),
     preTargetAngle(_preTargetAngle),
     postTargetAngle(_postTargetAngle),
     basePower(_basePower),
-    targetDistance(_targetDistance),
+    preTargetDistance(_preTargetDistance),
+    postTargetDistance(_postTargetDistance),
     preTargetSpeed(_preTargetSpeed),
     postTargetSpeed(_postTargetSpeed),
+    armPower(_armPower),
     threshold(_threshold),
     minArea(_minArea),
     roi(_roi),
@@ -69,8 +70,18 @@ void BackgroundPlaCameraAction::run()
                                isAbsoluteAngleMode);
   preRotation.run();
 
+  // 動作安定のためのスリープ
+  this_thread::sleep_for(chrono::milliseconds(10));
+
+  // アームを上げる
+  robot.getMotorControllerInstance().setArmMotorPower(armPower);
+  robot.getMotorControllerInstance().holdArmMotor();
+
+  // 動作安定のためのスリープ
+  this_thread::sleep_for(chrono::milliseconds(10));
+
   // 撮影のため直進
-  IMUDistanceStraight preStraight(robot, targetDistance, preTargetSpeed, prePidGain);
+  IMUDistanceStraight preStraight(robot, preTargetDistance, preTargetSpeed, prePidGain);
   preStraight.run();
 
   // 綺麗な写真の撮影のためのスリープ
@@ -103,11 +114,25 @@ void BackgroundPlaCameraAction::run()
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));
 
+  robot.getMotorControllerInstance().stopWheelsMotor();
+
   PidGain postPidGain = { kp, ki, kd };
 
-  //黒線復帰のための後退をする
-  IMUDistanceStraight postStraight(robot, targetDistance, postTargetSpeed, postPidGain);
+  // 黒線復帰のための後退をする
+  IMUDistanceStraight postStraight(robot, postTargetDistance, postTargetSpeed, postPidGain);
   postStraight.run();
+
+  // 動作安定のためのスリープ
+  this_thread::sleep_for(chrono::milliseconds(10));
+
+  robot.getMotorControllerInstance().stopWheelsMotor();
+
+  // アームを下げる
+  robot.getMotorControllerInstance().resetArmMotorPower();
+  robot.getMotorControllerInstance().stopArmMotor();
+
+  // 動作安定のためのスリープ
+  this_thread::sleep_for(chrono::milliseconds(10));
 
   // 黒線復帰のための回頭をする
   IMUAngleRotation postRotation(robot, postTargetAngle, basePower, !isClockwise, postPidGain,
