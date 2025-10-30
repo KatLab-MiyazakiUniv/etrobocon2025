@@ -8,8 +8,10 @@
 
 DistanceCameraLineTrace::DistanceCameraLineTrace(
     Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate,
-    const PidGain& _pidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
-  : CameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest),
+    const PidGain& _pidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
+    bool shouldStopMotorPower)
+  : CameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest,
+                      shouldStopMotorPower),
     targetDistance(_targetDistance)
 {
 }
