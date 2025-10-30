@@ -13,13 +13,15 @@
 
 int main(int argc, char* argv[])
 {
-  if(argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " <input_dir> <output_video>" << std::endl;
+  if(argc < 3 || argc > 4) {
+    std::cerr << "Usage: " << argv[0] << " <input_dir> <output_video> [duration_seconds]"
+              << std::endl;
     return 1;
   }
 
   std::string inputDir = argv[1];
   std::string outputPath = argv[2];
+  int durationSeconds = (argc == 4) ? std::stoi(argv[3]) : 120;  // デフォルト120秒
 
   namespace fs = std::filesystem;
 
@@ -86,14 +88,16 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  // ★ ここで「最大2分（=120秒）」の制限を設定
-  const int maxFrames = static_cast<int>(fps * 120);  // 15fps × 120秒 = 1800フレーム
+  // 指定された秒数での制限を設定（最大2分）
+  int targetSeconds = std::min(durationSeconds, 120);
+  const int maxFrames = static_cast<int>(fps * targetSeconds);
   int frameCount = 0;
 
   // 各画像を処理
   for(const auto& imagePath : imageFiles) {
     if(frameCount >= maxFrames) {
-      std::cerr << "Reached 2-minute limit (" << maxFrames << " frames)." << std::endl;
+      std::cerr << "Reached " << targetSeconds << "-second limit (" << maxFrames << " frames)."
+                << std::endl;
       break;
     }
 

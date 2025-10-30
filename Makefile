@@ -29,6 +29,7 @@ help:
 	@echo " $$ make upload-image"
 	@echo ライントレース画像から動画を作成する
 	@echo " $$ make create-line-trace-video"
+	@echo " $$ make create-line-trace-video-<秒数>  # 例: create-line-trace-video-30"
 
 ## 実行関連 ##
 build: build-client build-camera
@@ -172,6 +173,22 @@ create-line-trace-video:
 	@echo "動画を作成中..."
 	@cd $(MAKEFILE_PATH)camera_server && \
 		./create_video_app datafiles/line_trace $(MAKEFILE_PATH)line_trace.mp4
+	@rm -f $(MAKEFILE_PATH)camera_server/create_video_app
+	@echo "動画を作成しました: $(MAKEFILE_PATH)line_trace.mp4"
+
+# 秒数指定でライントレース動画を作成
+create-line-trace-video-%:
+	@if [ ! -d "$(MAKEFILE_PATH)camera_server/datafiles/line_trace" ]; then \
+		echo "Error: camera_server/datafiles/line_trace not found"; \
+		exit 1; \
+	fi
+	@echo "動画作成ツールをコンパイル中..."
+	@cd $(MAKEFILE_PATH)camera_server && \
+		g++ -std=c++17 -Wall -Wextra -O2 $$(pkg-config --cflags opencv4) \
+		create_video.cpp $$(pkg-config --libs opencv4) -o create_video_app
+	@echo "動画を作成中（$*秒）..."
+	@cd $(MAKEFILE_PATH)camera_server && \
+		./create_video_app datafiles/line_trace $(MAKEFILE_PATH)line_trace.mp4 $*
 	@rm -f $(MAKEFILE_PATH)camera_server/create_video_app
 	@echo "動画を作成しました: $(MAKEFILE_PATH)line_trace.mp4"
 
