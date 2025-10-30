@@ -5,8 +5,6 @@
  */
 
 #include "AreaMaster.h"
-#include <chrono>
-#include <typeinfo>
 
 using namespace std;
 const string AreaMaster::basePath = "etrobocon2025/datafiles/commands/";
@@ -31,12 +29,6 @@ void AreaMaster::run()
 
   // 各動作を実行し、動作し終えたらメモリを開放する
   for(auto motion = motionList.begin(); motion != motionList.end();) {
-    auto now = chrono::system_clock::now();
-    auto now_ms = chrono::time_point_cast<chrono::milliseconds>(now);
-    auto value = chrono::duration_cast<chrono::milliseconds>(now_ms.time_since_epoch());
-    long long milliseconds = value.count();
-
-    cout << "[" << milliseconds << "] [AreaMaster] 動作開始: " << typeid(**motion).name() << endl;
     (*motion)->run();
     delete *motion;                     // メモリを解放
     motion = motionList.erase(motion);  // リストから削除
