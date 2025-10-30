@@ -31,6 +31,7 @@
 #include "ColorDistanceCameraLineTrace.h"
 #include "UltrasonicDistanceCameraLineTrace.h"
 #include "CameraRecoveryAction.h"
+#include "SmartCarryAction.h"
 #include "IMUSetting.h"
 
 enum class COMMAND {
@@ -51,6 +52,7 @@ enum class COMMAND {
   MCA,   // ミニフィグのカメラ撮影動作
   BCA,   // 背景のカメラ撮影動作
   CRA,   // カメラ復帰動作
+  SCA,   // スマートキャリーアクション
   IS,    // IMUの角度計算の設定を行う動作
   NONE
 };

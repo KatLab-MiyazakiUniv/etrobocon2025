@@ -351,6 +351,47 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // SCA: スマートキャリーアクション
+      // [1]:int 前進距離[mm], [2]:double IMU直進スピード[mm/s], [3]:double 超音波センサー距離[mm]
+      // [4]:double udcl距離[mm], [5-10]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV),
+      // [11-14]:int ROI座標[px]
+      // ([11]左上隅のx座標, [12]左上隅のy座標, [13]幅, [14]高さ), [15-16]int 解像度[px]
+      // ([15]幅,[16]高さ) 補足：ROI（Region of Interest:
+      // ライントレース用の画像内注目領域（四角形）） SmartCarryAction::SmartCarryAction( Robot&
+      // _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance, double
+      // _udclDistance, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+      case COMMAND::SCA: {
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
+
+        detectionRequest.command
+            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
+
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[5]), stoi(params[6]), stoi(params[7]));
+        detectionRequest.upperHSV = cv::Scalar(stoi(params[8]), stoi(params[9]), stoi(params[10]));
+
+        // パラメータ配列のサイズによってROIと解像度を設定
+        if(params.size() > 16) {
+          detectionRequest.roi
+              = cv::Rect(stoi(params[11]), stoi(params[12]), stoi(params[13]), stoi(params[14]));
+          detectionRequest.resolution = cv::Size(stoi(params[15]), stoi(params[16]));
+        } else if(params.size() > 14) {
+          detectionRequest.roi
+              = cv::Rect(stoi(params[11]), stoi(params[12]), stoi(params[13]), stoi(params[14]));
+          detectionRequest.resolution = cv::Size(640, 480);
+        } else {
+          detectionRequest.roi = cv::Rect(50, 240, 540, 240);
+          detectionRequest.resolution = cv::Size(640, 480);
+        }
+
+        auto sca = new SmartCarryAction(robot, stod(params[1]), stod(params[2]), stod(params[3]),
+                                        stod(params[4]), detectionRequest);
+        // SmartCarryAction::SmartCarryAction(
+        // Robot& _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance,
+        // double _udclDistance, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+        motionList.push_back(sca);
+        break;
+      }
+
       // IS: IMU設定
       // [1]:string 設定 (start or stop)
       case COMMAND::IS: {
@@ -394,6 +435,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
     { "CRA", COMMAND::CRA },    // カメラ復帰動作
+    { "SCA", COMMAND::SCA },    // スマートキャリーアクション
     { "IS", COMMAND::IS }       // IMU設定
   };
 
