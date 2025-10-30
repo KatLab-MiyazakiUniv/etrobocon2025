@@ -73,10 +73,8 @@ int main(int argc, char* argv[])
 
   // 解像度を縮小
   double scale = 0.5;
-  cv::Size frameSize(
-    static_cast<int>(firstFrame.cols * scale),
-    static_cast<int>(firstFrame.rows * scale)
-  );
+  cv::Size frameSize(static_cast<int>(firstFrame.cols * scale),
+                     static_cast<int>(firstFrame.rows * scale));
   std::cerr << "Original size: " << firstFrame.cols << "x" << firstFrame.rows << std::endl;
   std::cerr << "Video size: " << frameSize.width << "x" << frameSize.height << std::endl;
 
@@ -155,8 +153,10 @@ int main(int argc, char* argv[])
       // ROI文字情報を描画
       std::string roiText1 = "ROI: x=" + std::to_string(x) + ", y=" + std::to_string(y);
       std::string roiText2 = "w=" + std::to_string(w) + ", h=" + std::to_string(h);
-      cv::putText(resizedFrame, roiText1, cv::Point(10, 22), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255), 1);
-      cv::putText(resizedFrame, roiText2, cv::Point(10, 22 + 18), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255), 1);
+      cv::putText(resizedFrame, roiText1, cv::Point(10, 22), cv::FONT_HERSHEY_SIMPLEX, 0.6,
+                  cv::Scalar(0, 0, 255), 1);
+      cv::putText(resizedFrame, roiText2, cv::Point(10, 22 + 18), cv::FONT_HERSHEY_SIMPLEX, 0.6,
+                  cv::Scalar(0, 0, 255), 1);
     }
 
     // 動画に書き込み
