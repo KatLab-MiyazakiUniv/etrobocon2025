@@ -17,7 +17,7 @@ DualDistanceCameraLineTrace::DualDistanceCameraLineTrace(
 }
 
 // 指定距離カメラライントレースの事前条件
-bool DistanceCameraLineTrace::isMetPreCondition()
+bool DualDistanceCameraLineTrace::isMetPreCondition()
 {
   // targetSpeed値が0の場合は終了する
   if(targetSpeed == 0.0) {
@@ -33,7 +33,7 @@ bool DistanceCameraLineTrace::isMetPreCondition()
 }
 
 // 指定距離カメラライントレースの事前処理
-void DistanceCameraLineTrace::prepare()
+void DualDistanceCameraLineTrace::prepare()
 {
   // 初期値を代入
   initDistance = Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
@@ -41,7 +41,7 @@ void DistanceCameraLineTrace::prepare()
 }
 
 // 指定距離カメラライントレースの継続条件
-bool DistanceCameraLineTrace::isMetContinuationCondition()
+bool DualDistanceCameraLineTrace::isMetContinuationCondition()
 {
   // 走行距離が目標距離に到達
   if(fabs(Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
