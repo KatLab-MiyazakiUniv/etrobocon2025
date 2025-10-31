@@ -186,6 +186,38 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // DDCL: 2色指定距離カメラライントレース
+      // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int X座標[px], [4-6]:double PIDゲイン,
+      // [7-9]int lowerHSV, [10-12]int upperHSV,
+      // [13-16]int ROI座標[px] ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ),
+      // [17-18]int 解像度[px] ([17]幅, [18]高さ)
+      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      case COMMAND::DDCL: {
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
+
+        detectionRequest.command
+            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
+
+        detectionRequest.lowerFirstHSV
+            = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        detectionRequest.upperFirstHSV
+            = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
+        detectionRequest.lowerSecondHSV
+            = cv::Scalar(stoi(params[13]), stoi(params[14]), stoi(params[15]));
+        detectionRequest.upperSecondHSV
+            = cv::Scalar(stoi(params[16]), stoi(params[17]), stoi(params[18]));
+
+        detectionRequest.roi
+            = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
+        detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
+
+        auto ddcl = new DoubleDistanceCameraLineTrace(
+            robot, stod(params[1]), stod(params[2]), stoi(params[3]),
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest);
+        motionList.push_back(ddcl);
+        break;
+      }
+
       // CL: 指定色ライントレース
       // [1]:string 色, [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
       case COMMAND::CL: {
@@ -394,7 +426,8 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
     { "CRA", COMMAND::CRA },    // カメラ復帰動作
-    { "IS", COMMAND::IS }       // IMU設定
+    { "IS", COMMAND::IS },      // IMU設定
+    { "DDCL", COMMAND::DDCL }   // 2色指定距離カメラライントレース
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
