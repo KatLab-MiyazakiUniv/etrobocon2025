@@ -1,0 +1,64 @@
+/**
+ * @file   DualCameraPidTracking.h
+ * @brief  カメラを使った2色のPID走行の親クラス
+ * @author miyahara046 HaruArima08 takuchi17
+ */
+
+#ifndef DUAL_CAMERA_PID_TRACKING_H
+#define DUAL_CAMERA_PID_TRACKING_H
+
+#include "Motion.h"
+#include "Pid.h"
+#include "SpeedCalculator.h"
+#include "Mileage.h"
+#include <algorithm>
+#include "SocketProtocol.h"
+
+class DualCameraPidTracking : public Motion {
+ public:
+  /**
+   * コンストラクタ
+   * @brief カメラ画像を使ったPID走行クラスを初期化する
+   * @param _robot ロボットインスタンス
+   * @param _targetSpeed 目標速度
+   * @param _targetXCoordinate 目標x座標
+   * @param _pidGain PIDゲイン
+   * @param _detectionRequestFirst 1色目の検出リクエスト
+   * @param _detectionRequestSecond 2色目の検出リクエスト
+   */
+  DualCameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
+                        const PidGain& _pidGain,
+                        const CameraServer::BoundingBoxDetectorRequest& _detectionRequestFirst,
+                        const CameraServer::BoundingBoxDetectorRequest& _detectionRequestSecond);
+
+  /**
+   * @brief カメラ走行を実行する
+   */
+  void run() override;
+
+ protected:
+  /**
+   * @brief カメラ走行する際の事前条件判定をする
+   */
+  virtual bool isMetPreCondition() = 0;
+
+  /**
+   * @brief カメラ走行する際の事前処理をする
+   */
+  virtual void prepare() = 0;
+
+  /**
+   * @brief カメラ走行する際の継続条件判定をする。返り値がfalseでモーターが止まる
+   */
+  virtual bool isMetContinuationCondition() = 0;
+
+ protected:
+  CameraServer::BoundingBoxDetectorRequest detectionRequestFirst;   // 1色目の検出リクエスト
+  CameraServer::BoundingBoxDetectorRequest detectionRequestSecond;  // 2色目の検出リクエスト
+  BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
+  double targetSpeed;                 // 目標速度
+  int targetXCoordinate;              // 目標X座標
+  PidGain pidGain;                    // PIDゲイン
+};
+
+#endif
