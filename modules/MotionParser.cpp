@@ -186,191 +186,247 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-      // CL: 指定色ライントレース
-      // [1]:string 色, [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
-      case COMMAND::CL: {
-        auto cl = new ColorLineTrace(robot, ColorJudge::convertStringToColor(params[1]),
-                                     stod(params[2]), targetBrightness + stoi(params[3]),
-                                     PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
-        motionList.push_back(cl);
+      // DDCL: 2色指定距離カメラライントレース
+      // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int X座標[px], [4-6]:double PIDゲイン,
+      // [7-9]int 1色目lowerHSV, [10-12]int 1色目upperHSV,
+      // [13-16]int 2色目lowerHSV, [17-19]int 2色目upperHSV,
+      // [20-23]int ROI座標[px] ([20]左上隅のx座標, [21]左上隅のy座標, [22]幅, [23]高さ),
+      // [24-25]int 解像度[px] ([24]幅, [25]高さ)
+      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      case COMMAND::DDCL: {
+        CameraServer::BoundingBoxDetectorRequest detectionRequestFirst;
+        CameraServer::BoundingBoxDetectorRequest detectionRequestSecond;
+
+        detectionRequestFirst.command
+            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
+        detectionRequestSecond.command
+            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
+
+        detectionRequestFirst.lowerHSV
+            = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        detectionRequestFirst.upperHSV
+            = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
+        detectionRequestSecond.lowerHSV
+            = cv::Scalar(stoi(params[13]), stoi(params[14]), stoi(params[15]));
+        detectionRequestSecond.upperHSV
+            = cv::Scalar(stoi(params[16]), stoi(params[17]), stoi(params[18]));
+
+        detectionRequestFirst.roi
+            = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
+        detectionRequestFirst.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
+        detectionRequestSecond.roi
+            = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
+        detectionRequestSecond.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
+
+        auto ddcl = new DualDistanceCameraLineTrace(
+            robot, stod(params[1]), stod(params[2]), stoi(params[3]),
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequestFirst,
+            detectionRequestSecond);
+        motionList.push_back(ddcl);
         break;
       }
-
-      // CDL: 色距離指定ライントレース
-      // [1]:string 色, [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int 輝度補正,
-      // [5-7]:double PIDゲイン
-      case COMMAND::CDL: {
-        auto cdl = new ColorDistanceLineTrace(
-            robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
-            targetBrightness + stoi(params[4]),
-            PidGain(stod(params[5]), stod(params[6]), stod(params[7])));
-        motionList.push_back(cdl);
-        break;
-      }
-
-      // EC: エッジ切り替え
-      // [1]:string 切り替え後エッジ (left or right)
-      case COMMAND::EC: {
-        auto ec = new EdgeChange(robot, convertBool(params[0], params[1]));
-        motionList.push_back(ec);
-        break;
-      }
-
-      // SL: 自タスクスリープ
-      // [1]:double 時間(マイクロ秒)[μs]
-      case COMMAND::SL: {
-        auto sl = new Sleeping(robot, stod(params[1]));
-        motionList.push_back(sl);
-        break;
-      }
-
-      // SS: カメラ撮影動作
-      // [1]:string ファイル名(デフォルトではsnapshot.JPEG)
-      case COMMAND::SS: {
-        Snapshot* ss;
-        if(params.size() == 2) {
-          ss = new Snapshot(robot, params[1]);
-        } else {
-          ss = new Snapshot(robot);
-        }
-        motionList.push_back(ss);
-        break;
-      }
-
-        // MCA: ミニフィグのカメラ撮影動作
-        // [1]:int フロントカメラをミニフィグに向けるための回頭角度[deg],
-        // [2]:int 黒線復帰のための回頭角度[deg],
-        // [3]:int 撮影前後の回頭のための基準パワー値,
-        // [4]:double 撮影前の後退距離[mm],
-        // [5]:double 撮影後の前進距離[mm],
-        // [6]:double 撮影前の後退速度の絶対値[mm/s],
-        // [7]:double 撮影後の前進速度の絶対値[mm/s],
-        // [8]:string 回頭の方向(clockwise or anticlockwise),
-        // [9]:int 撮影位置(0が初期位置)
-        // [10]:string 回頭方法(relative or absolute)
-        // [11]:double kp（回頭PIDのP値）[オプション]
-        // [12]:double ki（回頭PIDのI値）[オプション]
-        // [13]:double kd（回頭PIDのD値）[オプション]
-      case COMMAND::MCA: {
-        MiniFigCameraAction* mca;
-        if(params.size() >= 14) {
-          // PID値が指定されている場合
-          mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]), stoi(params[1]),
-                                        stoi(params[2]), stoi(params[3]), stod(params[4]),
-                                        stod(params[5]), stod(params[6]), stod(params[7]),
-                                        stoi(params[9]), convertRotationModeToBool(params[10]),
-                                        stod(params[11]), stod(params[12]), stod(params[13]));
-        } else {
-          // PID値が指定されていない場合、デフォルト値を使用
-          mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]), stoi(params[1]),
-                                        stoi(params[2]), stoi(params[3]), stod(params[4]),
-                                        stod(params[5]), stod(params[6]), stod(params[7]),
-                                        stoi(params[9]), convertRotationModeToBool(params[10]));
-        }
-        motionList.push_back(mca);
-
-        break;
-      }
-
-        // BCA: 風景・プラレールのカメラ撮影動作
-        // [1]:bool isClockwise（"clockwise"/"anticlockwise"）
-        // [2]:int preTargetAngle
-        // [3]:int postTargetAngle
-        // [4]:int 回頭基準パワー値
-        // [5]:double threshold（動体検出用）
-        // [6]:double minArea（動体矩形とみなす最小面積）
-        // [7]:int ROIの左上X座標
-        // [8]:int ROIの左上Y座標
-        // [9]:int ROIの幅
-        // [10]:int ROIの高さ
-        // [11]:int position（0=初期位置）
-        // [12]:string 回頭方法(relative or absolute)
-        // [13]:double kp（回頭PIDのP値）[オプション]
-        // [14]:double ki（回頭PIDのI値）[オプション]
-        // [15]:double kd（回頭PIDのD値）[オプション]
-
-      case COMMAND::BCA: {
-        cv::Rect roi;
-
-        bool isClockwise = convertBool("BCA", params[1]);
-        roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
-
-        BackgroundPlaCameraAction* bca;
-        if(params.size() >= 16) {
-          // PID値が指定されている場合
-          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
-                                              stoi(params[4]), stod(params[5]), stod(params[6]),
-                                              roi, stoi(params[11]),
-                                              convertRotationModeToBool(params[12]),
-                                              stod(params[13]), stod(params[14]), stod(params[15]));
-        } else {
-          // PID値が指定されていない場合、デフォルト値を使用
-          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
-                                              stoi(params[4]), stod(params[5]), stod(params[6]),
-                                              roi, stoi(params[11]),
-                                              convertRotationModeToBool(params[12]));
-        }
-
-        motionList.push_back(bca);
-        break;
-      }
-
-      // CRA: カメラ復帰動作
-      // [1]:int 回頭角度[deg], [2]:double 回頭スピード[mm/s], [3]:string 回頭の方向(clockwise or
-      // anticlockwise), [4-9]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [10-13]int
-      // ROI座標[px]
-      // ([10]左上隅のx座標, [11]左上隅のy座標, [12]幅, [13]高さ), [14-15]int 解像度[px] ([14]幅,
-      // [15]高さ)
-      // 補足：ROI（Region of Interest: ライントレース用の画像内注目領域（四角形））
-      case COMMAND::CRA: {
-        CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
         detectionRequest.command
             = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
-        detectionRequest.lowerHSV = cv::Scalar(stoi(params[4]), stoi(params[5]), stoi(params[6]));
-        detectionRequest.upperHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        detectionRequest.upperHSV
+            = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
 
-        // パラメータ配列のサイズによってROIと解像度を設定
-        if(params.size() > 15) {
-          detectionRequest.roi
-              = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
-          detectionRequest.resolution = cv::Size(stoi(params[14]), stoi(params[15]));
-        } else if(params.size() > 13) {
-          detectionRequest.roi
-              = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
-          detectionRequest.resolution = cv::Size(640, 480);
-        } else {
-          detectionRequest.roi = cv::Rect(50, 240, 540, 240);
-          detectionRequest.resolution = cv::Size(640, 480);
-        }
+        detectionRequest.roi
+            = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
+        detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
 
-        auto cra = new CameraRecoveryAction(robot, stoi(params[1]), stod(params[2]),
-                                            convertBool(params[0], params[3]), detectionRequest);
-        motionList.push_back(cra);
+        auto dcl = new DistanceCameraLineTrace(
+            robot, stod(params[1]), stod(params[2]), stoi(params[3]),
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest);
+        motionList.push_back(dcl);
         break;
-      }
-
-      // IS: IMU設定
-      // [1]:string 設定 (start or stop)
-      case COMMAND::IS: {
-        auto is = new IMUSetting(robot, convertBool(params[0], params[1]));
-        motionList.push_back(is);
-        break;
-      }
-
-      // 未定義コマンド
-      default: {
-        cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
-             << endl;
-        break;
-      }
     }
 
-    lineNum++;  // 行番号をインクリメントする
+    // CL: 指定色ライントレース
+    // [1]:string 色, [2]:double 速度[mm/s], [3]:int 輝度補正, [4-6]:double PIDゲイン
+    case COMMAND::CL: {
+      auto cl = new ColorLineTrace(robot, ColorJudge::convertStringToColor(params[1]),
+                                   stod(params[2]), targetBrightness + stoi(params[3]),
+                                   PidGain(stod(params[4]), stod(params[5]), stod(params[6])));
+      motionList.push_back(cl);
+      break;
+    }
+
+    // CDL: 色距離指定ライントレース
+    // [1]:string 色, [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int 輝度補正,
+    // [5-7]:double PIDゲイン
+    case COMMAND::CDL: {
+      auto cdl = new ColorDistanceLineTrace(
+          robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
+          targetBrightness + stoi(params[4]),
+          PidGain(stod(params[5]), stod(params[6]), stod(params[7])));
+      motionList.push_back(cdl);
+      break;
+    }
+
+    // EC: エッジ切り替え
+    // [1]:string 切り替え後エッジ (left or right)
+    case COMMAND::EC: {
+      auto ec = new EdgeChange(robot, convertBool(params[0], params[1]));
+      motionList.push_back(ec);
+      break;
+    }
+
+    // SL: 自タスクスリープ
+    // [1]:double 時間(マイクロ秒)[μs]
+    case COMMAND::SL: {
+      auto sl = new Sleeping(robot, stod(params[1]));
+      motionList.push_back(sl);
+      break;
+    }
+
+    // SS: カメラ撮影動作
+    // [1]:string ファイル名(デフォルトではsnapshot.JPEG)
+    case COMMAND::SS: {
+      Snapshot* ss;
+      if(params.size() == 2) {
+        ss = new Snapshot(robot, params[1]);
+      } else {
+        ss = new Snapshot(robot);
+      }
+      motionList.push_back(ss);
+      break;
+    }
+
+      // MCA: ミニフィグのカメラ撮影動作
+      // [1]:int フロントカメラをミニフィグに向けるための回頭角度[deg],
+      // [2]:int 黒線復帰のための回頭角度[deg],
+      // [3]:int 撮影前後の回頭のための基準パワー値,
+      // [4]:double 撮影前の後退距離[mm],
+      // [5]:double 撮影後の前進距離[mm],
+      // [6]:double 撮影前の後退速度の絶対値[mm/s],
+      // [7]:double 撮影後の前進速度の絶対値[mm/s],
+      // [8]:string 回頭の方向(clockwise or anticlockwise),
+      // [9]:int 撮影位置(0が初期位置)
+      // [10]:string 回頭方法(relative or absolute)
+      // [11]:double kp（回頭PIDのP値）[オプション]
+      // [12]:double ki（回頭PIDのI値）[オプション]
+      // [13]:double kd（回頭PIDのD値）[オプション]
+    case COMMAND::MCA: {
+      MiniFigCameraAction* mca;
+      if(params.size() >= 14) {
+        // PID値が指定されている場合
+        mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]), stoi(params[1]),
+                                      stoi(params[2]), stoi(params[3]), stod(params[4]),
+                                      stod(params[5]), stod(params[6]), stod(params[7]),
+                                      stoi(params[9]), convertRotationModeToBool(params[10]),
+                                      stod(params[11]), stod(params[12]), stod(params[13]));
+      } else {
+        // PID値が指定されていない場合、デフォルト値を使用
+        mca = new MiniFigCameraAction(robot, convertBool(params[0], params[8]), stoi(params[1]),
+                                      stoi(params[2]), stoi(params[3]), stod(params[4]),
+                                      stod(params[5]), stod(params[6]), stod(params[7]),
+                                      stoi(params[9]), convertRotationModeToBool(params[10]));
+      }
+      motionList.push_back(mca);
+
+      break;
+    }
+
+      // BCA: 風景・プラレールのカメラ撮影動作
+      // [1]:bool isClockwise（"clockwise"/"anticlockwise"）
+      // [2]:int preTargetAngle
+      // [3]:int postTargetAngle
+      // [4]:int 回頭基準パワー値
+      // [5]:double threshold（動体検出用）
+      // [6]:double minArea（動体矩形とみなす最小面積）
+      // [7]:int ROIの左上X座標
+      // [8]:int ROIの左上Y座標
+      // [9]:int ROIの幅
+      // [10]:int ROIの高さ
+      // [11]:int position（0=初期位置）
+      // [12]:string 回頭方法(relative or absolute)
+      // [13]:double kp（回頭PIDのP値）[オプション]
+      // [14]:double ki（回頭PIDのI値）[オプション]
+      // [15]:double kd（回頭PIDのD値）[オプション]
+
+    case COMMAND::BCA: {
+      cv::Rect roi;
+
+      bool isClockwise = convertBool("BCA", params[1]);
+      roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
+
+      BackgroundPlaCameraAction* bca;
+      if(params.size() >= 16) {
+        // PID値が指定されている場合
+        bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
+                                            stoi(params[4]), stod(params[5]), stod(params[6]), roi,
+                                            stoi(params[11]), convertRotationModeToBool(params[12]),
+                                            stod(params[13]), stod(params[14]), stod(params[15]));
+      } else {
+        // PID値が指定されていない場合、デフォルト値を使用
+        bca = new BackgroundPlaCameraAction(
+            robot, isClockwise, stoi(params[2]), stoi(params[3]), stoi(params[4]), stod(params[5]),
+            stod(params[6]), roi, stoi(params[11]), convertRotationModeToBool(params[12]));
+      }
+
+      motionList.push_back(bca);
+      break;
+    }
+
+    // CRA: カメラ復帰動作
+    // [1]:int 回頭角度[deg], [2]:double 回頭スピード[mm/s], [3]:string 回頭の方向(clockwise or
+    // anticlockwise), [4-9]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [10-13]int
+    // ROI座標[px]
+    // ([10]左上隅のx座標, [11]左上隅のy座標, [12]幅, [13]高さ), [14-15]int 解像度[px] ([14]幅,
+    // [15]高さ)
+    // 補足：ROI（Region of Interest: ライントレース用の画像内注目領域（四角形））
+    case COMMAND::CRA: {
+      CameraServer::BoundingBoxDetectorRequest detectionRequest;
+
+      detectionRequest.command
+          = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
+
+      detectionRequest.lowerHSV = cv::Scalar(stoi(params[4]), stoi(params[5]), stoi(params[6]));
+      detectionRequest.upperHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+
+      // パラメータ配列のサイズによってROIと解像度を設定
+      if(params.size() > 15) {
+        detectionRequest.roi
+            = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
+        detectionRequest.resolution = cv::Size(stoi(params[14]), stoi(params[15]));
+      } else if(params.size() > 13) {
+        detectionRequest.roi
+            = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
+        detectionRequest.resolution = cv::Size(640, 480);
+      } else {
+        detectionRequest.roi = cv::Rect(50, 240, 540, 240);
+        detectionRequest.resolution = cv::Size(640, 480);
+      }
+
+      auto cra = new CameraRecoveryAction(robot, stoi(params[1]), stod(params[2]),
+                                          convertBool(params[0], params[3]), detectionRequest);
+      motionList.push_back(cra);
+      break;
+    }
+
+    // IS: IMU設定
+    // [1]:string 設定 (start or stop)
+    case COMMAND::IS: {
+      auto is = new IMUSetting(robot, convertBool(params[0], params[1]));
+      motionList.push_back(is);
+      break;
+    }
+
+    // 未定義コマンド
+    default: {
+      cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
+           << endl;
+      break;
+    }
   }
 
-  return motionList;
+  lineNum++;  // 行番号をインクリメントする
+}
+
+return motionList;
 }
 
 COMMAND MotionParser::convertCommand(const string& str)
@@ -394,7 +450,8 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
     { "CRA", COMMAND::CRA },    // カメラ復帰動作
-    { "IS", COMMAND::IS }       // IMU設定
+    { "IS", COMMAND::IS },      // IMU設定
+    { "DDCL", COMMAND::DDCL }   // 2色指定距離カメラライントレース
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
