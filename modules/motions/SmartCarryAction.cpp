@@ -48,6 +48,7 @@ void SmartCarryAction::run()
 
   SocketClient& client = robot.getSocketClient();
   CameraServer::BoundingBoxDetectorResponse response;
+
   while(1) {
     bool success = client.executeLineDetection(detectionRequest, response);
     if(success && response.result.wasDetected) {
