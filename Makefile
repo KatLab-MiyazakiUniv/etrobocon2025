@@ -43,6 +43,7 @@ build-camera:
 start: start-camera start-client
 
 start-client:
+	rm -rf $(MAKEFILE_PATH)camera_server/datafiles/line_trace
 	cd $(MAKEFILE_PATH)../ && make start
 
 start-camera:
@@ -174,4 +175,3 @@ create-line-trace-video:
 		./create_video_app datafiles/line_trace $(MAKEFILE_PATH)line_trace.mp4
 	@rm -f $(MAKEFILE_PATH)camera_server/create_video_app
 	@echo "動画を作成しました: $(MAKEFILE_PATH)line_trace.mp4"
-
