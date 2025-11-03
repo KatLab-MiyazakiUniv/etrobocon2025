@@ -360,8 +360,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
 
         detectionRequest.command = CameraServer::Command::LINE_DETECTION;
         detectionRequest.lowerHSV = cv::Scalar(stoi(params[6]), stoi(params[7]), stoi(params[8]));
-        detectionRequest.upperHSV
-            = cv::Scalar(stoi(params[9]), stoi(params[10]), stoi(params[11]));
+        detectionRequest.upperHSV = cv::Scalar(stoi(params[9]), stoi(params[10]), stoi(params[11]));
         detectionRequest.roi
             = cv::Rect(stoi(params[12]), stoi(params[13]), stoi(params[14]), stoi(params[15]));
         detectionRequest.resolution = cv::Size(stoi(params[16]), stoi(params[17]));
@@ -399,25 +398,25 @@ COMMAND MotionParser::convertCommand(const string& str)
 {
   // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
   static const unordered_map<string, COMMAND> commandMap = {
-    { "AR", COMMAND::AR },      // 角度指定回頭
-    { "IMUR", COMMAND::IMUR },  // IMU角度指定回頭
-    { "DS", COMMAND::DS },      // 指定距離直進
-    { "IDS", COMMAND::IDS },    // IMU角度補正直進
-    { "CS", COMMAND::CS },      // 指定色直進
-    { "DL", COMMAND::DL },      // 指定距離ライントレース
-    { "DCL", COMMAND::DCL },    // 指定距離カメラライントレース
-    { "CDCL", COMMAND::CDCL },  // 色距離指定カメラライントレース
-    { "UDCL", COMMAND::UDCL },  // 超音波距離指定カメラライントレース
-    { "CL", COMMAND::CL },      // 指定色ライントレース
-    { "CDL", COMMAND::CDL },    // 色距離指定ライントレース
-    { "EC", COMMAND::EC },      // エッジ切り替え
-    { "SL", COMMAND::SL },      // スリープ
-    { "SS", COMMAND::SS },      // カメラ撮影動作
-    { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
-    { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
-    { "CRA", COMMAND::CRA },    // カメラ復帰動作
+    { "AR", COMMAND::AR },        // 角度指定回頭
+    { "IMUR", COMMAND::IMUR },    // IMU角度指定回頭
+    { "DS", COMMAND::DS },        // 指定距離直進
+    { "IDS", COMMAND::IDS },      // IMU角度補正直進
+    { "CS", COMMAND::CS },        // 指定色直進
+    { "DL", COMMAND::DL },        // 指定距離ライントレース
+    { "DCL", COMMAND::DCL },      // 指定距離カメラライントレース
+    { "CDCL", COMMAND::CDCL },    // 色距離指定カメラライントレース
+    { "UDCL", COMMAND::UDCL },    // 超音波距離指定カメラライントレース
+    { "CL", COMMAND::CL },        // 指定色ライントレース
+    { "CDL", COMMAND::CDL },      // 色距離指定ライントレース
+    { "EC", COMMAND::EC },        // エッジ切り替え
+    { "SL", COMMAND::SL },        // スリープ
+    { "SS", COMMAND::SS },        // カメラ撮影動作
+    { "MCA", COMMAND::MCA },      // ミニフィグのカメラ撮影動作
+    { "BCA", COMMAND::BCA },      // 風景・プラレールのカメラ撮影動作
+    { "CRA", COMMAND::CRA },      // カメラ復帰動作
     { "PCIDS", COMMAND::PCIDS },  // 画像ラインを用いた距離直進
-    { "IS", COMMAND::IS }       // IMU設定
+    { "IS", COMMAND::IS }         // IMU設定
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
