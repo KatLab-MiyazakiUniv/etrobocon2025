@@ -27,6 +27,8 @@ help:
 	@echo " $$ make test"
 	@echo 画像をサーバーにアップロードする
 	@echo " $$ make upload-image"
+	@echo ライントレース画像から動画を作成する
+	@echo " $$ make create-line-trace-video"
 
 ## 実行関連 ##
 build: build-client build-camera
@@ -155,3 +157,21 @@ upload-image:
 # ミニフィグの正面らしさ比較用画像をサーバーにアップロードする
 upload-minifig-image:
 	curl --fail -X POST -F "file=@$(FILE_PATH)" http://$(SERVER_IP):8000/minifig/detect
+
+## デバッグ関連 ##
+# ライントレース画像から動画を作成（ROI描画付き）
+create-line-trace-video:
+	@if [ ! -d "$(MAKEFILE_PATH)camera_server/datafiles/line_trace" ]; then \
+		echo "Error: camera_server/datafiles/line_trace not found"; \
+		exit 1; \
+	fi
+	@echo "動画作成ツールをコンパイル中..."
+	@cd $(MAKEFILE_PATH)camera_server && \
+		g++ -std=c++17 -Wall -Wextra -O2 $$(pkg-config --cflags opencv4) \
+		create_video.cpp $$(pkg-config --libs opencv4) -o create_video_app
+	@echo "動画を作成中..."
+	@cd $(MAKEFILE_PATH)camera_server && \
+		./create_video_app datafiles/line_trace $(MAKEFILE_PATH)line_trace.mp4
+	@rm -f $(MAKEFILE_PATH)camera_server/create_video_app
+	@echo "動画を作成しました: $(MAKEFILE_PATH)line_trace.mp4"
+
