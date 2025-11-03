@@ -22,10 +22,12 @@ class ColorDistanceCameraLineTrace : public CameraPidTracking {
    * @param _targetXCoordinate 目標x座標
    * @param _pidGain PIDゲイン
    * @param _detectionRequest 検出リクエスト
+   * @param shouldStopMotorPower モータを停止するかどうか
    */
   ColorDistanceCameraLineTrace(Robot& _robot, COLOR _targetColor, double _targetDistance,
                                double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain,
-                               const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
+                               const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
+                               bool shouldStopMotorPower = true);
 
   /**
    * @brief (指定距離まで||指定色認識する)だけカメラライントレースする

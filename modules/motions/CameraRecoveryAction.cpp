@@ -23,6 +23,7 @@ CameraRecoveryAction::CameraRecoveryAction(
 void CameraRecoveryAction::run()
 {
   SocketClient& client = robot.getSocketClient();
+  MotorController& motorController = robot.getMotorControllerInstance();
 
   // 初回検出
   CameraServer::BoundingBoxDetectorResponse response;
@@ -30,11 +31,13 @@ void CameraRecoveryAction::run()
 
   if(!success) {
     std::cerr << "通信に失敗しました。" << std::endl;
+    motorController.stopWheelsMotor();
     return;
   }
 
   if(response.result.wasDetected) {
     std::cout << "ラインを検出できたため、復帰動作の必要はありません。" << std::endl;
+    motorController.stopWheelsMotor();
     return;
   }
 
@@ -47,6 +50,7 @@ void CameraRecoveryAction::run()
 
   if(!success) {
     std::cerr << "通信に失敗しました。" << std::endl;
+    motorController.stopWheelsMotor();
     return;
   }
 
@@ -55,4 +59,6 @@ void CameraRecoveryAction::run()
   } else {
     std::cout << "復帰できませんでした。" << std::endl;
   }
+
+  motorController.stopWheelsMotor();
 }
