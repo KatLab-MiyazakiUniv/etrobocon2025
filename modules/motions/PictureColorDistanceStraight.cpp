@@ -94,7 +94,7 @@ void PictureColorDistanceStraight::run()
   // SpeedCalculatorの宣言
   SpeedCalculator speedCalculator(robot, targetSpeed);
 
-  // SocketClientの参照を取得
+  // SocketClientのポインタを取得
   socketClient = &robot.getSocketClient();
 
   // 継続条件を満たしている間繰り返す
