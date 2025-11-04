@@ -186,7 +186,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-      // DDCL: 2色指定距離カメラライントレース
+      // DTCCL: 2色指定距離カメラライントレース
       // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int X座標[px], [4-6]:double PIDゲイン,
       // [7-9]int lowerHSV, [10-12]int upperHSV,
       // [13-16]int ROI座標[px] ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ),
@@ -211,10 +211,10 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
         detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
 
-        auto ddcl = new DistanceTwoColorCameraLineTrace(
+        auto dtccl = new DistanceTwoColorCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stoi(params[3]),
             PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest);
-        motionList.push_back(dtccL);
+        motionList.push_back(dtccl);
         break;
       }
 
