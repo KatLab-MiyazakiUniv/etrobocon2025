@@ -102,6 +102,9 @@ void DoubleLineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDete
   cv::Mat combinedMask;
   cv::bitwise_or(mask1, mask2, combinedMask);
 
+  // デバッグ画像保存（必要に応じてコメントアウト）
+  // saveDebugImages(frameProcessed, mask1, mask2, combinedMask, roiRect, result, "double_line_debug");
+
   // 5. モルフォロジー処理 (結合されたマスクに対して実行)
   cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
 
@@ -144,4 +147,65 @@ void DoubleLineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDete
       = cv::Point(boundingBox.x + roiRect.x, boundingBox.y + boundingBox.height + roiRect.y);
   result.bottomRight = cv::Point(boundingBox.x + boundingBox.width + roiRect.x,
                                  boundingBox.y + boundingBox.height + roiRect.y);
+}
+
+void DoubleLineBoundingBoxDetector::saveDebugImages(const cv::Mat& originalFrame, const cv::Mat& mask1, 
+                                                     const cv::Mat& mask2, const cv::Mat& combinedMask, 
+                                                     const cv::Rect& roiRect, 
+                                                     const BoundingBoxDetectionResult& result, 
+                                                     const std::string& prefix)
+{
+  static int frameCount = 0;
+  frameCount++;
+  
+  std::string timestamp = std::to_string(frameCount);
+  
+  // 1. 元画像にROIとバウンディングボックスを描画
+  cv::Mat debugOriginal = originalFrame.clone();
+  
+  // ROI描画（緑色）
+  cv::rectangle(debugOriginal, roiRect, cv::Scalar(0, 255, 0), 2);
+  
+  // バウンディングボックス描画（検出時のみ、赤色）
+  if (result.wasDetected) {
+    cv::rectangle(debugOriginal, 
+                  cv::Point(result.topLeft.x, result.topLeft.y),
+                  cv::Point(result.bottomRight.x, result.bottomRight.y),
+                  cv::Scalar(0, 0, 255), 2);
+    
+    // 中心点描画
+    cv::Point center((result.topLeft.x + result.bottomRight.x) / 2,
+                     (result.topLeft.y + result.bottomRight.y) / 2);
+    cv::circle(debugOriginal, center, 5, cv::Scalar(0, 0, 255), -1);
+  }
+  
+  // 2. マスク画像を3チャンネルに変換（表示用）
+  cv::Mat mask1_colored, mask2_colored, combined_colored;
+  cv::cvtColor(mask1, mask1_colored, cv::COLOR_GRAY2BGR);
+  cv::cvtColor(mask2, mask2_colored, cv::COLOR_GRAY2BGR);
+  cv::cvtColor(combinedMask, combined_colored, cv::COLOR_GRAY2BGR);
+  
+  // 3. 1色目マスクを青色で着色
+  cv::Mat mask1_blue = cv::Mat::zeros(mask1_colored.size(), CV_8UC3);
+  mask1_blue.setTo(cv::Scalar(255, 0, 0), mask1);  // 青色
+  
+  // 4. 2色目マスクを緑色で着色
+  cv::Mat mask2_green = cv::Mat::zeros(mask2_colored.size(), CV_8UC3);
+  mask2_green.setTo(cv::Scalar(0, 255, 0), mask2);  // 緑色
+  
+  // 5. 結合マスクを白色で着色
+  cv::Mat combined_white = cv::Mat::zeros(combined_colored.size(), CV_8UC3);
+  combined_white.setTo(cv::Scalar(255, 255, 255), combinedMask);  // 白色
+  
+  // 6. 画像を保存
+  try {
+    cv::imwrite(prefix + "_" + timestamp + "_original.jpg", debugOriginal);
+    cv::imwrite(prefix + "_" + timestamp + "_mask1_blue.jpg", mask1_blue);
+    cv::imwrite(prefix + "_" + timestamp + "_mask2_green.jpg", mask2_green);
+    cv::imwrite(prefix + "_" + timestamp + "_combined_white.jpg", combined_white);
+    
+    std::cout << "Debug images saved: " << prefix << "_" << timestamp << "_*.jpg" << std::endl;
+  } catch (const cv::Exception& e) {
+    std::cerr << "Error saving debug images: " << e.what() << std::endl;
+  }
 }
