@@ -8,7 +8,7 @@
 #define TWO_COLOR_LINE_DETECTION_ACTION_HANDLER_H
 
 #include "CameraCapture.h"
-#include "TwoColorBoundingBoxDetector.h"
+#include "TwoColorLineBoundingBoxDetector.h"
 #include "SocketProtocol.h"
 
 class TwoColorLineDetectionActionHandler {
