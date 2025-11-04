@@ -13,7 +13,7 @@ TwoColorLineDetectionActionHandler::TwoColorLineDetectionActionHandler(CameraCap
 }
 
 void TwoColorLineDetectionActionHandler::execute(
-    const CameraServer::TwoColorBoundingBoxDetectorRequest& request,
+    const CameraServer::TwoColorLineBoundingBoxDetectorRequest& request,
     CameraServer::BoundingBoxDetectorResponse& response)
 {
   std::cout << "Executing TWO_COLOR_LINE_DETECTION command." << std::endl;
@@ -25,10 +25,10 @@ void TwoColorLineDetectionActionHandler::execute(
     return;
   }
 
-  // Create a TwoColorBoundingBoxDetector with parameters from the request
-  TwoColorBoundingBoxDetector detector(request.lowerFirstHSV, request.upperFirstHSV,
-                                       request.lowerSecondHSV, request.upperSecondHSV, request.roi,
-                                       request.resolution);
+  // Create a TwoColorLineBoundingBoxDetector with parameters from the request
+  TwoColorLineBoundingBoxDetector detector(request.lowerFirstHSV, request.upperFirstHSV,
+                                           request.lowerSecondHSV, request.upperSecondHSV,
+                                           request.roi, request.resolution);
 
   detector.detect(frame, response.result);
 
