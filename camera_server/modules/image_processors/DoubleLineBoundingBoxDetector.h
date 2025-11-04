@@ -27,9 +27,6 @@ class DoubleLineBoundingBoxDetector {
                                 const cv::Scalar& _lowerHSV2, const cv::Scalar& _upperHSV2);
 
   void detect(const cv::Mat& frame, BoundingBoxDetectionResult& result);
-  void saveDebugImages(const cv::Mat& originalFrame, const cv::Mat& mask1, const cv::Mat& mask2, 
-                       const cv::Mat& combinedMask, const cv::Rect& roiRect, 
-                       const BoundingBoxDetectionResult& result, const std::string& prefix = "debug");
 
  private:
   // 対象の輪郭とみなす最小面積（この閾値は調整）
