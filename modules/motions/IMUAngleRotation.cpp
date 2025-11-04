@@ -109,7 +109,7 @@ bool IMUAngleRotation::isMetContinuationCondition()
 
   // 継続しない場合（終了する場合）
   if(!shouldContinue) {
-    // この動作で角度計算を開始した場合のみ、計算を停止
+    // IMUSetting などで計算を開始していない場合は、計算を継続する必要がないため計算を停止
     if(!robot.getIMUControllerInstance().getShouldContinueCalculation()) {
       robot.getIMUControllerInstance().stopAngleCalculation();
     }
