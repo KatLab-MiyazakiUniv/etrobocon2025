@@ -29,9 +29,11 @@ int main()
   BackgroundPlaActionHandler bgPlaHandler(camera);
   SnapshotActionHandler snapshotHandler(camera);
   LineDetectionActionHandler lineDetectionHandler(camera);
+  DoubleLineDetectionActionHandler doubleLineDetectionHandler(camera);
 
   // サーバーの初期化と実行
-  SocketServer server(minifigHandler, bgPlaHandler, snapshotHandler, lineDetectionHandler);
+  SocketServer server(minifigHandler, bgPlaHandler, snapshotHandler, lineDetectionHandler,
+                      doubleLineDetectionHandler);
   if(!server.init()) {
     std::cerr << "Failed to initialize socket server." << std::endl;
     return 1;

@@ -79,6 +79,10 @@ class SocketClient {
   virtual bool executeLineDetection(const CameraServer::BoundingBoxDetectorRequest& request,
                                     CameraServer::BoundingBoxDetectorResponse& response);
 
+  virtual bool executeDoubleLineDetection(
+      const CameraServer::DoubleBoundingBoxDetectorRequest& request,
+      CameraServer::BoundingBoxDetectorResponse& response);
+
  protected:
   int sock;          // ソケットファイルディスクリプタ
   bool isConnected;  // サーバーへの接続状態

@@ -193,10 +193,10 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [17-18]int 解像度[px] ([17]幅, [18]高さ)
       // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
       case COMMAND::DDCL: {
-        CameraServer::BoundingBoxDetectorRequest detectionRequest;
+        CameraServer::DoubleBoundingBoxDetectorRequest detectionRequest;
 
         detectionRequest.command
-            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
+            = CameraServer::Command::DOUBLE_LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
         detectionRequest.lowerFirstHSV
             = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));

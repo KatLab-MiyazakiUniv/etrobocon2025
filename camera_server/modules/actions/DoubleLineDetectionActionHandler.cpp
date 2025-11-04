@@ -13,7 +13,7 @@ DoubleLineDetectionActionHandler::DoubleLineDetectionActionHandler(CameraCapture
 }
 
 void DoubleLineDetectionActionHandler::execute(
-    const CameraServer::BoundingBoxDetectorRequest& request,
+    const CameraServer::DoubleBoundingBoxDetectorRequest& request,
     CameraServer::BoundingBoxDetectorResponse& response)
 {
   std::cout << "Executing DOUBLE_LINE_DETECTION command." << std::endl;

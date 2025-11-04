@@ -24,7 +24,7 @@ class DoubleLineDetectionActionHandler {
    * @param request クライアントからのリクエスト
    * @param response クライアントへのレスポンス
    */
-  void execute(const CameraServer::BoundingBoxDetectorRequest& request,
+  void execute(const CameraServer::DoubleBoundingBoxDetectorRequest& request,
                CameraServer::BoundingBoxDetectorResponse& response);
 
  private:
