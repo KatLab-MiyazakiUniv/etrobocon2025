@@ -4,8 +4,8 @@
  * @author takuchi17 miyahara046 HaruArima08
  */
 
-#ifndef DOUBLE_COLOR_LINE_BOUNDING_BOX_DETECTOR_H
-#define DOUBLE_COLOR_LINE_BOUNDING_BOX_DETECTOR_H
+#ifndef TWO_COLOR_LINE_BOUNDING_BOX_DETECTOR_H
+#define TWO_COLOR_LINE_BOUNDING_BOX_DETECTOR_H
 
 #include "BoundingBoxDetector.h"
 #include "SystemInfo.h"
@@ -41,4 +41,4 @@ class TwoColorLineBoundingBoxDetector {
 
   void validateParameters();
 };
-#endif  // DOUBLE_COLOR_LINE_BOUNDING_BOX_DETECTOR_H
+#endif  // TWO_COLOR_LINE_BOUNDING_BOX_DETECTOR_H
