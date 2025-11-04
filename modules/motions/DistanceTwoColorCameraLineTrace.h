@@ -1,16 +1,16 @@
 /**
- * @file   DoubleDistanceCameraLineTrace.h
+ * @file   DistanceTwoColorCameraLineTrace.h
  * @brief  2色指定距離カメラライントレース動作
  * @author miyahara046 HaruArima08
  */
 
-#ifndef DOUBLE_DISTANCE_CAMERA_LINE_TRACE_H
-#define DOUBLE_DISTANCE_CAMERA_LINE_TRACE_H
+#ifndef DISTANCE_TWO_COLOR_CAMERA_LINE_TRACE_H
+#define DISTANCE_TWO_COLOR_CAMERA_LINE_TRACE_H
 
-#include "DoubleCameraPidTracking.h"
+#include "TwoColorCameraPidTracking.h"
 #include "SocketProtocol.h"
 
-class DoubleDistanceCameraLineTrace : public DoubleCameraPidTracking {
+class DistanceTwoColorCameraLineTrace : public TwoColorCameraPidTracking {
  public:
   /**
    * コンストラクタ
@@ -20,15 +20,15 @@ class DoubleDistanceCameraLineTrace : public DoubleCameraPidTracking {
    * @param _pidGain PIDゲイン
    * @param _detectionRequest 検出リクエスト
    */
-  DoubleDistanceCameraLineTrace(
+  DistanceTwoColorCameraLineTrace(
       Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate,
       const PidGain& _pidGain,
-      const CameraServer::DoubleBoundingBoxDetectorRequest& _detectionRequest);
+      const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest);
 
   /**
    * @brief 指定距離だけカメラライントレースする
    */
-  using DoubleCameraPidTracking::run;
+  using TwoColorCameraPidTracking::run;
 
  protected:
   /**
@@ -49,9 +49,9 @@ class DoubleDistanceCameraLineTrace : public DoubleCameraPidTracking {
   bool isMetContinuationCondition() override;
 
  private:
-  double targetDistance;                                            // 目標距離
-  double initDistance;                                              // 実行前の走行距離
-  CameraServer::DoubleBoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
+  double targetDistance;                                              // 目標距離
+  double initDistance;                                                // 実行前の走行距離
+  CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
 };
 
 #endif

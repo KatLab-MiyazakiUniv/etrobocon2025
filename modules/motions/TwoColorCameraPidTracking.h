@@ -1,11 +1,11 @@
 /**
- * @file   DoubleCameraPidTracking.h
+ * @file   TwoColorCameraPidTracking.h
  * @brief  カメラを使った2色指定PID走行の親クラス
  * @author miyahara046 HaruArima08 takuchi17
  */
 
-#ifndef DOUBLE_CAMERA_PID_TRACKING_H
-#define DOUBLE_CAMERA_PID_TRACKING_H
+#ifndef TWO_COLOR_CAMERA_PID_TRACKING_H
+#define TWO_COLOR_CAMERA_PID_TRACKING_H
 
 #include "Motion.h"
 #include "Pid.h"
@@ -14,7 +14,7 @@
 #include <algorithm>
 #include "SocketProtocol.h"
 
-class DoubleCameraPidTracking : public Motion {
+class TwoColorCameraPidTracking : public Motion {
  public:
   /**
    * コンストラクタ
@@ -25,9 +25,9 @@ class DoubleCameraPidTracking : public Motion {
    * @param _pidGain PIDゲイン
    * @param _detectionRequest 検出リクエスト
    */
-  DoubleCameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
-                          const PidGain& _pidGain,
-                          const CameraServer::DoubleBoundingBoxDetectorRequest& _detectionRequest);
+  TwoColorCameraPidTracking(
+      Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain,
+      const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest);
 
   /**
    * @brief カメラ走行を実行する
@@ -51,7 +51,7 @@ class DoubleCameraPidTracking : public Motion {
   virtual bool isMetContinuationCondition() = 0;
 
  protected:
-  CameraServer::DoubleBoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
+  CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
   BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
   double targetSpeed;                 // 目標速度
   int targetXCoordinate;              // 目標X座標

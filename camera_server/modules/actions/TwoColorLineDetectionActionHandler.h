@@ -1,30 +1,30 @@
 /**
- * @file DoubleLineDetectionActionHandler.h
+ * @file TwoColorLineDetectionActionHandler.h
  * @brief 2色線検出をするクラス
  * @author takuchi17 miyahara046 HaruArima08
  */
 
-#ifndef DOUBLE_LINE_DETECTION_ACTION_HANDLER_H
-#define DOUBLE_LINE_DETECTION_ACTION_HANDLER_H
+#ifndef TWO_COLOR_LINE_DETECTION_ACTION_HANDLER_H
+#define TWO_COLOR_LINE_DETECTION_ACTION_HANDLER_H
 
 #include "CameraCapture.h"
-#include "DoubleLineBoundingBoxDetector.h"
+#include "TwoColorBoundingBoxDetector.h"
 #include "SocketProtocol.h"
 
-class DoubleLineDetectionActionHandler {
+class TwoColorLineDetectionActionHandler {
  public:
   /**
    * @brief コンストラクタ
    * @param camera カメラキャプチャのインスタンス
    */
-  DoubleLineDetectionActionHandler(CameraCapture& camera);
+  TwoColorLineDetectionActionHandler(CameraCapture& camera);
 
   /**
    * @brief ライン検出アクションを実行する
    * @param request クライアントからのリクエスト
    * @param response クライアントへのレスポンス
    */
-  void execute(const CameraServer::DoubleBoundingBoxDetectorRequest& request,
+  void execute(const CameraServer::TwoColorBoundingBoxDetectorRequest& request,
                CameraServer::BoundingBoxDetectorResponse& response);
 
  private:

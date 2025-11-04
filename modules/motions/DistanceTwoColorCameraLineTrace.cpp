@@ -1,22 +1,23 @@
 /**
- * @file   DoubleDistanceCameraLineTrace.cpp
+ * @file   DistanceTwoColorCameraLineTrace.cpp
  * @brief  2色指定距離カメラライントレース動作
  * @author miyahara046 HaruArima08
  */
 
-#include "DoubleDistanceCameraLineTrace.h"
+#include "DistanceTwoColorCameraLineTrace.h"
 
-DoubleDistanceCameraLineTrace::DoubleDistanceCameraLineTrace(
+DistanceTwoColorCameraLineTrace::DistanceTwoColorCameraLineTrace(
     Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate,
     const PidGain& _pidGain,
-    const CameraServer::DoubleBoundingBoxDetectorRequest& _detectionRequest)
-  : DoubleCameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest),
+    const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest)
+  : TwoColorCameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain,
+                              _detectionRequest),
     targetDistance(_targetDistance)
 {
 }
 
 // 指定距離カメラライントレースの事前条件
-bool DoubleDistanceCameraLineTrace::isMetPreCondition()
+bool DistanceTwoColorCameraLineTrace::isMetPreCondition()
 {
   // targetSpeed値が0の場合は終了する
   if(targetSpeed == 0.0) {
@@ -32,7 +33,7 @@ bool DoubleDistanceCameraLineTrace::isMetPreCondition()
 }
 
 // 指定距離カメラライントレースの事前処理
-void DoubleDistanceCameraLineTrace::prepare()
+void DistanceTwoColorCameraLineTrace::prepare()
 {
   // 初期値を代入
   initDistance = Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
@@ -40,7 +41,7 @@ void DoubleDistanceCameraLineTrace::prepare()
 }
 
 // 指定距離カメラライントレースの継続条件
-bool DoubleDistanceCameraLineTrace::isMetContinuationCondition()
+bool DistanceTwoColorCameraLineTrace::isMetContinuationCondition()
 {
   // 走行距離が目標距離に到達
   if(fabs(Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),

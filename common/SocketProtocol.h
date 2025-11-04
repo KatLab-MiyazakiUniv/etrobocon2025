@@ -20,7 +20,7 @@ namespace CameraServer {
     BACKGROUND_PLA_CAMERA_ACTION = 1,  // 背景・プラレール撮影アクション
     TAKE_SNAPSHOT = 2,                 // スナップショット撮影アクション
     LINE_DETECTION = 3,                // ライン検出
-    DOUBLE_LINE_DETECTION = 4,         // 2色線検出
+    TWO_COLOR_LINE_DETECTION = 4,      // 2色線検出
     SHUTDOWN = 255                     // サーバーシャットダウン
   };
 
@@ -56,14 +56,14 @@ namespace CameraServer {
     cv::Size resolution;                        // カメラ画像の解像度
   };
 
-  struct DoubleBoundingBoxDetectorRequest {
-    Command command = Command::DOUBLE_LINE_DETECTION;  // DOUBLE_LINE_DETECTIONを期待
-    cv::Scalar lowerFirstHSV;                          // 検出する色の下限HSV値
-    cv::Scalar upperFirstHSV;                          // 検出する色の上限HSV値
-    cv::Scalar lowerSecondHSV;                         // 2色目の検出する色の下限HSV値
-    cv::Scalar upperSecondHSV;                         // 2色目の検出する色の上限HSV値
-    cv::Rect roi;                                      // 検出を行うROI
-    cv::Size resolution;                               // カメラ画像の解像度
+  struct TwoColorBoundingBoxDetectorRequest {
+    Command command = Command::TWO_COLOR_LINE_DETECTION;  // TWO_COLOR_LINE_DETECTIONを期待
+    cv::Scalar lowerFirstHSV;   // 1色目の検出する色の下限HSV値
+    cv::Scalar upperFirstHSV;   // 1色目の検出する色の上限HSV値
+    cv::Scalar lowerSecondHSV;  // 2色目の検出する色の下限HSV値
+    cv::Scalar upperSecondHSV;  // 2色目の検出する色の上限HSV値
+    cv::Rect roi;               // 検出を行うROI
+    cv::Size resolution;        // カメラ画像の解像度
   };
 
   // バウンディングボックス検出のレスポンスデータ構造

@@ -18,14 +18,14 @@ SocketServer::SocketServer(MiniFigActionHandler& _minifigHandler,
                            BackgroundPlaActionHandler& _bgPlaHandler,
                            SnapshotActionHandler& _snapshotHandler,
                            LineDetectionActionHandler& _lineDetectionHandler,
-                           DoubleLineDetectionActionHandler& _doubleLineDetectionHandler)
+                           TwoColorLineDetectionActionHandler& _twoColorLineDetectionHandler)
   : listenSocket(-1),
     isRunning(false),
     minifigHandler(_minifigHandler),
     bgPlaHandler(_bgPlaHandler),
     snapshotHandler(_snapshotHandler),
     lineDetectionHandler(_lineDetectionHandler),
-    doubleLineDetectionHandler(_doubleLineDetectionHandler)
+    twoColorLineDetectionHandler(_twoColorLineDetectionHandler)
 {
 }
 
@@ -157,19 +157,19 @@ void SocketServer::handle_connection(int clientSocket)
               std::cerr << "Invalid request size for LINE_DETECTION." << std::endl;
             }
             break;
-          case CameraServer::Command::DOUBLE_LINE_DETECTION:
+          case CameraServer::Command::TWO_COLOR_LINE_DETECTION:
             if(static_cast<size_t>(iResult)
-               == sizeof(CameraServer::DoubleBoundingBoxDetectorRequest)) {
+               == sizeof(CameraServer::TwoColorBoundingBoxDetectorRequest)) {
               auto* request
-                  = reinterpret_cast<CameraServer::DoubleBoundingBoxDetectorRequest*>(recvbuf);
-              std::cout << "Executing DOUBLE_LINE_DETECTION command." << std::endl;
+                  = reinterpret_cast<CameraServer::TwoColorBoundingBoxDetectorRequest*>(recvbuf);
+              std::cout << "Executing TWO_COLOR_LINE_DETECTION command." << std::endl;
 
               CameraServer::BoundingBoxDetectorResponse response;
-              doubleLineDetectionHandler.execute(*request, response);
+              twoColorLineDetectionHandler.execute(*request, response);
 
               send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
             } else {
-              std::cerr << "Invalid request size for DOUBLE_LINE_DETECTION." << std::endl;
+              std::cerr << "Invalid request size for TWO_COLOR_LINE_DETECTION." << std::endl;
             }
             break;
           case CameraServer::Command::SHUTDOWN:

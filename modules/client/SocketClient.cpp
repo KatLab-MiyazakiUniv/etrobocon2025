@@ -94,8 +94,9 @@ bool SocketClient::executeLineDetection(const CameraServer::BoundingBoxDetectorR
   return executeAction(request, response);
 }
 
-bool SocketClient::executeDoubleLineDetection(const CameraServer::DoubleBoundingBoxDetectorRequest& request,
-                                        CameraServer::BoundingBoxDetectorResponse& response)
+bool SocketClient::executeTwoColorLineDetection(
+    const CameraServer::TwoColorBoundingBoxDetectorRequest& request,
+    CameraServer::BoundingBoxDetectorResponse& response)
 {
   return executeAction(request, response);
 }

@@ -11,7 +11,7 @@
 #include "BackgroundPlaActionHandler.h"
 #include "SnapshotActionHandler.h"
 #include "LineDetectionActionHandler.h"
-#include "DoubleLineDetectionActionHandler.h"
+#include "TwoColorLineDetectionActionHandler.h"
 
 #include <vector>
 
@@ -27,7 +27,7 @@ class SocketServer {
   SocketServer(MiniFigActionHandler& minifigHandler, BackgroundPlaActionHandler& bgPlaHandler,
                SnapshotActionHandler& snapshotHandler,
                LineDetectionActionHandler& lineDetectionHandler,
-               DoubleLineDetectionActionHandler& doubleLineDetectionHandler);
+               TwoColorLineDetectionActionHandler& twoColorLineDetectionHandler);
 
   /**
    * @brief サーバーを初期化する
@@ -53,7 +53,7 @@ class SocketServer {
   BackgroundPlaActionHandler& bgPlaHandler;
   SnapshotActionHandler& snapshotHandler;
   LineDetectionActionHandler& lineDetectionHandler;
-  DoubleLineDetectionActionHandler& doubleLineDetectionHandler;
+  TwoColorLineDetectionActionHandler& twoColorLineDetectionHandler;
 
   /**
    * @brief クライアントとの接続を処理する

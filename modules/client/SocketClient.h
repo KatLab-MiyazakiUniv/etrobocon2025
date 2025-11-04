@@ -79,8 +79,15 @@ class SocketClient {
   virtual bool executeLineDetection(const CameraServer::BoundingBoxDetectorRequest& request,
                                     CameraServer::BoundingBoxDetectorResponse& response);
 
-  virtual bool executeDoubleLineDetection(
-      const CameraServer::DoubleBoundingBoxDetectorRequest& request,
+  /**
+   * @brief 2色線検出アクションを実行する
+   * @param request リクエスト
+   * @param response レスポンス
+   * @return true アクションの実行に成功した場合
+   * @return false アクションの実行に失敗した場合
+   */
+  virtual bool executeTwoColorLineDetection(
+      const CameraServer::TwoColorBoundingBoxDetectorRequest& request,
       CameraServer::BoundingBoxDetectorResponse& response);
 
  protected:

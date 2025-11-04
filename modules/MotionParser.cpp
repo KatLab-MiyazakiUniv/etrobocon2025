@@ -192,11 +192,11 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [13-16]int ROI座標[px] ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ),
       // [17-18]int 解像度[px] ([17]幅, [18]高さ)
       // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
-      case COMMAND::DDCL: {
-        CameraServer::DoubleBoundingBoxDetectorRequest detectionRequest;
+      case COMMAND::DTCL: {
+        CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;
 
         detectionRequest.command
-            = CameraServer::Command::DOUBLE_LINE_DETECTION;  // コマンドタイプをライン検出に設定
+            = CameraServer::Command::TWO_COLOR_LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
         detectionRequest.lowerFirstHSV
             = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
@@ -211,7 +211,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
         detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
 
-        auto ddcl = new DoubleDistanceCameraLineTrace(
+        auto ddcl = new DistanceTwoColorCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stoi(params[3]),
             PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest);
         motionList.push_back(ddcl);
@@ -427,7 +427,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
     { "CRA", COMMAND::CRA },    // カメラ復帰動作
     { "IS", COMMAND::IS },      // IMU設定
-    { "DDCL", COMMAND::DDCL }   // 2色指定距離カメラライントレース
+    { "DTCL", COMMAND::DTCL }   // 2色指定距離カメラライントレース
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す

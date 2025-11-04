@@ -1,12 +1,12 @@
 /**
- * @file DoubleLineBoundingBoxDetector.cpp
+ * @file TwoColorLineBoundingBoxDetector.cpp
  * @brief ライントレース用の画像処理クラス (2色対応)
  * @author takuchi17 miyahara046 HaruArima08
  */
-#include "DoubleLineBoundingBoxDetector.h"
+#include "TwoColorLineBoundingBoxDetector.h"
 
 // ROIと解像度を指定するオーバーロードコンストラクタ
-DoubleLineBoundingBoxDetector::DoubleLineBoundingBoxDetector(
+TwoColorLineBoundingBoxDetector::TwoColorLineBoundingBoxDetector(
     const cv::Scalar& _lowerHSV1, const cv::Scalar& _upperHSV1, const cv::Scalar& _lowerHSV2,
     const cv::Scalar& _upperHSV2, const cv::Rect& _roi, const cv::Size& _resolution)
   : lowerHSV1(_lowerHSV1),
@@ -20,27 +20,27 @@ DoubleLineBoundingBoxDetector::DoubleLineBoundingBoxDetector(
 }
 
 // ROIを指定するオーバーロードコンストラクタ (解像度はデフォルト 640x480)
-DoubleLineBoundingBoxDetector::DoubleLineBoundingBoxDetector(const cv::Scalar& _lowerHSV1,
-                                                             const cv::Scalar& _upperHSV1,
-                                                             const cv::Scalar& _lowerHSV2,
-                                                             const cv::Scalar& _upperHSV2,
-                                                             const cv::Rect& _roi)
-  : DoubleLineBoundingBoxDetector(_lowerHSV1, _upperHSV1, _lowerHSV2, _upperHSV2, _roi,
-                                  cv::Size(640, 480))
+TwoColorLineBoundingBoxDetector::TwoColorLineBoundingBoxDetector(const cv::Scalar& _lowerHSV1,
+                                                                 const cv::Scalar& _upperHSV1,
+                                                                 const cv::Scalar& _lowerHSV2,
+                                                                 const cv::Scalar& _upperHSV2,
+                                                                 const cv::Rect& _roi)
+  : TwoColorLineBoundingBoxDetector(_lowerHSV1, _upperHSV1, _lowerHSV2, _upperHSV2, _roi,
+                                    cv::Size(640, 480))
 {
 }
 
 // デフォルトのROIおよび解像度を使用するコンストラクタ
-DoubleLineBoundingBoxDetector::DoubleLineBoundingBoxDetector(const cv::Scalar& _lowerHSV1,
-                                                             const cv::Scalar& _upperHSV1,
-                                                             const cv::Scalar& _lowerHSV2,
-                                                             const cv::Scalar& _upperHSV2)
-  : DoubleLineBoundingBoxDetector(_lowerHSV1, _upperHSV1, _lowerHSV2, _upperHSV2,
-                                  cv::Rect(50, 240, 540, 240), cv::Size(640, 480))
+TwoColorLineBoundingBoxDetector::TwoColorLineBoundingBoxDetector(const cv::Scalar& _lowerHSV1,
+                                                                 const cv::Scalar& _upperHSV1,
+                                                                 const cv::Scalar& _lowerHSV2,
+                                                                 const cv::Scalar& _upperHSV2)
+  : TwoColorLineBoundingBoxDetector(_lowerHSV1, _upperHSV1, _lowerHSV2, _upperHSV2,
+                                    cv::Rect(50, 240, 540, 240), cv::Size(640, 480))
 {
 }
 
-void DoubleLineBoundingBoxDetector::validateParameters()
+void TwoColorLineBoundingBoxDetector::validateParameters()
 {
   // 解像度の検証
   if(resolution.width < MIN_WIDTH) {
@@ -61,7 +61,8 @@ void DoubleLineBoundingBoxDetector::validateParameters()
   if(roi.y + roi.height > resolution.height) roi.height = resolution.height - roi.y;
 }
 
-void DoubleLineBoundingBoxDetector::detect(const cv::Mat& frame, BoundingBoxDetectionResult& result)
+void TwoColorLineBoundingBoxDetector::detect(const cv::Mat& frame,
+                                             BoundingBoxDetectionResult& result)
 {
   result.wasDetected = false;
 
