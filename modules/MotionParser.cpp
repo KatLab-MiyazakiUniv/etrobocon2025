@@ -188,9 +188,10 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
 
       // DTCCL: 2色指定距離カメラライントレース
       // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int X座標[px], [4-6]:double PIDゲイン,
-      // [7-9]int lowerHSV, [10-12]int upperHSV,
-      // [13-16]int ROI座標[px] ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ),
-      // [17-18]int 解像度[px] ([17]幅, [18]高さ)
+      // [7-9]int 1色目lowerHSV (H, S, V), [10-12]int 1色目upperHSV (H, S, V),
+      // [13-15]int 2色目lowerHSV (H, S, V), [16-18]int 2色目upperHSV (H, S, V),
+      // [19-22]int ROI座標[px] ([19]左上隅のx座標, [20]左上隅のy座標, [21]幅, [22]高さ),
+      // [23-24]int 解像度[px] ([23]幅, [24]高さ)
       // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
       case COMMAND::DTCCL: {
         CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;
@@ -219,10 +220,12 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       }
 
       // CDTCCL: 2色色指定距離カメラライントレース
-      // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int X座標[px], [4-6]:double PIDゲイン,
-      // [7-9]int lowerHSV, [10-12]int upperHSV,
-      // [13-16]int ROI座標[px] ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ),
-      // [17-18]int 解像度[px] ([17]幅, [18]高さ)
+      // [1]:string 終了検出色, [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int X座標[px],
+      // [5-7]:double PIDゲイン,
+      // [8-10]int 1色目lowerHSV (H, S, V), [11-13]int 1色目upperHSV (H, S, V),
+      // [14-16]int 2色目lowerHSV (H, S, V), [17-19]int 2色目upperHSV (H, S, V),
+      // [20-23]int ROI座標[px] ([20]左上隅のx座標, [21]左上隅のy座標, [22]幅, [23]高さ),
+      // [24-25]int 解像度[px] ([24]幅, [25]高さ)
       // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
       case COMMAND::CDTCCL: {
         CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;
