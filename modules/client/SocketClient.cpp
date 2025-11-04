@@ -94,6 +94,12 @@ bool SocketClient::executeLineDetection(const CameraServer::BoundingBoxDetectorR
   return executeAction(request, response);
 }
 
+bool SocketClient::executeDoubleLineDetection(const CameraServer::DoubleBoundingBoxDetectorRequest& request,
+                                        CameraServer::BoundingBoxDetectorResponse& response)
+{
+  return executeAction(request, response);
+}
+
 template <typename Req, typename Res>
 bool SocketClient::executeAction(const Req& request, Res& response)
 {
