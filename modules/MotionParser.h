@@ -33,6 +33,7 @@
 #include "CameraRecoveryAction.h"
 #include "IMUSetting.h"
 #include "PictureColorDistanceStraight.h"
+#include "Stop.h"
 
 enum class COMMAND {
   AR,     // 角度指定回頭
@@ -53,6 +54,7 @@ enum class COMMAND {
   BCA,    // 背景のカメラ撮影動作
   CRA,    // カメラ復帰動作
   PCIDS,  // カメラ画像を用いた色距離直進
+  STOP,   // モータ停止
   IS,     // IMUの角度計算の設定を行う動作
   NONE
 };

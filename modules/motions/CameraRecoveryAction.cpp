@@ -31,13 +31,11 @@ void CameraRecoveryAction::run()
 
   if(!success) {
     std::cerr << "通信に失敗しました。" << std::endl;
-    motorController.stopWheelsMotor();
     return;
   }
 
   if(response.result.wasDetected) {
     std::cout << "ラインを検出できたため、復帰動作の必要はありません。" << std::endl;
-    motorController.stopWheelsMotor();
     return;
   }
 

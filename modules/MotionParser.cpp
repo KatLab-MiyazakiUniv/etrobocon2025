@@ -391,6 +391,13 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // STOP: モータ停止
+      case COMMAND::STOP: {
+        auto stop = new Stop(robot);
+        motionList.push_back(stop);
+        break;
+      }
+
       // IS: IMU設定
       // [1]:string 設定 (start or stop)
       case COMMAND::IS: {
@@ -435,6 +442,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "BCA", COMMAND::BCA },      // 風景・プラレールのカメラ撮影動作
     { "CRA", COMMAND::CRA },      // カメラ復帰動作
     { "PCIDS", COMMAND::PCIDS },  // 画像ラインを用いた距離直進
+    { "STOP", COMMAND::STOP },    // モータ停止
     { "IS", COMMAND::IS }         // IMU設定
   };
 
