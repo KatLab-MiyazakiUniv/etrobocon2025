@@ -23,6 +23,7 @@ class SocketServer {
    * @param bgPlaHandler 背景・プラレール撮影アクションハンドラ
    * @param snapshotHandler スナップショット撮影アクションハンドラ
    * @param lineDetectionHandler ライン検出アクションハンドラ
+   * @param twoColorLineDetectionHandler 2色線検出アクションハンドラ
    */
   SocketServer(MiniFigActionHandler& minifigHandler, BackgroundPlaActionHandler& bgPlaHandler,
                SnapshotActionHandler& snapshotHandler,
