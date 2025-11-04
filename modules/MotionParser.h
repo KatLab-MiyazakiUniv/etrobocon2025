@@ -33,27 +33,29 @@
 #include "CameraRecoveryAction.h"
 #include "IMUSetting.h"
 #include "DistanceTwoColorCameraLineTrace.h"
+#include "ColorDistanceTwoColorCameraLineTrace.h"
 
 enum class COMMAND {
-  AR,     // 角度指定回頭
-  IMUR,   // IMU角度指定回頭
-  DS,     // 指定距離直進
-  IDS,    // IMU角度補正直進
-  CS,     // 指定色直進
-  DL,     // 指定距離ライントレース
-  DCL,    // 指定距離カメラライントレース
-  CDCL,   // 色距離指定カメラライントレース
-  UDCL,   // 超音波距離指定カメラライントレース
-  CL,     // 指定色ライントレース
-  CDL,    // 色距離指定ライントレース
-  EC,     // エッジ切り替え
-  SL,     // 自タスクスリープ
-  SS,     // カメラ撮影動作
-  MCA,    // ミニフィグのカメラ撮影動作
-  BCA,    // 背景のカメラ撮影動作
-  CRA,    // カメラ復帰動作
-  IS,     // IMUの角度計算の設定を行う動作
-  DTCCL,  // 2色指定距離カメラライントレース
+  AR,      // 角度指定回頭
+  IMUR,    // IMU角度指定回頭
+  DS,      // 指定距離直進
+  IDS,     // IMU角度補正直進
+  CS,      // 指定色直進
+  DL,      // 指定距離ライントレース
+  DCL,     // 指定距離カメラライントレース
+  CDCL,    // 色距離指定カメラライントレース
+  UDCL,    // 超音波距離指定カメラライントレース
+  CL,      // 指定色ライントレース
+  CDL,     // 色距離指定ライントレース
+  EC,      // エッジ切り替え
+  SL,      // 自タスクスリープ
+  SS,      // カメラ撮影動作
+  MCA,     // ミニフィグのカメラ撮影動作
+  BCA,     // 背景のカメラ撮影動作
+  CRA,     // カメラ復帰動作
+  IS,      // IMUの角度計算の設定を行う動作
+  DTCCL,   // 2色指定距離カメラライントレース
+  CDTCCL,  // 色距離指定2色カメラライントレース
   NONE
 };
 
