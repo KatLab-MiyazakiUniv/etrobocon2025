@@ -27,7 +27,7 @@ class DoubleCameraPidTracking : public Motion {
    */
   DoubleCameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
                           const PidGain& _pidGain,
-                          const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
+                          const CameraServer::DoubleBoundingBoxDetectorRequest& _detectionRequest);
 
   /**
    * @brief カメラ走行を実行する
@@ -51,7 +51,7 @@ class DoubleCameraPidTracking : public Motion {
   virtual bool isMetContinuationCondition() = 0;
 
  protected:
-  CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
+  CameraServer::DoubleBoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
   BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
   double targetSpeed;                 // 目標速度
   int targetXCoordinate;              // 目標X座標

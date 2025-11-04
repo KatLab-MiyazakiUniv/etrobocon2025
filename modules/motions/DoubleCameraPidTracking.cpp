@@ -10,7 +10,7 @@
 
 DoubleCameraPidTracking::DoubleCameraPidTracking(
     Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain,
-    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+    const CameraServer::DoubleBoundingBoxDetectorRequest& _detectionRequest)
   : Motion(_robot),
     targetSpeed(_targetSpeed),
     targetXCoordinate(_targetXCoordinate),

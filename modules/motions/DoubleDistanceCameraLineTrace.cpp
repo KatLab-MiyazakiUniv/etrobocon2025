@@ -8,7 +8,8 @@
 
 DoubleDistanceCameraLineTrace::DoubleDistanceCameraLineTrace(
     Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate,
-    const PidGain& _pidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+    const PidGain& _pidGain,
+    const CameraServer::DoubleBoundingBoxDetectorRequest& _detectionRequest)
   : DoubleCameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest),
     targetDistance(_targetDistance)
 {

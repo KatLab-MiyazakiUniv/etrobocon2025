@@ -20,14 +20,15 @@ class DoubleDistanceCameraLineTrace : public DoubleCameraPidTracking {
    * @param _pidGain PIDゲイン
    * @param _detectionRequest 検出リクエスト
    */
-  DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
-                          int _targetXCoordinate, const PidGain& _pidGain,
-                          const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
+  DoubleDistanceCameraLineTrace(
+      Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate,
+      const PidGain& _pidGain,
+      const CameraServer::DoubleBoundingBoxDetectorRequest& _detectionRequest);
 
   /**
    * @brief 指定距離だけカメラライントレースする
    */
-  using CameraPidTracking::run;
+  using DoubleCameraPidTracking::run;
 
  protected:
   /**
@@ -48,9 +49,9 @@ class DoubleDistanceCameraLineTrace : public DoubleCameraPidTracking {
   bool isMetContinuationCondition() override;
 
  private:
-  double targetDistance;                                      // 目標距離
-  double initDistance;                                        // 実行前の走行距離
-  CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
+  double targetDistance;                                            // 目標距離
+  double initDistance;                                              // 実行前の走行距離
+  CameraServer::DoubleBoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
 };
 
 #endif
