@@ -102,11 +102,6 @@ void IMUDistanceStraight::run()
 
     double turningPower = anglePid.calculatePid(angleError, 0.01);
 
-    // 後退時は補正方向を逆にする
-    if(targetSpeed < 0) {
-      turningPower = -turningPower;
-    }
-
     // モーターにPower値をセット
     robot.getMotorControllerInstance().setRightMotorPower(currentRightPower + turningPower);
     robot.getMotorControllerInstance().setLeftMotorPower(currentLeftPower - turningPower);
