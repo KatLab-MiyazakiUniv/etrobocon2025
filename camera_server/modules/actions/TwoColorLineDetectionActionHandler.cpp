@@ -13,7 +13,7 @@ TwoColorLineDetectionActionHandler::TwoColorLineDetectionActionHandler(CameraCap
 }
 
 void TwoColorLineDetectionActionHandler::execute(
-    const CameraServer::TwoColorLineBoundingBoxDetectorRequest& request,
+    const CameraServer::TwoColorBoundingBoxDetectorRequest& request,
     CameraServer::BoundingBoxDetectorResponse& response)
 {
   std::cout << "Executing TWO_COLOR_LINE_DETECTION command." << std::endl;

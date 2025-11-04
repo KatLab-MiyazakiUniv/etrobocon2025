@@ -24,7 +24,7 @@ class TwoColorLineDetectionActionHandler {
    * @param request クライアントからのリクエスト
    * @param response クライアントへのレスポンス
    */
-  void execute(const CameraServer::TwoColorLineBoundingBoxDetectorRequest& request,
+  void execute(const CameraServer::TwoColorBoundingBoxDetectorRequest& request,
                CameraServer::BoundingBoxDetectorResponse& response);
 
  private:
