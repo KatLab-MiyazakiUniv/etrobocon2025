@@ -110,7 +110,7 @@ void PictureColorDistanceStraight::run()
       angleError += 360.0;
     }
 
-    double turningPower = anglePid.calculatePid(angleError, 0.01);
+    double turningPower = anglePid.calculatePid(angleError);
 
     // モーターにPower値をセット
     robot.getMotorControllerInstance().setRightMotorPower(currentRightPower + turningPower);

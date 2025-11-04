@@ -121,7 +121,7 @@ bool IMUAngleRotation::isMetContinuationCondition()
 void IMUAngleRotation::updateMotorControl()
 {
   // PID制御により角度誤差から補正値を計算
-  double pidCorrection = anglePid.calculatePid(angleError, 0.01);
+  double pidCorrection = anglePid.calculatePid(angleError);
 
   // 基準パワー値にPID補正を適用
   double motorPower = basePower + pidCorrection;
