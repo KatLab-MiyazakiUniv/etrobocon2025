@@ -54,7 +54,6 @@ class PictureColorDistanceStraight : public Straight {
   Pid anglePid;                                               // IMU角度補正用PID
   double targetAngle;                                         // 走行開始時の角度
   CameraServer::BoundingBoxDetectorRequest detectionRequest;  // カメラ検出設定（HSV上下限など）
-  SocketClient* socketClient;                                 // SocketClientへのポインタ
 };
 
 #endif  // PICTURE_COLOR_DISTANCE_STRAIGHT_H

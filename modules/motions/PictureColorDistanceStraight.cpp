@@ -14,8 +14,7 @@ PictureColorDistanceStraight::PictureColorDistanceStraight(
     initialDistance(0.0),
     anglePid(_anglePidGain.kp, _anglePidGain.ki, _anglePidGain.kd, 0.0),
     targetAngle(0.0),
-    detectionRequest(_detectionRequest),
-    socketClient(nullptr)
+    detectionRequest(_detectionRequest)
 {
 }
 
@@ -71,7 +70,7 @@ bool PictureColorDistanceStraight::isMetContinuationCondition()
 
   // カメラでラインを検出
   CameraServer::BoundingBoxDetectorResponse response;
-  bool success = socketClient->executeLineDetection(detectionRequest, response);
+  bool success = robot.getSocketClient().executeLineDetection(detectionRequest, response);
 
   // 通信成功かつライン検出ができた場合のみ終了
   if(success && response.result.wasDetected) {
@@ -93,9 +92,6 @@ void PictureColorDistanceStraight::run()
 
   // SpeedCalculatorの宣言
   SpeedCalculator speedCalculator(robot, targetSpeed);
-
-  // SocketClientのポインタを取得
-  socketClient = &robot.getSocketClient();
 
   // 継続条件を満たしている間繰り返す
   while(isMetContinuationCondition()) {
