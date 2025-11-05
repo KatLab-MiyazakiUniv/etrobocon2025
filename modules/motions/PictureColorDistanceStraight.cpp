@@ -6,6 +6,8 @@
 
 #include "PictureColorDistanceStraight.h"
 
+#include <cstring>
+
 PictureColorDistanceStraight::PictureColorDistanceStraight(
     Robot& _robot, double _targetDistance, double _targetSpeed, const PidGain& _anglePidGain,
     const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
@@ -45,6 +47,16 @@ void PictureColorDistanceStraight::prepare()
   // IMU角度計算がコマンドで開始されていなければ、この動作で計算を開始する
   if(!robot.getIMUControllerInstance().getShouldContinueCalculation()) {
     robot.getIMUControllerInstance().startAngleCalculation();
+  }
+
+  // 最新フレームに更新するためにスナップショットを連続で取得
+  CameraServer::SnapshotActionRequest request{};
+  request.command = CameraServer::Command::TAKE_SNAPSHOT;
+  std::strncpy(request.fileName, "warmup", sizeof(request.fileName));
+  for(int i = 0; i < 5; ++i) {
+    CameraServer::SnapshotActionResponse response{};
+    robot.getSocketClient().executeSnapshotAction(request, response);
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
   }
 
   // 呼び出し時の走行距離を取得する
