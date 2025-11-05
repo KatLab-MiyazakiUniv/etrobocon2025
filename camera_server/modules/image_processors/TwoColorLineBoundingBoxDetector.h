@@ -31,13 +31,12 @@ class TwoColorLineBoundingBoxDetector {
  private:
   // 対象の輪郭とみなす最小面積（この閾値は調整）
   static constexpr double MIN_LINE_CONTOUR_AREA = 50.0;
-  cv::Scalar lowerHSV1;
-  cv::Scalar upperHSV1;
-  cv::Scalar lowerHSV2;  // 2色目
-  cv::Scalar upperHSV2;  // 2色目
-
-  cv::Rect roi;
-  cv::Size resolution;
+  cv::Scalar lowerHSV1;  // 1色目のライントレース対象の色の下限HSV値
+  cv::Scalar upperHSV1;  // 1色目のライントレース対象の色の上限HSV値
+  cv::Scalar lowerHSV2;  // 2色目のライントレース対象の色の下限HSV値
+  cv::Scalar upperHSV2;  // 2色目ライントレース対象の色の上限HSV値
+  cv::Rect roi;          // 注目領域
+  cv::Size resolution;   // 画像処理に用いる解像度
 
   void validateParameters();
 };

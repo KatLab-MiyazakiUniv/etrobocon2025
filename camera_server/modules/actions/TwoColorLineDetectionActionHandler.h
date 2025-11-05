@@ -31,4 +31,4 @@ class TwoColorLineDetectionActionHandler {
   CameraCapture& camera;
 };
 
-#endif  // LINE_DETECTION_ACTION_HANDLER_H
+#endif  // TWO_COLOR_LINE_DETECTION_ACTION_HANDLER_H
