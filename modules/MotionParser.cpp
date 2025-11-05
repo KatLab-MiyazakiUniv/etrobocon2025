@@ -351,7 +351,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-      // PCIDS: 画像ラインを用いた距離停止直進
+      // PCIDS: IMU角度補正直進に、カメラ画像の色検出による停止条件を追加した動作
       // [1]:double 距離[mm], [2]:double 速度[mm/s], [3-5]:double 角度補正PIDゲイン(kp, ki, kd),
       // [6-8]:int HSV下限, [9-11]:int HSV上限, [12-15]:int ROI座標[px] ([12]左上x, [13]左上y,
       // [14]幅, [15]高さ), [16-17]:int 解像度[px] ([16]幅, [17]高さ)
