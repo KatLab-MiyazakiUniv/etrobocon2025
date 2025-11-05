@@ -29,20 +29,30 @@ GetCorrectionAngleResult GetCorrectionAngle::GetCorrectAngle(
   double currentX = (response.result.topLeft.x + response.result.bottomRight.x) / 2.0;
 
   Calibrator isleftCorse(robot);
-  // 回頭方向を計算
-  if(currentX >= targetXCoordinate && isleftCorse.getIsLeftCourse() == true) {
+  // // 回頭方向を計算
+  // if(currentX >= targetXCoordinate && isleftCorse.getIsLeftCourse() == true) {
+  //   correctionResult.isClockwise = true;
+  // } else if(currentX >= targetXCoordinate && isleftCorse.getIsLeftCourse() == false) {
+  //   correctionResult.isClockwise = false;
+  // } else if(currentX < targetXCoordinate && isleftCorse.getIsLeftCourse() == true) {
+  //   correctionResult.isClockwise = false;
+  // } else {
+  //   correctionResult.isClockwise = true;
+  // }
+
+  if(currentX >= targetXCoordinate) {
     correctionResult.isClockwise = true;
-  } else if(currentX >= targetXCoordinate && isleftCorse.getIsLeftCourse() == false) {
+  } else if(currentX < targetXCoordinate) {
     correctionResult.isClockwise = false;
-  } else if(currentX < targetXCoordinate && isleftCorse.getIsLeftCourse() == true) {
-    correctionResult.isClockwise = false;
-  } else {
-    correctionResult.isClockwise = true;
   }
 
   // 補正角度を計算
   correctionResult.correctionAngle
       = atan2(currentX - targetXCoordinate, targetXCoordinate) * 180.0 / M_PI;
+
+  if(correctionResult.correctionAngle < 0){
+    correctionResult.correctionAngle = correctionResult.correctionAngle * (-1);
+  }
 
   return correctionResult;
 }

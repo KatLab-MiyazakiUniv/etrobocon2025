@@ -16,6 +16,8 @@
 #include "CameraDistanceCalculator.h"
 #include "SocketProtocol.h"
 #include "ColorJudge.h"
+#include "Snapshot.h"
+#include <opencv2/opencv.hpp>  // For cv::Rect
 
 class BottleCarryAction : public CompositeMotion {
  public:

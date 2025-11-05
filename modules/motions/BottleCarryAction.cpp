@@ -5,7 +5,10 @@
  */
 
 #include "BottleCarryAction.h"
+#include <thread>
+#include <iostream>
 
+using namespace std;
 // コンストラクタ
 BottleCarryAction::BottleCarryAction(
     Robot& _robot, double _forwardDistance, double _maxDistance, double _idsSpeed,
@@ -48,13 +51,23 @@ void BottleCarryAction::run()
     ids.run();
   }
 
+  Snapshot ss(robot, "testtest");
+  for(int i = 0; i < 5; i++){
+    ss.run();
+  }
+
   // 青丸に直進するための補正角度計算
   GetCorrectionAngle correction(robot);
   GetCorrectionAngleResult correctionResult;
   correctionResult = correction.GetCorrectAngle(targetXCoordinate, detectionRequest);
-  IMUAngleRotation rotate(robot, correctionResult.correctionAngle, 70.0,
+  std::cout << "補正回頭角度："<< correctionResult.correctionAngle << std::endl;
+  IMUAngleRotation rotate(robot, correctionResult.correctionAngle, 60.0,
                           correctionResult.isClockwise, PidGain(0.036, 0.012, 0.03), false);
   rotate.run();
+
+  // 動作安定のためのスリープ
+  this_thread::sleep_for(chrono::milliseconds(10));
+
   // 青丸までの距離をカメラで計測
   CameraDistanceCalculator calculator(robot);
   double cameraDistance = calculator.calculateDistance(response);
@@ -62,9 +75,11 @@ void BottleCarryAction::run()
   // 色距離指定IMU直進
   //   IMUColorDistanceStraight(Robot& _robot, COLOR _targetColor, double _targetDistance,
   //                            double _targetSpeed, const PidGain& _anglePidGain);
-  IMUColorDistanceStraight icds(robot, COLOR::BLUE, cameraDistance, idsSpeed,
-                                PidGain(0.08, 0.02, 0.05));
-  icds.run();
+  // IMUColorDistanceStraight icds(robot, COLOR::BLUE, cameraDistance, idsSpeed,
+  //                               PidGain(0.08, 0.02, 0.05));
+  // icds.run();
+  IMUDistanceStraight idss(robot, cameraDistance, idsSpeed, PidGain(0.08, 0.02, 0.05));
+  idss.run();
 
   // 動作終了時点の走行距離を取得する
   double currentRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
