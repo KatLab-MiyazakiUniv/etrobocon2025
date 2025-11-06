@@ -54,6 +54,7 @@ enum class COMMAND {
   CRA,    // カメラ復帰動作
   PCIDS,  // カメラ画像を用いた色距離直進
   IS,     // IMUの角度計算の設定を行う動作
+  BSCA,  // ボトルキャリー動作
   NONE
 };
 

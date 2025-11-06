@@ -380,6 +380,34 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // BSCA: ボトルキャリー動作
+      // BottleCarryAction(Robot& _robot, double _forwardDistance, double _maxDistance, double
+      // _idsSpeed,
+      // int _targetXCoordinate,
+      // const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
+      // [1] : double 前進距離[mm],
+      // [2] : double 最大距離[mm],
+      // [3] : double IDS速度[mm/s],
+      // [4] : int 目標X座標[px],
+      // [5-7] : int lowerHSV,
+      // [8-10] : int upperHSV,
+      // [11-14] : int ROI座標[px] ([11]左上隅のx座標, [12]左上隅のy座標, [13]幅, [14]高さ),
+      // [15-16] : int 解像度[px] ([15]幅, [16]高さ)
+      case COMMAND::BSCA: {
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
+        detectionRequest.command
+            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[5]), stoi(params[6]), stoi(params[7]));
+        detectionRequest.upperHSV = cv::Scalar(stoi(params[8]), stoi(params[9]), stoi(params[10]));
+        detectionRequest.roi
+            = cv::Rect(stoi(params[11]), stoi(params[12]), stoi(params[13]), stoi(params[14]));
+        detectionRequest.resolution = cv::Size(stoi(params[15]), stoi(params[16]));
+        auto bsca = new BottleCarryAction(robot, stod(params[1]), stod(params[2]), stod(params[3]),
+                                          stoi(params[4]), detectionRequest);
+        motionList.push_back(bsca);
+        break;
+      }
+
       // 未定義コマンド
       default: {
         cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
@@ -416,7 +444,8 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "BCA", COMMAND::BCA },      // 風景・プラレールのカメラ撮影動作
     { "CRA", COMMAND::CRA },      // カメラ復帰動作
     { "PCIDS", COMMAND::PCIDS },  // 画像ラインを用いた距離直進
-    { "IS", COMMAND::IS }         // IMU設定
+    { "IS", COMMAND::IS },         // IMU設定
+    { "BSCA", COMMAND::BSCA }   // ボトルキャリー動作
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
