@@ -52,18 +52,24 @@ void BottleCarryAction::run()
   }
 
   Snapshot ss(robot, "testtest");
-  for(int i = 0; i < 5; i++){
+  for(int i = 0; i < 5; i++) {
     ss.run();
   }
 
   // 青丸に直進するための補正角度計算
-  GetCorrectionAngle correction(robot);
-  GetCorrectionAngleResult correctionResult;
-  correctionResult = correction.GetCorrectAngle(targetXCoordinate, detectionRequest);
-  std::cout << "補正回頭角度："<< correctionResult.correctionAngle << std::endl;
-  IMUAngleRotation rotate(robot, correctionResult.correctionAngle, 60.0,
-                          correctionResult.isClockwise, PidGain(0.036, 0.012, 0.03), false);
-  rotate.run();
+  while(1) {
+    GetCorrectionAngle correction(robot);
+    GetCorrectionAngleResult correctionResult;
+    correctionResult = correction.GetCorrectAngle(targetXCoordinate, detectionRequest);
+    std::cout << "補正回頭角度：" << correctionResult.correctionAngle << std::endl;
+    IMUAngleRotation rotate(robot, correctionResult.correctionAngle, 60.0,
+                            correctionResult.isClockwise, PidGain(0.036, 0.012, 0.03), false);
+    if(correctionResult.correctionAngle <= 3.0) {
+      rotate.run();
+      break;
+    }
+    rotate.run();
+  }
 
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));
