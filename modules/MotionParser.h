@@ -18,6 +18,7 @@
 #include "IMUAngleRotation.h"
 #include "DistanceStraight.h"
 #include "IMUDistanceStraight.h"
+#include "PictureColorDistanceStraight.h"
 #include "DistanceCameraLineTrace.h"
 #include "ColorStraight.h"
 #include "ColorLineTrace.h"
