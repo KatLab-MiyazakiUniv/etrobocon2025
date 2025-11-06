@@ -1,6 +1,6 @@
 /**
  * @file   IMUMinAngleRotation.cpp
- * @brief  IMU絶対角度の最小角度で回頭する動作
+ * @brief  絶対角度の最小角度で回頭する動作
  * @author Hara127
  */
 
