@@ -19,12 +19,14 @@ class UltrasonicDistanceCameraLineTrace : public CameraPidTracking {
    * @param _targetSpeed 目標速度
    * @param _targetXCoordinate 目標x座標
    * @param _pidGain PIDゲイン
-   * @param _detector 画像処理クラスのポインタ
+   * @param _detectionRequest 検出リクエスト
+   * @param isStopMotorPower モーターを停止するかどうか
    */
   UltrasonicDistanceCameraLineTrace(
       Robot& _robot, double _targetUltrasonicDistance, double _targetDistance, double _targetSpeed,
       int _targetXCoordinate, const PidGain& _pidGain,
-      const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
+      const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
+      bool isStopMotorPower = true);
 
   /**
    * @brief (指定距離まで||指定超音波距離認識する)だけカメラライントレースする
