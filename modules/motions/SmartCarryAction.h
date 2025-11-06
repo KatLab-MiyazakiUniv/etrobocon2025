@@ -1,6 +1,6 @@
 /**
  * @file   SmartCarryAction.h
- * @brief  スマートキャリー動作クラス(ボトル2のランディングのみ)
+ * @brief  スマートキャリー動作クラス(ボトル2のキャッチ)
  * @author nishijima515
  */
 
@@ -9,9 +9,11 @@
 #include "SystemInfo.h"
 #include "CompositeMotion.h"
 #include "IMUDistanceStraight.h"
+#include "IMUAngleRotation.h"
 #include "IMUSetting.h"
 #include "UltrasonicDistanceCameraLineTrace.h"
 #include "SocketProtocol.h"
+#include <cmath>
 
 class SmartCarryAction : public CompositeMotion {
  public:

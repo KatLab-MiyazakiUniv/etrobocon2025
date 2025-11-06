@@ -35,14 +35,13 @@ void SmartCarryAction::run()
   //   std::cout << "SmartCarryAction: UDCL start" << std::endl;
   //   std::cout << "UDCL開始時点の走行距離: " << initialDistance << std::endl;
 
-  // 　IMU設定
-  IMUSetting start(robot, true);
-  IMUSetting stop(robot, false);
+  // // 　IMU設定
+  // IMUSetting start(robot, true);
+  // IMUSetting stop(robot, false);
 
   double initialAngle = robot.getIMUControllerInstance().getAngle();  // 動作開始時の角度
-  double totalAngleToTurn;                                            // 総回頭角度
 
-  start.run();
+  // start.run();
   // IDSを動かす。ボトル探索。
   IMUDistanceStraight ids(robot, forwardDistance, idsSpeed, PidGain(0.08, 0.02, 0.05));
 
@@ -61,13 +60,36 @@ void SmartCarryAction::run()
 
   UltrasonicDistanceCameraLineTrace udcl(robot, ultrasonicDistance, udclDistance, 470, 400,
                                          PidGain(0.002, 0.0005, 0.001), detectionRequest);
+  
+  udcl.run();
+  // stop.run();
 
   // 動作終了時点の走行距離を取得する
   double currentRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
   double currentLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
   double currentDistance = Mileage::calculateMileage(currentRightMotorCount, currentLeftMotorCount);
 
-  double runDistance = fabs(currentDistance - initialDistance);
+  double totalAngleToTurn = robot.getIMUControllerInstance().getAngle();
 
-  std::cout << "走った距離: " << runDistance << std::endl;
+  double runDistance = fabs(currentDistance - initialDistance);
+  double widthMoved = runDistance * sin(totalAngleToTurn * PI / 180.0);
+
+  std::cout << "走った距離: " << runDistance << "SCA開始時点からの傾き：" << totalAngleToTurn <<std::endl;
+  std::cout << "sin：" << sin(totalAngleToTurn) << std::endl;
+  std::cout << "横方向のズレ：" << widthMoved << std::endl;
+
+  IMUAngleRotation imur(robot, 340, 60.0, false, PidGain(0.036, 0.012, 0.03),
+                         true);
+  imur.run();
+
+  double nextDistance = 1100.0 - runDistance;
+  if(nextDistance < 0){
+    nextDistance = 0;
+  }
+
+
+
+  IMUDistanceStraight nextids(robot, nextDistance, idsSpeed, PidGain(0.08, 0.02, 0.05));
+  nextids.run();
+
 }
