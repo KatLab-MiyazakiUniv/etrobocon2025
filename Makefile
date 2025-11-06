@@ -44,6 +44,7 @@ build-camera:
 start: start-camera start-client
 
 start-client:
+	rm -rf camera_server/datafiles/line_trace
 	cd $(MAKEFILE_PATH)../ && make start
 
 start-camera:

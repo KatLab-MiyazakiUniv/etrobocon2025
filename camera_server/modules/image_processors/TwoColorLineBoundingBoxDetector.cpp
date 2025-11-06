@@ -71,6 +71,13 @@ void TwoColorLineBoundingBoxDetector::detect(const cv::Mat& frame,
     return;
   }
 
+  // 画像保存
+  std::string filename
+      = "roi_x" + std::to_string(roi.x) + "_y" + std::to_string(roi.y) + "_w"
+        + std::to_string(roi.width) + "_h" + std::to_string(roi.height) + "_"
+        + std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
+  FrameSave::save(const_cast<cv::Mat&>(frame), "datafiles/line_trace", filename);
+
   // 1. リサイズ処理
   cv::Mat frameProcessed;
   if(frame.size() != resolution) {
