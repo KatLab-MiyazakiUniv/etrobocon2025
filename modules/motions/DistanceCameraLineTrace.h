@@ -19,10 +19,12 @@ class DistanceCameraLineTrace : public CameraPidTracking {
    * @param _targetXCoordinate 目標x座標
    * @param _pidGain PIDゲイン
    * @param _detectionRequest 検出リクエスト
+   * @param isStopMotorPower モーターを停止するかどうか
    */
   DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
                           int _targetXCoordinate, const PidGain& _pidGain,
-                          const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
+                          const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
+                          bool isStopMotorPower = true);
 
   /**
    * @brief 指定距離だけカメラライントレースする

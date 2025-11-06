@@ -105,7 +105,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int X座標[px], [4-6]:double PIDゲイン,
       // [7-9]int lowerHSV, [10-12]int upperHSV,
       // [13-16]int ROI座標[px] ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ),
-      // [17-18]int 解像度[px] ([17]幅, [18]高さ)
+      // [17-18]int 解像度[px] ([17]幅, [18]高さ),
+      // [19]string 停止制御 (continue ならモータを停止せず、stop ならモータを停止) [オプション]
       // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
       case COMMAND::DCL: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
@@ -121,9 +122,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
         detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
 
+        bool isStopMotorPower = true;
+        if(params.size() >= 20) {
+          isStopMotorPower = convertBool("DCL", params[19]);
+        }
+
         auto dcl = new DistanceCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stoi(params[3]),
-            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest);
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest,
+            isStopMotorPower);
         motionList.push_back(dcl);
         break;
       }
@@ -132,7 +139,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [1]:string 色, [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int X座標[px],
       // [5-7]:double PIDゲイン, [8-10]int lowerHSV, [11-13]int upperHSV, [14-17]int ROI座標[px]
       // ([14]左上隅のx座標, [15]左上隅のy座標, [16]幅, [17]高さ), [18-19]int 解像度[px] ([18]幅,
-      // [19]高さ) 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      // [19]高さ) 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））,
+      // [20]string 停止制御 (continue ならモータを停止せず、stop ならモータを停止) [オプション]
       case COMMAND::CDCL: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
@@ -147,10 +155,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
         detectionRequest.resolution = cv::Size(stoi(params[18]), stoi(params[19]));
 
+        bool isStopMotorPower = true;
+        if(params.size() >= 21) {
+          isStopMotorPower = convertBool("CDCL", params[20]);
+        }
+
         auto cdcl = new ColorDistanceCameraLineTrace(
             robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
             stoi(params[4]), PidGain(stod(params[5]), stod(params[6]), stod(params[7])),
-            detectionRequest);
+            detectionRequest, isStopMotorPower);
         motionList.push_back(cdcl);
         break;
       }
@@ -160,7 +173,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [5-7]:double PIDゲイン, [8-10]int lowerHSV, [11-13]int upperHSV, [14-17]int ROI座標[px]
       // ([14]左上隅のx座標, [15]左上隅のy座標, [16]幅, [17]高さ), [18-19]int 解像度[px] ([18]幅,
       // [19]高さ)
-      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））,
+      // [20]string 停止制御 (continue ならモータを停止せず、stop ならモータを停止) [オプション]
       case COMMAND::UDCL: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
@@ -179,9 +193,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
           detectionRequest.resolution = cv::Size(stoi(params[18]), stoi(params[19]));
         }
 
+        bool isStopMotorPower = true;
+        if(params.size() >= 21) {
+          isStopMotorPower = convertBool("UDCL", params[20]);
+        }
+
         auto udcl = new UltrasonicDistanceCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stod(params[3]), stoi(params[4]),
-            PidGain(stod(params[5]), stod(params[6]), stod(params[7])), detectionRequest);
+            PidGain(stod(params[5]), stod(params[6]), stod(params[7])), detectionRequest,
+            isStopMotorPower);
         motionList.push_back(udcl);
         break;
       }
@@ -418,6 +438,18 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
 {
   // 末尾の改行を削除
   string param = StringOperator::removeEOL(stringParameter);
+
+  // カメラPIDトラッキング系の停止制御（continueなら継続、stopなら停止）
+  if(command == "DCL" || command == "CDCL" || command == "UDCL") {
+    if(param == "continue") {
+      return false;
+    } else if(param == "stop") {
+      return true;
+    } else {
+      cout << "'continue' か 'stop'を入力してください" << endl;
+      return true;
+    }
+  }
 
   // 回転動作(AR,IMUR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
   if(command == "AR" || command == "IMUR" || command == "MCA" || command == "BCA"

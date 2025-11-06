@@ -10,12 +10,13 @@
 
 CameraPidTracking::CameraPidTracking(
     Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain,
-    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest, bool isStopMotorPower)
   : Motion(_robot),
     targetSpeed(_targetSpeed),
     targetXCoordinate(_targetXCoordinate),
     pidGain(_pidGain),
-    detectionRequest(_detectionRequest)
+    detectionRequest(_detectionRequest),
+    isStopMotorPower(isStopMotorPower)
 {
 }
 
@@ -67,6 +68,8 @@ void CameraPidTracking::run()
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 
-  // モータを停止
-  robot.getMotorControllerInstance().stopWheelsMotor();
+  // 後続動作（例: CRA）で停止する場合はモータを維持するため、必要なときだけ停止
+  if(isStopMotorPower) {
+    robot.getMotorControllerInstance().stopWheelsMotor();
+  }
 }
