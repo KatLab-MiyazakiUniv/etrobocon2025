@@ -1,17 +1,17 @@
 /**
- * @file   IMUShortestAngleRotation.h
- * @brief  IMU絶対角度の最短回頭動作
+ * @file   IMUMinAngleRotation.h
+ * @brief  IMU絶対角度の最小角度で回頭する動作
  * @author Hara127
  */
 
-#ifndef IMU_SHORTEST_ANGLE_ROTATION_H
-#define IMU_SHORTEST_ANGLE_ROTATION_H
+#ifndef IMU_MIN_ANGLE_ROTATION_H
+#define IMU_MIN_ANGLE_ROTATION_H
 
 #include "Rotation.h"
 #include "Pid.h"
 #include <cmath>
 
-class IMUShortestAngleRotation : public Rotation {
+class IMUMinAngleRotation : public Rotation {
  public:
   /**
    * コンストラクタ
@@ -20,8 +20,8 @@ class IMUShortestAngleRotation : public Rotation {
    * @param _basePower   基準パワー値
    * @param _anglePidGain 角度制御用PIDゲイン
    */
-  IMUShortestAngleRotation(Robot& _robot, int _targetAngle, int _basePower,
-                           const PidGain& _anglePidGain);
+  IMUMinAngleRotation(Robot& _robot, int _targetAngle, int _basePower,
+                      const PidGain& _anglePidGain);
 
   /**
    * @brief 回頭動作の事前準備を行う

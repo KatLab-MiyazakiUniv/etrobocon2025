@@ -1,10 +1,10 @@
 /**
- * @file   IMUShortestAngleRotation.cpp
- * @brief  IMU絶対角度の最短回頭動作
+ * @file   IMUMinAngleRotation.cpp
+ * @brief  IMU絶対角度の最小角度で回頭する動作
  * @author Hara127
  */
 
-#include "IMUShortestAngleRotation.h"
+#include "IMUMinAngleRotation.h"
 
 #include "IMUController.h"
 #include "MotorController.h"
@@ -14,8 +14,8 @@
 #include <iostream>
 #include <thread>
 
-IMUShortestAngleRotation::IMUShortestAngleRotation(Robot& _robot, int _targetAngle, int _basePower,
-                                                   const PidGain& _anglePidGain)
+IMUMinAngleRotation::IMUMinAngleRotation(Robot& _robot, int _targetAngle, int _basePower,
+                                         const PidGain& _anglePidGain)
   : Rotation(_robot, true),
     targetAngle(_targetAngle),
     basePower(_basePower),
@@ -25,12 +25,12 @@ IMUShortestAngleRotation::IMUShortestAngleRotation(Robot& _robot, int _targetAng
 {
 }
 
-void IMUShortestAngleRotation::prepare()
+void IMUMinAngleRotation::prepare()
 {
   // IMUから現在角度を取得する
   currentAngle = robot.getIMUControllerInstance().getAngle();
 
-  // 目標角度への最短の角度を計算
+  // 目標角度への角度の差を計算
   angleError = targetAngle - currentAngle;
   if(angleError > 180.0) {
     angleError -= 360.0;
@@ -44,7 +44,7 @@ void IMUShortestAngleRotation::prepare()
   rightSign = isClockwise ? -1 : 1;
 }
 
-bool IMUShortestAngleRotation::isMetPreCondition()
+bool IMUMinAngleRotation::isMetPreCondition()
 {
   // 角度をチェック
   if(targetAngle < 0 || targetAngle >= 360) {
@@ -63,12 +63,12 @@ bool IMUShortestAngleRotation::isMetPreCondition()
   return true;
 }
 
-bool IMUShortestAngleRotation::isMetContinuationCondition()
+bool IMUMinAngleRotation::isMetContinuationCondition()
 {
   // 現在の角度を取得
   currentAngle = robot.getIMUControllerInstance().getAngle();
 
-  // 残りの最短の回頭角度を計算
+  // 残りの角度を計算
   angleError = targetAngle - currentAngle;
   if(angleError > 180.0) {
     angleError -= 360.0;
@@ -80,7 +80,7 @@ bool IMUShortestAngleRotation::isMetContinuationCondition()
   return std::abs(angleError) > TOLERANCE;
 }
 
-void IMUShortestAngleRotation::updateMotorControl()
+void IMUMinAngleRotation::updateMotorControl()
 {
   // PID制御により角度誤差から補正値を計算
   double pidCorrection = anglePid.calculatePid(angleError);
