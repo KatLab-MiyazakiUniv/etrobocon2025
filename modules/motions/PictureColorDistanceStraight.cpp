@@ -136,6 +136,7 @@ void PictureColorDistanceStraight::run()
 
   // IMUSetting などで計算を開始していない場合は、計算を継続する必要がないため計算を停止
   if(!robot.getIMUControllerInstance().getShouldContinueCalculation()) {
+    std::cout << "終了" << std::endl;
     robot.getIMUControllerInstance().stopAngleCalculation();
   }
 }

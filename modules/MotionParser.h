@@ -33,6 +33,7 @@
 #include "CameraRecoveryAction.h"
 #include "IMUSetting.h"
 #include "PictureColorDistanceStraight.h"
+#include "BottleCarryAction.h"
 
 enum class COMMAND {
   AR,     // 角度指定回頭

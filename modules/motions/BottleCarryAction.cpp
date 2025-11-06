@@ -29,11 +29,6 @@ void BottleCarryAction::run()
   double initialLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
   double initialDistance = Mileage::calculateMileage(initialRightMotorCount, initialLeftMotorCount);
 
-  // 　IMU設定
-  IMUSetting start(robot, true);
-  IMUSetting stop(robot, false);
-
-  start.run();
   IMUDistanceStraight ids(robot, forwardDistance, idsSpeed, PidGain(0.08, 0.02, 0.05));
 
   SocketClient& client = robot.getSocketClient();
@@ -95,5 +90,4 @@ void BottleCarryAction::run()
   double runDistance = fabs(currentDistance - initialDistance);
 
   std::cout << "走った距離: " << runDistance << std::endl;
-  stop.run();
 }
