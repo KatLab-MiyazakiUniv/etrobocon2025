@@ -64,6 +64,16 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // IMUMR: IMU絶対角度を最小の角度で回頭動作を行う
+      // [1]:int 目標絶対角度[deg] (0~360), [2]:int 基準パワー, [3-5]:double 角度PIDゲイン(kp, ki, kd)
+      case COMMAND::IMUMR: {
+        auto imumr = new IMUMinAngleRotation(
+            robot, stoi(params[1]), stoi(params[2]),
+            PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
+        motionList.push_back(imumr);
+        break;
+      }
+
       // DS: 指定距離直進
       // [1]:double 距離[mm], [2]:double 速度[mm/s]
       case COMMAND::DS: {
@@ -378,7 +388,8 @@ COMMAND MotionParser::convertCommand(const string& str)
   // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
   static const unordered_map<string, COMMAND> commandMap = {
     { "AR", COMMAND::AR },      // 角度指定回頭
-    { "IMUR", COMMAND::IMUR },  // IMU角度指定回頭
+    { "IMUR", COMMAND::IMUR },     // IMU角度指定回頭
+    { "IMUMR", COMMAND::IMUMR },   // IMU絶対角度を最小の角度で回頭動作
     { "DS", COMMAND::DS },      // 指定距離直進
     { "IDS", COMMAND::IDS },    // IMU角度補正直進
     { "CS", COMMAND::CS },      // 指定色直進
