@@ -127,7 +127,7 @@ void BackgroundPlaCameraAction::run()
   robot.getMotorControllerInstance().stopWheelsMotor();
 
   // アームを下げる
-  robot.getMotorControllerInstance().resetArmMotorPower();
+  robot.getMotorControllerInstance().setArmMotorPower(-armPower);
 
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));
