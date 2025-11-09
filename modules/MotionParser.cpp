@@ -65,11 +65,12 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       }
 
       // IMUMR: IMU絶対角度を最小の角度で回頭動作を行う
-      // [1]:int 目標絶対角度[deg] (0~360), [2]:int 基準パワー, [3-5]:double 角度PIDゲイン(kp, ki, kd)
+      // [1]:int 目標絶対角度[deg] (0~360), [2]:int 基準パワー, [3-5]:double 角度PIDゲイン(kp, ki,
+      // kd)
       case COMMAND::IMUMR: {
-        auto imumr = new IMUMinAngleRotation(
-            robot, stoi(params[1]), stoi(params[2]),
-            PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
+        auto imumr
+            = new IMUMinAngleRotation(robot, stoi(params[1]), stoi(params[2]),
+                                      PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
         motionList.push_back(imumr);
         break;
       }
@@ -402,14 +403,6 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-      // IS: IMU設定
-      // [1]:string 設定 (start or stop)
-      case COMMAND::IS: {
-        auto is = new IMUSetting(robot, convertBool(params[0], params[1]));
-        motionList.push_back(is);
-        break;
-      }
-
       // BSCA: ボトルキャリー動作
       // BottleCarryAction(Robot& _robot, double _forwardDistance, double _maxDistance, double
       // _idsSpeed,
@@ -438,6 +431,35 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // PCIDS: IMU角度補正直進に、カメラ画像の色検出による停止条件を追加した動作
+      // [1]:double 距離[mm], [2]:double 速度[mm/s], [3-5]:double 角度補正PIDゲイン(kp, ki, kd),
+      // [6-8]:int HSV下限, [9-11]:int HSV上限, [12-15]:int ROI座標[px] ([12]左上x, [13]左上y,
+      // [14]幅, [15]高さ), [16-17]:int 解像度[px] ([16]幅, [17]高さ)
+      case COMMAND::PCIDS: {
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
+
+        detectionRequest.command = CameraServer::Command::LINE_DETECTION;
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[6]), stoi(params[7]), stoi(params[8]));
+        detectionRequest.upperHSV = cv::Scalar(stoi(params[9]), stoi(params[10]), stoi(params[11]));
+        detectionRequest.roi
+            = cv::Rect(stoi(params[12]), stoi(params[13]), stoi(params[14]), stoi(params[15]));
+        detectionRequest.resolution = cv::Size(stoi(params[16]), stoi(params[17]));
+
+        auto pcds = new PictureColorDistanceStraight(
+            robot, stod(params[1]), stod(params[2]),
+            PidGain(stod(params[3]), stod(params[4]), stod(params[5])), detectionRequest);
+        motionList.push_back(pcds);
+        break;
+      }
+
+      // IS: IMU設定
+      // [1]:string 設定 (start or stop)
+      case COMMAND::IS: {
+        auto is = new IMUSetting(robot, convertBool(params[0], params[1]));
+        motionList.push_back(is);
+        break;
+      }
+
       // 未定義コマンド
       default: {
         cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
@@ -456,28 +478,28 @@ COMMAND MotionParser::convertCommand(const string& str)
 {
   // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
   static const unordered_map<string, COMMAND> commandMap = {
-    { "AR", COMMAND::AR },      // 角度指定回頭
-    { "IMUR", COMMAND::IMUR },     // IMU角度指定回頭
-    { "IMUMR", COMMAND::IMUMR },   // IMU絶対角度を最小の角度で回頭動作
-    { "DS", COMMAND::DS },      // 指定距離直進
-    { "IDS", COMMAND::IDS },    // IMU角度補正直進
-    { "CS", COMMAND::CS },      // 指定色直進
-    { "DL", COMMAND::DL },      // 指定距離ライントレース
-    { "DCL", COMMAND::DCL },    // 指定距離カメラライントレース
-    { "CDCL", COMMAND::CDCL },  // 色距離指定カメラライントレース
-    { "UDCL", COMMAND::UDCL },  // 超音波距離指定カメラライントレース
-    { "CL", COMMAND::CL },      // 指定色ライントレース
-    { "CDL", COMMAND::CDL },    // 色距離指定ライントレース
-    { "EC", COMMAND::EC },      // エッジ切り替え
-    { "SL", COMMAND::SL },      // スリープ
-    { "SS", COMMAND::SS },      // カメラ撮影動作
-    { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
-    { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
-    { "CRA", COMMAND::CRA },    // カメラ復帰動作
-    { "SCA", COMMAND::SCA },    // スマートキャリーアクション
-    { "IS", COMMAND::IS },      // IMU設定
-    { "BSCA", COMMAND::BSCA },  // ボトルキャリー動作
-    { "IS", COMMAND::IS }       // IMU設定
+    { "AR", COMMAND::AR },        // 角度指定回頭
+    { "IMUR", COMMAND::IMUR },    // IMU角度指定回頭
+    { "IMUMR", COMMAND::IMUMR },  // IMU絶対角度を最小の角度で回頭動作
+    { "DS", COMMAND::DS },        // 指定距離直進
+    { "IDS", COMMAND::IDS },      // IMU角度補正直進
+    { "CS", COMMAND::CS },        // 指定色直進
+    { "DL", COMMAND::DL },        // 指定距離ライントレース
+    { "DCL", COMMAND::DCL },      // 指定距離カメラライントレース
+    { "CDCL", COMMAND::CDCL },    // 色距離指定カメラライントレース
+    { "UDCL", COMMAND::UDCL },    // 超音波距離指定カメラライントレース
+    { "CL", COMMAND::CL },        // 指定色ライントレース
+    { "CDL", COMMAND::CDL },      // 色距離指定ライントレース
+    { "EC", COMMAND::EC },        // エッジ切り替え
+    { "SL", COMMAND::SL },        // スリープ
+    { "SS", COMMAND::SS },        // カメラ撮影動作
+    { "MCA", COMMAND::MCA },      // ミニフィグのカメラ撮影動作
+    { "BCA", COMMAND::BCA },      // 風景・プラレールのカメラ撮影動作
+    { "CRA", COMMAND::CRA },      // カメラ復帰動作
+    { "SCA", COMMAND::SCA },      // スマートキャリーアクション
+    { "BSCA", COMMAND::BSCA },    // ボトルキャリー動作
+    { "PCIDS", COMMAND::PCIDS },  // 画像ラインを用いた距離直進
+    { "IS", COMMAND::IS }         // IMU設定
   };
 
   // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
