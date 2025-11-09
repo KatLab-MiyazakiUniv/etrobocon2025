@@ -25,8 +25,7 @@ class BottleCarryAction : public CompositeMotion {
    * コンストラクタ
    * @param _robot ロボット本体への参照
    */
-  BottleCarryAction(Robot& _robot, double _forwardDistance, double _maxDistance, double _idsSpeed,
-                    int _targetXCoordinate,
+  BottleCarryAction(Robot& _robot, double _offsetDistance, double _idsSpeed,
                     const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
 
   /**
@@ -37,10 +36,8 @@ class BottleCarryAction : public CompositeMotion {
  private:
   CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
   BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
-  double forwardDistance;
-  double idsSpeed;
-  double maxDistance;
-  int targetXCoordinate;
+  double offsetDistance;              // 距離補正値[mm]
+  double idsSpeed;                    // IDSの走行速度[mm/s]
 };
 
 #endif
