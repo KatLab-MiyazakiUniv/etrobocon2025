@@ -408,25 +408,23 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // _idsSpeed,
       // int _targetXCoordinate,
       // const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
-      // [1] : double 前進距離[mm],
-      // [2] : double 最大距離[mm],
-      // [3] : double IDS速度[mm/s],
-      // [4] : int 目標X座標[px],
-      // [5-7] : int lowerHSV,
-      // [8-10] : int upperHSV,
-      // [11-14] : int ROI座標[px] ([11]左上隅のx座標, [12]左上隅のy座標, [13]幅, [14]高さ),
-      // [15-16] : int 解像度[px] ([15]幅, [16]高さ)
+      // [1] : double 距離補正値[mm],
+      // [2] : double IDS速度[mm/s],
+      // [3-5] : int lowerHSV,
+      // [6-8] : int upperHSV,
+      // [9-12] : int ROI座標[px] ([9]左上隅のx座標, [10]左上隅のy座標, [11]幅, [12]高さ),
+      // [13-14] : int 解像度[px] ([13]幅, [14]高さ)
       case COMMAND::BSCA: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
         detectionRequest.command
             = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
-        detectionRequest.lowerHSV = cv::Scalar(stoi(params[5]), stoi(params[6]), stoi(params[7]));
-        detectionRequest.upperHSV = cv::Scalar(stoi(params[8]), stoi(params[9]), stoi(params[10]));
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[3]), stoi(params[4]), stoi(params[5]));
+        detectionRequest.upperHSV = cv::Scalar(stoi(params[6]), stoi(params[7]), stoi(params[8]));
         detectionRequest.roi
-            = cv::Rect(stoi(params[11]), stoi(params[12]), stoi(params[13]), stoi(params[14]));
-        detectionRequest.resolution = cv::Size(stoi(params[15]), stoi(params[16]));
-        auto bsca = new BottleCarryAction(robot, stod(params[1]), stod(params[2]), stod(params[3]),
-                                          stoi(params[4]), detectionRequest);
+            = cv::Rect(stoi(params[9]), stoi(params[10]), stoi(params[11]), stoi(params[12]));
+        detectionRequest.resolution = cv::Size(stoi(params[13]), stoi(params[14]));
+        auto bsca
+            = new BottleCarryAction(robot, stod(params[1]), stod(params[2]), detectionRequest);
         motionList.push_back(bsca);
         break;
       }
