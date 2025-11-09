@@ -13,6 +13,7 @@
 #include "IMUSetting.h"
 #include "UltrasonicDistanceCameraLineTrace.h"
 #include "SocketProtocol.h"
+#include "PictureColorDistanceStraight.h"
 #include <cmath>
 
 class SmartCarryAction : public CompositeMotion {
