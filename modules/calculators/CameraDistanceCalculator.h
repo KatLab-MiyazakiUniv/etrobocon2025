@@ -20,18 +20,21 @@ class CameraDistanceCalculator {
   /**
    * @brief コンストラクタ
    * @param _robot ロボット本体への参照
+   * @param _offsetDistance 距離補正値[mm]
    */
-  CameraDistanceCalculator(Robot& _robot);
+  CameraDistanceCalculator(Robot& _robot, double _offsetDistance = 0.0);
 
   /**
    * @brief カメラ画像を使って、走行体からバウンディングボックスの中心までの距離を計算する
    * @param response カメラサーバーからの応答
    * @return バウンディングボックスの中心までの距離[mm]
    */
-  double calculateDistance(const CameraServer::BoundingBoxDetectorResponse& response);
+  double calculateDistance(const CameraServer::BoundingBoxDetectorResponse& response,
+                           double offsetDistance);
 
  private:
   Robot& robot;
+  double offsetDistance = 0.0;  // 距離補正値[mm]
 };
 
 #endif
