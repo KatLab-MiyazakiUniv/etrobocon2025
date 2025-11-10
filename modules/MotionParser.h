@@ -32,9 +32,9 @@
 #include "ColorDistanceCameraLineTrace.h"
 #include "UltrasonicDistanceCameraLineTrace.h"
 #include "CameraRecoveryAction.h"
-#include "SmartCarryAction.h"
+#include "BottleTwoCatchAction.h"
 #include "IMUSetting.h"
-#include "BottleCarryAction.h"
+#include "BottleLandingAction.h"
 #include "PictureColorDistanceStraight.h"
 
 enum class COMMAND {
@@ -56,8 +56,8 @@ enum class COMMAND {
   MCA,    // ミニフィグのカメラ撮影動作
   BCA,    // 背景のカメラ撮影動作
   CRA,    // カメラ復帰動作
-  SCA,    // スマートキャリーアクション
-  BSCA,   // ボトルキャリー動作
+  BTCA,   // ボトル2つ目のキャッチ動作
+  BLA,    // ボトルランディング動作
   PCIDS,  // カメラ画像を用いた色距離直進
   IS,     // IMUの角度計算の設定を行う動作
   NONE

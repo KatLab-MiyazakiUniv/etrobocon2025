@@ -1,10 +1,10 @@
 /**
- * @file   BottleCarryAction.cpp
- * @brief  ボトルキャリー動作クラス
+ * @file   BottleLandingAction.cpp
+ * @brief  ボトルランディング動作クラス
  * @author nishijima515
  */
 
-#include "BottleCarryAction.h"
+#include "BottleLandingAction.h"
 #include <thread>
 #include <iostream>
 
@@ -12,7 +12,7 @@ using namespace std;
 // コンストラクタ
 // offsetDistance: 距離補正値[mm]
 // idsSpeed: IDSの走行速度[mm/s]
-BottleCarryAction::BottleCarryAction(
+BottleLandingAction::BottleLandingAction(
     Robot& _robot, double _offsetDistance, double _idsSpeed,
     const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
   : CompositeMotion(_robot),
@@ -23,7 +23,7 @@ BottleCarryAction::BottleCarryAction(
 }
 
 // カメラ距離計算、ランディングのためのIDSを担当する複合動作クラス
-void BottleCarryAction::run()
+void BottleLandingAction::run()
 {
   // 動作開始時点の走行距離を取得する
   double initialRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();

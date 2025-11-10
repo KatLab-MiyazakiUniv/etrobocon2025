@@ -362,7 +362,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-      // SCA: スマートキャリーアクション
+      // BTCA: ボトル2つ目のキャッチ動作
       // [1]:int 前進距離[mm], [2]:double IMU直進スピード[mm/s], [3]:double 超音波センサー距離[mm]
       // [4]:double udclスピード[mm/s], [5]:double 角度[deg] [6]:double 回転パワー
       // [7-12]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV),
@@ -372,7 +372,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // ライントレース用の画像内注目領域（四角形）） SmartCarryAction::SmartCarryAction( Robot&
       // _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance, double
       // _udclDistance, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
-      case COMMAND::SCA: {
+      case COMMAND::BTCA: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
         detectionRequest.command
@@ -396,20 +396,18 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
           detectionRequest.resolution = cv::Size(640, 480);
         }
 
-        auto sca = new SmartCarryAction(robot, stod(params[1]), stod(params[2]), stod(params[3]),
-                                        stod(params[4]), stod(params[5]), stod(params[6]),
-                                        detectionRequest);
+        auto btca = new BottleTwoCatchAction(robot, stod(params[1]), stod(params[2]),
+                                             stod(params[3]), stod(params[4]), stod(params[5]),
+                                             stod(params[6]), detectionRequest);
         // SmartCarryAction::SmartCarryAction(
         // Robot& _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance,
         // double _udclDistance, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
-        motionList.push_back(sca);
+        motionList.push_back(btca);
         break;
       }
 
-      // BSCA: ボトルキャリー動作
-      // BottleCarryAction(Robot& _robot, double _forwardDistance, double _maxDistance, double
-      // _idsSpeed,
-      // int _targetXCoordinate,
+      // BLA: ボトルランディング動作
+      // BottleLandingAction(Robot& _robot, double _offsetDistance, double _idsSpeed,
       // const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
       // [1] : double 距離補正値[mm],
       // [2] : double IDS速度[mm/s],
@@ -417,7 +415,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [6-8] : int upperHSV,
       // [9-12] : int ROI座標[px] ([9]左上隅のx座標, [10]左上隅のy座標, [11]幅, [12]高さ),
       // [13-14] : int 解像度[px] ([13]幅, [14]高さ)
-      case COMMAND::BSCA: {
+      case COMMAND::BLA: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
         detectionRequest.command
             = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
@@ -426,9 +424,9 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         detectionRequest.roi
             = cv::Rect(stoi(params[9]), stoi(params[10]), stoi(params[11]), stoi(params[12]));
         detectionRequest.resolution = cv::Size(stoi(params[13]), stoi(params[14]));
-        auto bsca
-            = new BottleCarryAction(robot, stod(params[1]), stod(params[2]), detectionRequest);
-        motionList.push_back(bsca);
+        auto bla
+            = new BottleLandingAction(robot, stod(params[1]), stod(params[2]), detectionRequest);
+        motionList.push_back(bla);
         break;
       }
 
@@ -497,8 +495,8 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "MCA", COMMAND::MCA },      // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },      // 風景・プラレールのカメラ撮影動作
     { "CRA", COMMAND::CRA },      // カメラ復帰動作
-    { "SCA", COMMAND::SCA },      // スマートキャリーアクション
-    { "BSCA", COMMAND::BSCA },    // ボトルキャリー動作
+    { "BTCA", COMMAND::BTCA },    // ボトル2つ目のキャッチ動作
+    { "BLA", COMMAND::BLA },      // ボトルランディング動作
     { "PCIDS", COMMAND::PCIDS },  // 画像ラインを用いた距離直進
     { "IS", COMMAND::IS }         // IMU設定
   };

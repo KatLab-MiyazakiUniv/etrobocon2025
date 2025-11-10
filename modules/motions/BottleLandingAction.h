@@ -1,17 +1,16 @@
 /**
- * @file   BottleCarryAction.h
- * @brief  ボトルキャリー動作クラス
+ * @file   BottleLandingAction.h
+ * @brief  ボトルランディング動作クラス
  * @author nishijima515
  */
 
-#ifndef BOTTLE_CARRY_ACTION_H
-#define BOTTLE_CARRY_ACTION_H
+#ifndef BOTTLE_LANDING_ACTION_H
+#define BOTTLE_LANDING_ACTION_H
 #include "SystemInfo.h"
 #include "CompositeMotion.h"
 #include "IMUDistanceStraight.h"
 #include "IMUColorDistanceStraight.h"
 #include "IMUAngleRotation.h"
-#include "GetCorrectionAngle.h"
 #include "IMUSetting.h"
 #include "CameraDistanceCalculator.h"
 #include "SocketProtocol.h"
@@ -19,17 +18,17 @@
 #include "Snapshot.h"
 #include <opencv2/opencv.hpp>  // For cv::Rect
 
-class BottleCarryAction : public CompositeMotion {
+class BottleLandingAction : public CompositeMotion {
  public:
   /**
    * コンストラクタ
    * @param _robot ロボット本体への参照
    */
-  BottleCarryAction(Robot& _robot, double _offsetDistance, double _idsSpeed,
-                    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
+  BottleLandingAction(Robot& _robot, double _offsetDistance, double _idsSpeed,
+                      const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
 
   /**
-   * @brief ボトルキャリー動作を行う
+   * @brief ボトルランディング動作を行う
    */
   void run() override;
 

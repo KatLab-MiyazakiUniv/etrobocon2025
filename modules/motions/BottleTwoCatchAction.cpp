@@ -1,16 +1,13 @@
-// 距離計測の開始
-// if 画角に指定した色が入るまで、5cmごと前進を続ける
-
 /**
- * @file   SmartCarryAction.cpp
- * @brief  スマートキャリー動作クラス
+ * @file   BottleTwoCatchAction.cpp
+ * @brief  ボトル2つ目のキャッチ動作クラス
  * @author nishijima515
  */
 
-#include "SmartCarryAction.h"
+#include "BottleTwoCatchAction.h"
 
 // コンストラクタ
-SmartCarryAction::SmartCarryAction(
+BottleTwoCatchAction::BottleTwoCatchAction(
     Robot& _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance,
     double _udclSpeed, double _angle, double _rotatePower,
     const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
@@ -25,7 +22,7 @@ SmartCarryAction::SmartCarryAction(
 {
 }
 
-void SmartCarryAction::run()
+void BottleTwoCatchAction::run()
 {
   // ボトル探索開始時点の走行距離を取得する
   double initialRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
