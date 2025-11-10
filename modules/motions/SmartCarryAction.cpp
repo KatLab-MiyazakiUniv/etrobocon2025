@@ -12,12 +12,15 @@
 // コンストラクタ
 SmartCarryAction::SmartCarryAction(
     Robot& _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance,
-    double _udclDistance, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+    double _udclSpeed, double _angle, double _rotatePower,
+    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
   : CompositeMotion(_robot),
     forwardDistance(_forwardDistance),
     idsSpeed(_idsSpeed),
     ultrasonicDistance(_ultrasonicDistance),
-    udclDistance(_udclDistance),
+    udclSpeed(_udclSpeed),
+    angle(_angle),
+    rotatePower(_rotatePower),
     detectionRequest(_detectionRequest)
 {
 }
@@ -52,7 +55,7 @@ void SmartCarryAction::run()
                                      detectionRequest);
   pcids.run();
 
-  UltrasonicDistanceCameraLineTrace udcl(robot, ultrasonicDistance, udclDistance, 470, 400,
+  UltrasonicDistanceCameraLineTrace udcl(robot, ultrasonicDistance, forwardDistance, udclSpeed, 400,
                                          PidGain(0.002, 0.0005, 0.001), detectionRequest);
 
   udcl.run();
@@ -74,8 +77,10 @@ void SmartCarryAction::run()
   std::cout << "横方向のズレ：" << widthMoved << std::endl;
 
   // ここをminARに変更
-  IMUAngleRotation imur(robot, 340, 60.0, false, PidGain(0.036, 0.012, 0.03), true);
-  imur.run();
+  // IMUAngleRotation imur(robot, 340, 60.0, false, PidGain(0.036, 0.012, 0.03), true);
+  // imur.run();
+  IMUMinAngleRotation minar(robot, angle, rotatePower, PidGain(0.036, 0.012, 0.03));
+  minar.run();
 
   // 最大直進距離を設定
   double maxDistance = forwardDistance;  // forwardDistanceは1100mm程度に設定される想定

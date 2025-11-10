@@ -364,10 +364,11 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
 
       // SCA: スマートキャリーアクション
       // [1]:int 前進距離[mm], [2]:double IMU直進スピード[mm/s], [3]:double 超音波センサー距離[mm]
-      // [4]:double udcl距離[mm], [5-10]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV),
-      // [11-14]:int ROI座標[px]
-      // ([11]左上隅のx座標, [12]左上隅のy座標, [13]幅, [14]高さ), [15-16]int 解像度[px]
-      // ([15]幅,[16]高さ) 補足：ROI（Region of Interest:
+      // [4]:double udclスピード[mm/s], [5]:double 角度[deg] [6]:double 回転パワー
+      // [7-12]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV),
+      // [13-16]:int ROI座標[px]
+      // ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ), [17-18]int 解像度[px]
+      // ([17]幅,[18]高さ) 補足：ROI（Region of Interest:
       // ライントレース用の画像内注目領域（四角形）） SmartCarryAction::SmartCarryAction( Robot&
       // _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance, double
       // _udclDistance, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
@@ -377,17 +378,18 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         detectionRequest.command
             = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
-        detectionRequest.lowerHSV = cv::Scalar(stoi(params[5]), stoi(params[6]), stoi(params[7]));
-        detectionRequest.upperHSV = cv::Scalar(stoi(params[8]), stoi(params[9]), stoi(params[10]));
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        detectionRequest.upperHSV
+            = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
 
         // パラメータ配列のサイズによってROIと解像度を設定
-        if(params.size() > 16) {
+        if(params.size() > 18) {
           detectionRequest.roi
-              = cv::Rect(stoi(params[11]), stoi(params[12]), stoi(params[13]), stoi(params[14]));
-          detectionRequest.resolution = cv::Size(stoi(params[15]), stoi(params[16]));
-        } else if(params.size() > 14) {
+              = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
+          detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
+        } else if(params.size() > 16) {
           detectionRequest.roi
-              = cv::Rect(stoi(params[11]), stoi(params[12]), stoi(params[13]), stoi(params[14]));
+              = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
           detectionRequest.resolution = cv::Size(640, 480);
         } else {
           detectionRequest.roi = cv::Rect(50, 240, 540, 240);
@@ -395,7 +397,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         }
 
         auto sca = new SmartCarryAction(robot, stod(params[1]), stod(params[2]), stod(params[3]),
-                                        stod(params[4]), detectionRequest);
+                                        stod(params[4]), stod(params[5]), stod(params[6]),
+                                        detectionRequest);
         // SmartCarryAction::SmartCarryAction(
         // Robot& _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance,
         // double _udclDistance, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)

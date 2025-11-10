@@ -14,6 +14,7 @@
 #include "UltrasonicDistanceCameraLineTrace.h"
 #include "SocketProtocol.h"
 #include "PictureColorDistanceStraight.h"
+#include "IMUMinAngleRotation.h"
 #include <cmath>
 
 class SmartCarryAction : public CompositeMotion {
@@ -23,7 +24,8 @@ class SmartCarryAction : public CompositeMotion {
    * @param _robot ロボット本体への参照
    */
   SmartCarryAction(Robot& _robot, double _forwardDistance, double _idsSpeed,
-                   double _ultrasonicDistance, double _udclDistance,
+                   double _ultrasonicDistance, double _udclSpeed, double _angle,
+                   double _rotatePower,
                    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
 
   /**
@@ -37,7 +39,9 @@ class SmartCarryAction : public CompositeMotion {
   double forwardDistance;
   double idsSpeed;
   double ultrasonicDistance;
-  double udclDistance;
+  double udclSpeed;
+  double angle;
+  double rotatePower;
   //   cv::Scalar lowerHSV = cv::Scalar(85, 50, 50);
   //   cv::Scalar upperHSV = cv::Scalar(105, 255, 255);
   //   cv::Rect roi = cv::Rect(0, 0, 600, 600);
@@ -47,3 +51,8 @@ class SmartCarryAction : public CompositeMotion {
 };
 
 #endif
+
+// SmartCarryAction::SmartCarryAction(
+//     Robot& _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance,
+//     double _udclpeed, double _angle, double _rotatePower,
+//     const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
