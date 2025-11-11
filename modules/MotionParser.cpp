@@ -365,50 +365,46 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // BTCA: ボトル2つ目のキャッチ動作
       // [1]:int 前進距離[mm], [2]:double IMU直進スピード[mm/s], [3]:double 超音波センサー距離[mm]
       // [4]:double udclスピード[mm/s], [5]:double 角度[deg] [6]:double 回転パワー
-      // [7-12]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV),
-      // [13-16]:int ROI座標[px]
-      // ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ), [17-18]int 解像度[px]
-      // ([17]幅,[18]高さ) 補足：ROI（Region of Interest:
-      // ライントレース用の画像内注目領域（四角形）） SmartCarryAction::SmartCarryAction( Robot&
-      // _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance, double
-      // _udclDistance, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+      // [7-9]:double udclのPIDゲイン(kp, ki, kd),
+      // [10-15]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV),
+      // [16-19]:int ROI座標[px]
+      // ([16]左上隅のx座標, [17]左上隅のy座標, [18]幅, [19]高さ), [20-21]int 解像度[px]
+      // ([20]幅,[21]高さ) 補足：ROI（Region of Interest:
+      // ライントレース用の画像内注目領域（四角形））
       case COMMAND::BTCA: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
         detectionRequest.command
             = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
-        detectionRequest.lowerHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
-        detectionRequest.upperHSV
+        detectionRequest.lowerHSV
             = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
+        detectionRequest.upperHSV
+            = cv::Scalar(stoi(params[13]), stoi(params[14]), stoi(params[15]));
 
         // パラメータ配列のサイズによってROIと解像度を設定
-        if(params.size() > 18) {
+        if(params.size() > 21) {
           detectionRequest.roi
-              = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
-          detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
-        } else if(params.size() > 16) {
+              = cv::Rect(stoi(params[16]), stoi(params[17]), stoi(params[18]), stoi(params[19]));
+          detectionRequest.resolution = cv::Size(stoi(params[20]), stoi(params[21]));
+        } else if(params.size() > 19) {
           detectionRequest.roi
-              = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
+              = cv::Rect(stoi(params[16]), stoi(params[17]), stoi(params[18]), stoi(params[19]));
           detectionRequest.resolution = cv::Size(640, 480);
         } else {
           detectionRequest.roi = cv::Rect(50, 240, 540, 240);
           detectionRequest.resolution = cv::Size(640, 480);
         }
 
-        auto btca = new BottleTwoCatchAction(robot, stod(params[1]), stod(params[2]),
-                                             stod(params[3]), stod(params[4]), stod(params[5]),
-                                             stod(params[6]), detectionRequest);
-        // SmartCarryAction::SmartCarryAction(
-        // Robot& _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance,
-        // double _udclDistance, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+        auto btca = new BottleTwoCatchAction(
+            robot, stod(params[1]), stod(params[2]), stod(params[3]), stod(params[4]),
+            stod(params[5]), stod(params[6]),
+            PidGain(stod(params[7]), stod(params[8]), stod(params[9])), detectionRequest);
         motionList.push_back(btca);
         break;
       }
 
       // BLA: ボトルランディング動作
-      // BottleLandingAction(Robot& _robot, double _offsetDistance, double _idsSpeed,
-      // const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
       // [1] : double 距離補正値[mm],
       // [2] : double IDS速度[mm/s],
       // [3-5] : int lowerHSV,
