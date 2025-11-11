@@ -50,7 +50,7 @@ GetCorrectionAngleResult GetCorrectionAngle::GetCorrectAngle(
   correctionResult.correctionAngle
       = atan2(currentX - targetXCoordinate, targetXCoordinate) * 180.0 / M_PI;
 
-  if(correctionResult.correctionAngle < 0){
+  if(correctionResult.correctionAngle < 0) {
     correctionResult.correctionAngle = correctionResult.correctionAngle * (-1);
   }
 
