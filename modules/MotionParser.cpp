@@ -212,7 +212,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [13-15]int 2色目lowerHSV (H, S, V), [16-18]int 2色目upperHSV (H, S, V),
       // [19-22]int ROI座標[px] ([19]左上隅のx座標, [20]左上隅のy座標, [21]幅, [22]高さ),
       // [23-24]int 解像度[px] ([23]幅, [24]高さ)
-      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））,
+      // [25]string 停止制御 (continue ならモータを停止せず、stop ならモータを停止) [オプション]
       case COMMAND::DTCCL: {
         CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;
 
@@ -232,9 +233,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
         detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
 
+        bool isStopMotorPower = true;
+        if(params.size() >= 26) {
+          isStopMotorPower = convertBool("DTCCL", params[25]);
+        }
+
         auto dtccl = new DistanceTwoColorCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stoi(params[3]),
-            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest);
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest,
+            isStopMotorPower);
         motionList.push_back(dtccl);
         break;
       }
@@ -246,7 +253,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [14-16]int 2色目lowerHSV (H, S, V), [17-19]int 2色目upperHSV (H, S, V),
       // [20-23]int ROI座標[px] ([20]左上隅のx座標, [21]左上隅のy座標, [22]幅, [23]高さ),
       // [24-25]int 解像度[px] ([24]幅, [25]高さ)
-      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））,
+      // [26]string 停止制御 (continue ならモータを停止せず、stop ならモータを停止) [オプション]
       case COMMAND::CDTCCL: {
         CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;
 
@@ -266,10 +274,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = cv::Rect(stoi(params[20]), stoi(params[21]), stoi(params[22]), stoi(params[23]));
         detectionRequest.resolution = cv::Size(stoi(params[24]), stoi(params[25]));
 
+        bool isStopMotorPower = true;
+        if(params.size() >= 27) {
+          isStopMotorPower = convertBool("DTCCL", params[26]);
+        }
+
         auto cdtccl = new ColorDistanceTwoColorCameraLineTrace(
             robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
             stoi(params[4]), PidGain(stod(params[5]), stod(params[6]), stod(params[7])),
-            detectionRequest);
+            detectionRequest, isStopMotorPower);
         motionList.push_back(cdtccl);
         break;
       }
@@ -443,159 +456,161 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       case COMMAND::STOP: {
         auto stop = new Stop(robot);
         motionList.push_back(stop);
-
-        // PCIDS: IMU角度補正直進に、カメラ画像の色検出による停止条件を追加した動作
-        // [1]:double 距離[mm], [2]:double 速度[mm/s], [3-5]:double 角度補正PIDゲイン(kp, ki, kd),
-        // [6-8]:int HSV下限, [9-11]:int HSV上限, [12-15]:int ROI座標[px] ([12]左上x, [13]左上y,
-        // [14]幅, [15]高さ), [16-17]:int 解像度[px] ([16]幅, [17]高さ)
-        case COMMAND::PCIDS: {
-          CameraServer::BoundingBoxDetectorRequest detectionRequest;
-
-          detectionRequest.command = CameraServer::Command::LINE_DETECTION;
-          detectionRequest.lowerHSV = cv::Scalar(stoi(params[6]), stoi(params[7]), stoi(params[8]));
-          detectionRequest.upperHSV
-              = cv::Scalar(stoi(params[9]), stoi(params[10]), stoi(params[11]));
-          detectionRequest.roi
-              = cv::Rect(stoi(params[12]), stoi(params[13]), stoi(params[14]), stoi(params[15]));
-          detectionRequest.resolution = cv::Size(stoi(params[16]), stoi(params[17]));
-
-          auto pcds = new PictureColorDistanceStraight(
-              robot, stod(params[1]), stod(params[2]),
-              PidGain(stod(params[3]), stod(params[4]), stod(params[5])), detectionRequest);
-          motionList.push_back(pcds);
-          break;
-        }
-
-        // IS: IMU設定
-        // [1]:string 設定 (start or stop)
-        case COMMAND::IS: {
-          auto is = new IMUSetting(robot, convertBool(params[0], params[1]));
-          motionList.push_back(is);
-          break;
-        }
-
-        // 未定義コマンド
-        default: {
-          cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
-               << endl;
-          break;
-        }
+        break;
       }
 
-        lineNum++;  // 行番号をインクリメントする
+      // PCIDS: IMU角度補正直進に、カメラ画像の色検出による停止条件を追加した動作
+      // [1]:double 距離[mm], [2]:double 速度[mm/s], [3-5]:double 角度補正PIDゲイン(kp, ki, kd),
+      // [6-8]:int HSV下限, [9-11]:int HSV上限, [12-15]:int ROI座標[px] ([12]左上x, [13]左上y,
+      // [14]幅, [15]高さ), [16-17]:int 解像度[px] ([16]幅, [17]高さ)
+      case COMMAND::PCIDS: {
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
+
+        detectionRequest.command = CameraServer::Command::LINE_DETECTION;
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[6]), stoi(params[7]), stoi(params[8]));
+        detectionRequest.upperHSV = cv::Scalar(stoi(params[9]), stoi(params[10]), stoi(params[11]));
+        detectionRequest.roi
+            = cv::Rect(stoi(params[12]), stoi(params[13]), stoi(params[14]), stoi(params[15]));
+        detectionRequest.resolution = cv::Size(stoi(params[16]), stoi(params[17]));
+
+        auto pcds = new PictureColorDistanceStraight(
+            robot, stod(params[1]), stod(params[2]),
+            PidGain(stod(params[3]), stod(params[4]), stod(params[5])), detectionRequest);
+        motionList.push_back(pcds);
+        break;
+      }
+
+      // IS: IMU設定
+      // [1]:string 設定 (start or stop)
+      case COMMAND::IS: {
+        auto is = new IMUSetting(robot, convertBool(params[0], params[1]));
+        motionList.push_back(is);
+        break;
+      }
+
+      // 未定義コマンド
+      default: {
+        cout << commandFilePath << ":" << lineNum << " Command " << params[0] << " は未定義です"
+             << endl;
+        break;
+      }
     }
 
-    return motionList;
+    lineNum++;  // 行番号をインクリメントする
   }
 
-  COMMAND MotionParser::convertCommand(const string& str)
-  {
-    // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
-    static const unordered_map<string, COMMAND> commandMap = {
-      { "AR", COMMAND::AR },         // 角度指定回頭
-      { "IMUR", COMMAND::IMUR },     // IMU角度指定回頭
-      { "DS", COMMAND::DS },         // 指定距離直進
-      { "IDS", COMMAND::IDS },       // IMU角度補正直進
-      { "CS", COMMAND::CS },         // 指定色直進
-      { "DL", COMMAND::DL },         // 指定距離ライントレース
-      { "DCL", COMMAND::DCL },       // 指定距離カメラライントレース
-      { "CDCL", COMMAND::CDCL },     // 色距離指定カメラライントレース
-      { "UDCL", COMMAND::UDCL },     // 超音波距離指定カメラライントレース
-      { "CL", COMMAND::CL },         // 指定色ライントレース
-      { "CDL", COMMAND::CDL },       // 色距離指定ライントレース
-      { "EC", COMMAND::EC },         // エッジ切り替え
-      { "SL", COMMAND::SL },         // スリープ
-      { "SS", COMMAND::SS },         // カメラ撮影動作
-      { "MCA", COMMAND::MCA },       // ミニフィグのカメラ撮影動作
-      { "BCA", COMMAND::BCA },       // 風景・プラレールのカメラ撮影動作
-      { "CRA", COMMAND::CRA },       // カメラ復帰動作
-      { "STOP", COMMAND::STOP },     // 走行体を停止させる動作
-      { "PCIDS", COMMAND::PCIDS },   // 画像ラインを用いた距離直進
-      { "IS", COMMAND::IS },         // IMU設定
-      { "DTCCL", COMMAND::DTCCL },   // 2色指定距離カメラライントレース
-      { "CDTCCL", COMMAND::CDTCCL }  // 2色色指定距離カメラライントレース
-    };
+  return motionList;
+}
 
-    // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
-    auto it = commandMap.find(str);
-    if(it != commandMap.end()) {
-      return it->second;
-    } else {
-      return COMMAND::NONE;
-    }
+COMMAND MotionParser::convertCommand(const string& str)
+{
+  // コマンド文字列(string)と、それに対応する列挙型COMMANDのマッピングを定義
+  static const unordered_map<string, COMMAND> commandMap = {
+    { "AR", COMMAND::AR },         // 角度指定回頭
+    { "IMUR", COMMAND::IMUR },     // IMU角度指定回頭
+    { "DS", COMMAND::DS },         // 指定距離直進
+    { "IDS", COMMAND::IDS },       // IMU角度補正直進
+    { "CS", COMMAND::CS },         // 指定色直進
+    { "DL", COMMAND::DL },         // 指定距離ライントレース
+    { "DCL", COMMAND::DCL },       // 指定距離カメラライントレース
+    { "CDCL", COMMAND::CDCL },     // 色距離指定カメラライントレース
+    { "UDCL", COMMAND::UDCL },     // 超音波距離指定カメラライントレース
+    { "CL", COMMAND::CL },         // 指定色ライントレース
+    { "CDL", COMMAND::CDL },       // 色距離指定ライントレース
+    { "EC", COMMAND::EC },         // エッジ切り替え
+    { "SL", COMMAND::SL },         // スリープ
+    { "SS", COMMAND::SS },         // カメラ撮影動作
+    { "MCA", COMMAND::MCA },       // ミニフィグのカメラ撮影動作
+    { "BCA", COMMAND::BCA },       // 風景・プラレールのカメラ撮影動作
+    { "CRA", COMMAND::CRA },       // カメラ復帰動作
+    { "STOP", COMMAND::STOP },     // 走行体を停止させる動作
+    { "PCIDS", COMMAND::PCIDS },   // 画像ラインを用いた距離直進
+    { "IS", COMMAND::IS },         // IMU設定
+    { "DTCCL", COMMAND::DTCCL },   // 2色指定距離カメラライントレース
+    { "CDTCCL", COMMAND::CDTCCL }  // 2色色指定距離カメラライントレース
+  };
+
+  // コマンド文字列に対応するCOMMAND値をマップから取得。なければCOMMAND::NONEを返す
+  auto it = commandMap.find(str);
+  if(it != commandMap.end()) {
+    return it->second;
+  } else {
+    return COMMAND::NONE;
   }
+}
 
-  bool MotionParser::convertBool(const string& command, const string& stringParameter)
-  {
-    // 末尾の改行を削除
-    string param = StringOperator::removeEOL(stringParameter);
+bool MotionParser::convertBool(const string& command, const string& stringParameter)
+{
+  // 末尾の改行を削除
+  string param = StringOperator::removeEOL(stringParameter);
 
-    // カメラPIDトラッキング系の停止制御（continueなら継続、stopなら停止）
-    if(command == "DCL" || command == "CDCL" || command == "UDCL") {
-      if(param == "continue") {
-        return false;
-      } else if(param == "stop") {
-        return true;
-      } else {
-        cout << "'continue' か 'stop'を入力してください" << endl;
-        return true;
-      }
-    }
-
-    // 回転動作(AR,IMUR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
-    if(command == "AR" || command == "IMUR" || command == "MCA" || command == "BCA"
-       || command == "CRA") {
-      if(param == "clockwise") {
-        return true;
-      } else if(param == "anticlockwise") {
-        return false;
-      } else {
-        cout << "'clockwise' か 'anticlockwise'を入力してください" << endl;
-        return true;
-      }
-    }
-
-    // エッジ切り替え(EC)の場合、"left"ならtrue（左エッジ）、"right"ならfalse（右エッジ)に変換
-    if(command == "EC") {
-      if(param == "left") {
-        return true;
-      } else if(param == "right") {
-        return false;
-      } else {
-        cout << "'left' か 'right'を入力してください" << endl;
-        return true;
-      }
-    }
-
-    // IMU設定(IS)の場合、"start"ならtrue（開始）、"stop"ならfalse（停止)に変換
-    if(command == "IS") {
-      if(param == "start") {
-        return true;
-      } else if(param == "stop") {
-        return false;
-      } else {
-        cout << "'start' か 'stop'を入力してください" << endl;
-        return false;
-      }
-    }
-
-    // ここまでに条件を満たしていなかった場合は、デフォルト値としてtrueを返す
-    cout << "convertBool関数の処理の対象外です: '" << command << endl;
-    return true;
-  }
-
-  bool MotionParser::convertRotationModeToBool(const string& stringParameter)
-  {
-    // 末尾の改行を削除
-    string param = StringOperator::removeEOL(stringParameter);
-
-    // "relative"ならfalse（相対角度回頭）、"absolute"ならtrue（絶対角度回頭）に変換
-    if(param == "relative") {
+  // カメラPIDトラッキング系の停止制御（continueなら継続、stopなら停止）
+  if(command == "DCL" || command == "CDCL" || command == "UDCL" || command == "DTCCL"
+     || command == "CDTCCL") {
+    if(param == "continue") {
       return false;
-    } else if(param == "absolute") {
+    } else if(param == "stop") {
       return true;
     } else {
-      cout << "'relative' か 'absolute'を入力してください (入力値: " << param << ")" << endl;
-      return false;  // デフォルトは相対角度回頭
+      cout << "'continue' か 'stop'を入力してください" << endl;
+      return true;
     }
   }
+
+  // 回転動作(AR,IMUR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  if(command == "AR" || command == "IMUR" || command == "MCA" || command == "BCA"
+     || command == "CRA") {
+    if(param == "clockwise") {
+      return true;
+    } else if(param == "anticlockwise") {
+      return false;
+    } else {
+      cout << "'clockwise' か 'anticlockwise'を入力してください" << endl;
+      return true;
+    }
+  }
+
+  // エッジ切り替え(EC)の場合、"left"ならtrue（左エッジ）、"right"ならfalse（右エッジ)に変換
+  if(command == "EC") {
+    if(param == "left") {
+      return true;
+    } else if(param == "right") {
+      return false;
+    } else {
+      cout << "'left' か 'right'を入力してください" << endl;
+      return true;
+    }
+  }
+
+  // IMU設定(IS)の場合、"start"ならtrue（開始）、"stop"ならfalse（停止)に変換
+  if(command == "IS") {
+    if(param == "start") {
+      return true;
+    } else if(param == "stop") {
+      return false;
+    } else {
+      cout << "'start' か 'stop'を入力してください" << endl;
+      return false;
+    }
+  }
+
+  // ここまでに条件を満たしていなかった場合は、デフォルト値としてtrueを返す
+  cout << "convertBool関数の処理の対象外です: '" << command << endl;
+  return true;
+}
+
+bool MotionParser::convertRotationModeToBool(const string& stringParameter)
+{
+  // 末尾の改行を削除
+  string param = StringOperator::removeEOL(stringParameter);
+
+  // "relative"ならfalse（相対角度回頭）、"absolute"ならtrue（絶対角度回頭）に変換
+  if(param == "relative") {
+    return false;
+  } else if(param == "absolute") {
+    return true;
+  } else {
+    cout << "'relative' か 'absolute'を入力してください (入力値: " << param << ")" << endl;
+    return false;  // デフォルトは相対角度回頭
+  }
+}
