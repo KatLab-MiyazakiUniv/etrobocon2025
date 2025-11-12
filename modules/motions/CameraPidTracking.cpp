@@ -10,13 +10,13 @@
 
 CameraPidTracking::CameraPidTracking(
     Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain,
-    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest, bool isStopMotorPower)
+    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest, bool _isStopMotorPower)
   : Motion(_robot),
     targetSpeed(_targetSpeed),
     targetXCoordinate(_targetXCoordinate),
     pidGain(_pidGain),
     detectionRequest(_detectionRequest),
-    isStopMotorPower(isStopMotorPower)
+    isStopMotorPower(_isStopMotorPower)
 {
 }
 

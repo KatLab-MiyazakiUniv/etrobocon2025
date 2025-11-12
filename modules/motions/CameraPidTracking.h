@@ -24,12 +24,12 @@ class CameraPidTracking : public Motion {
    * @param _targetXCoordinate 目標x座標
    * @param _pidGain PIDゲイン
    * @param _detectionRequest 検出リクエスト
-   * @param isStopMotorPower モーターを停止するかどうか
+   * @param _isStopMotorPower モーターを停止するかどうか
    */
   CameraPidTracking(Robot& _robot, double _targetSpeed, int _targetXCoordinate,
                     const PidGain& _pidGain,
                     const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
-                    bool isStopMotorPower = true);
+                    bool _isStopMotorPower = true);
 
   /**
    * @brief カメラ走行を実行する

@@ -9,9 +9,9 @@
 ColorDistanceCameraLineTrace::ColorDistanceCameraLineTrace(
     Robot& _robot, COLOR _targetColor, double _targetDistance, double _targetSpeed,
     int _targetXCoordinate, const PidGain& _pidGain,
-    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest, bool isStopMotorPower)
+    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest, bool _isStopMotorPower)
   : CameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest,
-                      isStopMotorPower),
+                      _isStopMotorPower),
     targetColor(_targetColor),
     colorCount(0),
     targetDistance(_targetDistance),
