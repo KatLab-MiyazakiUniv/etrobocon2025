@@ -315,39 +315,29 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-      // CRA: カメラ復帰動作
-      // [1]:int 回頭角度[deg], [2]:double 回頭スピード[mm/s], [3]:string 回頭の方向(clockwise or
-      // anticlockwise), [4-9]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [10-13]int
-      // ROI座標[px]
-      // ([10]左上隅のx座標, [11]左上隅のy座標, [12]幅, [13]高さ), [14-15]int 解像度[px] ([14]幅,
-      // [15]高さ)
+      // SCRA: 首振りカメラ復帰動作
+      // [1]:int ラインの方向角度（絶対角度）[deg], [2]:int 基準パワー値, [3]:double Pゲイン,
+      // [4]:double Iゲイン, [5]:double Dゲイン, [6]:int 首振り角度[deg],
+      // [7-12]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [13-16]:int ROI座標[px]
+      // ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ), [17-18]:int 解像度[px] ([17]幅,
+      // [18]高さ)
       // 補足：ROI（Region of Interest: ライントレース用の画像内注目領域（四角形））
-      case COMMAND::CRA: {
+      case COMMAND::SCRA: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
         detectionRequest.command
             = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
-        detectionRequest.lowerHSV = cv::Scalar(stoi(params[4]), stoi(params[5]), stoi(params[6]));
-        detectionRequest.upperHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        detectionRequest.upperHSV = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
+        detectionRequest.roi
+            = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
+        detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
 
-        // パラメータ配列のサイズによってROIと解像度を設定
-        if(params.size() > 15) {
-          detectionRequest.roi
-              = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
-          detectionRequest.resolution = cv::Size(stoi(params[14]), stoi(params[15]));
-        } else if(params.size() > 13) {
-          detectionRequest.roi
-              = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
-          detectionRequest.resolution = cv::Size(640, 480);
-        } else {
-          detectionRequest.roi = cv::Rect(50, 240, 540, 240);
-          detectionRequest.resolution = cv::Size(640, 480);
-        }
-
-        auto cra = new CameraRecoveryAction(robot, stoi(params[1]), stod(params[2]),
-                                            convertBool(params[0], params[3]), detectionRequest);
-        motionList.push_back(cra);
+        PidGain anglePidGain(stod(params[3]), stod(params[4]), stod(params[5]));
+        auto scra = new SwingCameraRecoveryAction(robot, stoi(params[1]), stoi(params[2]),
+                                                   anglePidGain, stoi(params[6]), detectionRequest);
+        motionList.push_back(scra);
         break;
       }
 
@@ -393,7 +383,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "SS", COMMAND::SS },      // カメラ撮影動作
     { "MCA", COMMAND::MCA },    // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },    // 風景・プラレールのカメラ撮影動作
-    { "CRA", COMMAND::CRA },    // カメラ復帰動作
+    { "SCRA", COMMAND::SCRA },  // 首振りカメラ復帰動作
     { "IS", COMMAND::IS }       // IMU設定
   };
 
@@ -411,9 +401,9 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   // 末尾の改行を削除
   string param = StringOperator::removeEOL(stringParameter);
 
-  // 回転動作(AR,IMUR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  // 回転動作(AR,IMUR,MCA,BCA,SCRA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
   if(command == "AR" || command == "IMUR" || command == "MCA" || command == "BCA"
-     || command == "CRA") {
+     || command == "SCRA") {
     if(param == "clockwise") {
       return true;
     } else if(param == "anticlockwise") {

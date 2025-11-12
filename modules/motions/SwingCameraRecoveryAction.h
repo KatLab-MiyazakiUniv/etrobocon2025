@@ -1,11 +1,11 @@
 /**
- * @file   CameraRecoveryAction.h
- * @brief  カメラ検出失敗時の復帰動作クラス
+ * @file   SwingCameraRecoveryAction.h
+ * @brief  カメラ検出失敗時の首振り復帰動作クラス
  * @author HaruArima08
  */
 
-#ifndef CAMERA_RECOVERY_ACTION_H
-#define CAMERA_RECOVERY_ACTION_H
+#ifndef SWING_CAMERA_RECOVERY_ACTION_H
+#define SWING_CAMERA_RECOVERY_ACTION_H
 
 #include "CompositeMotion.h"
 #include "IMUAngleRotation.h"
@@ -15,7 +15,7 @@
 #include <cmath>
 #include "Pid.h"
 
-class CameraRecoveryAction : public CompositeMotion {
+class SwingCameraRecoveryAction : public CompositeMotion {
  public:
   /**
    * コンストラクタ
@@ -26,9 +26,9 @@ class CameraRecoveryAction : public CompositeMotion {
    * @param _swingAngle 首振り角度（deg）
    * @param _detectionRequest 検出リクエスト
    */
-  CameraRecoveryAction(Robot& _robot, int _lineDirectionAngle, int _basePower,
-                       const PidGain& _anglePidGain, int _swingAngle,
-                       const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
+  SwingCameraRecoveryAction(Robot& _robot, int _lineDirectionAngle, int _basePower,
+                            const PidGain& _anglePidGain, int _swingAngle,
+                            const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
 
   /**
    * @brief カメラフレーム復帰動作を実行する

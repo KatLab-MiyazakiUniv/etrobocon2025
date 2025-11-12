@@ -1,17 +1,17 @@
 /**
- * @file   CameraRecoveryAction.cpp
- * @brief  カメラ検出失敗時の復帰動作クラス
+ * @file   SwingCameraRecoveryAction.cpp
+ * @brief  カメラ検出失敗時の首振り復帰動作クラス
  * @author HaruArima08
  */
 
-#include "CameraRecoveryAction.h"
+#include "SwingCameraRecoveryAction.h"
 #include "Snapshot.h"
 #include <iostream>
 #include <cmath>
 #include <thread>
 #include <chrono>
 
-CameraRecoveryAction::CameraRecoveryAction(
+SwingCameraRecoveryAction::SwingCameraRecoveryAction(
     Robot& _robot, int _lineDirectionAngle, int _basePower, const PidGain& _anglePidGain,
     int _swingAngle, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
   : CompositeMotion(_robot),
@@ -23,7 +23,7 @@ CameraRecoveryAction::CameraRecoveryAction(
 {
 }
 
-void CameraRecoveryAction::run()
+void SwingCameraRecoveryAction::run()
 {
   SocketClient& client = robot.getSocketClient();
 
@@ -89,6 +89,10 @@ void CameraRecoveryAction::run()
     // swingAngle分、初回と同じ方向（isClockwise）に相対角度で首を振る
     IMUAngleRotation swing(robot, swingAngle, basePower, isClockwise, anglePidGain, false);
     swing.run();
+
+    // デバッグ用に復帰動作後の画像を保存
+    Snapshot snapshot(robot, "recovery_swing");
+    snapshot.run();
 
     // 動作安定のためにスリープ
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));

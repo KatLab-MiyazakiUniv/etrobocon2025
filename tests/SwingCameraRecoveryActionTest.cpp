@@ -1,10 +1,10 @@
 /**
- * @file   CameraRecoveryActionTest.cpp
- * @brief  CameraRecoveryActionクラスのテスト
+ * @file   SwingCameraRecoveryActionTest.cpp
+ * @brief  SwingCameraRecoveryActionクラスのテスト
  * @author HaruArima08
  */
 
-#include "CameraRecoveryAction.h"
+#include "SwingCameraRecoveryAction.h"
 #include <gtest/gtest.h>
 #include <iostream>
 #include "Robot.h"
@@ -16,7 +16,7 @@ using namespace std;
 namespace etrobocon2025_test {
 
   // 既に検出済みの場合、復帰動作を行わないかのテスト
-  TEST(CameraRecoveryActionTest, AlreadyDetected)
+  TEST(SwingCameraRecoveryActionTest, AlreadyDetected)
   {
     MockSocketClient mockSocketClient;
     Robot robot(mockSocketClient);
@@ -27,7 +27,8 @@ namespace etrobocon2025_test {
     mockSocketClient.setNextLineDetectionResponse(successResponse);
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
-    CameraRecoveryAction action(robot, 20, 100.0, true, dummyRequest);
+    PidGain anglePidGain{ 0.3, 0.005, 0.15 };
+    SwingCameraRecoveryAction action(robot, 20, 100, anglePidGain, 10, dummyRequest);
 
     testing::internal::CaptureStdout();
     action.run();
@@ -36,7 +37,7 @@ namespace etrobocon2025_test {
   }
 
   // 復帰動作を行い、再検出で成功した場合のテスト
-  TEST(CameraRecoveryActionTest, DetectionSuccessAfterRecovery)
+  TEST(SwingCameraRecoveryActionTest, DetectionSuccessAfterRecovery)
   {
     MockSocketClient mockSocketClient;
     Robot robot(mockSocketClient);
@@ -50,7 +51,8 @@ namespace etrobocon2025_test {
     mockSocketClient.setNextLineDetectionResponse(successResponse);
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
-    CameraRecoveryAction action(robot, 20, 100.0, true, dummyRequest);
+    PidGain anglePidGain{ 0.3, 0.005, 0.15 };
+    SwingCameraRecoveryAction action(robot, 20, 100, anglePidGain, 10, dummyRequest);
 
     testing::internal::CaptureStdout();
     action.run();
@@ -58,25 +60,29 @@ namespace etrobocon2025_test {
     ASSERT_NE(output.find("復帰に成功しました。"), string::npos);
   }
 
-  // 復帰動作を行い、再検出でも失敗した場合のテスト
-  TEST(CameraRecoveryActionTest, DetectionFailureAfterRecovery)
+  // 復帰動作を行い、首振りで成功した場合のテスト
+  TEST(SwingCameraRecoveryActionTest, DetectionSuccessAfterSwing)
   {
     MockSocketClient mockSocketClient;
     Robot robot(mockSocketClient);
 
-    // モックを設定: 2回とも失敗
+    // モックを設定: 初回と再検出は失敗、首振り後に成功
     CameraServer::BoundingBoxDetectorResponse failureResponse;
     failureResponse.result.wasDetected = false;
-    mockSocketClient.setNextLineDetectionResponse(failureResponse);
-    mockSocketClient.setNextLineDetectionResponse(failureResponse);
+    CameraServer::BoundingBoxDetectorResponse successResponse;
+    successResponse.result.wasDetected = true;
+    mockSocketClient.setNextLineDetectionResponse(failureResponse);  // 初回失敗
+    mockSocketClient.setNextLineDetectionResponse(failureResponse);  // 再検出失敗
+    mockSocketClient.setNextLineDetectionResponse(successResponse);  // 首振り後成功
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
-    CameraRecoveryAction action(robot, 90, 300.0, true, dummyRequest);
+    PidGain anglePidGain{ 0.3, 0.005, 0.15 };
+    SwingCameraRecoveryAction action(robot, 90, 100, anglePidGain, 10, dummyRequest);
 
     testing::internal::CaptureStdout();
     action.run();
     string output = testing::internal::GetCapturedStdout();
-    ASSERT_NE(output.find("復帰できませんでした"), string::npos);
+    ASSERT_NE(output.find("首振りで復帰に成功しました。"), string::npos);
   }
 
 }  // namespace etrobocon2025_test
