@@ -1,0 +1,57 @@
+/**
+ * @file   DistanceTwoColorCameraLineTrace.h
+ * @brief  2色指定距離カメラライントレース動作
+ * @author miyahara046 HaruArima08
+ */
+
+#ifndef DISTANCE_TWO_COLOR_CAMERA_LINE_TRACE_H
+#define DISTANCE_TWO_COLOR_CAMERA_LINE_TRACE_H
+
+#include "TwoColorCameraPidTracking.h"
+#include "SocketProtocol.h"
+
+class DistanceTwoColorCameraLineTrace : public TwoColorCameraPidTracking {
+ public:
+  /**
+   * コンストラクタ
+   * @param _targetDistance 目標距離
+   * @param _targetSpeed 目標速度
+   * @param _targetXCoordinate 目標x座標
+   * @param _pidGain PIDゲイン
+   * @param _detectionRequest 検出リクエスト
+   */
+  DistanceTwoColorCameraLineTrace(
+      Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate,
+      const PidGain& _pidGain,
+      const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest);
+
+  /**
+   * @brief 指定距離だけカメラライントレースする
+   */
+  using TwoColorCameraPidTracking::run;
+
+ protected:
+  /**
+   * @brief 指定距離カメラライントレースする際の事前条件判定をする
+   */
+
+  bool isMetPreCondition() override;
+
+  /**
+   * @brief ライントレースする際の事前処理をする
+   */
+  void prepare() override;
+
+  /**
+   * @brief
+   * 指定距離カメラライントレースする際の継続条件判定をする。
+   */
+  bool isMetContinuationCondition() override;
+
+ private:
+  double targetDistance;                                              // 目標距離
+  double initDistance;                                                // 実行前の走行距離
+  CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
+};
+
+#endif
