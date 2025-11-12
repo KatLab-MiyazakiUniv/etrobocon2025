@@ -276,7 +276,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
 
         bool isStopMotorPower = true;
         if(params.size() >= 27) {
-          isStopMotorPower = convertBool("DTCCL", params[26]);
+          isStopMotorPower = convertBool("CDTCCL", params[26]);
         }
 
         auto cdtccl = new ColorDistanceTwoColorCameraLineTrace(
