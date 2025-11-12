@@ -8,20 +8,26 @@
 #define CAMERA_RECOVERY_ACTION_H
 
 #include "CompositeMotion.h"
-#include "AngleRotation.h"
+#include "IMUAngleRotation.h"
 #include "SocketProtocol.h"
+#include "Snapshot.h"
+#include <iostream>
+#include <cmath>
+#include "Pid.h"
 
 class CameraRecoveryAction : public CompositeMotion {
  public:
   /**
    * コンストラクタ
    * @param _robot ロボットインスタンス
-   * @param _angle 回頭角度 (dig) 0~180
-   * @param _speed 回頭速度（mm/秒）
-   * @param _isClockwise 回頭方向（true: 右回り, false: 左回り）
+   * @param _lineDirectionAngle ラインの方向角度（絶対角度, deg） 0~360
+   * @param _basePower 基準パワー値
+   * @param _anglePidGain 角度制御用PIDゲイン
+   * @param _swingAngle 首振り角度（deg）
    * @param _detectionRequest 検出リクエスト
    */
-  CameraRecoveryAction(Robot& _robot, int _angle, double _speed, bool _isClockwise,
+  CameraRecoveryAction(Robot& _robot, int _lineDirectionAngle, int _basePower,
+                       const PidGain& _anglePidGain, int _swingAngle,
                        const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
 
   /**
@@ -32,9 +38,10 @@ class CameraRecoveryAction : public CompositeMotion {
  private:
   CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
   BoundingBoxDetectionResult result;                          // 検出結果
-  int recoveryAngle;                                          // 復帰回頭角度
-  double speed;                                               // 回頭スピード
-  bool isClockwise;                                           // 回頭方向
+  int lineDirectionAngle;                                     // ラインの方向角度（絶対角度）
+  int basePower;                                              // 基準パワー値
+  PidGain anglePidGain;                                       // 角度制御用PIDゲイン
+  int swingAngle;                                             // 首振り角度
   static constexpr int FRAME_NUMBER = 5;                      // フレーム取得回数
 };
 
