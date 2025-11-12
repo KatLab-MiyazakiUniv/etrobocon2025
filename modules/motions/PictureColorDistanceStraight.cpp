@@ -1,35 +1,38 @@
 /**
- * @file   IMUDistanceStraight.cpp
- * @brief  IMU角度補正を用いた目標距離まで直進するクラス
+ * @file   PictureColorDistanceStraight.cpp
+ * @brief  カメラでの色検出か指定距離で停止する直進動作
  * @author Hara1274
  */
 
-#include "IMUDistanceStraight.h"
-#include <thread>
-#include <chrono>
+#include "PictureColorDistanceStraight.h"
 
-IMUDistanceStraight::IMUDistanceStraight(Robot& _robot, double _targetDistance, double _targetSpeed,
-                                         const PidGain& _anglePidGain)
+#include <cstring>
+
+PictureColorDistanceStraight::PictureColorDistanceStraight(
+    Robot& _robot, double _targetDistance, double _targetSpeed, const PidGain& _anglePidGain,
+    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
   : Straight(_robot, _targetSpeed),
     targetDistance(_targetDistance),
+    initialDistance(0.0),
     anglePid(_anglePidGain.kp, _anglePidGain.ki, _anglePidGain.kd, 0.0),
-    targetAngle(0.0)
+    targetAngle(0.0),
+    detectionRequest(_detectionRequest)
 {
 }
 
-bool IMUDistanceStraight::isMetPreCondition()
+bool PictureColorDistanceStraight::isMetPreCondition()
 {
-  // targetSpeed値が0の場合は終了する
+  // 目標速度が0のときは実行しない
   if(targetSpeed == 0.0) {
     return false;
   }
 
-  // targetDistance値が0以下の場合は終了する
+  // 目標距離が0以下のときは実行しない
   if(targetDistance <= 0.0) {
     return false;
   }
 
-  // IMU角度計算が既に開始されている場合、それがコマンドによるものでなければエラー
+  // IMU角度計算がすでに他処理で開始されている場合はエラーとする
   if(robot.getIMUControllerInstance().isAngleCalculating()
      && !robot.getIMUControllerInstance().getShouldContinueCalculation()) {
     std::cerr << "IMU角度計算が既に開始されています。" << std::endl;
@@ -39,11 +42,21 @@ bool IMUDistanceStraight::isMetPreCondition()
   return true;
 }
 
-void IMUDistanceStraight::prepare()
+void PictureColorDistanceStraight::prepare()
 {
   // IMU角度計算がコマンドで開始されていなければ、この動作で計算を開始する
   if(!robot.getIMUControllerInstance().getShouldContinueCalculation()) {
     robot.getIMUControllerInstance().startAngleCalculation();
+  }
+
+  // 最新フレームに更新するためにスナップショットを連続で取得
+  CameraServer::SnapshotActionRequest request{};
+  request.command = CameraServer::Command::TAKE_SNAPSHOT;
+  std::strncpy(request.fileName, "warmup", sizeof(request.fileName));
+  for(int i = 0; i < 5; ++i) {
+    CameraServer::SnapshotActionResponse response{};
+    robot.getSocketClient().executeSnapshotAction(request, response);
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
   }
 
   // 呼び出し時の走行距離を取得する
@@ -55,7 +68,7 @@ void IMUDistanceStraight::prepare()
   targetAngle = robot.getIMUControllerInstance().getAngle();
 }
 
-bool IMUDistanceStraight::isMetContinuationCondition()
+bool PictureColorDistanceStraight::isMetContinuationCondition()
 {
   // 現在の走行距離を取得する
   double currentRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
@@ -67,11 +80,19 @@ bool IMUDistanceStraight::isMetContinuationCondition()
     return false;
   }
 
-  // 現在の走行距離が目標走行距離に達していなければ走行を続ける
+  // カメラでラインを検出
+  CameraServer::BoundingBoxDetectorResponse response;
+  bool success = robot.getSocketClient().executeLineDetection(detectionRequest, response);
+
+  // 通信成功かつライン検出ができた場合のみ終了
+  if(success && response.result.wasDetected) {
+    return false;
+  }
+
   return true;
 }
 
-void IMUDistanceStraight::run()
+void PictureColorDistanceStraight::run()
 {
   // 事前条件判定が真でないときは終了する
   if(!isMetPreCondition()) {
@@ -81,6 +102,7 @@ void IMUDistanceStraight::run()
   // 事前準備
   prepare();
 
+  // SpeedCalculatorの宣言
   SpeedCalculator speedCalculator(robot, targetSpeed);
 
   // 継続条件を満たしている間繰り返す
