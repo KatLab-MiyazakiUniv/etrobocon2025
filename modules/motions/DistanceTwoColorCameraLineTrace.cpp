@@ -9,9 +9,10 @@
 DistanceTwoColorCameraLineTrace::DistanceTwoColorCameraLineTrace(
     Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate,
     const PidGain& _pidGain,
-    const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest)
-  : TwoColorCameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain,
-                              _detectionRequest),
+    const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest,
+    bool _isStopMotorPower)
+  : TwoColorCameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest,
+                              _isStopMotorPower),
     targetDistance(_targetDistance)
 {
 }

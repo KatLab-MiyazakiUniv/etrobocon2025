@@ -19,11 +19,13 @@ class DistanceTwoColorCameraLineTrace : public TwoColorCameraPidTracking {
    * @param _targetXCoordinate 目標x座標
    * @param _pidGain PIDゲイン
    * @param _detectionRequest 検出リクエスト
+   * @param _isStopMotorPower モーターを停止するかどうか
    */
   DistanceTwoColorCameraLineTrace(
       Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate,
       const PidGain& _pidGain,
-      const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest);
+      const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest,
+      bool _isStopMotorPower = true);
 
   /**
    * @brief 指定距離だけカメラライントレースする
