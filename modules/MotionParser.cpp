@@ -329,14 +329,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
         detectionRequest.lowerHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
-        detectionRequest.upperHSV = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
+        detectionRequest.upperHSV
+            = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
         detectionRequest.roi
             = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
         detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
 
         PidGain anglePidGain(stod(params[3]), stod(params[4]), stod(params[5]));
         auto scra = new SwingCameraRecoveryAction(robot, stoi(params[1]), stoi(params[2]),
-                                                   anglePidGain, stoi(params[6]), detectionRequest);
+                                                  anglePidGain, stoi(params[6]), detectionRequest);
         motionList.push_back(scra);
         break;
       }
