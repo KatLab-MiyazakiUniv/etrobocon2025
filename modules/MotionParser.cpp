@@ -483,7 +483,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "MCA", COMMAND::MCA },       // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },       // 風景・プラレールのカメラ撮影動作
     { "CRA", COMMAND::CRA },       // カメラ復帰動作
-    { "PCIDS", COMMAND::PCIDS },  // 画像ラインを用いた距離直進
+    { "PCIDS", COMMAND::PCIDS },   // 画像ラインを用いた距離直進
     { "IS", COMMAND::IS },         // IMU設定
     { "DTCCL", COMMAND::DTCCL },   // 2色指定距離カメラライントレース
     { "CDTCCL", COMMAND::CDTCCL }  // 2色色指定距離カメラライントレース
