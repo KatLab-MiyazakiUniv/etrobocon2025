@@ -405,8 +405,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
 
         PidGain anglePidGain(stod(params[3]), stod(params[4]), stod(params[5]));
-        auto scra = new CameraRecoveryAction(robot, stoi(params[1]), stoi(params[2]),
-                                             anglePidGain, stoi(params[6]), detectionRequest);
+        auto scra = new CameraRecoveryAction(robot, stoi(params[1]), stoi(params[2]), anglePidGain,
+                                             stoi(params[6]), detectionRequest);
         motionList.push_back(scra);
         break;
       }
