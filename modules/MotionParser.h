@@ -30,7 +30,7 @@
 #include "BackgroundPlaCameraAction.h"
 #include "ColorDistanceCameraLineTrace.h"
 #include "UltrasonicDistanceCameraLineTrace.h"
-#include "CameraRecoveryAction.h"
+#include "SwingCameraRecoveryAction.h"
 #include "IMUSetting.h"
 #include "DistanceTwoColorCameraLineTrace.h"
 #include "ColorDistanceTwoColorCameraLineTrace.h"
@@ -53,7 +53,7 @@ enum class COMMAND {
   SS,      // カメラ撮影動作
   MCA,     // ミニフィグのカメラ撮影動作
   BCA,     // 背景のカメラ撮影動作
-  CRA,     // カメラ復帰動作
+  SCRA,    // 首振りカメラ復帰動作
   IS,      // IMUの角度計算の設定を行う動作
   PCIDS,   // カメラ画像を用いた色距離直進
   DTCCL,   // 2色指定距離カメラライントレース
