@@ -367,8 +367,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // ki, kd),[6]:double 超音波センサー距離[mm] [7]:double udclスピード[mm/s], [8]:double
         // 角度[deg] [9]:double 回転パワー [10-12]:double udclのPIDゲイン(kp, ki, kd), [13-18]:int
         // HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [19-22]:int ROI座標[px]
-        // ([16]左上隅のx座標, [17]左上隅のy座標, [18]幅, [19]高さ), [20-21]int 解像度[px]
-        // ([20]幅,[21]高さ) 補足：ROI（Region of Interest:
+        // ([19]左上隅のx座標, [20]左上隅のy座標, [21]幅, [22]高さ), [23-24]int 解像度[px]
+        // ([23]幅,[24]高さ) 補足：ROI（Region of Interest:
         // ライントレース用の画像内注目領域（四角形））
       case COMMAND::BTCA: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
