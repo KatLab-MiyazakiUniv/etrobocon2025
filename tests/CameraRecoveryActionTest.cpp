@@ -29,7 +29,9 @@ namespace etrobocon2025_test {
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
-    CameraRecoveryAction action(robot, 20, 100, anglePidGain, 10, dummyRequest);
+    PidGain pcidsPidGain{ 0.5, 0.01, 0.2 };
+    CameraRecoveryAction action(robot, 20, 100, anglePidGain, 10, 3, 100.0, 50.0, pcidsPidGain,
+                                dummyRequest);
 
     testing::internal::CaptureStdout();
     action.run();
@@ -67,7 +69,9 @@ namespace etrobocon2025_test {
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
-    CameraRecoveryAction action(robot, 15, 100, anglePidGain, 10, dummyRequest);
+    PidGain pcidsPidGain{ 0.5, 0.01, 0.2 };
+    CameraRecoveryAction action(robot, 15, 100, anglePidGain, 10, 3, 100.0, 50.0, pcidsPidGain,
+                                dummyRequest);
 
     testing::internal::CaptureStdout();
     action.run();
@@ -110,7 +114,9 @@ namespace etrobocon2025_test {
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
-    CameraRecoveryAction action(robot, 15, 100, anglePidGain, 10, dummyRequest);
+    PidGain pcidsPidGain{ 0.5, 0.01, 0.2 };
+    CameraRecoveryAction action(robot, 15, 100, anglePidGain, 10, 3, 100.0, 50.0, pcidsPidGain,
+                                dummyRequest);
 
     testing::internal::CaptureStdout();
     action.run();
