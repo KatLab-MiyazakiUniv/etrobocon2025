@@ -386,6 +386,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // SCRA: 首振りカメラ復帰動作
       // [1]:int ラインの方向角度（絶対角度）[deg], [2]:int 基準パワー値, 
       // [3-5]:double ライン回頭用PIDゲイン(kp, ki, kd)
+      // [6]:int 首振り角度（deg）
       // [7-12]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [13-16]:int ROI座標[px]
       // ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ), [17-18]:int 解像度[px] ([17]幅,
       // [18]高さ)

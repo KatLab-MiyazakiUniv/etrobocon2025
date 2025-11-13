@@ -95,6 +95,16 @@ void SwingCameraRecoveryAction::run()
     IMUAngleRotation swing(robot, swingAngle, basePower, isClockwise, anglePidGain, false);
     swing.run();
 
+    // 最新フレームに更新するためにスナップショットを連続で取得
+    CameraServer::SnapshotActionRequest request{};
+    request.command = CameraServer::Command::TAKE_SNAPSHOT;
+    std::strncpy(request.fileName, "warmup", sizeof(request.fileName));
+    for(int i = 0; i < 5; ++i) {
+      CameraServer::SnapshotActionResponse response{};
+      robot.getSocketClient().executeSnapshotAction(request, response);
+      std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+
     // デバッグ用に復帰動作後の画像を保存
     Snapshot snapshot(robot, "recovery_swing");
     snapshot.run();
