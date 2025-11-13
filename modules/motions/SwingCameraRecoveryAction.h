@@ -11,9 +11,11 @@
 #include "IMUAngleRotation.h"
 #include "SocketProtocol.h"
 #include "Snapshot.h"
+#include "Pid.h"
 #include <iostream>
 #include <cmath>
-#include "Pid.h"
+#include <thread>
+#include <chrono>
 
 class SwingCameraRecoveryAction : public CompositeMotion {
  public:
@@ -38,11 +40,11 @@ class SwingCameraRecoveryAction : public CompositeMotion {
  private:
   CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
   BoundingBoxDetectionResult result;                          // 検出結果
-  int lineDirectionAngle;                 // ラインの方向角度（絶対角度）
-  int basePower;                          // 基準パワー値
-  PidGain anglePidGain;                   // 角度制御用PIDゲイン
-  int swingAngle;                         // 首振り角度
-  static constexpr int FRAME_NUMBER = 5;  // フレーム取得回数
+  int lineDirectionAngle;                                     // ラインの方向角度（絶対角度）
+  int basePower;                                              // 基準パワー値
+  PidGain anglePidGain;                                       // 角度制御用PIDゲイン
+  int swingAngle;                                             // 首振り角度
+  static constexpr int FRAME_NUMBER = 5;                      // フレーム取得回数
 };
 
 #endif

@@ -5,11 +5,6 @@
  */
 
 #include "SwingCameraRecoveryAction.h"
-#include "Snapshot.h"
-#include <iostream>
-#include <cmath>
-#include <thread>
-#include <chrono>
 
 SwingCameraRecoveryAction::SwingCameraRecoveryAction(
     Robot& _robot, int _lineDirectionAngle, int _basePower, const PidGain& _anglePidGain,
