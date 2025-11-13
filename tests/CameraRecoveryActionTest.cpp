@@ -1,10 +1,10 @@
 /**
- * @file   SwingCameraRecoveryActionTest.cpp
- * @brief  SwingCameraRecoveryActionクラスのテスト
+ * @file   CameraRecoveryActionTest.cpp
+ * @brief  CameraRecoveryActionクラスのテスト
  * @author HaruArima08
  */
 
-#include "SwingCameraRecoveryAction.h"
+#include "CameraRecoveryAction.h"
 #include <gtest/gtest.h>
 #include <iostream>
 #include "Robot.h"
@@ -17,7 +17,7 @@ using namespace std;
 namespace etrobocon2025_test {
 
   // 既に検出済みの場合、復帰動作を行わないかのテスト
-  TEST(SwingCameraRecoveryActionTest, AlreadyDetected)
+  TEST(CameraRecoveryActionTest, AlreadyDetected)
   {
     MockSocketClient mockSocketClient;
     Robot robot(mockSocketClient);
@@ -29,7 +29,7 @@ namespace etrobocon2025_test {
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
-    SwingCameraRecoveryAction action(robot, 20, 100, anglePidGain, 10, dummyRequest);
+    CameraRecoveryAction action(robot, 20, 100, anglePidGain, 10, dummyRequest);
 
     testing::internal::CaptureStdout();
     action.run();
@@ -38,7 +38,7 @@ namespace etrobocon2025_test {
   }
 
   // 復帰動作を行い、再検出で成功した場合のテスト
-  TEST(SwingCameraRecoveryActionTest, DetectionSuccessAfterRecovery)
+  TEST(CameraRecoveryActionTest, DetectionSuccessAfterRecovery)
   {
     MockSocketClient mockSocketClient;
     Robot robot(mockSocketClient);
@@ -67,7 +67,7 @@ namespace etrobocon2025_test {
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
-    SwingCameraRecoveryAction action(robot, 15, 100, anglePidGain, 10, dummyRequest);
+    CameraRecoveryAction action(robot, 15, 100, anglePidGain, 10, dummyRequest);
 
     testing::internal::CaptureStdout();
     action.run();
@@ -80,7 +80,7 @@ namespace etrobocon2025_test {
   }
 
   // 復帰動作を行い、首振りで成功した場合のテスト
-  TEST(SwingCameraRecoveryActionTest, DetectionSuccessAfterSwing)
+  TEST(CameraRecoveryActionTest, DetectionSuccessAfterSwing)
   {
     MockSocketClient mockSocketClient;
     Robot robot(mockSocketClient);
@@ -110,7 +110,7 @@ namespace etrobocon2025_test {
 
     CameraServer::BoundingBoxDetectorRequest dummyRequest;
     PidGain anglePidGain{ 0.3, 0.005, 0.15 };
-    SwingCameraRecoveryAction action(robot, 15, 100, anglePidGain, 10, dummyRequest);
+    CameraRecoveryAction action(robot, 15, 100, anglePidGain, 10, dummyRequest);
 
     testing::internal::CaptureStdout();
     action.run();

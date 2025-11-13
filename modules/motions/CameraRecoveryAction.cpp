@@ -1,12 +1,12 @@
 /**
- * @file   SwingCameraRecoveryAction.cpp
- * @brief  カメラ検出失敗時の首振り復帰動作クラス
+ * @file   CameraRecoveryAction.cpp
+ * @brief  カメラ検出失敗時の復帰動作クラス
  * @author HaruArima08
  */
 
-#include "SwingCameraRecoveryAction.h"
+#include "CameraRecoveryAction.h"
 
-SwingCameraRecoveryAction::SwingCameraRecoveryAction(
+CameraRecoveryAction::CameraRecoveryAction(
     Robot& _robot, int _lineDirectionAngle, int _basePower, const PidGain& _anglePidGain,
     int _swingAngle, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
   : CompositeMotion(_robot),
@@ -18,7 +18,7 @@ SwingCameraRecoveryAction::SwingCameraRecoveryAction(
 {
 }
 
-void SwingCameraRecoveryAction::run()
+void CameraRecoveryAction::run()
 {
   SocketClient& client = robot.getSocketClient();
 

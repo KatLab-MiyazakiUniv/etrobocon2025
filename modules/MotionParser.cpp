@@ -383,15 +383,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-      // SCRA: 首振りカメラ復帰動作
-      // [1]:int ラインの方向角度（絶対角度）[deg], [2]:int 基準パワー値, 
+      // CRA: カメラ検出失敗時の復帰動作
+      // [1]:int ラインの方向角度（絶対角度）[deg], [2]:int 基準パワー値,
       // [3-5]:double ライン回頭用PIDゲイン(kp, ki, kd)
       // [6]:int 首振り角度（deg）
       // [7-12]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [13-16]:int ROI座標[px]
       // ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ), [17-18]:int 解像度[px] ([17]幅,
       // [18]高さ)
       // 補足：ROI（Region of Interest: ライントレース用の画像内注目領域（四角形））
-      case COMMAND::SCRA: {
+      case COMMAND::CRA: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
         detectionRequest.command
@@ -405,8 +405,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
 
         PidGain anglePidGain(stod(params[3]), stod(params[4]), stod(params[5]));
-        auto scra = new SwingCameraRecoveryAction(robot, stoi(params[1]), stoi(params[2]),
-                                                  anglePidGain, stoi(params[6]), detectionRequest);
+        auto scra = new CameraRecoveryAction(robot, stoi(params[1]), stoi(params[2]),
+                                             anglePidGain, stoi(params[6]), detectionRequest);
         motionList.push_back(scra);
         break;
       }
@@ -474,7 +474,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "SS", COMMAND::SS },         // カメラ撮影動作
     { "MCA", COMMAND::MCA },       // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },       // 風景・プラレールのカメラ撮影動作
-    { "SCRA", COMMAND::SCRA },     // 首振りカメラ復帰動作
+    { "CRA", COMMAND::CRA },       // カメラ検出失敗時の復帰動作
     { "PCIDS", COMMAND::PCIDS },   // 画像ラインを用いた距離直進
     { "IS", COMMAND::IS },         // IMU設定
     { "DTCCL", COMMAND::DTCCL },   // 2色指定距離カメラライントレース
@@ -495,9 +495,9 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   // 末尾の改行を削除
   string param = StringOperator::removeEOL(stringParameter);
 
-  // 回転動作(AR,IMUR,MCA,BCA,SCRA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  // 回転動作(AR,IMUR,MCA,BCA,CRA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
   if(command == "AR" || command == "IMUR" || command == "MCA" || command == "BCA"
-     || command == "SCRA") {
+     || command == "CRA") {
     if(param == "clockwise") {
       return true;
     } else if(param == "anticlockwise") {
