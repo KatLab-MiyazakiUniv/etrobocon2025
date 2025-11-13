@@ -96,41 +96,57 @@ void CameraRecoveryAction::run()
 
   // 復帰できなかった場合、首振り動作で検出を試みる
   int swingCount = 0;
-  while(swingCount < maxSwingCount) {
-    // swingAngle分、初回と同じ方向（isClockwise）に相対角度で首を振る
-    IMUAngleRotation swing(robot, swingAngle, basePower, isClockwise, anglePidGain, false);
-    swing.run();
+  bool currentDirection = isClockwise;  // 現在の首振り方向
 
-    // 最新フレームに更新するためにスナップショットを連続で取得
-    CameraServer::SnapshotActionRequest request{};
-    request.command = CameraServer::Command::TAKE_SNAPSHOT;
-    std::strncpy(request.fileName, "warmup", sizeof(request.fileName));
-    for(int i = 0; i < 5; ++i) {
-      CameraServer::SnapshotActionResponse response{};
-      robot.getSocketClient().executeSnapshotAction(request, response);
-      std::this_thread::sleep_for(std::chrono::milliseconds(5));
+  while(true) {  // ラインを検出するまで無限ループ
+    // 首振り動作
+    for(int i = 0; i < maxSwingCount; ++i) {
+      // swingAngle分、現在の方向（currentDirection）に相対角度で首を振る
+      IMUAngleRotation swing(robot, swingAngle, basePower, currentDirection, anglePidGain, false);
+      swing.run();
+
+      // 最新フレームに更新するためにスナップショットを連続で取得
+      CameraServer::SnapshotActionRequest request{};
+      request.command = CameraServer::Command::TAKE_SNAPSHOT;
+      std::strncpy(request.fileName, "warmup", sizeof(request.fileName));
+      for(int j = 0; j < 5; ++j) {
+        CameraServer::SnapshotActionResponse response{};
+        robot.getSocketClient().executeSnapshotAction(request, response);
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+      }
+
+      // デバッグ用に復帰動作後の画像を保存
+      Snapshot snapshot(robot, "recovery_swing");
+      snapshot.run();
+
+      // 動作安定のためにスリープ
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+      // 検出を試みる
+      success = client.executeLineDetection(detectionRequest, response);
+      if(success && response.result.wasDetected) {
+        std::cout << "首振りで復帰に成功しました。" << std::endl;
+        return;
+      }
+
+      swingCount++;
     }
 
-    // デバッグ用に復帰動作後の画像を保存
-    Snapshot snapshot(robot, "recovery_swing");
-    snapshot.run();
+    // 首振り動作後、直進
+    std::cout << "首振り " << swingCount << " 回実施後、直進します。" << std::endl;
+    PictureColorDistanceStraight straightMotion(robot, pcidsDistance, pcidsSpeed, pcidsPidGain,
+                                                detectionRequest);
+    straightMotion.run();
 
-    // 動作安定のためにスリープ
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    // 検出を試みる
+    // 直進後に再検出
     success = client.executeLineDetection(detectionRequest, response);
     if(success && response.result.wasDetected) {
-      std::cout << "首振りで復帰に成功しました。" << std::endl;
+      std::cout << "直進後に復帰に成功しました。" << std::endl;
       return;
     }
 
-    swingCount++;
+    // 首振り方向を反転
+    currentDirection = !currentDirection;
+    std::cout << "首振り方向を反転して継続します。" << std::endl;
   }
-
-  // 最大首振り回数に達した場合、detectionRequestを使って直進
-  std::cout << "最大首振り回数に達しました。直進します。" << std::endl;
-  PictureColorDistanceStraight straightMotion(robot, pcidsDistance, pcidsSpeed, pcidsPidGain,
-                                              detectionRequest);
-  straightMotion.run();
 }
