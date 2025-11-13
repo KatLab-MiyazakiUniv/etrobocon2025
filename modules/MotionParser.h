@@ -31,7 +31,6 @@
 #include "ColorDistanceCameraLineTrace.h"
 #include "UltrasonicDistanceCameraLineTrace.h"
 #include "SwingCameraRecoveryAction.h"
-#include "OrthogonalLineRecoveryAction.h"
 #include "IMUSetting.h"
 #include "DistanceTwoColorCameraLineTrace.h"
 #include "ColorDistanceTwoColorCameraLineTrace.h"
@@ -57,7 +56,6 @@ enum class COMMAND {
   SCRA,    // 首振りカメラ復帰動作
   IS,      // IMUの角度計算の設定を行う動作
   PCIDS,   // カメラ画像を用いた色距離直進
-  OLRA,    // OrthogonalLineRecoveryAction: ライン法線方向に直進して復帰
   DTCCL,   // 2色指定距離カメラライントレース
   CDTCCL,  // 色距離指定2色カメラライントレース
   NONE
