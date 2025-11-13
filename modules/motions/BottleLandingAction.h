@@ -12,6 +12,7 @@
 #include "CameraDistanceCalculator.h"
 #include "SocketProtocol.h"
 #include "ColorJudge.h"
+#include "Pid.h"
 #include <opencv2/opencv.hpp>  // For cv::Rect
 
 class BottleLandingAction : public CompositeMotion {
@@ -21,9 +22,10 @@ class BottleLandingAction : public CompositeMotion {
    * @param _robot ロボット本体への参照
    * @param _offsetDistance 距離補正値[mm]
    * @param _idsSpeed IDSの走行速度[mm/s]
+   * @param pidGain PIDゲイン
    * @param _detectionRequest 検出リクエスト
    */
-  BottleLandingAction(Robot& _robot, double _offsetDistance, double _idsSpeed,
+  BottleLandingAction(Robot& _robot, double _offsetDistance, double _idsSpeed, PidGain _pidGain,
                       const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
 
   /**
@@ -33,9 +35,9 @@ class BottleLandingAction : public CompositeMotion {
 
  private:
   CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
-  BoundingBoxDetectionResult result;  // バウンディングボックスの座標を格納する構造体
-  double offsetDistance;              // 距離補正値[mm]
-  double idsSpeed;                    // IDSの走行速度[mm/s]
+  double offsetDistance;                                      // 距離補正値[mm]
+  double idsSpeed;                                            // IDSの走行速度[mm/s]
+  PidGain pidGain;                                            // PIDゲイン
 };
 
 #endif

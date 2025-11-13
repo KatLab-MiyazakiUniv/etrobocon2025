@@ -13,11 +13,12 @@ using namespace std;
 // offsetDistance: 距離補正値[mm]
 // idsSpeed: IDSの走行速度[mm/s]
 BottleLandingAction::BottleLandingAction(
-    Robot& _robot, double _offsetDistance, double _idsSpeed,
+    Robot& _robot, double _offsetDistance, double _idsSpeed, PidGain _pidGain,
     const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
   : CompositeMotion(_robot),
     offsetDistance(_offsetDistance),
     idsSpeed(_idsSpeed),
+    pidGain(_pidGain),
     detectionRequest(_detectionRequest)
 {
 }
@@ -33,14 +34,19 @@ void BottleLandingAction::run()
   SocketClient& client = robot.getSocketClient();
   CameraServer::BoundingBoxDetectorResponse response;
   bool success = client.executeLineDetection(detectionRequest, response);
-
+  if(!success) {
+    std::cerr << "青丸検出に失敗しました" << std::endl;
+    IMUDistanceStraight idserr(robot, 200.0, idsSpeed, pidGain);
+    idserr.run();
+    return;
+  }
   // 青丸までの距離をカメラで計測
   CameraDistanceCalculator calculator(robot);
-  double cameraDistance = calculator.calculateDistance(response, offsetDistance);
-  std::cout << "CameraDistance: " << cameraDistance << std::endl;
+  double cameraDistanceToBluePoint = calculator.calculateDistance(response, offsetDistance);
+  std::cout << "CameraDistanceToBluePoint: " << cameraDistanceToBluePoint << std::endl;
 
-  IMUDistanceStraight idss(robot, cameraDistance, idsSpeed, PidGain(0.08, 0.02, 0.05));
-  idss.run();
+  IMUDistanceStraight ids(robot, cameraDistanceToBluePoint, idsSpeed, pidGain);
+  ids.run();
 
   // 動作終了時点の走行距離を取得する
   double currentRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
