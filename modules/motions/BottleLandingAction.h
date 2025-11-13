@@ -22,7 +22,7 @@ class BottleLandingAction : public CompositeMotion {
    * @param _robot ロボット本体への参照
    * @param _offsetDistance 距離補正値[mm]
    * @param _idsSpeed IDSの走行速度[mm/s]
-   * @param pidGain PIDゲイン
+   * @param pidGain idsのPIDゲイン
    * @param _detectionRequest 検出リクエスト
    */
   BottleLandingAction(Robot& _robot, double _offsetDistance, double _idsSpeed, PidGain _pidGain,
