@@ -386,10 +386,12 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // CRA: カメラ検出失敗時の復帰動作
       // [1]:int ラインの方向角度（絶対角度）[deg], [2]:int 基準パワー値,
       // [3-5]:double ライン回頭用PIDゲイン(kp, ki, kd)
-      // [6]:int 首振り角度（deg）
-      // [7-12]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [13-16]:int ROI座標[px]
-      // ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ), [17-18]:int 解像度[px] ([17]幅,
-      // [18]高さ)
+      // [6]:int 首振り角度（deg）, [7]:int 最大首振り回数
+      // [8]:double PCIDS距離[mm], [9]:double PCIDS速度[mm/s],
+      // [10-12]:double PCIDS用PIDゲイン(kp, ki, kd)
+      // [13-18]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [19-22]:int ROI座標[px]
+      // ([19]左上隅のx座標, [20]左上隅のy座標, [21]幅, [22]高さ), [23-24]:int 解像度[px] ([23]幅,
+      // [24]高さ)
       // 補足：ROI（Region of Interest: ライントレース用の画像内注目領域（四角形））
       case COMMAND::CRA: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
@@ -397,16 +399,19 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         detectionRequest.command
             = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
-        detectionRequest.lowerHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        detectionRequest.lowerHSV
+            = cv::Scalar(stoi(params[13]), stoi(params[14]), stoi(params[15]));
         detectionRequest.upperHSV
-            = cv::Scalar(stoi(params[10]), stoi(params[11]), stoi(params[12]));
+            = cv::Scalar(stoi(params[16]), stoi(params[17]), stoi(params[18]));
         detectionRequest.roi
-            = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
-        detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
+            = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
+        detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
 
         PidGain anglePidGain(stod(params[3]), stod(params[4]), stod(params[5]));
+        PidGain pcidsPidGain(stod(params[10]), stod(params[11]), stod(params[12]));
         auto cra = new CameraRecoveryAction(robot, stoi(params[1]), stoi(params[2]), anglePidGain,
-                                            stoi(params[6]), detectionRequest);
+                                            stoi(params[6]), stoi(params[7]), stod(params[8]),
+                                            stod(params[9]), pcidsPidGain, detectionRequest);
         motionList.push_back(cra);
         break;
       }
@@ -474,7 +479,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "SS", COMMAND::SS },         // カメラ撮影動作
     { "MCA", COMMAND::MCA },       // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },       // 風景・プラレールのカメラ撮影動作
-    { "CRA", COMMAND::CRA },       // カメラ復帰動作
+    { "CRA", COMMAND::CRA },       // カメラ検出失敗時の復帰動作
     { "PCIDS", COMMAND::PCIDS },   // 画像ラインを用いた距離直進
     { "IS", COMMAND::IS },         // IMU設定
     { "DTCCL", COMMAND::DTCCL },   // 2色指定距離カメラライントレース
@@ -495,7 +500,7 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   // 末尾の改行を削除
   string param = StringOperator::removeEOL(stringParameter);
 
-  // 回転動作(AR,IMUR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  // 回転動作(AR,IMUR,MCA,BCA,CRA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
   if(command == "AR" || command == "IMUR" || command == "MCA" || command == "BCA"
      || command == "CRA") {
     if(param == "clockwise") {
