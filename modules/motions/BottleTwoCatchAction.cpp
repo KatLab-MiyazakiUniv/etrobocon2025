@@ -61,9 +61,9 @@ void BottleTwoCatchAction::run()
   imumar.run();
 
   // 最大直進距離を設定
-  double maxStraightDistance = forwardDistance;  // forwardDistanceは1100mm程度に設定される想定
+  double targetStraightDistance = forwardDistance;  // forwardDistanceは1100mm程度に設定される想定
   // 補正距離を算出
-  double nextDistance = maxStraightDistance - runDistance;
+  double nextDistance = targetStraightDistance - runDistance;
   if(nextDistance < 0) {
     nextDistance = 0;
   }
