@@ -367,8 +367,9 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // ki, kd),[6]:double 超音波センサー距離[mm] [7]:double udclスピード[mm/s], [8]:double
         // 角度[deg] [9]:double 回転パワー [10-12]:double udclのPIDゲイン(kp, ki, kd), [13-18]:int
         // HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [19-22]:int ROI座標[px]
-        // ([16]左上隅のx座標, [17]左上隅のy座標, [18]幅, [19]高さ), [20-21]int 解像度[px]
-        // ([20]幅,[21]高さ) 補足：ROI（Region of Interest:
+        // ([19]左上隅のx座標, [20]左上隅のy座標, [21]幅, [22]高さ), [23-24]int 解像度[px]
+        // ([23]幅,[24]高さ), [25]:int PCIDS用ROI狭め値[px](オプション)
+        // 補足：ROI（Region of Interest:
         // ライントレース用の画像内注目領域（四角形））
       case COMMAND::BTCA: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
@@ -381,8 +382,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         detectionRequest.upperHSV
             = cv::Scalar(stoi(params[16]), stoi(params[17]), stoi(params[18]));
 
+        int roiShrinkValue = 0;  // ROI狭め値のデフォルト値
+
         // パラメータ配列のサイズによってROIと解像度を設定
-        if(params.size() > 24) {
+        if(params.size() > 25) {
+          detectionRequest.roi
+              = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
+          detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
+          roiShrinkValue = stoi(params[25]);
+        } else if(params.size() > 24) {
           detectionRequest.roi
               = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
           detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
@@ -399,7 +407,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             robot, stod(params[1]), stod(params[2]),
             PidGain(stod(params[3]), stod(params[4]), stod(params[5])), stod(params[6]),
             stod(params[7]), stod(params[8]), stod(params[9]),
-            PidGain(stod(params[10]), stod(params[11]), stod(params[12])), detectionRequest);
+            PidGain(stod(params[10]), stod(params[11]), stod(params[12])), detectionRequest,
+            roiShrinkValue);
         motionList.push_back(btca);
         break;
       }
