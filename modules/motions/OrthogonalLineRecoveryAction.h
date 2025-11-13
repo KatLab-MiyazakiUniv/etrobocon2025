@@ -28,12 +28,13 @@ class OrthogonalLineRecoveryAction : public CompositeMotion {
    * @param _anglePidGain 角度制御用PIDゲイン
    * @param _orthogonalDistance 法線方向へ前進する距離[mm]
    * @param _orthogonalSpeed 法線方向の前進速度[mm/s]
+   * @param _pcidsPidGain 法線直進用PIDゲイン
    * @param _lineDetectionRequest ライン検出リクエスト
    * @param _pcidsDetectionRequest PCIDS用の検出リクエスト
    */
   OrthogonalLineRecoveryAction(
       Robot& _robot, int _lineDirectionAngle, int _basePower, const PidGain& _anglePidGain,
-      double _orthogonalDistance, double _orthogonalSpeed,
+      double _orthogonalDistance, double _orthogonalSpeed, const PidGain& _pcidsPidGain,
       const CameraServer::BoundingBoxDetectorRequest& _lineDetectionRequest,
       const CameraServer::BoundingBoxDetectorRequest& _pcidsDetectionRequest);
 
@@ -50,6 +51,7 @@ class OrthogonalLineRecoveryAction : public CompositeMotion {
   PidGain anglePidGain;                                            // 角度制御PIDゲイン
   double orthogonalDistance;                                       // 法線方向の前進距離[mm]
   double orthogonalSpeed;                                          // 法線方向の前進速度[mm/s]
+  PidGain pcidsPidGain;                                            // 法線直進用PIDゲイン
 };
 
 #endif

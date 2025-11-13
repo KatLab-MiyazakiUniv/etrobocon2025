@@ -7,7 +7,7 @@
 
 OrthogonalLineRecoveryAction::OrthogonalLineRecoveryAction(
     Robot& _robot, int _lineDirectionAngle, int _basePower, const PidGain& _anglePidGain,
-    double _orthogonalDistance, double _orthogonalSpeed,
+    double _orthogonalDistance, double _orthogonalSpeed, const PidGain& _pcidsPidGain,
     const CameraServer::BoundingBoxDetectorRequest& _lineDetectionRequest,
     const CameraServer::BoundingBoxDetectorRequest& _pcidsDetectionRequest)
   : CompositeMotion(_robot),
@@ -17,7 +17,8 @@ OrthogonalLineRecoveryAction::OrthogonalLineRecoveryAction(
     basePower(_basePower),
     anglePidGain(_anglePidGain),
     orthogonalDistance(_orthogonalDistance),
-    orthogonalSpeed(_orthogonalSpeed)
+    orthogonalSpeed(_orthogonalSpeed),
+    pcidsPidGain(_pcidsPidGain)
 {
 }
 
@@ -99,7 +100,7 @@ void OrthogonalLineRecoveryAction::run()
 
   // 法線方向へ PCIDS で前進しながらライン検出を試みる
   PictureColorDistanceStraight orthogonalApproach(robot, orthogonalDistance, orthogonalSpeed,
-                                                  anglePidGain, pcidsDetectionRequest);
+                                                  pcidsPidGain, pcidsDetectionRequest);
   orthogonalApproach.run();
 
   robot.getMotorControllerInstance().stopWheelsMotor();

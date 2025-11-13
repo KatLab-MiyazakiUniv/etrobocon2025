@@ -410,6 +410,39 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // OLRA: ライン方向へ回頭して再検出し、失敗時は法線方向へ直進して復帰を試みる動作
+      // [1]:int ライン方向角度[deg], [2]:int 基準パワー
+      // [3-5]:double ライン回頭用PIDゲイン(kp, ki, kd)
+      // [6]:double 法線方向距離[mm], [7]:double 法線方向速度[mm/s]
+      // [8-10]:double PCIDS直進用PIDゲイン(kp, ki, kd)
+      // [11-16]:int HSV(lowerH,lowerS,lowerV,upperH,upperS,upperV) ※共通
+      // [17-20]:int ライン検出ROI ([17]左上x, [18]左上y, [19]幅, [20]高さ)
+      // [21-22]:int 解像度 ([21]幅, [22]高さ) ※ライン検出・PCIDS共通
+      // [23-26]:int PCIDS用ROI ([23]左上x, [24]左上y, [25]幅, [26]高さ)
+      case COMMAND::OLRA: {
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
+        detectionRequest.command = CameraServer::Command::LINE_DETECTION;
+        detectionRequest.lowerHSV
+            = cv::Scalar(stoi(params[11]), stoi(params[12]), stoi(params[13]));
+        detectionRequest.upperHSV
+            = cv::Scalar(stoi(params[14]), stoi(params[15]), stoi(params[16]));
+        detectionRequest.roi
+            = cv::Rect(stoi(params[17]), stoi(params[18]), stoi(params[19]), stoi(params[20]));
+        detectionRequest.resolution = cv::Size(stoi(params[21]), stoi(params[22]));
+
+        CameraServer::BoundingBoxDetectorRequest pcidsDetectionRequest = detectionRequest;
+        pcidsDetectionRequest.roi
+            = cv::Rect(stoi(params[23]), stoi(params[24]), stoi(params[25]), stoi(params[26]));
+
+        PidGain anglePidGain(stod(params[3]), stod(params[4]), stod(params[5]));
+        PidGain pcidsPidGain(stod(params[8]), stod(params[9]), stod(params[10]));
+        auto olra = new OrthogonalLineRecoveryAction(
+            robot, stoi(params[1]), stoi(params[2]), anglePidGain, stod(params[6]), stod(params[7]),
+            pcidsPidGain, detectionRequest, pcidsDetectionRequest);
+        motionList.push_back(olra);
+        break;
+      }
+
       // PCIDS: IMU角度補正直進に、カメラ画像の色検出による停止条件を追加した動作
       // [1]:double 距離[mm], [2]:double 速度[mm/s], [3-5]:double 角度補正PIDゲイン(kp, ki, kd),
       // [6-8]:int HSV下限, [9-11]:int HSV上限, [12-15]:int ROI座標[px] ([12]左上x, [13]左上y,
@@ -474,6 +507,7 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "MCA", COMMAND::MCA },       // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },       // 風景・プラレールのカメラ撮影動作
     { "SCRA", COMMAND::SCRA },     // 首振りカメラ復帰動作
+    { "OLRA", COMMAND::OLRA },     // 法線方向直進復帰動作
     { "PCIDS", COMMAND::PCIDS },   // 画像ラインを用いた距離直進
     { "IS", COMMAND::IS },         // IMU設定
     { "DTCCL", COMMAND::DTCCL },   // 2色指定距離カメラライントレース
