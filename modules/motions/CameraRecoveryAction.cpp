@@ -8,12 +8,17 @@
 
 CameraRecoveryAction::CameraRecoveryAction(
     Robot& _robot, int _lineDirectionAngle, int _basePower, const PidGain& _anglePidGain,
-    int _swingAngle, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+    int _swingAngle, int _maxSwingCount, double _pcidsDistance, double _pcidsSpeed,
+    const PidGain& _pcidsPidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
   : CompositeMotion(_robot),
     lineDirectionAngle(_lineDirectionAngle),
     basePower(_basePower),
     anglePidGain(_anglePidGain),
     swingAngle(_swingAngle),
+    maxSwingCount(_maxSwingCount),
+    pcidsDistance(_pcidsDistance),
+    pcidsSpeed(_pcidsSpeed),
+    pcidsPidGain(_pcidsPidGain),
     detectionRequest(_detectionRequest)
 {
 }
@@ -90,7 +95,8 @@ void CameraRecoveryAction::run()
   }
 
   // 復帰できなかった場合、首振り動作で検出を試みる
-  while(true) {
+  int swingCount = 0;
+  while(swingCount < maxSwingCount) {
     // swingAngle分、初回と同じ方向（isClockwise）に相対角度で首を振る
     IMUAngleRotation swing(robot, swingAngle, basePower, isClockwise, anglePidGain, false);
     swing.run();
@@ -118,5 +124,13 @@ void CameraRecoveryAction::run()
       std::cout << "首振りで復帰に成功しました。" << std::endl;
       return;
     }
+
+    swingCount++;
   }
+
+  // 最大首振り回数に達した場合、detectionRequestを使って直進
+  std::cout << "最大首振り回数に達しました。直進します。" << std::endl;
+  PictureColorDistanceStraight straightMotion(robot, pcidsDistance, pcidsSpeed, pcidsPidGain,
+                                              detectionRequest);
+  straightMotion.run();
 }
