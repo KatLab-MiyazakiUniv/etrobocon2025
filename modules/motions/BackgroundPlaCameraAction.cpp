@@ -83,6 +83,8 @@ void BackgroundPlaCameraAction::run()
   IMUDistanceStraight preStraight(robot, preTargetDistance, preTargetSpeed, prePidGain);
   preStraight.run();
 
+  robot.getMotorControllerInstance().stopWheelsMotor();
+
   // 綺麗な写真の撮影のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(100));
 
@@ -112,8 +114,6 @@ void BackgroundPlaCameraAction::run()
 
   // 動作安定のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(10));
-
-  robot.getMotorControllerInstance().stopWheelsMotor();
 
   PidGain postPidGain = { kp, ki, kd };
 
