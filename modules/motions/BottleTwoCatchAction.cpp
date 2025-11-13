@@ -8,17 +8,18 @@
 
 // コンストラクタ
 BottleTwoCatchAction::BottleTwoCatchAction(
-    Robot& _robot, double _forwardDistance, double _idsSpeed, double _ultrasonicDistance,
-    double _udclSpeed, double _angle, double _rotatePower, const PidGain& _pidGain,
-    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+    Robot& _robot, double _forwardDistance, double _idsSpeed, const PidGain& _idsPidGain,
+    double _ultrasonicDistance, double _udclSpeed, double _angle, double _rotatePower,
+    const PidGain& _udclPidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
   : CompositeMotion(_robot),
     forwardDistance(_forwardDistance),
     idsSpeed(_idsSpeed),
+    idsPidGain(_idsPidGain),
     ultrasonicDistance(_ultrasonicDistance),
     udclSpeed(_udclSpeed),
     angle(_angle),
     rotatePower(_rotatePower),
-    pidGain(_pidGain),
+    udclPidGain(_udclPidGain),
     detectionRequest(_detectionRequest)
 {
 }
@@ -30,22 +31,15 @@ void BottleTwoCatchAction::run()
   double initialLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
   double initialDistance = Mileage::calculateMileage(initialRightMotorCount, initialLeftMotorCount);
 
-  double initialAngle = robot.getIMUControllerInstance().getAngle();  // 動作開始時の角度
-
-  SocketClient& client = robot.getSocketClient();
-  CameraServer::BoundingBoxDetectorResponse response;
-  bool success = client.executeLineDetection(detectionRequest, response);
-
   // PCIDSを動かす。ボトル探索。
-  PictureColorDistanceStraight pcids(robot, forwardDistance, idsSpeed, PidGain(0.08, 0.02, 0.05),
+  PictureColorDistanceStraight pcids(robot, forwardDistance, idsSpeed, idsPidGain,
                                      detectionRequest);
   pcids.run();
 
   UltrasonicDistanceCameraLineTrace udcl(robot, ultrasonicDistance, forwardDistance, udclSpeed, 400,
-                                         pidGain, detectionRequest);
+                                         udclPidGain, detectionRequest);
 
   udcl.run();
-  // stop.run();
 
   // 動作終了時点の走行距離を取得する
   double currentRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();
@@ -63,18 +57,18 @@ void BottleTwoCatchAction::run()
   std::cout << "横方向のズレ：" << widthMoved << std::endl;
 
   // 回頭
-  IMUMinAngleRotation minar(robot, angle, rotatePower, PidGain(0.036, 0.012, 0.03));
-  minar.run();
+  IMUMinAngleRotation imumar(robot, angle, rotatePower, PidGain(0.036, 0.012, 0.03));
+  imumar.run();
 
   // 最大直進距離を設定
-  double maxDistance = forwardDistance;  // forwardDistanceは1100mm程度に設定される想定
+  double maxStraightDistance = forwardDistance;  // forwardDistanceは1100mm程度に設定される想定
   // 補正距離を算出
-  double nextDistance = maxDistance - runDistance;
+  double nextDistance = maxStraightDistance - runDistance;
   if(nextDistance < 0) {
     nextDistance = 0;
   }
 
   // 距離補正のための直進
-  IMUDistanceStraight nextids(robot, nextDistance, idsSpeed, PidGain(0.08, 0.02, 0.05));
+  IMUDistanceStraight nextids(robot, nextDistance, idsSpeed, idsPidGain);
   nextids.run();
 }

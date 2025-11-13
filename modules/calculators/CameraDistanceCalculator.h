@@ -27,6 +27,7 @@ class CameraDistanceCalculator {
   /**
    * @brief カメラ画像を使って、走行体からバウンディングボックスの中心までの距離を計算する
    * @param response カメラサーバーからの応答
+   * @param offsetDistance 距離補正値[mm]
    * @return バウンディングボックスの中心までの距離[mm]
    */
   double calculateDistance(const CameraServer::BoundingBoxDetectorResponse& response,

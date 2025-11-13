@@ -14,8 +14,7 @@ CameraDistanceCalculator::CameraDistanceCalculator(Robot& _robot, double _offset
 double CameraDistanceCalculator::calculateDistance(
     const CameraServer::BoundingBoxDetectorResponse& response, double offsetDistance)
 {
-  // バウンディングボックスの中心座標を取得
-  double currentX = (response.result.topLeft.x + response.result.bottomRight.x) / 2.0;
+  // バウンディングボックスのY座標の中心を取得
   double currentY = (response.result.topLeft.y + response.result.bottomRight.y) / 2.0;
 
   // 対象物から画角の一番下までのピクセル数を計算
