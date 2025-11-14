@@ -1,16 +1,17 @@
 /**
- * @file   CameraPidTracking.cpp
- * @brief  カメラを使ったPID走行の親クラス
+ * @file   TwoColorCameraPidTracking.cpp
+ * @brief  カメラを使った2色指定PID走行の親クラス
  * @author miyahara046 HaruArima08 takuchi17
  */
 
-#include "CameraPidTracking.h"
+#include "TwoColorCameraPidTracking.h"
 #include <thread>
 #include <chrono>
 
-CameraPidTracking::CameraPidTracking(
+TwoColorCameraPidTracking::TwoColorCameraPidTracking(
     Robot& _robot, double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain,
-    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest, bool _isStopMotorPower)
+    const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest,
+    bool _isStopMotorPower)
   : Motion(_robot),
     targetSpeed(_targetSpeed),
     targetXCoordinate(_targetXCoordinate),
@@ -20,7 +21,7 @@ CameraPidTracking::CameraPidTracking(
 {
 }
 
-void CameraPidTracking::run()
+void TwoColorCameraPidTracking::run()
 {
   Pid pid(pidGain.kp, pidGain.ki, pidGain.kd, targetXCoordinate);
   // 事前条件を判定する
@@ -43,7 +44,7 @@ void CameraPidTracking::run()
 
     // ライン検出をサーバーに依頼
     CameraServer::BoundingBoxDetectorResponse response;
-    bool success = client.executeLineDetection(detectionRequest, response);
+    bool success = client.executeTwoColorLineDetection(detectionRequest, response);
 
     // 通信失敗、または検出できなかった場合
     if(!success || !response.result.wasDetected) {

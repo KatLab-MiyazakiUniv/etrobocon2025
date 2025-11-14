@@ -11,6 +11,8 @@
 #include "BackgroundPlaActionHandler.h"
 #include "SnapshotActionHandler.h"
 #include "LineDetectionActionHandler.h"
+#include "TwoColorLineDetectionActionHandler.h"
+
 #include <vector>
 
 class SocketServer {
@@ -21,10 +23,12 @@ class SocketServer {
    * @param bgPlaHandler 背景・プラレール撮影アクションハンドラ
    * @param snapshotHandler スナップショット撮影アクションハンドラ
    * @param lineDetectionHandler ライン検出アクションハンドラ
+   * @param twoColorLineDetectionHandler 2色線検出アクションハンドラ
    */
   SocketServer(MiniFigActionHandler& minifigHandler, BackgroundPlaActionHandler& bgPlaHandler,
                SnapshotActionHandler& snapshotHandler,
-               LineDetectionActionHandler& lineDetectionHandler);
+               LineDetectionActionHandler& lineDetectionHandler,
+               TwoColorLineDetectionActionHandler& twoColorLineDetectionHandler);
 
   /**
    * @brief サーバーを初期化する
@@ -50,6 +54,7 @@ class SocketServer {
   BackgroundPlaActionHandler& bgPlaHandler;
   SnapshotActionHandler& snapshotHandler;
   LineDetectionActionHandler& lineDetectionHandler;
+  TwoColorLineDetectionActionHandler& twoColorLineDetectionHandler;
 
   /**
    * @brief クライアントとの接続を処理する

@@ -17,13 +17,15 @@
 SocketServer::SocketServer(MiniFigActionHandler& _minifigHandler,
                            BackgroundPlaActionHandler& _bgPlaHandler,
                            SnapshotActionHandler& _snapshotHandler,
-                           LineDetectionActionHandler& _lineDetectionHandler)
+                           LineDetectionActionHandler& _lineDetectionHandler,
+                           TwoColorLineDetectionActionHandler& _twoColorLineDetectionHandler)
   : listenSocket(-1),
     isRunning(false),
     minifigHandler(_minifigHandler),
     bgPlaHandler(_bgPlaHandler),
     snapshotHandler(_snapshotHandler),
-    lineDetectionHandler(_lineDetectionHandler)
+    lineDetectionHandler(_lineDetectionHandler),
+    twoColorLineDetectionHandler(_twoColorLineDetectionHandler)
 {
 }
 
@@ -153,6 +155,21 @@ void SocketServer::handle_connection(int clientSocket)
               send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
             } else {
               std::cerr << "Invalid request size for LINE_DETECTION." << std::endl;
+            }
+            break;
+          case CameraServer::Command::TWO_COLOR_LINE_DETECTION:
+            if(static_cast<size_t>(iResult)
+               == sizeof(CameraServer::TwoColorBoundingBoxDetectorRequest)) {
+              auto* request
+                  = reinterpret_cast<CameraServer::TwoColorBoundingBoxDetectorRequest*>(recvbuf);
+              std::cout << "Executing TWO_COLOR_LINE_DETECTION command." << std::endl;
+
+              CameraServer::BoundingBoxDetectorResponse response;
+              twoColorLineDetectionHandler.execute(*request, response);
+
+              send(clientSocket, reinterpret_cast<const char*>(&response), sizeof(response), 0);
+            } else {
+              std::cerr << "Invalid request size for TWO_COLOR_LINE_DETECTION." << std::endl;
             }
             break;
           case CameraServer::Command::SHUTDOWN:

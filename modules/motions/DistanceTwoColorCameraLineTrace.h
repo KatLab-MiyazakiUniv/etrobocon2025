@@ -1,16 +1,16 @@
 /**
- * @file   DistanceCameraLineTrace.h
- * @brief  指定距離カメラライントレース動作
+ * @file   DistanceTwoColorCameraLineTrace.h
+ * @brief  2色指定距離カメラライントレース動作
  * @author miyahara046 HaruArima08
  */
 
-#ifndef DISTANCE_CAMERA_LINE_TRACE_H
-#define DISTANCE_CAMERA_LINE_TRACE_H
+#ifndef DISTANCE_TWO_COLOR_CAMERA_LINE_TRACE_H
+#define DISTANCE_TWO_COLOR_CAMERA_LINE_TRACE_H
 
-#include "CameraPidTracking.h"
+#include "TwoColorCameraPidTracking.h"
 #include "SocketProtocol.h"
 
-class DistanceCameraLineTrace : public CameraPidTracking {
+class DistanceTwoColorCameraLineTrace : public TwoColorCameraPidTracking {
  public:
   /**
    * コンストラクタ
@@ -21,15 +21,16 @@ class DistanceCameraLineTrace : public CameraPidTracking {
    * @param _detectionRequest 検出リクエスト
    * @param _isStopMotorPower モーターを停止するかどうか
    */
-  DistanceCameraLineTrace(Robot& _robot, double _targetDistance, double _targetSpeed,
-                          int _targetXCoordinate, const PidGain& _pidGain,
-                          const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
-                          bool _isStopMotorPower = true);
+  DistanceTwoColorCameraLineTrace(
+      Robot& _robot, double _targetDistance, double _targetSpeed, int _targetXCoordinate,
+      const PidGain& _pidGain,
+      const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest,
+      bool _isStopMotorPower = true);
 
   /**
    * @brief 指定距離だけカメラライントレースする
    */
-  using CameraPidTracking::run;
+  using TwoColorCameraPidTracking::run;
 
  protected:
   /**
@@ -50,9 +51,9 @@ class DistanceCameraLineTrace : public CameraPidTracking {
   bool isMetContinuationCondition() override;
 
  private:
-  double targetDistance;                                      // 目標距離
-  double initDistance;                                        // 実行前の走行距離
-  CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
+  double targetDistance;                                              // 目標距離
+  double initDistance;                                                // 実行前の走行距離
+  CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
 };
 
 #endif
