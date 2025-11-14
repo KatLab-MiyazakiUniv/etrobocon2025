@@ -1,17 +1,17 @@
 /**
- * @file   ColorDistanceCameraLineTrace.h
- * @brief  色距離指定カメラライントレース動作
- * @author HaruArima08 nishijima515
+ * @file   ColorDistanceTwoColorCameraLineTrace.h
+ * @brief  2色色距離指定カメラライントレース動作
+ * @author miyahara046 HaruArima08
  */
 
-#ifndef COLOR_DISTANCE_CAMERA_LINE_TRACE_H
-#define COLOR_DISTANCE_CAMERA_LINE_TRACE_H
+#ifndef COLOR_DISTANCE_TWO_COLOR_CAMERA_LINE_TRACE_H
+#define COLOR_DISTANCE_TWO_COLOR_CAMERA_LINE_TRACE_H
 
-#include "CameraPidTracking.h"
+#include "TwoColorCameraPidTracking.h"
 #include "ColorJudge.h"
 #include "SocketProtocol.h"
 
-class ColorDistanceCameraLineTrace : public CameraPidTracking {
+class ColorDistanceTwoColorCameraLineTrace : public TwoColorCameraPidTracking {
  public:
   /**
    * コンストラクタ
@@ -24,15 +24,16 @@ class ColorDistanceCameraLineTrace : public CameraPidTracking {
    * @param _detectionRequest 検出リクエスト
    * @param _isStopMotorPower モーターを停止するかどうか
    */
-  ColorDistanceCameraLineTrace(Robot& _robot, COLOR _targetColor, double _targetDistance,
-                               double _targetSpeed, int _targetXCoordinate, const PidGain& _pidGain,
-                               const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
-                               bool _isStopMotorPower = true);
+  ColorDistanceTwoColorCameraLineTrace(
+      Robot& _robot, COLOR _targetColor, double _targetDistance, double _targetSpeed,
+      int _targetXCoordinate, const PidGain& _pidGain,
+      const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest,
+      bool _isStopMotorPower = true);
 
   /**
    * @brief (指定距離まで||指定色認識する)だけカメラライントレースする
    */
-  using CameraPidTracking::run;
+  using TwoColorCameraPidTracking::run;
 
  protected:
   /**
@@ -58,7 +59,7 @@ class ColorDistanceCameraLineTrace : public CameraPidTracking {
   COLOR targetColor;                     // 指定色
   double targetDistance;                 // 目標距離
   double initDistance;                   // 実行前の走行距離
-  CameraServer::BoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
+  CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;  // 検出リクエスト
 };
 
 #endif

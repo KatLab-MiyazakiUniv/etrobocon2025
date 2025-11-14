@@ -1,17 +1,18 @@
 /**
- * @file   ColorDistanceCameraLineTrace.cpp
- * @brief  色距離指定カメラライントレース動作
- * @author HaruArima08 nishijima515
+ * @file   ColorDistanceTwoColorCameraLineTrace.cpp
+ * @brief  2色色距離指定カメラライントレース動作
+ * @author miyahara046 HaruArima08
  */
 
-#include "ColorDistanceCameraLineTrace.h"
+#include "ColorDistanceTwoColorCameraLineTrace.h"
 
-ColorDistanceCameraLineTrace::ColorDistanceCameraLineTrace(
+ColorDistanceTwoColorCameraLineTrace::ColorDistanceTwoColorCameraLineTrace(
     Robot& _robot, COLOR _targetColor, double _targetDistance, double _targetSpeed,
     int _targetXCoordinate, const PidGain& _pidGain,
-    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest, bool _isStopMotorPower)
-  : CameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest,
-                      _isStopMotorPower),
+    const CameraServer::TwoColorBoundingBoxDetectorRequest& _detectionRequest,
+    bool _isStopMotorPower)
+  : TwoColorCameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest,
+                              _isStopMotorPower),
     targetColor(_targetColor),
     colorCount(0),
     targetDistance(_targetDistance),
@@ -20,7 +21,7 @@ ColorDistanceCameraLineTrace::ColorDistanceCameraLineTrace(
 }
 
 // 色距離指定カメラライントレースの事前条件
-bool ColorDistanceCameraLineTrace::isMetPreCondition()
+bool ColorDistanceTwoColorCameraLineTrace::isMetPreCondition()
 {
   // 目標の色がNoneのとき終了する
   if(targetColor == COLOR::NONE) {
@@ -41,7 +42,7 @@ bool ColorDistanceCameraLineTrace::isMetPreCondition()
 }
 
 // 色距離指定カメラライントレースの事前処理
-void ColorDistanceCameraLineTrace::prepare()
+void ColorDistanceTwoColorCameraLineTrace::prepare()
 {
   // 初期値を代入
   initDistance = Mileage::calculateMileage(robot.getMotorControllerInstance().getRightMotorCount(),
@@ -49,7 +50,7 @@ void ColorDistanceCameraLineTrace::prepare()
 }
 
 // 色距離指定カメラライントレースの継続条件
-bool ColorDistanceCameraLineTrace::isMetContinuationCondition()
+bool ColorDistanceTwoColorCameraLineTrace::isMetContinuationCondition()
 {
   // HSV値を取得
   spikeapi::ColorSensor::HSV hsv;
