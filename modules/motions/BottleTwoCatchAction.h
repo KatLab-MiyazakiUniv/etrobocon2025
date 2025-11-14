@@ -30,11 +30,13 @@ class BottleTwoCatchAction : public CompositeMotion {
    * @param _rotatePower 回頭パワー
    * @param _udclPidGain udclのPIDゲイン
    * @param _detectionRequest 検出リクエスト
+   * @param _roiShrinkValue PCIDS用のROIを狭める値[px] (デフォルト: 0)
    */
   BottleTwoCatchAction(Robot& _robot, double _forwardDistance, double _idsSpeed,
                        const PidGain& _idsPidGain, double _ultrasonicDistance, double _udclSpeed,
                        double _angle, double _rotatePower, const PidGain& _udclPidGain,
-                       const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
+                       const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
+                       int _roiShrinkValue = 0);
 
   /**
    * @brief 2本目のボトルのキャッチ動作を行う
@@ -51,6 +53,7 @@ class BottleTwoCatchAction : public CompositeMotion {
   double angle;                                               // 回頭角度[度]
   double rotatePower;                                         // 回頭パワー
   PidGain udclPidGain;                                        // udclのPIDゲイン
+  int roiShrinkValue;                                         // PCIDS用のROIを狭める値[px]
 };
 
 #endif

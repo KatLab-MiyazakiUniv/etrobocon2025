@@ -10,7 +10,8 @@
 BottleTwoCatchAction::BottleTwoCatchAction(
     Robot& _robot, double _forwardDistance, double _idsSpeed, const PidGain& _idsPidGain,
     double _ultrasonicDistance, double _udclSpeed, double _angle, double _rotatePower,
-    const PidGain& _udclPidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+    const PidGain& _udclPidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
+    int _roiShrinkValue)
   : CompositeMotion(_robot),
     forwardDistance(_forwardDistance),
     idsSpeed(_idsSpeed),
@@ -20,7 +21,8 @@ BottleTwoCatchAction::BottleTwoCatchAction(
     angle(_angle),
     rotatePower(_rotatePower),
     udclPidGain(_udclPidGain),
-    detectionRequest(_detectionRequest)
+    detectionRequest(_detectionRequest),
+    roiShrinkValue(_roiShrinkValue)
 {
 }
 
@@ -31,9 +33,16 @@ void BottleTwoCatchAction::run()
   double initialLeftMotorCount = robot.getMotorControllerInstance().getLeftMotorCount();
   double initialDistance = Mileage::calculateMileage(initialRightMotorCount, initialLeftMotorCount);
 
+  // PCIDS用にROIを狭める
+  CameraServer::BoundingBoxDetectorRequest pcidsDetectionRequest = detectionRequest;
+  pcidsDetectionRequest.roi.x += roiShrinkValue;
+  pcidsDetectionRequest.roi.y += roiShrinkValue;
+  pcidsDetectionRequest.roi.width -= roiShrinkValue * 2;
+  pcidsDetectionRequest.roi.height -= roiShrinkValue * 2;
+
   // PCIDSを動かす。ボトル探索。
   PictureColorDistanceStraight pcids(robot, forwardDistance, idsSpeed, idsPidGain,
-                                     detectionRequest);
+                                     pcidsDetectionRequest);
   pcids.run();
 
   UltrasonicDistanceCameraLineTrace udcl(robot, ultrasonicDistance, forwardDistance, udclSpeed, 400,
