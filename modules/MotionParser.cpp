@@ -64,6 +64,17 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+      // IMUMR: IMU絶対角度を最小の角度で回頭動作を行う
+      // [1]:int 目標絶対角度[deg] (0~360), [2]:int 基準パワー, [3-5]:double 角度PIDゲイン(kp, ki,
+      // kd)
+      case COMMAND::IMUMR: {
+        auto imumr
+            = new IMUMinAngleRotation(robot, stoi(params[1]), stoi(params[2]),
+                                      PidGain(stod(params[3]), stod(params[4]), stod(params[5])));
+        motionList.push_back(imumr);
+        break;
+      }
+
       // DS: 指定距離直進
       // [1]:double 距離[mm], [2]:double 速度[mm/s]
       case COMMAND::DS: {
@@ -459,6 +470,84 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
+        // BTCA: ボトル2つ目のキャッチ動作
+        // [1]:double 前進距離[mm], [2]:double IMU直進スピード[mm/s],[3-5]:double idsのPIDゲイン(kp,
+        // ki, kd),[6]:double 超音波センサー距離[mm] [7]:double udclスピード[mm/s], [8]:double
+        // 角度[deg] [9]:double 回転パワー [10-12]:double udclのPIDゲイン(kp, ki, kd), [13-18]:int
+        // HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [19-22]:int ROI座標[px]
+        // ([19]左上隅のx座標, [20]左上隅のy座標, [21]幅, [22]高さ), [23-24]int 解像度[px]
+        // ([23]幅,[24]高さ), [25]:int PCIDS用ROI狭め値[px](オプション)
+        // 補足：ROI（Region of Interest:
+        // ライントレース用の画像内注目領域（四角形））
+      case COMMAND::BTCA: {
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
+
+        detectionRequest.command
+            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
+
+        detectionRequest.lowerHSV
+            = cv::Scalar(stoi(params[13]), stoi(params[14]), stoi(params[15]));
+        detectionRequest.upperHSV
+            = cv::Scalar(stoi(params[16]), stoi(params[17]), stoi(params[18]));
+
+        int roiShrinkValue = 0;  // ROI狭め値のデフォルト値
+
+        // パラメータ配列のサイズによってROIと解像度を設定
+        if(params.size() > 25) {
+          detectionRequest.roi
+              = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
+          detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
+          roiShrinkValue = stoi(params[25]);
+        } else if(params.size() > 24) {
+          detectionRequest.roi
+              = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
+          detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
+        } else if(params.size() > 22) {
+          detectionRequest.roi
+              = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
+          detectionRequest.resolution = cv::Size(640, 480);
+        } else {
+          detectionRequest.roi = cv::Rect(50, 240, 540, 240);
+          detectionRequest.resolution = cv::Size(640, 480);
+        }
+
+        auto btca = new BottleTwoCatchAction(
+            robot, stod(params[1]), stod(params[2]),
+            PidGain(stod(params[3]), stod(params[4]), stod(params[5])), stod(params[6]),
+            stod(params[7]), stod(params[8]), stod(params[9]),
+            PidGain(stod(params[10]), stod(params[11]), stod(params[12])), detectionRequest,
+            roiShrinkValue);
+        motionList.push_back(btca);
+        break;
+      }
+
+        // BLA: ボトルランディング動作
+        // [1] : double 距離補正値[mm],
+        // [2] : double IDS速度[mm/s],
+        // [3-5] : double idsのPIDゲイン(kp, ki, kd),
+        // [6-8] : int lowerHSV,
+        // [9-11] : int upperHSV,
+        // [12-15] : int ROI座標[px] ([12]左上隅のx座標, [13]左上隅のy座標, [14]幅, [15]高さ),
+        // [16-17] : int 解像度[px] ([16]幅, [17]高さ)
+        //   BottleLandingAction::BottleLandingAction(
+        // Robot& _robot, double _offsetDistance, double _idsSpeed, PidGain _pidGain,
+        // const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+      case COMMAND::BLA: {
+        CameraServer::BoundingBoxDetectorRequest detectionRequest;
+        detectionRequest.command
+            = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
+        detectionRequest.lowerHSV = cv::Scalar(stoi(params[6]), stoi(params[7]), stoi(params[8]));
+        detectionRequest.upperHSV = cv::Scalar(stoi(params[9]), stoi(params[10]), stoi(params[11]));
+        detectionRequest.roi
+            = cv::Rect(stoi(params[12]), stoi(params[13]), stoi(params[14]), stoi(params[15]));
+        detectionRequest.resolution = cv::Size(stoi(params[16]), stoi(params[17]));
+        auto bla = new BottleLandingAction(
+            robot, stod(params[1]), stod(params[2]),
+            PidGain(stod(params[3]), stod(params[4]), stod(params[5])), detectionRequest);
+        motionList.push_back(bla);
+        break;
+      }
+
       // STOP: 走行体を停止させる動作
       case COMMAND::STOP: {
         auto stop = new Stop(robot);
@@ -515,6 +604,7 @@ COMMAND MotionParser::convertCommand(const string& str)
   static const unordered_map<string, COMMAND> commandMap = {
     { "AR", COMMAND::AR },         // 角度指定回頭
     { "IMUR", COMMAND::IMUR },     // IMU角度指定回頭
+    { "IMUMR", COMMAND::IMUMR },   // IMU絶対角度を最小の角度で回頭動作
     { "DS", COMMAND::DS },         // 指定距離直進
     { "IDS", COMMAND::IDS },       // IMU角度補正直進
     { "CS", COMMAND::CS },         // 指定色直進
@@ -530,6 +620,8 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "MCA", COMMAND::MCA },       // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },       // 風景・プラレールのカメラ撮影動作
     { "CRA", COMMAND::CRA },       // カメラ復帰動作
+    { "BTCA", COMMAND::BTCA },     // ボトル2つ目のキャッチ動作
+    { "BLA", COMMAND::BLA },       // ボトルランディング動作
     { "STOP", COMMAND::STOP },     // 走行体を停止させる動作
     { "PCIDS", COMMAND::PCIDS },   // 画像ラインを用いた距離直進
     { "IS", COMMAND::IS },         // IMU設定
