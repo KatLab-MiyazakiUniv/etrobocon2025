@@ -105,7 +105,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [1]:double 距離[mm], [2]:double 速度[mm/s], [3]:int X座標[px], [4-6]:double PIDゲイン,
       // [7-9]int lowerHSV, [10-12]int upperHSV,
       // [13-16]int ROI座標[px] ([13]左上隅のx座標, [14]左上隅のy座標, [15]幅, [16]高さ),
-      // [17-18]int 解像度[px] ([17]幅, [18]高さ)
+      // [17-18]int 解像度[px] ([17]幅, [18]高さ),
+      // [19]string 停止制御 (continue ならモータを停止せず、stop ならモータを停止) [オプション]
       // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
       case COMMAND::DCL: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
@@ -121,9 +122,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = cv::Rect(stoi(params[13]), stoi(params[14]), stoi(params[15]), stoi(params[16]));
         detectionRequest.resolution = cv::Size(stoi(params[17]), stoi(params[18]));
 
+        bool isStopMotorPower = true;
+        if(params.size() >= 20) {
+          isStopMotorPower = convertBool("DCL", params[19]);
+        }
+
         auto dcl = new DistanceCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stoi(params[3]),
-            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest);
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest,
+            isStopMotorPower);
         motionList.push_back(dcl);
         break;
       }
@@ -132,7 +139,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [1]:string 色, [2]:double 距離[mm], [3]:double 速度[mm/s], [4]:int X座標[px],
       // [5-7]:double PIDゲイン, [8-10]int lowerHSV, [11-13]int upperHSV, [14-17]int ROI座標[px]
       // ([14]左上隅のx座標, [15]左上隅のy座標, [16]幅, [17]高さ), [18-19]int 解像度[px] ([18]幅,
-      // [19]高さ) 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      // [19]高さ) 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））,
+      // [20]string 停止制御 (continue ならモータを停止せず、stop ならモータを停止) [オプション]
       case COMMAND::CDCL: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
@@ -147,10 +155,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = cv::Rect(stoi(params[14]), stoi(params[15]), stoi(params[16]), stoi(params[17]));
         detectionRequest.resolution = cv::Size(stoi(params[18]), stoi(params[19]));
 
+        bool isStopMotorPower = true;
+        if(params.size() >= 21) {
+          isStopMotorPower = convertBool("CDCL", params[20]);
+        }
+
         auto cdcl = new ColorDistanceCameraLineTrace(
             robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
             stoi(params[4]), PidGain(stod(params[5]), stod(params[6]), stod(params[7])),
-            detectionRequest);
+            detectionRequest, isStopMotorPower);
         motionList.push_back(cdcl);
         break;
       }
@@ -160,7 +173,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [5-7]:double PIDゲイン, [8-10]int lowerHSV, [11-13]int upperHSV, [14-17]int ROI座標[px]
       // ([14]左上隅のx座標, [15]左上隅のy座標, [16]幅, [17]高さ), [18-19]int 解像度[px] ([18]幅,
       // [19]高さ)
-      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））,
+      // [20]string 停止制御 (continue ならモータを停止せず、stop ならモータを停止) [オプション]
       case COMMAND::UDCL: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
@@ -179,9 +193,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
           detectionRequest.resolution = cv::Size(stoi(params[18]), stoi(params[19]));
         }
 
+        bool isStopMotorPower = true;
+        if(params.size() >= 21) {
+          isStopMotorPower = convertBool("UDCL", params[20]);
+        }
+
         auto udcl = new UltrasonicDistanceCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stod(params[3]), stoi(params[4]),
-            PidGain(stod(params[5]), stod(params[6]), stod(params[7])), detectionRequest);
+            PidGain(stod(params[5]), stod(params[6]), stod(params[7])), detectionRequest,
+            isStopMotorPower);
         motionList.push_back(udcl);
         break;
       }
@@ -192,7 +212,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [13-15]int 2色目lowerHSV (H, S, V), [16-18]int 2色目upperHSV (H, S, V),
       // [19-22]int ROI座標[px] ([19]左上隅のx座標, [20]左上隅のy座標, [21]幅, [22]高さ),
       // [23-24]int 解像度[px] ([23]幅, [24]高さ)
-      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））,
+      // [25]string 停止制御 (continue ならモータを停止せず、stop ならモータを停止) [オプション]
       case COMMAND::DTCCL: {
         CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;
 
@@ -212,9 +233,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
         detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
 
+        bool isStopMotorPower = true;
+        if(params.size() >= 26) {
+          isStopMotorPower = convertBool("DTCCL", params[25]);
+        }
+
         auto dtccl = new DistanceTwoColorCameraLineTrace(
             robot, stod(params[1]), stod(params[2]), stoi(params[3]),
-            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest);
+            PidGain(stod(params[4]), stod(params[5]), stod(params[6])), detectionRequest,
+            isStopMotorPower);
         motionList.push_back(dtccl);
         break;
       }
@@ -226,7 +253,8 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // [14-16]int 2色目lowerHSV (H, S, V), [17-19]int 2色目upperHSV (H, S, V),
       // [20-23]int ROI座標[px] ([20]左上隅のx座標, [21]左上隅のy座標, [22]幅, [23]高さ),
       // [24-25]int 解像度[px] ([24]幅, [25]高さ)
-      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））
+      // 補足：ROI（Region of Interest:ライントレース用の画像内注目領域（四角形））,
+      // [26]string 停止制御 (continue ならモータを停止せず、stop ならモータを停止) [オプション]
       case COMMAND::CDTCCL: {
         CameraServer::TwoColorBoundingBoxDetectorRequest detectionRequest;
 
@@ -246,10 +274,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = cv::Rect(stoi(params[20]), stoi(params[21]), stoi(params[22]), stoi(params[23]));
         detectionRequest.resolution = cv::Size(stoi(params[24]), stoi(params[25]));
 
+        bool isStopMotorPower = true;
+        if(params.size() >= 27) {
+          isStopMotorPower = convertBool("CDTCCL", params[26]);
+        }
+
         auto cdtccl = new ColorDistanceTwoColorCameraLineTrace(
             robot, ColorJudge::convertStringToColor(params[1]), stod(params[2]), stod(params[3]),
             stoi(params[4]), PidGain(stod(params[5]), stod(params[6]), stod(params[7])),
-            detectionRequest);
+            detectionRequest, isStopMotorPower);
         motionList.push_back(cdtccl);
         break;
       }
@@ -345,38 +378,45 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         // [2]:int preTargetAngle
         // [3]:int postTargetAngle
         // [4]:int 回頭基準パワー値
-        // [5]:double threshold（動体検出用）
-        // [6]:double minArea（動体矩形とみなす最小面積）
-        // [7]:int ROIの左上X座標
-        // [8]:int ROIの左上Y座標
-        // [9]:int ROIの幅
-        // [10]:int ROIの高さ
-        // [11]:int position（0=初期位置）
-        // [12]:string 回頭方法(relative or absolute)
-        // [13]:double kp（回頭PIDのP値）[オプション]
-        // [14]:double ki（回頭PIDのI値）[オプション]
-        // [15]:double kd（回頭PIDのD値）[オプション]
+        // [5]:double preTargetDistance（撮影前の直進距離）
+        // [6]:double postTargetDistance（撮影後の後退距離）
+        // [7]:double preTargetSpeed（撮影前の直進速度）
+        // [8]:double postTargetSpeed（撮影後の後退速度）
+        // [9]:int armPower（アームを上げるpower値）
+        // [10]:double threshold（動体検出用）
+        // [11]:double minArea（動体矩形とみなす最小面積）
+        // [12]:int ROIの左上X座標
+        // [13]:int ROIの左上Y座標
+        // [14]:int ROIの幅
+        // [15]:int ROIの高さ
+        // [16]:int position（0=初期位置）
+        // [17]:string 回頭方法(relative or absolute)
+        // [18]:double kp（回頭PIDのP値）[オプション]
+        // [19]:double ki（回頭PIDのI値）[オプション]
+        // [20]:double kd（回頭PIDのD値）[オプション]
 
       case COMMAND::BCA: {
         cv::Rect roi;
 
         bool isClockwise = convertBool("BCA", params[1]);
-        roi = cv::Rect(stoi(params[7]), stoi(params[8]), stoi(params[9]), stoi(params[10]));
+        roi = cv::Rect(stoi(params[12]), stoi(params[13]), stoi(params[14]), stoi(params[15]));
 
         BackgroundPlaCameraAction* bca;
-        if(params.size() >= 16) {
+        if(params.size() >= 21) {
           // PID値が指定されている場合
-          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
-                                              stoi(params[4]), stod(params[5]), stod(params[6]),
-                                              roi, stoi(params[11]),
-                                              convertRotationModeToBool(params[12]),
-                                              stod(params[13]), stod(params[14]), stod(params[15]));
+          bca = new BackgroundPlaCameraAction(
+              robot, isClockwise, stoi(params[2]), stoi(params[3]), stoi(params[4]),
+              stod(params[5]), stod(params[6]), stod(params[7]), stod(params[8]), stoi(params[9]),
+              stod(params[10]), stod(params[11]), roi, stoi(params[16]),
+              convertRotationModeToBool(params[17]), stod(params[18]), stod(params[19]),
+              stod(params[20]));
         } else {
           // PID値が指定されていない場合、デフォルト値を使用
-          bca = new BackgroundPlaCameraAction(robot, isClockwise, stoi(params[2]), stoi(params[3]),
-                                              stoi(params[4]), stod(params[5]), stod(params[6]),
-                                              roi, stoi(params[11]),
-                                              convertRotationModeToBool(params[12]));
+          bca = new BackgroundPlaCameraAction(
+              robot, isClockwise, stoi(params[2]), stoi(params[3]), stoi(params[4]),
+              stod(params[5]), stod(params[6]), stod(params[7]), stod(params[8]), stoi(params[9]),
+              stod(params[10]), stod(params[11]), roi, stoi(params[16]),
+              convertRotationModeToBool(params[17]));
         }
 
         motionList.push_back(bca);
@@ -413,6 +453,13 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
                                             stoi(params[6]), stoi(params[7]), stod(params[8]),
                                             stod(params[9]), pcidsPidGain, detectionRequest);
         motionList.push_back(cra);
+        break;
+      }
+
+      // STOP: 走行体を停止させる動作
+      case COMMAND::STOP: {
+        auto stop = new Stop(robot);
+        motionList.push_back(stop);
         break;
       }
 
@@ -479,7 +526,8 @@ COMMAND MotionParser::convertCommand(const string& str)
     { "SS", COMMAND::SS },         // カメラ撮影動作
     { "MCA", COMMAND::MCA },       // ミニフィグのカメラ撮影動作
     { "BCA", COMMAND::BCA },       // 風景・プラレールのカメラ撮影動作
-    { "CRA", COMMAND::CRA },       // カメラ検出失敗時の復帰動作
+    { "CRA", COMMAND::CRA },       // カメラ復帰動作
+    { "STOP", COMMAND::STOP },     // 走行体を停止させる動作
     { "PCIDS", COMMAND::PCIDS },   // 画像ラインを用いた距離直進
     { "IS", COMMAND::IS },         // IMU設定
     { "DTCCL", COMMAND::DTCCL },   // 2色指定距離カメラライントレース
@@ -500,7 +548,20 @@ bool MotionParser::convertBool(const string& command, const string& stringParame
   // 末尾の改行を削除
   string param = StringOperator::removeEOL(stringParameter);
 
-  // 回転動作(AR,IMUR,MCA,BCA,CRA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
+  // カメラPIDトラッキング系の停止制御（continueなら継続、stopなら停止）
+  if(command == "DCL" || command == "CDCL" || command == "UDCL" || command == "DTCCL"
+     || command == "CDTCCL") {
+    if(param == "continue") {
+      return false;
+    } else if(param == "stop") {
+      return true;
+    } else {
+      cout << "'continue' か 'stop'を入力してください" << endl;
+      return true;
+    }
+  }
+
+  // 回転動作(AR,IMUR,MCA,BCA)の場合、"clockwise"ならtrue（時計回り）、"anticlockwise"ならfalse（反時計回り）に変換
   if(command == "AR" || command == "IMUR" || command == "MCA" || command == "BCA"
      || command == "CRA") {
     if(param == "clockwise") {

@@ -9,8 +9,9 @@
 UltrasonicDistanceCameraLineTrace::UltrasonicDistanceCameraLineTrace(
     Robot& _robot, double _targetUltrasonicDistance, double _targetDistance, double _targetSpeed,
     int _targetXCoordinate, const PidGain& _pidGain,
-    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
-  : CameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest),
+    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest, bool _isStopMotorPower)
+  : CameraPidTracking(_robot, _targetSpeed, _targetXCoordinate, _pidGain, _detectionRequest,
+                      _isStopMotorPower),
     targetUltrasonicDistance(_targetUltrasonicDistance),
     ultrasonicCount(0),
     targetDistance(_targetDistance),
