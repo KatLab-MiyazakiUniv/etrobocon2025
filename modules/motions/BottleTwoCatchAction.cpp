@@ -11,9 +11,10 @@ BottleTwoCatchAction::BottleTwoCatchAction(
     Robot& _robot, double _forwardDistance, double _idsSpeed, const PidGain& _idsPidGain,
     double _ultrasonicDistance, double _udclSpeed, double _angle, double _rotatePower,
     const PidGain& _udclPidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
-    int _roiShrinkValue, double _minimumDistance)
+    int _roiShrinkValue, double _minimumDistance, double _pcidsForwardDistance)
   : CompositeMotion(_robot),
     forwardDistance(_forwardDistance),
+    pcidsForwardDistance(_pcidsForwardDistance),
     idsSpeed(_idsSpeed),
     idsPidGain(_idsPidGain),
     ultrasonicDistance(_ultrasonicDistance),
@@ -42,7 +43,7 @@ void BottleTwoCatchAction::run()
   pcidsDetectionRequest.roi.height -= roiShrinkValue * 2;
 
   // PCIDSを動かす。ボトル探索。
-  PictureColorDistanceStraight pcids(robot, forwardDistance, idsSpeed, idsPidGain,
+  PictureColorDistanceStraight pcids(robot, pcidsForwardDistance, idsSpeed, idsPidGain,
                                      pcidsDetectionRequest, minimumDistance);
   pcids.run();
 
