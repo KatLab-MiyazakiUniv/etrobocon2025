@@ -554,7 +554,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
       // PCIDS: IMU角度補正直進に、カメラ画像の色検出による停止条件を追加した動作
       // [1]:double 距離[mm], [2]:double 速度[mm/s], [3-5]:double 角度補正PIDゲイン(kp, ki, kd),
       // [6-8]:int HSV下限, [9-11]:int HSV上限, [12-15]:int ROI座標[px] ([12]左上x, [13]左上y,
-      // [14]幅, [15]高さ), [16-17]:int 解像度[px] ([16]幅, [17]高さ)
+      // [14]幅, [15]高さ), [16-17]:int 解像度[px] ([16]幅, [17]高さ), [18]:double 最低走行距離[mm]
       case COMMAND::PCIDS: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
 
@@ -565,9 +565,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
             = cv::Rect(stoi(params[12]), stoi(params[13]), stoi(params[14]), stoi(params[15]));
         detectionRequest.resolution = cv::Size(stoi(params[16]), stoi(params[17]));
 
+        double minimumDistance = 0.0;
+        if(params.size() > 18) {
+          minimumDistance = stod(params[18]);
+        }
+
         auto pcds = new PictureColorDistanceStraight(
             robot, stod(params[1]), stod(params[2]),
-            PidGain(stod(params[3]), stod(params[4]), stod(params[5])), detectionRequest);
+            PidGain(stod(params[3]), stod(params[4]), stod(params[5])), detectionRequest,
+            minimumDistance);
         motionList.push_back(pcds);
         break;
       }
