@@ -10,12 +10,13 @@
 
 PictureColorDistanceStraight::PictureColorDistanceStraight(
     Robot& _robot, double _targetDistance, double _targetSpeed, const PidGain& _anglePidGain,
-    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest)
+    const CameraServer::BoundingBoxDetectorRequest& _detectionRequest, double _minimumDistance)
   : Straight(_robot, _targetSpeed),
     targetDistance(_targetDistance),
     initialDistance(0.0),
     anglePid(_anglePidGain.kp, _anglePidGain.ki, _anglePidGain.kd, 0.0),
     targetAngle(0.0),
+    minimumDistance(_minimumDistance),
     detectionRequest(_detectionRequest)
 {
 }
@@ -29,6 +30,16 @@ bool PictureColorDistanceStraight::isMetPreCondition()
 
   // 目標距離が0以下のときは実行しない
   if(targetDistance <= 0.0) {
+    return false;
+  }
+
+  // 最低走行距離が不正な場合は実行しない
+  if(minimumDistance < 0.0) {
+    std::cerr << "最低走行距離が不正です。" << std::endl;
+    return false;
+  }
+  if(minimumDistance > targetDistance) {
+    std::cerr << "最低走行距離が目標距離を超えています。" << std::endl;
     return false;
   }
 
@@ -78,6 +89,11 @@ bool PictureColorDistanceStraight::isMetContinuationCondition()
   // 現在の走行距離が目標走行距離に達した場合falseを返す
   if((fabs(currentDistance - initialDistance) >= targetDistance)) {
     return false;
+  }
+
+  // 最低走行距離に達するまでは色検出結果に関わらず継続する
+  if(fabs(currentDistance - initialDistance) < minimumDistance) {
+    return true;
   }
 
   // カメラでラインを検出

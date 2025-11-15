@@ -22,10 +22,12 @@ class PictureColorDistanceStraight : public Straight {
    * @param _targetSpeed      目標速度[mm/s]
    * @param _anglePidGain     角度補正用PIDゲイン
    * @param _detectionRequest 検出リクエスト（HSV上下限やROIなど）
+   * @param _minimumDistance  最低走行距離[mm]（この距離に達するまでは停止しない）
    */
   PictureColorDistanceStraight(Robot& _robot, double _targetDistance, double _targetSpeed,
                                const PidGain& _anglePidGain,
-                               const CameraServer::BoundingBoxDetectorRequest& _detectionRequest);
+                               const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
+                               double _minimumDistance = 0.0);
 
   /**
    * @brief 直進動作を実行する
@@ -53,6 +55,7 @@ class PictureColorDistanceStraight : public Straight {
   double initialDistance;                                     // 走行開始時の距離[mm]
   Pid anglePid;                                               // IMU角度補正用PID
   double targetAngle;                                         // 走行開始時の角度
+  double minimumDistance;                                     // 最低走行距離[mm]
   CameraServer::BoundingBoxDetectorRequest detectionRequest;  // カメラ検出設定（HSV上下限など）
 };
 
