@@ -9,6 +9,7 @@
 
 #include "BoundingBoxDetector.h"
 #include "SystemInfo.h"
+#include "FrameSave.h"
 
 class TwoColorLineBoundingBoxDetector {
  public:
