@@ -434,12 +434,15 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         break;
       }
 
-      // CRA: カメラ復帰動作
-      // [1]:int 回頭角度[deg], [2]:double 回頭スピード[mm/s], [3]:string 回頭の方向(clockwise or
-      // anticlockwise), [4-9]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [10-13]int
-      // ROI座標[px]
-      // ([10]左上隅のx座標, [11]左上隅のy座標, [12]幅, [13]高さ), [14-15]int 解像度[px] ([14]幅,
-      // [15]高さ)
+      // CRA: カメラ検出失敗時の復帰動作
+      // [1]:int ラインの方向角度（絶対角度）[deg], [2]:int 基準パワー値,
+      // [3-5]:double ライン回頭用PIDゲイン(kp, ki, kd)
+      // [6]:int 首振り角度（deg）, [7]:int 最大首振り回数
+      // [8]:double PCIDS距離[mm], [9]:double PCIDS速度[mm/s],
+      // [10-12]:double PCIDS用PIDゲイン(kp, ki, kd)
+      // [13-18]:int HSV値(lowerH,lowerS,lowerV,upperH,upperS,upperV), [19-22]:int ROI座標[px]
+      // ([19]左上隅のx座標, [20]左上隅のy座標, [21]幅, [22]高さ), [23-24]:int 解像度[px] ([23]幅,
+      // [24]高さ)
       // 補足：ROI（Region of Interest: ライントレース用の画像内注目領域（四角形））
       case COMMAND::CRA: {
         CameraServer::BoundingBoxDetectorRequest detectionRequest;
@@ -447,25 +450,19 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
         detectionRequest.command
             = CameraServer::Command::LINE_DETECTION;  // コマンドタイプをライン検出に設定
 
-        detectionRequest.lowerHSV = cv::Scalar(stoi(params[4]), stoi(params[5]), stoi(params[6]));
-        detectionRequest.upperHSV = cv::Scalar(stoi(params[7]), stoi(params[8]), stoi(params[9]));
+        detectionRequest.lowerHSV
+            = cv::Scalar(stoi(params[13]), stoi(params[14]), stoi(params[15]));
+        detectionRequest.upperHSV
+            = cv::Scalar(stoi(params[16]), stoi(params[17]), stoi(params[18]));
+        detectionRequest.roi
+            = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
+        detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
 
-        // パラメータ配列のサイズによってROIと解像度を設定
-        if(params.size() > 15) {
-          detectionRequest.roi
-              = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
-          detectionRequest.resolution = cv::Size(stoi(params[14]), stoi(params[15]));
-        } else if(params.size() > 13) {
-          detectionRequest.roi
-              = cv::Rect(stoi(params[10]), stoi(params[11]), stoi(params[12]), stoi(params[13]));
-          detectionRequest.resolution = cv::Size(640, 480);
-        } else {
-          detectionRequest.roi = cv::Rect(50, 240, 540, 240);
-          detectionRequest.resolution = cv::Size(640, 480);
-        }
-
-        auto cra = new CameraRecoveryAction(robot, stoi(params[1]), stod(params[2]),
-                                            convertBool(params[0], params[3]), detectionRequest);
+        PidGain anglePidGain(stod(params[3]), stod(params[4]), stod(params[5]));
+        PidGain pcidsPidGain(stod(params[10]), stod(params[11]), stod(params[12]));
+        auto cra = new CameraRecoveryAction(robot, stoi(params[1]), stoi(params[2]), anglePidGain,
+                                            stoi(params[6]), stoi(params[7]), stod(params[8]),
+                                            stod(params[9]), pcidsPidGain, detectionRequest);
         motionList.push_back(cra);
         break;
       }
