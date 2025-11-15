@@ -30,6 +30,11 @@ class AreaMaster {
    */
   void run();
 
+  /**
+   * @brief ミニフィグ判定結果に基づくエリアを走行
+   */
+  void runConditional();
+
  private:
   Robot& robot;          // Robotインスタンスの参照
   Area area;             // エリアの指定(Enum型のArea)
@@ -41,6 +46,25 @@ class AreaMaster {
 
   // コマンドファイル名（各エリア名）
   static const std::array<std::string, 3> areaCommandNames;
+
+  /**
+   * @brief 動作リストを実行してメモリを解放する
+   * @param motionList 実行する動作リスト
+   */
+  void executeMotions(std::vector<Motion*>& motionList);
+
+  /**
+   * @brief 条件分岐用ファイルが存在するかチェック
+   * @return true: ファイルが存在する, false: ファイルが存在しない
+   */
+  bool hasConditionalFiles();
+
+  /**
+   * @brief 条件分岐用ファイルパスを生成
+   * @param suffix ファイル名に付加するサフィックス（_Common, _FigJudgeSuccess, _FigJudgeFailure）
+   * @return 生成されたファイルパス
+   */
+  std::string getConditionalFilePath(const std::string& suffix);
 };
 
 #endif
