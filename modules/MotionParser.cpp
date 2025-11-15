@@ -498,12 +498,7 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
           detectionRequest.roi
               = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
           detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
-          roiShrinkValue = stoi(params[25]);
-        } else if(params.size() > 25) {
-          detectionRequest.roi
-              = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
-          detectionRequest.resolution = cv::Size(stoi(params[23]), stoi(params[24]));
-        } else if(params.size() > 23) {
+        } else if(params.size() > 24) {
           detectionRequest.roi
               = cv::Rect(stoi(params[19]), stoi(params[20]), stoi(params[21]), stoi(params[22]));
           detectionRequest.resolution = cv::Size(640, 480);
@@ -512,14 +507,12 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
           detectionRequest.resolution = cv::Size(640, 480);
         }
 
-        minimumDistance = stod(params[26]);
-
         auto btca = new BottleTwoCatchAction(
             robot, stod(params[1]), stod(params[2]),
             PidGain(stod(params[3]), stod(params[4]), stod(params[5])), stod(params[6]),
             stod(params[7]), stod(params[8]), stod(params[9]),
             PidGain(stod(params[10]), stod(params[11]), stod(params[12])), detectionRequest,
-            roiShrinkValue, minimumDistance);
+            stod(params[25]), stod(params[26]));
         motionList.push_back(btca);
         break;
       }
