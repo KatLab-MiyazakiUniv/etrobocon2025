@@ -42,15 +42,72 @@ void BottleTwoCatchAction::run()
   pcidsDetectionRequest.roi.width -= roiShrinkValue * 2;
   pcidsDetectionRequest.roi.height -= roiShrinkValue * 2;
 
-  // PCIDSを動かす。ボトル探索。
+  // ボトル探索を検出する、もしくは指定の距離で止まるまで前進
   PictureColorDistanceStraight pcids(robot, pcidsForwardDistance, idsSpeed, idsPidGain,
                                      pcidsDetectionRequest, minimumDistance);
   pcids.run();
 
-  UltrasonicDistanceCameraLineTrace udcl(robot, ultrasonicDistance, forwardDistance, udclSpeed, 400,
-                                         udclPidGain, detectionRequest);
+  int rightSweepGoal = 1;
+  int rightSweepProgress = 0;
+  int leftSweepGoal = 1;
+  int leftSweepProgress = 0;
+  bool rotateRight = true;
 
-  udcl.run();
+  while(true) {
+    // 最新フレームに更新するためにスナップショットを連続で取得
+    CameraServer::SnapshotActionRequest request{};
+    request.command = CameraServer::Command::TAKE_SNAPSHOT;
+    std::strncpy(request.fileName, "warmup", sizeof(request.fileName));
+    for(int i = 0; i < 5; ++i) {
+      CameraServer::SnapshotActionResponse response{};
+      robot.getSocketClient().executeSnapshotAction(request, response);
+      std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+
+    // カメラでラインを検出
+    CameraServer::BoundingBoxDetectorResponse response;
+    bool success = robot.getSocketClient().executeLineDetection(detectionRequest, response);
+
+    // 通信成功かつライン検出ができた場合
+    if(success && response.result.wasDetected) {
+      UltrasonicDistanceCameraLineTrace udcl(robot, ultrasonicDistance, forwardDistance, udclSpeed,
+                                             400, udclPidGain, detectionRequest);
+      udcl.run();
+      break;
+    } else {
+      if(rotateRight) {
+        if(rightSweepGoal > 9) {
+          return;
+        }
+
+        IMUAngleRotation searchRotation(
+            robot, 10, rotatePower, true, PidGain(0.036, 0.012, 0.03), false);
+        searchRotation.run();
+
+        rightSweepProgress++;
+        if(rightSweepProgress >= rightSweepGoal) {
+          rightSweepGoal++;
+          rightSweepProgress = 0;
+          rotateRight = false;
+        }
+      } else {
+        if(leftSweepGoal > 9) {
+          return;
+        }
+
+        IMUAngleRotation searchRotation(
+            robot, 10, rotatePower, false, PidGain(0.036, 0.012, 0.03), false);
+        searchRotation.run();
+
+        leftSweepProgress++;
+        if(leftSweepProgress >= leftSweepGoal) {
+          leftSweepGoal++;
+          leftSweepProgress = 0;
+          rotateRight = true;
+        }
+      }
+    }
+  }
 
   // 動作終了時点の走行距離を取得する
   double currentRightMotorCount = robot.getMotorControllerInstance().getRightMotorCount();

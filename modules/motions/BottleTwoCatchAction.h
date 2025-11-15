@@ -14,6 +14,7 @@
 #include "SocketProtocol.h"
 #include "PictureColorDistanceStraight.h"
 #include "IMUMinAngleRotation.h"
+#include "IMUAngleRotation.h"
 #include <cmath>
 
 class BottleTwoCatchAction : public CompositeMotion {
