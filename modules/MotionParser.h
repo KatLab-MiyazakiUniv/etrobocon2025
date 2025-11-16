@@ -16,6 +16,7 @@
 #include "Motion.h"
 #include "AngleRotation.h"
 #include "IMUAngleRotation.h"
+#include "IMUMinAngleRotation.h"
 #include "DistanceStraight.h"
 #include "IMUDistanceStraight.h"
 #include "DistanceCameraLineTrace.h"
@@ -31,7 +32,9 @@
 #include "ColorDistanceCameraLineTrace.h"
 #include "UltrasonicDistanceCameraLineTrace.h"
 #include "CameraRecoveryAction.h"
+#include "BottleTwoCatchAction.h"
 #include "IMUSetting.h"
+#include "BottleLandingAction.h"
 #include "DistanceTwoColorCameraLineTrace.h"
 #include "ColorDistanceTwoColorCameraLineTrace.h"
 #include "PictureColorDistanceStraight.h"
@@ -40,6 +43,7 @@
 enum class COMMAND {
   AR,      // 角度指定回頭
   IMUR,    // IMU角度指定回頭
+  IMUMR,   // IMU絶対角度を最小の角度で回頭する動作
   DS,      // 指定距離直進
   IDS,     // IMU角度補正直進
   CS,      // 指定色直進
@@ -54,7 +58,9 @@ enum class COMMAND {
   SS,      // カメラ撮影動作
   MCA,     // ミニフィグのカメラ撮影動作
   BCA,     // 背景のカメラ撮影動作
-  CRA,     // カメラ検出失敗時の復帰動作
+  CRA,     // カメラ復帰動作
+  BTCA,    // ボトル2つ目のキャッチ動作
+  BLA,     // ボトルランディング動作
   IS,      // IMUの角度計算の設定を行う動作
   STOP,    // 走行体を停止させる動作
   PCIDS,   // カメラ画像を用いた色距離直進
