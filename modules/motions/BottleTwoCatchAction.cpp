@@ -50,7 +50,7 @@ void BottleTwoCatchAction::run()
 
   // 検出失敗時の首振り制御用の変数
   bool isSwingClockwise = false;  // 回頭方向（左奥が見つけられないことが多いので左奥から）
-  int swingFlipCount = 1;         // 方向を反転す回頭回数（1, 3, 6, 10, 15, …）
+  int swingFlipCount = 1;  // 方向を反転す回頭回数（1, 3, 6, 10, 15, …）
   int currentSwingCount = 0;
 
   while(true) {
