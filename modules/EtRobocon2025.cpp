@@ -39,7 +39,7 @@ void EtRobocon2025::start()
 
   Area doubleLoopArea = Area::DoubleLoop;
   AreaMaster doubleLoopAreaMaster(robot, doubleLoopArea, isLeftCourse, targetBrightness);
-  doubleLoopAreaMaster.run();
+  doubleLoopAreaMaster.runConditional();
 
   Area smartCarryArea = Area::SmartCarry;
   AreaMaster smartCarryAreaMaster(robot, smartCarryArea, isLeftCourse, targetBrightness);
