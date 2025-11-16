@@ -11,7 +11,7 @@ BottleTwoCatchAction::BottleTwoCatchAction(
     Robot& _robot, double _forwardDistance, double _idsSpeed, const PidGain& _idsPidGain,
     double _ultrasonicDistance, double _udclSpeed, double _angle, double _rotatePower,
     const PidGain& _udclPidGain, const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
-    int _roiShrinkValue, double _minimumDistance, double _pcidsForwardDistance)
+    int _roiShrinkValue, double _minimumDistance, double _pcidsForwardDistance, int _maxSwingCount)
   : CompositeMotion(_robot),
     forwardDistance(_forwardDistance),
     pcidsForwardDistance(_pcidsForwardDistance),
@@ -24,7 +24,8 @@ BottleTwoCatchAction::BottleTwoCatchAction(
     udclPidGain(_udclPidGain),
     detectionRequest(_detectionRequest),
     roiShrinkValue(_roiShrinkValue),
-    minimumDistance(_minimumDistance)
+    minimumDistance(_minimumDistance),
+    maxSwingCount(_maxSwingCount)
 {
 }
 
@@ -47,11 +48,10 @@ void BottleTwoCatchAction::run()
                                      pcidsDetectionRequest, minimumDistance);
   pcids.run();
 
-  int rightSweepGoal = 1;
-  int rightSweepProgress = 0;
-  int leftSweepGoal = 1;
-  int leftSweepProgress = 0;
-  bool rotateRight = true;
+  // 検出失敗時の首振り制御用の変数
+  bool isSwingClockwise = false;  // 回頭方向（左奥が見つけられないことが多いので左奥から）
+  int swingFlipCount = 1;         // 方向を反転す回頭回数（1, 3, 6, 10, 15, …）
+  int currentSwingCount = 0;
 
   while(true) {
     // 最新フレームに更新するためにスナップショットを連続で取得
@@ -64,47 +64,35 @@ void BottleTwoCatchAction::run()
       std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 
-    // カメラでラインを検出
+    // カメラでボトルを検出
     CameraServer::BoundingBoxDetectorResponse response;
     bool success = robot.getSocketClient().executeLineDetection(detectionRequest, response);
 
-    // 通信成功かつライン検出ができた場合
+    // 通信成功かつボトルが検出ができた場合
     if(success && response.result.wasDetected) {
       UltrasonicDistanceCameraLineTrace udcl(robot, ultrasonicDistance, forwardDistance, udclSpeed,
                                              400, udclPidGain, detectionRequest);
       udcl.run();
       break;
     } else {
-      if(rotateRight) {
-        if(rightSweepGoal > 9) {
-          return;
-        }
+      // ボトルを探すために回頭（1回ごとに検出処理へ戻る）
+      IMUAngleRotation searchRotation(robot, 10, rotatePower, isSwingClockwise,
+                                      PidGain(0.036, 0.012, 0.03), false);
+      searchRotation.run();
 
-        IMUAngleRotation searchRotation(
-            robot, 10, rotatePower, true, PidGain(0.036, 0.012, 0.03), false);
-        searchRotation.run();
+      // 動作安定のために多めに500ミリ秒待機
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        rightSweepProgress++;
-        if(rightSweepProgress >= rightSweepGoal) {
-          rightSweepGoal++;
-          rightSweepProgress = 0;
-          rotateRight = false;
-        }
-      } else {
-        if(leftSweepGoal > 9) {
-          return;
-        }
+      currentSwingCount++;
 
-        IMUAngleRotation searchRotation(
-            robot, 10, rotatePower, false, PidGain(0.036, 0.012, 0.03), false);
-        searchRotation.run();
+      // 回頭回数が上限に達したら終了
+      if(currentSwingCount >= maxSwingCount) break;
 
-        leftSweepProgress++;
-        if(leftSweepProgress >= leftSweepGoal) {
-          leftSweepGoal++;
-          leftSweepProgress = 0;
-          rotateRight = true;
-        }
+      // 三角数列（1, 3, 6, 10, 15, …）の時に反転
+      if(swingFlipCount == currentSwingCount) {
+        swingFlipCount
+            = currentSwingCount + (static_cast<int>(std::sqrt(1 + 8 * currentSwingCount)) + 1) / 2;
+        isSwingClockwise = !isSwingClockwise;
       }
     }
   }

@@ -34,13 +34,14 @@ class BottleTwoCatchAction : public CompositeMotion {
    * @param _roiShrinkValue PCIDS用のROIを狭める値[px] (デフォルト: 0)
    * @param _minimumDistance PictureColorDistanceStraightに設定する最低走行距離[mm]
    * @param _pcidsForwardDistance PCIDS動作用の前進距離[mm]（省略時は_forwardDistanceを使用）
+   * @param _maxSwingCount 首振りで回頭を試す最大回数
    */
   BottleTwoCatchAction(Robot& _robot, double _forwardDistance, double _idsSpeed,
                        const PidGain& _idsPidGain, double _ultrasonicDistance, double _udclSpeed,
                        double _angle, double _rotatePower, const PidGain& _udclPidGain,
                        const CameraServer::BoundingBoxDetectorRequest& _detectionRequest,
                        int _roiShrinkValue = 0, double _minimumDistance = 0.0,
-                       double _pcidsForwardDistance);
+                       double _pcidsForwardDistance = 0.0, int _maxSwingCount = 9);
 
   /**
    * @brief 2本目のボトルのキャッチ動作を行う
@@ -60,6 +61,7 @@ class BottleTwoCatchAction : public CompositeMotion {
   PidGain udclPidGain;                                        // udclのPIDゲイン
   int roiShrinkValue;                                         // PCIDS用のROIを狭める値[px]
   double minimumDistance;                                     // PCIDSの最低走行距離[mm]
+  int maxSwingCount;                                          // 首振りの最大試行回数
 };
 
 #endif
