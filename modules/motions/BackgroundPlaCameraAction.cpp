@@ -83,7 +83,7 @@ void BackgroundPlaCameraAction::run()
   IMUDistanceStraight preStraight(robot, preTargetDistance, preTargetSpeed, prePidGain);
   preStraight.run();
 
-  robot.getMotorControllerInstance().stopWheelsMotor();
+  robot.getMotorControllerInstance().resetWheelsMotorPower();
 
   // 綺麗な写真の撮影のためのスリープ
   this_thread::sleep_for(chrono::milliseconds(100));
