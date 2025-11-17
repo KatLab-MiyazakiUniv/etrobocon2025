@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
     if(startSeconds > 0) {
       endSeconds = startSeconds + durationSeconds;
     } else {
-      endSeconds = std::min(durationSeconds, 120);
+      endSeconds = durationSeconds;
     }
   }
 

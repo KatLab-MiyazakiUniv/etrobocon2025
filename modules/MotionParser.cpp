@@ -505,14 +505,12 @@ vector<Motion*> MotionParser::createMotions(Robot& robot, string& commandFilePat
           detectionRequest.resolution = cv::Size(640, 480);
         }
 
-        auto btca
-            = new BottleTwoCatchAction(robot, stod(params[1]), stod(params[2]),
-                                       PidGain(stod(params[3]), stod(params[4]), stod(params[5])),
-                                       stod(params[6]), stod(params[7]), stod(params[8]),
-                                       stod(params[9]),
-                                       PidGain(stod(params[10]), stod(params[11]), stod(params[12])),
-                                       detectionRequest, stod(params[25]), stod(params[26]),
-                                       stod(params[27]), stoi(params[28]));
+        auto btca = new BottleTwoCatchAction(
+            robot, stod(params[1]), stod(params[2]),
+            PidGain(stod(params[3]), stod(params[4]), stod(params[5])), stod(params[6]),
+            stod(params[7]), stod(params[8]), stod(params[9]),
+            PidGain(stod(params[10]), stod(params[11]), stod(params[12])), detectionRequest,
+            stod(params[25]), stod(params[26]), stod(params[27]), stoi(params[28]));
         motionList.push_back(btca);
         break;
       }
