@@ -19,14 +19,14 @@ int main(int argc, char* argv[])
               << std::endl;
     std::cerr << "Examples:" << std::endl;
     std::cerr << "  " << argv[0] << " input_dir output.mp4" << std::endl;
-    std::cerr << "  " << argv[0] << " input_dir output.mp4 120" << std::endl;
+    std::cerr << "  " << argv[0] << " input_dir output.mp4 180" << std::endl;
     std::cerr << "  " << argv[0] << " input_dir output.mp4 0 60 100" << std::endl;
     return 1;
   }
 
   std::string inputDir = argv[1];
   std::string outputPath = argv[2];
-  int durationSeconds = (argc >= 4) ? std::stoi(argv[3]) : 120;  // デフォルト120秒
+  int durationSeconds = (argc >= 4) ? std::stoi(argv[3]) : 180;  // デフォルト180秒
   int startSeconds = (argc >= 5) ? std::stoi(argv[4]) : 0;       // デフォルト0秒から
   int endSeconds = (argc == 6) ? std::stoi(argv[5]) : -1;        // デフォルト指定なし
 
